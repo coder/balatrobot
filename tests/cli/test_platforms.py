@@ -8,9 +8,11 @@ from balatrobot.config import Config
 from balatrobot.platforms import VALID_PLATFORMS, get_launcher
 from balatrobot.platforms.macos import MacOSLauncher
 from balatrobot.platforms.native import NativeLauncher
+from balatrobot.platforms.windows import WindowsLauncher
 
 IS_MACOS = platform_module.system() == "Darwin"
 IS_LINUX = platform_module.system() == "Linux"
+IS_WINDOWS = platform_module.system() == "Windows"
 
 
 class TestGetLauncher:
@@ -31,10 +33,10 @@ class TestGetLauncher:
         launcher = get_launcher("native")
         assert isinstance(launcher, NativeLauncher)
 
-    def test_windows_not_implemented(self):
-        """'windows' raises NotImplementedError."""
-        with pytest.raises(NotImplementedError):
-            get_launcher("windows")
+    def test_windows_returns_windows_launcher(self):
+        """'windows' returns WindowsLauncher."""
+        launcher = get_launcher("windows")
+        assert isinstance(launcher, WindowsLauncher)
 
     def test_linux_not_implemented(self):
         """'linux' raises NotImplementedError."""
@@ -127,3 +129,50 @@ class TestNativeLauncher:
         cmd = launcher.build_cmd(config)
 
         assert cmd == ["/usr/bin/love", "/path/to/balatro"]
+
+
+@pytest.mark.skipif(not IS_WINDOWS, reason="Windows only")
+class TestWindowsLauncher:
+    """Tests for WindowsLauncher (Windows only)."""
+
+    def test_validate_paths_missing_balatro_exe(self, tmp_path):
+        """Raises RuntimeError when Balatro.exe missing."""
+        launcher = WindowsLauncher()
+        config = Config(love_path=str(tmp_path / "nonexistent.exe"))
+
+        with pytest.raises(RuntimeError, match="Balatro executable not found"):
+            launcher.validate_paths(config)
+
+    def test_validate_paths_missing_version_dll(self, tmp_path):
+        """Raises RuntimeError when version.dll missing."""
+        # Create a fake Balatro.exe
+        exe_path = tmp_path / "Balatro.exe"
+        exe_path.touch()
+
+        launcher = WindowsLauncher()
+        config = Config(
+            love_path=str(exe_path),
+            lovely_path=str(tmp_path / "nonexistent.dll"),
+        )
+
+        with pytest.raises(RuntimeError, match="version.dll not found"):
+            launcher.validate_paths(config)
+
+    def test_build_env_no_dll_injection_var(self, tmp_path):
+        """build_env does not include DLL injection environment variable."""
+        launcher = WindowsLauncher()
+        config = Config(lovely_path=r"C:\path\to\version.dll")
+
+        env = launcher.build_env(config)
+
+        assert "DYLD_INSERT_LIBRARIES" not in env
+        assert "LD_PRELOAD" not in env
+
+    def test_build_cmd(self, tmp_path):
+        """build_cmd returns Balatro.exe path."""
+        launcher = WindowsLauncher()
+        config = Config(love_path=r"C:\path\to\Balatro.exe")
+
+        cmd = launcher.build_cmd(config)
+
+        assert cmd == [r"C:\path\to\Balatro.exe"]

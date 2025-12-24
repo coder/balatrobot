@@ -93,7 +93,61 @@ The CLI automatically:
 - Sets up the correct environment variables
 - Gracefully shuts down on Ctrl+C
 
-## Native Platform (Linux Only)
+## Platform-Specific Details
+
+### Windows Platform
+
+The `windows` platform launches Balatro via Steam on Windows. The CLI auto-detects the Steam installation paths:
+
+**Auto-Detected Paths:**
+
+- `BALATROBOT_LOVE_PATH`: `C:\Program Files (x86)\Steam\steamapps\common\Balatro\Balatro.exe`
+- `BALATROBOT_LOVELY_PATH`: `C:\Program Files (x86)\Steam\steamapps\common\Balatro\version.dll`
+
+**Requirements:**
+
+- Balatro installed via Steam
+- [Lovely Injector](https://github.com/ethangreen-dev/lovely-injector) `version.dll` placed in the Balatro game directory
+- Mods directory: `%AppData%\Balatro\Mods`
+
+**Launch:**
+
+```powershell
+# Auto-detects paths
+balatrobot --fast
+
+# Or specify custom paths
+balatrobot --love-path "C:\Custom\Path\Balatro.exe" --lovely-path "C:\Custom\Path\version.dll"
+```
+
+### macOS Platform
+
+The `darwin` platform launches Balatro via Steam on macOS. The CLI auto-detects the Steam installation paths:
+
+**Auto-Detected Paths:**
+
+- `BALATROBOT_LOVE_PATH`: `~/Library/Application Support/Steam/steamapps/common/Balatro/Balatro.app/Contents/MacOS/love`
+- `BALATROBOT_LOVELY_PATH`: `~/Library/Application Support/Steam/steamapps/common/Balatro/liblovely.dylib`
+
+**Requirements:**
+
+- Balatro installed via Steam
+- [Lovely Injector](https://github.com/ethangreen-dev/lovely-injector) `liblovely.dylib` and `run_lovely_macos.sh` in the Balatro game directory
+- Mods directory: `~/Library/Application Support/Balatro/Mods`
+
+**Note:** You cannot run the game through Steam on macOS due to a Steam client bug. The CLI handles this by directly executing the LOVE runtime with proper environment variables.
+
+**Launch:**
+
+```bash
+# Auto-detects paths
+balatrobot --fast
+
+# Or specify custom paths
+balatrobot --love-path "/path/to/love" --lovely-path "/path/to/liblovely.dylib"
+```
+
+### Native Platform (Linux Only)
 
 The `native` platform runs Balatro from source code using the LÖVE framework installed via package manager. This requires specific directory structure:
 

@@ -2,13 +2,14 @@
 
 Guide for contributing to BalatroBot development.
 
-!!! warning "Help Needed: Windows & Linux (Proton) Support"
+!!! warning "Help Needed: Linux (Proton) Support"
 
-    We currently lack CLI support for **Windows** and **Linux (Proton)**. Contributions to implement these platforms are highly welcome!
+    We currently lack CLI support for **Linux (Proton)**. Contributions to implement this platform are highly welcome!
 
     Please refer to the existing implementations for guidance:
 
     - **macOS:** `src/balatrobot/platforms/macos.py`
+    - **Windows:** `src/balatrobot/platforms/windows.py`
     - **Linux (Native):** `src/balatrobot/platforms/native.py`
 
 ## Prerequisites
@@ -49,7 +50,23 @@ ln -s "$(pwd)" ~/.local/share/Steam/steamapps/compatdata/2379780/pfx/drive_c/use
 New-Item -ItemType SymbolicLink -Path "$env:APPDATA\Balatro\Mods\balatrobot" -Target (Get-Location)
 ```
 
-### 3. Launch Balatro
+### 3. Activate Virtual Environment
+
+Activate the virtual environment to use the `balatrobot` command:
+
+**macOS/Linux:**
+
+```bash
+source .venv/bin/activate
+```
+
+**Windows (PowerShell):**
+
+```powershell
+.venv\Scripts\Activate.ps1
+```
+
+### 4. Launch Balatro
 
 Start with debug and fast mode for development:
 
@@ -59,7 +76,7 @@ balatrobot --debug --fast
 
 For detailed CLI options, see the [CLI Reference](cli.md).
 
-### 4. Running Tests
+### 5. Running Tests
 
 Tests use Python + pytest to communicate with the Lua API.
 
