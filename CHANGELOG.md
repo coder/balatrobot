@@ -1,5 +1,20 @@
 # Changelog
 
+## [1.1.0](https://github.com/coder/balatrobot/compare/v1.0.0...v1.1.0) (2025-12-24)
+
+
+### Features
+
+* **balatrobot:** add Windows support to CLI ([843a1b7](https://github.com/coder/balatrobot/commit/843a1b7b6dbf049a1cc1d1510714519d642aa0c2))
+
+
+### Documentation
+
+* **cli:** `run_lovely_macos.sh` is not required ([ccf1996](https://github.com/coder/balatrobot/commit/ccf1996fe9e960ed10e25b783500ae3b806debfd))
+* **contributing:** improve contributing guide ([d5576b2](https://github.com/coder/balatrobot/commit/d5576b2c50da5f5488c1cca1c0e5cf3f61025408))
+* **index:** remove link to legacy docs ([23029cd](https://github.com/coder/balatrobot/commit/23029cd0b8bdbe33f7ed41c02c9aed8e37da837d))
+* **readme:** remove the imgs from the related project section ([354de3a](https://github.com/coder/balatrobot/commit/354de3a2f2966dcd98e5c62751b740804d5b1afb))
+
 ## 1.0.0 (2025-12-23)
 
 
