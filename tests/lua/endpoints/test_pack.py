@@ -17,7 +17,8 @@ class TestPackEndpoint:
         """Test pack endpoint with no arguments."""
         # Buy a pack first to open it
         load_fixture(client, "pack", "state-SHOP")
-        api(client, "buy", {"pack": 0})
+        result = api(client, "buy", {"pack": 0})
+        assert_gamestate_response(result)
 
         assert_error_response(
             api(client, "pack", {}),
@@ -29,7 +30,8 @@ class TestPackEndpoint:
         """Test pack endpoint with both card and skip."""
         # Buy a pack first to open it
         load_fixture(client, "pack", "state-SHOP")
-        api(client, "buy", {"pack": 0})
+        result = api(client, "buy", {"pack": 0})
+        assert_gamestate_response(result)
 
         assert_error_response(
             api(client, "pack", {"card": 0, "skip": True}),
@@ -39,8 +41,7 @@ class TestPackEndpoint:
 
     def test_pack_no_pack_open(self, client: httpx.Client) -> None:
         """Test pack endpoint when no pack is open."""
-        gamestate = load_fixture(client, "pack", "state-SHOP")
-        assert gamestate["state"] == "SHOP"
+        load_fixture(client, "pack", "state-SHOP")
 
         # The dispatcher checks required state before the endpoint runs
         assert_error_response(
@@ -54,8 +55,7 @@ class TestPackEndpoint:
         # Buy a pack first to open it
         gamestate = load_fixture(client, "pack", "state-SHOP")
         result = api(client, "buy", {"pack": 0})
-        assert_gamestate_response(result)
-        gamestate = result["result"]
+        gamestate = assert_gamestate_response(result)
 
         pack_count = gamestate.get("pack", {}).get("count", 0)
         assert pack_count > 0
@@ -75,11 +75,8 @@ class TestPackEndpoint:
 
         # Skip the pack
         result = api(client, "pack", {"skip": True})
-        assert_gamestate_response(result)
-        gamestate = result["result"]
+        gamestate = assert_gamestate_response(result, state="SHOP")
 
-        # Should be back in SHOP state
-        assert gamestate["state"] == "SHOP"
         # Pack should be closed
         assert "pack" not in gamestate or gamestate.get("pack") is None
 
@@ -93,8 +90,7 @@ class TestPackEndpoint:
 
         # Buy the buffoon pack
         result = api(client, "buy", {"pack": 0})
-        assert_gamestate_response(result)
-        gamestate = result["result"]
+        gamestate = assert_gamestate_response(result)
 
         # Verify pack is open
         assert "pack" in gamestate
@@ -102,8 +98,7 @@ class TestPackEndpoint:
 
         # Select first card from pack
         result = api(client, "pack", {"card": 0})
-        assert_gamestate_response(result)
-        gamestate = result["result"]
+        gamestate = assert_gamestate_response(result)
 
         # Verify joker was added
         assert gamestate["jokers"]["count"] == initial_joker_count + 1
@@ -117,7 +112,6 @@ class TestPackEndpoint:
         # Select starting blind
         result = api(client, "select", {})
         assert_gamestate_response(result)
-        gamestate = result["result"]
 
         # Set chips to 1000 to easily beat the blind
         api(client, "set", {"chips": 1000})
@@ -127,17 +121,14 @@ class TestPackEndpoint:
 
         # Cash out to get to shop
         result = api(client, "cash_out", {})
-        assert_gamestate_response(result)
-        gamestate = result["result"]
+        gamestate = assert_gamestate_response(result, state="SHOP")
 
-        # Verify we're in shop and have an arcana pack at position 1
-        assert gamestate["state"] == "SHOP"
+        # Verify we have an arcana pack at position 1
         assert gamestate["packs"]["count"] >= 2
 
         # Buy the arcana pack (position 1)
         result = api(client, "buy", {"pack": 1})
-        assert_gamestate_response(result)
-        gamestate = result["result"]
+        gamestate = assert_gamestate_response(result)
 
         # Verify pack is open
         assert "pack" in gamestate
@@ -145,11 +136,8 @@ class TestPackEndpoint:
 
         # Select first card from pack (Hierophant) with 2 card targets
         result = api(client, "pack", {"card": 0, "targets": [0, 1]})
-        assert_gamestate_response(result)
-        gamestate = result["result"]
+        gamestate = assert_gamestate_response(result, state="SHOP")
 
-        # Should be back in SHOP state
-        assert gamestate["state"] == "SHOP"
         # Pack should be closed
         assert "pack" not in gamestate or gamestate.get("pack") is None
 
@@ -162,8 +150,7 @@ class TestPackEndpoint:
 
         # Buy the celestial pack
         result = api(client, "buy", {"pack": 1})
-        assert_gamestate_response(result)
-        gamestate = result["result"]
+        gamestate = assert_gamestate_response(result)
 
         # Verify pack is open
         assert "pack" in gamestate
@@ -171,22 +158,16 @@ class TestPackEndpoint:
 
         # Select first card from pack (planet will be used immediately)
         result = api(client, "pack", {"card": 0})
-        assert_gamestate_response(result)
-        gamestate = result["result"]
+        gamestate = assert_gamestate_response(result, state="SMODS_BOOSTER_OPENED")
 
-        # Should still be in SMODS_BOOSTER_OPENED state (Mega pack allows 2 selections)
-        assert gamestate["state"] == "SMODS_BOOSTER_OPENED"
         # Pack should still be open with 1 less choice
         assert "pack" in gamestate
         assert gamestate["pack"]["count"] == 4
 
         # Select second card to close the Mega pack
         result = api(client, "pack", {"card": 0})
-        assert_gamestate_response(result)
-        gamestate = result["result"]
+        gamestate = assert_gamestate_response(result, state="SHOP")
 
-        # Should be back in SHOP state
-        assert gamestate["state"] == "SHOP"
         # Pack should be closed
         assert "pack" not in gamestate or gamestate.get("pack") is None
 
@@ -202,14 +183,12 @@ class TestPackEndpoint:
         api(client, "set", {"money": 50})
         initial_joker_count = gamestate["jokers"]["count"]
         result = api(client, "buy", {"card": 0})
-        assert_gamestate_response(result)
-        gamestate = result["result"]
+        gamestate = assert_gamestate_response(result)
         assert gamestate["jokers"]["count"] == initial_joker_count + 1
 
         # Buy the spectral pack
         result = api(client, "buy", {"pack": 1})
-        assert_gamestate_response(result)
-        gamestate = result["result"]
+        gamestate = assert_gamestate_response(result)
 
         # Verify pack is open
         assert "pack" in gamestate
@@ -217,11 +196,8 @@ class TestPackEndpoint:
 
         # Select first card from pack (spectral will be used immediately)
         result = api(client, "pack", {"card": 0})
-        assert_gamestate_response(result)
-        gamestate = result["result"]
+        gamestate = assert_gamestate_response(result, state="SHOP")
 
-        # Should be back in SHOP state
-        assert gamestate["state"] == "SHOP"
         # Pack should be closed
         assert "pack" not in gamestate or gamestate.get("pack") is None
 
@@ -234,8 +210,7 @@ class TestPackEndpoint:
 
         # Buy the standard pack
         result = api(client, "buy", {"pack": 1})
-        assert_gamestate_response(result)
-        gamestate = result["result"]
+        gamestate = assert_gamestate_response(result)
 
         # Verify pack is open
         assert "pack" in gamestate
@@ -243,32 +218,25 @@ class TestPackEndpoint:
 
         # Select first card from pack (Mega pack allows 2 selections)
         result = api(client, "pack", {"card": 0})
-        assert_gamestate_response(result)
-        gamestate = result["result"]
+        gamestate = assert_gamestate_response(result, state="SMODS_BOOSTER_OPENED")
 
-        # Should still be in SMODS_BOOSTER_OPENED state (Mega pack)
-        assert gamestate["state"] == "SMODS_BOOSTER_OPENED"
         # Pack should still be open
         assert "pack" in gamestate
         assert gamestate["pack"]["count"] > 0
 
         # Select second card from pack
         result = api(client, "pack", {"card": 0})
-        assert_gamestate_response(result)
-        gamestate = result["result"]
+        gamestate = assert_gamestate_response(result, state="SHOP")
 
-        # Now should be back in SHOP state
-        assert gamestate["state"] == "SHOP"
         # Pack should be closed
         assert "pack" not in gamestate or gamestate.get("pack") is None
 
     def test_pack_joker_slots_full(self, client: httpx.Client) -> None:
         """Test selecting joker when slots are full."""
         # Set up state with full joker slots and buffoon pack
-        gamestate = load_fixture(
+        load_fixture(
             client, "buy", "state-SHOP--jokers.count-5--shop.cards[0].set-JOKER"
         )
-        assert gamestate["jokers"]["count"] == 5
 
         # Buy the buffoon pack
         result = api(client, "buy", {"pack": 0})
@@ -290,7 +258,6 @@ class TestPackEndpoint:
         # Select starting blind
         result = api(client, "select", {})
         assert_gamestate_response(result)
-        gamestate = result["result"]
 
         # Set chips to 1000 to easily beat the blind
         api(client, "set", {"chips": 1000})
@@ -300,17 +267,14 @@ class TestPackEndpoint:
 
         # Cash out to get to shop
         result = api(client, "cash_out", {})
-        assert_gamestate_response(result)
-        gamestate = result["result"]
+        gamestate = assert_gamestate_response(result, state="SHOP")
 
-        # Verify we're in shop and have an arcana pack at position 1
-        assert gamestate["state"] == "SHOP"
+        # Verify we have an arcana pack at position 1
         assert gamestate["packs"]["count"] >= 2
 
         # Buy the arcana pack (position 1)
         result = api(client, "buy", {"pack": 1})
-        assert_gamestate_response(result)
-        gamestate = result["result"]
+        gamestate = assert_gamestate_response(result)
 
         # Verify pack is open
         assert "pack" in gamestate
