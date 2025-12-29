@@ -265,6 +265,7 @@ make quality  # Runs lint, typecheck, and format
 3. **Update docs** - Update api.md and openrpc.json for API changes
 4. **Run code quality checks** - Execute `make quality` before committing (see [Code Quality Tools](#code-quality-tools))
 5. **Test locally** - Ensure both `pytest -n 6 tests/lua` and `pytest tests/cli` pass
+6. **Use Conventional Commits** - Follow [Conventional Commits](https://www.conventionalcommits.org/) for automated changelog generation
 
 ## CI/CD Pipeline
 
