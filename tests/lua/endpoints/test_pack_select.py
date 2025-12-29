@@ -190,7 +190,9 @@ class TestPackSelectEndpoint:
         # Pack should be closed
         assert "pack" not in gamestate or gamestate.get("pack") is None
 
-    def test_pack_select_spectral_from_spectral_pack(self, client: httpx.Client) -> None:
+    def test_pack_select_spectral_from_spectral_pack(
+        self, client: httpx.Client
+    ) -> None:
         """Test selecting and using a spectral from spectral pack."""
         # Set up state with a spectral pack
         gamestate = load_fixture(
@@ -225,7 +227,9 @@ class TestPackSelectEndpoint:
         # Pack should be closed
         assert "pack" not in gamestate or gamestate.get("pack") is None
 
-    def test_pack_select_playing_card_from_standard_pack(self, client: httpx.Client) -> None:
+    def test_pack_select_playing_card_from_standard_pack(
+        self, client: httpx.Client
+    ) -> None:
         """Test selecting a playing card from standard pack (Mega pack - 2 selections)."""
         # Set up state with a Mega standard pack
         gamestate = load_fixture(
