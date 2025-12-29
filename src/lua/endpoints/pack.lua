@@ -1,4 +1,4 @@
--- src/lua/endpoints/pack_select.lua
+-- src/lua/endpoints/pack.lua
 
 -- ==========================================================================
 -- Pack Select Endpoint Params
@@ -48,7 +48,7 @@ local CONSUMABLE_TARGET_REQUIREMENTS = {
 ---@type Endpoint
 return {
 
-  name = "pack_select",
+  name = "pack",
 
   description = "Select or skip a card from an opened booster pack",
 
@@ -76,7 +76,7 @@ return {
   ---@param args Request.Endpoint.PackSelect.Params
   ---@param send_response fun(response: Response.Endpoint)
   execute = function(args, send_response)
-    sendDebugMessage("Init pack_select()", "BB.ENDPOINTS")
+    sendDebugMessage("Init pack()", "BB.ENDPOINTS")
 
     -- Validate that exactly one of card or skip is provided
     local set = 0
@@ -257,7 +257,7 @@ return {
 
           if pack_closed and back_to_shop then
             G.GAME.bb_pack_is_mega = nil -- Clear pack metadata
-            sendDebugMessage("Return pack_select() after selection", "BB.ENDPOINTS")
+            sendDebugMessage("Return pack() after selection", "BB.ENDPOINTS")
             send_response(BB_GAMESTATE.get_gamestate())
             return true
           end
@@ -283,7 +283,7 @@ return {
 
           if pack_closed and back_to_shop then
             G.GAME.bb_pack_is_mega = nil -- Clear pack metadata
-            sendDebugMessage("Return pack_select() after skip", "BB.ENDPOINTS")
+            sendDebugMessage("Return pack() after skip", "BB.ENDPOINTS")
             send_response(BB_GAMESTATE.get_gamestate())
             return true
           end

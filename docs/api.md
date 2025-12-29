@@ -122,7 +122,7 @@ MENU ──► BLIND_SELECT ──► SELECTING_HAND ──► ROUND_EVAL ──
 - [`select`](#select) - Select the current blind to begin the round
 - [`skip`](#skip) - Skip the current blind (Small or Big only)
 - [`buy`](#buy) - Buy a card, voucher, or pack from the shop
-- [`pack_select`](#pack_select) - Select or skip a card from an opened booster pack
+- [`pack`](#pack) - Select or skip a card from an opened booster pack
 - [`sell`](#sell) - Sell a joker or consumable
 - [`reroll`](#reroll) - Reroll the shop items
 - [`cash_out`](#cash_out) - Cash out round rewards and transition to shop
@@ -344,7 +344,7 @@ curl -X POST http://127.0.0.1:12346 \
 
 ---
 
-### `pack_select`
+### `pack`
 
 Select or skip a card from an opened booster pack.
 
@@ -376,17 +376,17 @@ Some Tarot and Spectral cards require you to select target cards from your hand 
 # Select first card from a Buffoon pack (adds joker to slots)
 curl -X POST http://127.0.0.1:12346 \
   -H "Content-Type: application/json" \
-  -d '{"jsonrpc": "2.0", "method": "pack_select", "params": {"card": 0}, "id": 1}'
+  -d '{"jsonrpc": "2.0", "method": "pack", "params": {"card": 0}, "id": 1}'
 
 # Select a Tarot card requiring targets (e.g., The Magician on 2 hand cards)
 curl -X POST http://127.0.0.1:12346 \
   -H "Content-Type: application/json" \
-  -d '{"jsonrpc": "2.0", "method": "pack_select", "params": {"card": 0, "targets": [0, 1]}, "id": 1}'
+  -d '{"jsonrpc": "2.0", "method": "pack", "params": {"card": 0, "targets": [0, 1]}, "id": 1}'
 
 # Skip pack selection
 curl -X POST http://127.0.0.1:12346 \
   -H "Content-Type: application/json" \
-  -d '{"jsonrpc": "2.0", "method": "pack_select", "params": {"skip": true}, "id": 1}'
+  -d '{"jsonrpc": "2.0", "method": "pack", "params": {"skip": true}, "id": 1}'
 ```
 
 **Consumables Requiring Targets:**
