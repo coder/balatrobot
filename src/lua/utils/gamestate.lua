@@ -758,6 +758,10 @@ function gamestate.get_gamestate()
   -- Pack cards area (available during pack opening phases)
   if G.pack_cards and not G.pack_cards.REMOVED then
     state_data.pack = extract_area(G.pack_cards)
+    -- Add is_mega metadata if available
+    if state_data.pack and G.GAME and G.GAME.bb_pack_is_mega ~= nil then
+      state_data.pack.is_mega = G.GAME.bb_pack_is_mega
+    end
   end
 
   return state_data

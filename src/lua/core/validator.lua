@@ -55,7 +55,8 @@ local function validate_field(field_name, value, field_schema)
   end
   if expected_type == "array" and field_schema.items then
     for i, item in ipairs(value) do
-      local item_type = field_schema.items
+      local item_schema = field_schema.items
+      local item_type = type(item_schema) == "table" and item_schema.type or item_schema
       local item_valid = item_type == "integer" and is_integer(item) or type(item) == item_type
       if not item_valid then
         return false,

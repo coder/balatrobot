@@ -183,6 +183,14 @@ return {
       return
     end
 
+    -- Store pack metadata for Mega pack detection
+    if args.pack then
+      -- Get pack name from the actual game object, not the gamestate-extracted card
+      local game_pack = G.shop_booster.cards[pos]
+      local pack_name = (game_pack and game_pack.ability and game_pack.ability.name) or ""
+      G.GAME.bb_pack_is_mega = string.find(string.lower(pack_name), "mega") ~= nil
+    end
+
     -- Use appropriate function: use_card for vouchers, buy_from_shop for others
     if args.voucher or args.pack then
       G.FUNCS.use_card(btn)
