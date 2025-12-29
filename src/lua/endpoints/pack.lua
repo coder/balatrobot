@@ -235,17 +235,36 @@ return {
       -- Only wait for pack to close if this is not a Mega pack with more selections
       if is_mega_pack and pack_cards_remaining > 4 then
         -- Return for Mega packs with more selections available
-        -- But wait a bit for pack to stabilize first so we don't run into crashes
-        local delay_frames = 0
+        -- Wait for pack to stabilize after card removal and repositioning
+        local expected_remaining = pack_cards_remaining - 1
+
         G.E_MANAGER:add_event(Event({
           trigger = "condition",
           blocking = false,
           func = function()
-            delay_frames = delay_frames + 1
-            if delay_frames >= 30 then -- Wait ~0.5 seconds
+            -- Check pack still exists and card count has decreased
+            local pack_exists = G.pack_cards
+              and not G.pack_cards.REMOVED
+              and G.pack_cards.config
+              and G.pack_cards.config.card_count == expected_remaining
+
+            -- Check first remaining card is positioned (if any cards remain)
+            local cards_positioned = true
+            if expected_remaining > 0 then
+              cards_positioned = G.pack_cards.cards[1]
+                and G.pack_cards.cards[1].T
+                and G.pack_cards.cards[1].T.x
+            end
+
+            -- Check game state is stable and still in pack opened state
+            local state_stable = G.STATE_COMPLETE and G.STATE == G.STATES.SMODS_BOOSTER_OPENED
+
+            if pack_exists and cards_positioned and state_stable then
+              sendDebugMessage("Return pack() after first Mega pack selection", "BB.ENDPOINTS")
               send_response(BB_GAMESTATE.get_gamestate())
               return true
             end
+
             return false
           end,
         }))
