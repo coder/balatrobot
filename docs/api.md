@@ -105,7 +105,7 @@ MENU ──► BLIND_SELECT ──► SELECTING_HAND ──► ROUND_EVAL ──
 | `SELECTING_HAND`       | Selecting cards to play or discard              |
 | `ROUND_EVAL`           | Round complete, ready to cash out               |
 | `SHOP`                 | Shopping phase                                  |
-| `SMODS_BOOSTER_OPENED` | Booster pack opened, selecting or skipping card |
+| `SMODS_BOOSTER_OPENED` | Booster pack opened, selecting or skipping pack |
 | `GAME_OVER`            | Game ended                                      |
 
 ---
@@ -122,7 +122,7 @@ MENU ──► BLIND_SELECT ──► SELECTING_HAND ──► ROUND_EVAL ──
 - [`select`](#select) - Select the current blind to begin the round
 - [`skip`](#skip) - Skip the current blind (Small or Big only)
 - [`buy`](#buy) - Buy a card, voucher, or pack from the shop
-- [`pack`](#pack) - Select or skip a card from an opened booster pack
+- [`pack`](#pack) - Select a card or skip a pack from an opened booster pack, requires to you select targets for Tarot/Spectral consumables when applicable
 - [`sell`](#sell) - Sell a joker or consumable
 - [`reroll`](#reroll) - Reroll the shop items
 - [`cash_out`](#cash_out) - Cash out round rewards and transition to shop
@@ -346,7 +346,7 @@ curl -X POST http://127.0.0.1:12346 \
 
 ### `pack`
 
-Select or skip a card from an opened booster pack.
+Select a card or skip a pack from an opened booster pack.
 
 After buying a pack with [`buy`](#buy), this method allows you to select a card from the pack or skip the selection. Different pack types behave differently:
 
@@ -388,32 +388,6 @@ curl -X POST http://127.0.0.1:12346 \
   -H "Content-Type: application/json" \
   -d '{"jsonrpc": "2.0", "method": "pack", "params": {"skip": true}, "id": 1}'
 ```
-
-**Consumables Requiring Targets:**
-
-| Card           | Min Targets | Max Targets | Effect                          |
-| -------------- | ----------- | ----------- | ------------------------------- |
-| The Magician   | 1           | 2           | Enhance to Lucky                |
-| The Empress    | 1           | 2           | Enhance to Mult                 |
-| The Hierophant | 1           | 2           | Enhance to Bonus                |
-| The Lovers     | 1           | 1           | Enhance to Wild                 |
-| The Chariot    | 1           | 1           | Enhance to Steel                |
-| Justice        | 1           | 1           | Enhance to Glass                |
-| Strength       | 1           | 2           | Increase rank by 1              |
-| The Hanged Man | 1           | 2           | Destroy selected cards          |
-| Death          | 2           | 2           | Convert left card to right card |
-| The Devil      | 1           | 1           | Enhance to Gold                 |
-| The Tower      | 1           | 1           | Enhance to Stone                |
-| The Star       | 1           | 3           | Convert to Diamonds             |
-| The Moon       | 1           | 3           | Convert to Clubs                |
-| The Sun        | 1           | 3           | Convert to Hearts               |
-| The World      | 1           | 3           | Convert to Spades               |
-| Talisman       | 1           | 1           | Add Gold Seal                   |
-| Deja Vu        | 1           | 1           | Add Red Seal                    |
-| Trance         | 1           | 1           | Add Blue Seal                   |
-| Medium         | 1           | 1           | Add Purple Seal                 |
-| Cryptid        | 1           | 1           | Create 2 copies                 |
-| Aura           | 1           | 1           | Add Foil/Holo/Polychrome        |
 
 ---
 
