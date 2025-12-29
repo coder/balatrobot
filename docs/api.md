@@ -98,15 +98,15 @@ MENU ──► BLIND_SELECT ──► SELECTING_HAND ──► ROUND_EVAL ──
                 └─────────────────────────────────────────────────┘
 ```
 
-| State                  | Description                                    |
-| ---------------------- | ---------------------------------------------- |
-| `MENU`                 | Main menu                                      |
-| `BLIND_SELECT`         | Choosing which blind to play or skip           |
-| `SELECTING_HAND`       | Selecting cards to play or discard             |
-| `ROUND_EVAL`           | Round complete, ready to cash out              |
-| `SHOP`                 | Shopping phase                                 |
+| State                  | Description                                     |
+| ---------------------- | ----------------------------------------------- |
+| `MENU`                 | Main menu                                       |
+| `BLIND_SELECT`         | Choosing which blind to play or skip            |
+| `SELECTING_HAND`       | Selecting cards to play or discard              |
+| `ROUND_EVAL`           | Round complete, ready to cash out               |
+| `SHOP`                 | Shopping phase                                  |
 | `SMODS_BOOSTER_OPENED` | Booster pack opened, selecting or skipping card |
-| `GAME_OVER`            | Game ended                                     |
+| `GAME_OVER`            | Game ended                                      |
 
 ---
 
@@ -358,11 +358,11 @@ Some Tarot and Spectral cards require you to select target cards from your hand 
 
 **Parameters:** (exactly one required)
 
-| Name      | Type      | Required | Description                                                           |
-| --------- | --------- | -------- | --------------------------------------------------------------------- |
-| `card`    | integer   | No       | 0-based index of card to select from pack                             |
+| Name      | Type      | Required | Description                                                              |
+| --------- | --------- | -------- | ------------------------------------------------------------------------ |
+| `card`    | integer   | No       | 0-based index of card to select from pack                                |
 | `targets` | integer[] | No       | 0-based indices of hand cards to target (for consumables that need them) |
-| `skip`    | boolean   | No       | Skip pack selection without choosing a card                           |
+| `skip`    | boolean   | No       | Skip pack selection without choosing a card                              |
 
 **Returns:** [GameState](#gamestate-schema)
 
@@ -391,29 +391,29 @@ curl -X POST http://127.0.0.1:12346 \
 
 **Consumables Requiring Targets:**
 
-| Card | Min Targets | Max Targets | Effect |
-|------|-------------|-------------|--------|
-| The Magician | 1 | 2 | Enhance to Lucky |
-| The Empress | 1 | 2 | Enhance to Mult |
-| The Hierophant | 1 | 2 | Enhance to Bonus |
-| The Lovers | 1 | 1 | Enhance to Wild |
-| The Chariot | 1 | 1 | Enhance to Steel |
-| Justice | 1 | 1 | Enhance to Glass |
-| Strength | 1 | 2 | Increase rank by 1 |
-| The Hanged Man | 1 | 2 | Destroy selected cards |
-| Death | 2 | 2 | Convert left card to right card |
-| The Devil | 1 | 1 | Enhance to Gold |
-| The Tower | 1 | 1 | Enhance to Stone |
-| The Star | 1 | 3 | Convert to Diamonds |
-| The Moon | 1 | 3 | Convert to Clubs |
-| The Sun | 1 | 3 | Convert to Hearts |
-| The World | 1 | 3 | Convert to Spades |
-| Talisman | 1 | 1 | Add Gold Seal |
-| Deja Vu | 1 | 1 | Add Red Seal |
-| Trance | 1 | 1 | Add Blue Seal |
-| Medium | 1 | 1 | Add Purple Seal |
-| Cryptid | 1 | 1 | Create 2 copies |
-| Aura | 1 | 1 | Add Foil/Holo/Polychrome |
+| Card           | Min Targets | Max Targets | Effect                          |
+| -------------- | ----------- | ----------- | ------------------------------- |
+| The Magician   | 1           | 2           | Enhance to Lucky                |
+| The Empress    | 1           | 2           | Enhance to Mult                 |
+| The Hierophant | 1           | 2           | Enhance to Bonus                |
+| The Lovers     | 1           | 1           | Enhance to Wild                 |
+| The Chariot    | 1           | 1           | Enhance to Steel                |
+| Justice        | 1           | 1           | Enhance to Glass                |
+| Strength       | 1           | 2           | Increase rank by 1              |
+| The Hanged Man | 1           | 2           | Destroy selected cards          |
+| Death          | 2           | 2           | Convert left card to right card |
+| The Devil      | 1           | 1           | Enhance to Gold                 |
+| The Tower      | 1           | 1           | Enhance to Stone                |
+| The Star       | 1           | 3           | Convert to Diamonds             |
+| The Moon       | 1           | 3           | Convert to Clubs                |
+| The Sun        | 1           | 3           | Convert to Hearts               |
+| The World      | 1           | 3           | Convert to Spades               |
+| Talisman       | 1           | 1           | Add Gold Seal                   |
+| Deja Vu        | 1           | 1           | Add Red Seal                    |
+| Trance         | 1           | 1           | Add Blue Seal                   |
+| Medium         | 1           | 1           | Add Purple Seal                 |
+| Cryptid        | 1           | 1           | Create 2 copies                 |
+| Aura           | 1           | 1           | Add Foil/Holo/Polychrome        |
 
 ---
 
