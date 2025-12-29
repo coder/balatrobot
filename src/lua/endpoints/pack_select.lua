@@ -139,7 +139,10 @@ return {
         local joker_limit = G.jokers and G.jokers.config and G.jokers.config.card_limit or 0
         if joker_count >= joker_limit then
           send_response({
-            message = "Cannot select joker, joker slots are full. Current: " .. joker_count .. ", Limit: " .. joker_limit,
+            message = "Cannot select joker, joker slots are full. Current: "
+              .. joker_count
+              .. ", Limit: "
+              .. joker_limit,
             name = BB_ERROR_NAMES.NOT_ALLOWED,
           })
           return true
@@ -234,7 +237,7 @@ return {
           blocking = false,
           func = function()
             delay_frames = delay_frames + 1
-            if delay_frames >= 30 then  -- Wait ~0.5 seconds
+            if delay_frames >= 30 then -- Wait ~0.5 seconds
               send_response(BB_GAMESTATE.get_gamestate())
               return true
             end
@@ -253,7 +256,7 @@ return {
           local back_to_shop = G.STATE == G.STATES.SHOP
 
           if pack_closed and back_to_shop then
-            G.GAME.bb_pack_is_mega = nil  -- Clear pack metadata
+            G.GAME.bb_pack_is_mega = nil -- Clear pack metadata
             sendDebugMessage("Return pack_select() after selection", "BB.ENDPOINTS")
             send_response(BB_GAMESTATE.get_gamestate())
             return true
@@ -279,7 +282,7 @@ return {
           local back_to_shop = G.STATE == G.STATES.SHOP
 
           if pack_closed and back_to_shop then
-            G.GAME.bb_pack_is_mega = nil  -- Clear pack metadata
+            G.GAME.bb_pack_is_mega = nil -- Clear pack metadata
             sendDebugMessage("Return pack_select() after skip", "BB.ENDPOINTS")
             send_response(BB_GAMESTATE.get_gamestate())
             return true
@@ -292,12 +295,16 @@ return {
     end
 
     -- Wait for hand cards to load for Arcana and Spectral packs
-    local pack_key = G.pack_cards and G.pack_cards.cards and G.pack_cards.cards[1] and G.pack_cards.cards[1].ability and G.pack_cards.cards[1].ability.set
+    local pack_key = G.pack_cards
+      and G.pack_cards.cards
+      and G.pack_cards.cards[1]
+      and G.pack_cards.cards[1].ability
+      and G.pack_cards.cards[1].ability.set
     local needs_hand = pack_key == "Tarot" or pack_key == "Spectral"
 
     if needs_hand then
       -- Wait for hand cards to be fully loaded and positioned
-      local selection_executed = false  -- Flag to ensure we only execute once
+      local selection_executed = false -- Flag to ensure we only execute once
 
       G.E_MANAGER:add_event(Event({
         trigger = "condition",
@@ -308,8 +315,8 @@ return {
             and not G.hand.REMOVED
             and G.hand.cards
             and #G.hand.cards > 0
-            and G.hand.T  -- Table area exists
-            and G.hand.T.x  -- Positioned
+            and G.hand.T -- Table area exists
+            and G.hand.T.x -- Positioned
 
           -- Also check that cards are actually positioned in the hand
           local cards_positioned = hand_ready and G.hand.cards[1] and G.hand.cards[1].T and G.hand.cards[1].T.x
@@ -318,7 +325,7 @@ return {
           local all_targets_exist = true
           if args.targets and #args.targets > 0 then
             for _, target_idx in ipairs(args.targets) do
-              local hand_pos = target_idx + 1  -- Convert 0-based to 1-based
+              local hand_pos = target_idx + 1 -- Convert 0-based to 1-based
               if not G.hand.cards[hand_pos] then
                 all_targets_exist = false
                 break
@@ -327,7 +334,7 @@ return {
           end
 
           if hand_ready and cards_positioned and all_targets_exist and not selection_executed then
-            selection_executed = true  -- Mark as executed to prevent re-running
+            selection_executed = true -- Mark as executed to prevent re-running
             return select_card()
           end
 
