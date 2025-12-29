@@ -159,15 +159,15 @@ return {
         if req then
           -- Check joker requirement for cards like Ankh
           if req.requires_joker then
-          local joker_count = G.jokers and G.jokers.config and G.jokers.config.card_count or 0
-          if joker_count == 0 then
-            send_response({
-              message = string.format("Card '%s' requires at least 1 joker. Current: %d", card_key, joker_count),
-              name = BB_ERROR_NAMES.NOT_ALLOWED,
-            })
-            return true
+            local joker_count = G.jokers and G.jokers.config and G.jokers.config.card_count or 0
+            if joker_count == 0 then
+              send_response({
+                message = string.format("Card '%s' requires at least 1 joker. Current: %d", card_key, joker_count),
+                name = BB_ERROR_NAMES.NOT_ALLOWED,
+              })
+              return true
+            end
           end
-        end
 
           -- Check target card requirements
           local target_count = args.targets and #args.targets or 0
@@ -251,9 +251,7 @@ return {
             -- Check first remaining card is positioned (if any cards remain)
             local cards_positioned = true
             if expected_remaining > 0 then
-              cards_positioned = G.pack_cards.cards[1]
-                and G.pack_cards.cards[1].T
-                and G.pack_cards.cards[1].T.x
+              cards_positioned = G.pack_cards.cards[1] and G.pack_cards.cards[1].T and G.pack_cards.cards[1].T.x
             end
 
             -- Check game state is stable and still in pack opened state
