@@ -13,33 +13,37 @@
 -- Consumable Target Requirements
 -- ==========================================================================
 
--- Cards requiring specific number of highlighted targets
-local CONSUMABLE_TARGET_REQUIREMENTS = {
-  -- Tarot Cards
-  c_magician = { min = 1, max = 2 }, -- Enhance to Lucky
-  c_empress = { min = 1, max = 2 }, -- Enhance to Mult
-  c_heirophant = { min = 1, max = 2 }, -- Enhance to Bonus
-  c_lovers = { min = 1, max = 1 }, -- Enhance to Wild
-  c_chariot = { min = 1, max = 1 }, -- Enhance to Steel
-  c_justice = { min = 1, max = 1 }, -- Enhance to Glass
-  c_strength = { min = 1, max = 2 }, -- Increase rank
-  c_hanged_man = { min = 1, max = 2 }, -- Destroy cards
-  c_death = { min = 2, max = 2 }, -- Convert left to right
-  c_devil = { min = 1, max = 1 }, -- Enhance to Gold
-  c_tower = { min = 1, max = 1 }, -- Enhance to Stone
-  c_star = { min = 1, max = 3 }, -- Convert to Diamonds
-  c_moon = { min = 1, max = 3 }, -- Convert to Clubs
-  c_sun = { min = 1, max = 3 }, -- Convert to Hearts
-  c_world = { min = 1, max = 3 }, -- Convert to Spades
-  -- Spectral Cards
-  c_talisman = { min = 1, max = 1 }, -- Add Gold Seal
-  c_deja_vu = { min = 1, max = 1 }, -- Add Red Seal
-  c_trance = { min = 1, max = 1 }, -- Add Blue Seal
-  c_medium = { min = 1, max = 1 }, -- Add Purple Seal
-  c_cryptid = { min = 1, max = 1 }, -- Create copies
-  c_aura = { min = 1, max = 1 }, -- Add edition
-  c_ankh = { requires_joker = true }, -- Copy random joker (requires at least 1 joker)
-}
+--- Get target requirements for a consumable card from G.P_CENTERS configuration
+--- @param card_key string Card key (e.g., "c_magician")
+--- @return table|nil { min = number, max = number } or { requires_joker = boolean } or nil if no requirements
+local function get_consumable_target_requirements(card_key)
+  -- Special cases that don't follow the standard max_highlighted pattern
+  if card_key == "c_aura" then
+    -- Aura has empty config but uses exactly 1 highlighted card
+    return { min = 1, max = 1 }
+  end
+
+  if card_key == "c_ankh" then
+    -- Ankh requires at least 1 joker instead of hand card targets
+    return { requires_joker = true }
+  end
+
+  -- Look up configuration from G.P_CENTERS
+  local center = G.P_CENTERS[card_key]
+  if not center or not center.config then
+    return nil
+  end
+
+  local config = center.config
+  if config.max_highlighted then
+    return {
+      min = config.min_highlighted or 1, -- Default min to 1 if not specified
+      max = config.max_highlighted,
+    }
+  end
+
+  return nil
+end
 
 -- ==========================================================================
 -- Pack Select Endpoint
@@ -150,11 +154,11 @@ return {
       end
 
       -- Validate consumable target requirements
-      if card_key and CONSUMABLE_TARGET_REQUIREMENTS[card_key] then
-        local req = CONSUMABLE_TARGET_REQUIREMENTS[card_key]
-
-        -- Check joker requirement for cards like Ankh
-        if req.requires_joker then
+      if card_key then
+        local req = get_consumable_target_requirements(card_key)
+        if req then
+          -- Check joker requirement for cards like Ankh
+          if req.requires_joker then
           local joker_count = G.jokers and G.jokers.config and G.jokers.config.card_count or 0
           if joker_count == 0 then
             send_response({
@@ -165,52 +169,53 @@ return {
           end
         end
 
-        -- Check target card requirements
-        local target_count = args.targets and #args.targets or 0
-        if req.min and req.max and (target_count < req.min or target_count > req.max) then
-          local msg
-          if req.min == req.max then
-            msg = string.format(
-              "Card '%s' requires exactly %d target card(s). Provided: %d",
-              card_key,
-              req.min,
-              target_count
-            )
-          else
-            msg = string.format(
-              "Card '%s' requires %d-%d target card(s). Provided: %d",
-              card_key,
-              req.min,
-              req.max,
-              target_count
-            )
-          end
-          send_response({
-            message = msg,
-            name = BB_ERROR_NAMES.BAD_REQUEST,
-          })
-          return true
-        end
-
-        -- Highlight the target cards in hand
-        if args.targets and #args.targets > 0 then
-          -- Clear existing highlights
-          for _, hand_card in ipairs(G.hand.cards) do
-            hand_card.highlighted = false
-          end
-
-          -- Highlight target cards
-          for _, target_idx in ipairs(args.targets) do
-            local hand_pos = target_idx + 1 -- Convert 0-based to 1-based
-            if not G.hand.cards[hand_pos] then
-              send_response({
-                message = "Target card index out of range. Index: " .. target_idx .. ", Hand size: " .. #G.hand.cards,
-                name = BB_ERROR_NAMES.BAD_REQUEST,
-              })
-              return true
+          -- Check target card requirements
+          local target_count = args.targets and #args.targets or 0
+          if req.min and req.max and (target_count < req.min or target_count > req.max) then
+            local msg
+            if req.min == req.max then
+              msg = string.format(
+                "Card '%s' requires exactly %d target card(s). Provided: %d",
+                card_key,
+                req.min,
+                target_count
+              )
+            else
+              msg = string.format(
+                "Card '%s' requires %d-%d target card(s). Provided: %d",
+                card_key,
+                req.min,
+                req.max,
+                target_count
+              )
             end
-            G.hand.cards[hand_pos].highlighted = true
-            G.hand.highlighted[#G.hand.highlighted + 1] = G.hand.cards[hand_pos]
+            send_response({
+              message = msg,
+              name = BB_ERROR_NAMES.BAD_REQUEST,
+            })
+            return true
+          end
+
+          -- Highlight the target cards in hand
+          if args.targets and #args.targets > 0 then
+            -- Clear existing highlights
+            for _, hand_card in ipairs(G.hand.cards) do
+              hand_card.highlighted = false
+            end
+
+            -- Highlight target cards
+            for _, target_idx in ipairs(args.targets) do
+              local hand_pos = target_idx + 1 -- Convert 0-based to 1-based
+              if not G.hand.cards[hand_pos] then
+                send_response({
+                  message = "Target card index out of range. Index: " .. target_idx .. ", Hand size: " .. #G.hand.cards,
+                  name = BB_ERROR_NAMES.BAD_REQUEST,
+                })
+                return true
+              end
+              G.hand.cards[hand_pos].highlighted = true
+              G.hand.highlighted[#G.hand.highlighted + 1] = G.hand.cards[hand_pos]
+            end
           end
         end
       end
