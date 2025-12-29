@@ -2,6 +2,8 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+**GitHub Repository**: [`coder/balatrobot`](https://github.com/coder/balatrobot)
+
 ## Overview
 
 BalatroBot is a framework for Balatro bot development. It consists of two main parts:
