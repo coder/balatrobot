@@ -722,7 +722,7 @@ The complete game state returned by most methods.
   "shop": { ... },
   "vouchers": { ... },
   "packs": { ... },
-  "pack": { ... }  // Present only when state is SMODS_BOOSTER_OPENED
+  "pack": { ... }
 }
 ```
 
