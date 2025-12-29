@@ -315,11 +315,17 @@ return {
         trigger = "condition",
         blocking = false,
         func = function()
+          -- Calculate expected hand size
+          -- If deck has fewer cards than hand limit, hand will only have deck_size cards
+          local hand_limit = G.hand.config and G.hand.config.card_limit or 8
+          local deck_size = G.deck and G.deck.config and G.deck.config.card_count or 52
+          local expected_hand_size = math.min(deck_size, hand_limit)
+
           -- Wait for hand to be fully loaded and positioned
           local hand_ready = G.hand
             and not G.hand.REMOVED
             and G.hand.cards
-            and #G.hand.cards > 0
+            and #G.hand.cards == expected_hand_size
             and G.hand.T -- Table area exists
             and G.hand.T.x -- Positioned
 
