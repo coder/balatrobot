@@ -90,7 +90,7 @@ return {
       elseif args.voucher then
         msg = "No vouchers to redeem. Defeat boss blind to restock"
       elseif args.pack then
-        msg = "No boosters/standard/buffoon packs to open"
+        msg = "No packs to open"
       end
       send_response({
         message = msg,
