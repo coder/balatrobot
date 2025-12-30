@@ -586,31 +586,38 @@ curl -X POST http://127.0.0.1:12346 \
 
 ### `add`
 
-Add a card to the game (debug/testing).
+Add a card to the game (debug/testing). Supports jokers, consumables, vouchers, packs, and playing cards.
 
 **Parameters:**
 
-| Name          | Type    | Required | Description                                                         |
-| ------------- | ------- | -------- | ------------------------------------------------------------------- |
-| `key`         | string  | Yes      | [Card key](#card-keys) (e.g., `j_joker`, `c_fool`, `H_A`)           |
-| `seal`        | string  | No       | [Seal](#card-modifier-seal) type (playing cards only)               |
-| `edition`     | string  | No       | [Edition](#card-modifier-edition) type                              |
-| `enhancement` | string  | No       | [Enhancement](#card-modifier-enhancement) type (playing cards only) |
-| `eternal`     | boolean | No       | Cannot be sold/destroyed (jokers only)                              |
-| `perishable`  | integer | No       | Rounds until perish (jokers only)                                   |
-| `rental`      | boolean | No       | Costs $1/round (jokers only)                                        |
+| Name          | Type    | Required | Description                                                                    |
+| ------------- | ------- | -------- | ------------------------------------------------------------------------------ |
+| `key`         | string  | Yes      | [Card key](#card-keys) (e.g., `j_joker`, `c_fool`, `p_arcana_normal_1`, `H_A`) |
+| `seal`        | string  | No       | [Seal](#card-modifier-seal) type (playing cards only)                          |
+| `edition`     | string  | No       | [Edition](#card-modifier-edition) type (not vouchers or packs)                 |
+| `enhancement` | string  | No       | [Enhancement](#card-modifier-enhancement) type (playing cards only)            |
+| `eternal`     | boolean | No       | Cannot be sold/destroyed (jokers only)                                         |
+| `perishable`  | integer | No       | Rounds until perish (jokers only)                                              |
+| `rental`      | boolean | No       | Costs $1/round (jokers only)                                                   |
 
 **Returns:** [GameState](#gamestate-schema)
 
-**Errors:** `BAD_REQUEST`, `INVALID_STATE`
+**Errors:** `BAD_REQUEST`, `INVALID_STATE`, `NOT_ALLOWED`
 
-**Example:**
+**Required State:** Vouchers and packs require `SHOP` state. Packs also require available booster slots.
+
+**Examples:**
 
 ```bash
 # Add a Polychrome Joker
 curl -X POST http://127.0.0.1:12346 \
   -H "Content-Type: application/json" \
   -d '{"jsonrpc": "2.0", "method": "add", "params": {"key": "j_joker", "edition": "POLYCHROME"}, "id": 1}'
+
+# Add an Arcana Pack to the shop (requires SHOP state)
+curl -X POST http://127.0.0.1:12346 \
+  -H "Content-Type: application/json" \
+  -d '{"jsonrpc": "2.0", "method": "add", "params": {"key": "p_arcana_normal_1"}, "id": 1}'
 ```
 
 ---
@@ -1185,6 +1192,45 @@ Permanent upgrades purchased from the shop that provide lasting benefits like ex
 | `v_petroglyph`      | -1 Ante again, -1 discard each round                                           |
 | `v_retcon`          | Reroll Boss Blind unlimited times, $10 per roll                                |
 | `v_palette`         | +1 hand size again                                                             |
+
+#### Pack Cards
+
+Booster packs that can be purchased in the shop. When opened, you select cards to add to your collection. Keys use prefix `p_` followed by pack type, size, and variant number. 32 packs total.
+
+| Key                    | Effect                                                                        |
+| ---------------------- | ----------------------------------------------------------------------------- |
+| `p_arcana_normal_1`    | Arcana Pack: Choose 1 of 3 Tarot Cards to be used immediately                 |
+| `p_arcana_normal_2`    | Arcana Pack: Choose 1 of 3 Tarot Cards to be used immediately                 |
+| `p_arcana_normal_3`    | Arcana Pack: Choose 1 of 3 Tarot Cards to be used immediately                 |
+| `p_arcana_normal_4`    | Arcana Pack: Choose 1 of 3 Tarot Cards to be used immediately                 |
+| `p_arcana_jumbo_1`     | Jumbo Arcana Pack: Choose 1 of 5 Tarot Cards to be used immediately           |
+| `p_arcana_jumbo_2`     | Jumbo Arcana Pack: Choose 1 of 5 Tarot Cards to be used immediately           |
+| `p_arcana_mega_1`      | Mega Arcana Pack: Choose up to 2 of 5 Tarot Cards to be used immediately      |
+| `p_arcana_mega_2`      | Mega Arcana Pack: Choose up to 2 of 5 Tarot Cards to be used immediately      |
+| `p_celestial_normal_1` | Celestial Pack: Choose 1 of 3 Planet Cards to be used immediately             |
+| `p_celestial_normal_2` | Celestial Pack: Choose 1 of 3 Planet Cards to be used immediately             |
+| `p_celestial_normal_3` | Celestial Pack: Choose 1 of 3 Planet Cards to be used immediately             |
+| `p_celestial_normal_4` | Celestial Pack: Choose 1 of 3 Planet Cards to be used immediately             |
+| `p_celestial_jumbo_1`  | Jumbo Celestial Pack: Choose 1 of 5 Planet Cards to be used immediately       |
+| `p_celestial_jumbo_2`  | Jumbo Celestial Pack: Choose 1 of 5 Planet Cards to be used immediately       |
+| `p_celestial_mega_1`   | Mega Celestial Pack: Choose up to 2 of 5 Planet Cards to be used immediately  |
+| `p_celestial_mega_2`   | Mega Celestial Pack: Choose up to 2 of 5 Planet Cards to be used immediately  |
+| `p_spectral_normal_1`  | Spectral Pack: Choose 1 of 2 Spectral Cards to be used immediately            |
+| `p_spectral_normal_2`  | Spectral Pack: Choose 1 of 2 Spectral Cards to be used immediately            |
+| `p_spectral_jumbo_1`   | Jumbo Spectral Pack: Choose 1 of 4 Spectral Cards to be used immediately      |
+| `p_spectral_mega_1`    | Mega Spectral Pack: Choose up to 2 of 4 Spectral Cards to be used immediately |
+| `p_standard_normal_1`  | Standard Pack: Choose 1 of 3 Playing Cards to add to your Deck                |
+| `p_standard_normal_2`  | Standard Pack: Choose 1 of 3 Playing Cards to add to your Deck                |
+| `p_standard_normal_3`  | Standard Pack: Choose 1 of 3 Playing Cards to add to your Deck                |
+| `p_standard_normal_4`  | Standard Pack: Choose 1 of 3 Playing Cards to add to your Deck                |
+| `p_standard_jumbo_1`   | Jumbo Standard Pack: Choose 1 of 5 Playing Cards to add to your Deck          |
+| `p_standard_jumbo_2`   | Jumbo Standard Pack: Choose 1 of 5 Playing Cards to add to your Deck          |
+| `p_standard_mega_1`    | Mega Standard Pack: Choose up to 2 of 5 Playing Cards to add to your Deck     |
+| `p_standard_mega_2`    | Mega Standard Pack: Choose up to 2 of 5 Playing Cards to add to your Deck     |
+| `p_buffoon_normal_1`   | Buffoon Pack: Choose 1 of 2 Joker Cards                                       |
+| `p_buffoon_normal_2`   | Buffoon Pack: Choose 1 of 2 Joker Cards                                       |
+| `p_buffoon_jumbo_1`    | Jumbo Buffoon Pack: Choose 1 of 4 Joker Cards                                 |
+| `p_buffoon_mega_1`     | Mega Buffoon Pack: Choose up to 2 of 4 Joker Cards                            |
 
 #### Playing Cards
 
