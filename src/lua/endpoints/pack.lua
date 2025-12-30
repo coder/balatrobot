@@ -64,7 +64,7 @@ return {
     },
     targets = {
       type = "array",
-      items = { type = "integer" },
+      items = "integer",
       required = false,
       description = "0-based indices of hand cards to target (for consumables requiring targets)",
     },
