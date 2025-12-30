@@ -183,14 +183,6 @@ return {
       return
     end
 
-    -- Store pack metadata for Mega pack detection
-    if args.pack then
-      -- Get pack name from the actual game object, not the gamestate-extracted card
-      local game_pack = G.shop_booster.cards[pos]
-      local pack_name = (game_pack and game_pack.ability and game_pack.ability.name) or ""
-      G.GAME.bb_pack_is_mega = string.find(string.lower(pack_name), "mega") ~= nil
-    end
-
     -- Use appropriate function: use_card for vouchers, buy_from_shop for others
     if args.voucher or args.pack then
       G.FUNCS.use_card(btn)
@@ -233,8 +225,14 @@ return {
           end
         elseif args.pack then
           local money_deducted = (G.GAME.dollars == initial_money - card.cost.buy)
-          local pack_cards_count = (G.pack_cards and G.pack_cards.config and G.pack_cards.config.card_count or 0)
-          if money_deducted and pack_cards_count > 0 and G.STATE == G.STATES.SMODS_BOOSTER_OPENED then
+          local pack_ready = (
+            G.pack_cards
+            and not G.pack_cards.REMOVED
+            and G.pack_cards.cards[1]
+            and G.STATE_COMPLETE
+            and G.STATE == G.STATES.SMODS_BOOSTER_OPENED
+          )
+          if money_deducted and pack_ready then
             done = true
           end
         end
