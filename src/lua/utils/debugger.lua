@@ -79,8 +79,8 @@ BB_API = setmetatable({}, {
 
       -- Create request
       local request = {
-        name = endpoint_name,
-        arguments = args,
+        method = endpoint_name,
+        params = args,
       }
 
       -- Override send_response to capture and log
