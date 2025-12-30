@@ -286,3 +286,87 @@ class TestPackEndpoint:
             "BAD_REQUEST",
             "Card 'c_heirophant' requires 1-2 target card(s). Provided: 0",
         )
+
+
+class TestPackEndpointValidation:
+    """Test pack endpoint parameter validation."""
+
+    def test_invalid_card_type_string(self, client: httpx.Client) -> None:
+        """Test that pack fails when card parameter is a string."""
+        load_fixture(client, "pack", "state-SHOP")
+        api(client, "buy", {"pack": 0})
+
+        assert_error_response(
+            api(client, "pack", {"card": "INVALID_STRING"}),
+            "BAD_REQUEST",
+            "Field 'card' must be an integer",
+        )
+
+    def test_invalid_skip_type_string(self, client: httpx.Client) -> None:
+        """Test that pack fails when skip parameter is a string."""
+        load_fixture(client, "pack", "state-SHOP")
+        api(client, "buy", {"pack": 0})
+
+        assert_error_response(
+            api(client, "pack", {"skip": "INVALID_STRING"}),
+            "BAD_REQUEST",
+            "Field 'skip' must be of type boolean",
+        )
+
+    def test_invalid_targets_type_string(self, client: httpx.Client) -> None:
+        """Test that pack fails when targets parameter is a string."""
+        load_fixture(client, "pack", "state-SHOP")
+        api(client, "buy", {"pack": 0})
+
+        assert_error_response(
+            api(client, "pack", {"card": 0, "targets": "INVALID_STRING"}),
+            "BAD_REQUEST",
+            "Field 'targets' must be an array",
+        )
+
+    def test_invalid_targets_items_string(self, client: httpx.Client) -> None:
+        """Test that pack fails when targets array contains strings."""
+        load_fixture(client, "pack", "state-SHOP")
+        api(client, "buy", {"pack": 0})
+
+        assert_error_response(
+            api(client, "pack", {"card": 0, "targets": ["zero", "one"]}),
+            "BAD_REQUEST",
+            "Field 'targets' array item at index 0 must be of type integer",
+        )
+
+
+class TestPackEndpointStateRequirements:
+    """Test pack endpoint state requirements."""
+
+    def test_pack_from_MENU(self, client: httpx.Client) -> None:
+        """Test that pack fails from MENU state."""
+        api(client, "menu", {})
+
+        assert_error_response(
+            api(client, "pack", {"card": 0}),
+            "INVALID_STATE",
+            "Method 'pack' requires one of these states: SMODS_BOOSTER_OPENED",
+        )
+
+    def test_pack_from_SHOP(self, client: httpx.Client) -> None:
+        """Test that pack fails from SHOP state."""
+        load_fixture(client, "pack", "state-SHOP")
+
+        assert_error_response(
+            api(client, "pack", {"card": 0}),
+            "INVALID_STATE",
+            "Method 'pack' requires one of these states: SMODS_BOOSTER_OPENED",
+        )
+
+    def test_pack_from_SELECTING_HAND(self, client: httpx.Client) -> None:
+        """Test that pack fails from SELECTING_HAND state."""
+        api(client, "menu", {})
+        api(client, "start", {"deck": "RED", "stake": "WHITE", "seed": "TEST123"})
+        api(client, "select", {})
+
+        assert_error_response(
+            api(client, "pack", {"card": 0}),
+            "INVALID_STATE",
+            "Method 'pack' requires one of these states: SMODS_BOOSTER_OPENED",
+        )
