@@ -82,6 +82,8 @@ local function detect_card_type(key)
     return "consumable"
   elseif prefix == "v_" then
     return "voucher"
+  elseif prefix == "p_" then
+    return "pack"
   else
     -- Check if it's a playing card format (SUIT_RANK like H_A)
     if key:match("^[HDCS]_[2-9TJQKA]$") then
@@ -195,6 +197,48 @@ return {
       return
     end
 
+    -- Special validation for packs - can only be added in SHOP state
+    if card_type == "pack" and G.STATE ~= G.STATES.SHOP then
+      send_response({
+        message = "Packs can only be added in SHOP state",
+        name = BB_ERROR_NAMES.INVALID_STATE,
+      })
+      return
+    end
+
+    -- Special validation for packs - check shop booster area capacity
+    if card_type == "pack" then
+      if not G.shop_booster or not G.shop_booster.config then
+        send_response({
+          message = "Shop booster area not available",
+          name = BB_ERROR_NAMES.INVALID_STATE,
+        })
+        return
+      end
+
+      local current_count = G.shop_booster.config.card_count or 0
+      local card_limit = G.shop_booster.config.card_limit or 0
+
+      if current_count >= card_limit then
+        send_response({
+          message = "Cannot add pack, shop booster slots are full",
+          name = BB_ERROR_NAMES.NOT_ALLOWED,
+        })
+        return
+      end
+    end
+
+    -- Special validation for packs - validate pack key exists
+    if card_type == "pack" then
+      if not G.P_CENTERS[args.key] then
+        send_response({
+          message = "Pack key not found: " .. args.key,
+          name = BB_ERROR_NAMES.BAD_REQUEST,
+        })
+        return
+      end
+    end
+
     -- Validate seal parameter is only for playing cards
     if args.seal and card_type ~= "playing_card" then
       send_response({
@@ -218,9 +262,9 @@ return {
     end
 
     -- Validate edition parameter is only for jokers, playing cards, or consumables
-    if args.edition and card_type == "voucher" then
+    if args.edition and (card_type == "voucher" or card_type == "pack") then
       send_response({
-        message = "Edition cannot be applied to vouchers",
+        message = "Edition cannot be applied to " .. card_type .. "s",
         name = BB_ERROR_NAMES.BAD_REQUEST,
       })
       return
@@ -375,11 +419,20 @@ return {
     local initial_consumable_count = G.consumeables and G.consumeables.config and G.consumeables.config.card_count or 0
     local initial_voucher_count = G.shop_vouchers and G.shop_vouchers.config and G.shop_vouchers.config.card_count or 0
     local initial_hand_count = G.hand and G.hand.config and G.hand.config.card_count or 0
+    local initial_pack_count = G.shop_booster and G.shop_booster.config and G.shop_booster.config.card_count or 0
 
     sendDebugMessage("Initial voucher count: " .. initial_voucher_count, "BB.ENDPOINTS")
 
-    -- Call SMODS.add_card with error handling
-    local success, result = pcall(SMODS.add_card, params)
+    -- Call SMODS function with error handling
+    local success, result
+
+    if card_type == "pack" then
+      -- Packs use dedicated SMODS function
+      success, result = pcall(SMODS.add_booster_to_shop, args.key)
+    else
+      -- Other cards use SMODS.add_card
+      success, result = pcall(SMODS.add_card, params)
+    end
 
     if not success then
       send_response({
@@ -414,6 +467,10 @@ return {
           added = G.shop_vouchers
             and G.shop_vouchers.config
             and G.shop_vouchers.config.card_count == initial_voucher_count + 1
+        elseif card_type == "pack" then
+          added = G.shop_booster
+            and G.shop_booster.config
+            and G.shop_booster.config.card_count == initial_pack_count + 1
         elseif card_type == "playing_card" then
           added = G.hand and G.hand.config and G.hand.config.card_count == initial_hand_count + 1
         end
