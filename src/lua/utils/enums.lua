@@ -326,6 +326,40 @@
 ---| "v_retcon" # Retcon: Reroll Boss Blind unlimited times, $10 per roll
 ---| "v_palette" # Palette: +1 hand size again
 
+---@alias Card.Key.Pack
+---| "p_arcana_normal_1" # Arcana Pack: Choose 1 of 3 Tarot Cards to be used immediately.
+---| "p_arcana_normal_2" # Arcana Pack: Choose 1 of 3 Tarot Cards to be used immediately.
+---| "p_arcana_normal_3" # Arcana Pack: Choose 1 of 3 Tarot Cards to be used immediately.
+---| "p_arcana_normal_4" # Arcana Pack: Choose 1 of 3 Tarot Cards to be used immediately.
+---| "p_arcana_jumbo_1" # Jumbo Arcana Pack: Choose 1 of 5 Tarot Cards to be used immediately.
+---| "p_arcana_jumbo_2" # Jumbo Arcana Pack: Choose 1 of 5 Tarot Cards to be used immediately.
+---| "p_arcana_mega_1" # Mega Arcana Pack: Choose up to 2 of 5 Tarot Cards to be used immediately.
+---| "p_arcana_mega_2" # Mega Arcana Pack: Choose up to 2 of 5 Tarot Cards to be used immediately.
+---| "p_celestial_normal_1" # Celestial Pack: Choose 1 of 3 Planet Cards to be used immediately.
+---| "p_celestial_normal_2" # Celestial Pack: Choose 1 of 3 Planet Cards to be used immediately.
+---| "p_celestial_normal_3" # Celestial Pack: Choose 1 of 3 Planet Cards to be used immediately.
+---| "p_celestial_normal_4" # Celestial Pack: Choose 1 of 3 Planet Cards to be used immediately.
+---| "p_celestial_jumbo_1" # Jumbo Celestial Pack: Choose 1 of 5 Planet Cards to be used immediately.
+---| "p_celestial_jumbo_2" # Jumbo Celestial Pack: Choose 1 of 5 Planet Cards to be used immediately.
+---| "p_celestial_mega_1" # Mega Celestial Pack: Choose up to 2 of 5 Planet Cards to be used immediately.
+---| "p_celestial_mega_2" # Mega Celestial Pack: Choose up to 2 of 5 Planet Cards to be used immediately.
+---| "p_spectral_normal_1" # Spectral Pack: Choose 1 of 2 Spectral Cards to be used immediately.
+---| "p_spectral_normal_2" # Spectral Pack: Choose 1 of 2 Spectral Cards to be used immediately.
+---| "p_spectral_jumbo_1" # Jumbo Spectral Pack: Choose 1 of 4 Spectral Cards to be used immediately.
+---| "p_spectral_mega_1" # Mega Spectral Pack: Choose up to 2 of 4 Spectral Cards to be used immediately.
+---| "p_standard_normal_1" # Standard Pack: Choose 1 of 3 Playing Cards to add to your Deck.
+---| "p_standard_normal_2" # Standard Pack: Choose 1 of 3 Playing Cards to add to your Deck.
+---| "p_standard_normal_3" # Standard Pack: Choose 1 of 3 Playing Cards to add to your Deck.
+---| "p_standard_normal_4" # Standard Pack: Choose 1 of 3 Playing Cards to add to your Deck.
+---| "p_standard_jumbo_1" # Jumbo Standard Pack: Choose 1 of 5 Playing Cards to add to your Deck.
+---| "p_standard_jumbo_2" # Jumbo Standard Pack: Choose 1 of 5 Playing Cards to add to your Deck.
+---| "p_standard_mega_1" # Mega Standard Pack: Choose up to 2 of 5 Playing Cards to add to your Deck.
+---| "p_standard_mega_2" # Mega Standard Pack: Choose up to 2 of 5 Playing Cards to add to your Deck.
+---| "p_buffoon_normal_1" # Buffoon Pack: Choose 1 of 2 Joker Cards.
+---| "p_buffoon_normal_2" # Buffoon Pack: Choose 1 of 2 Joker Cards.
+---| "p_buffoon_jumbo_1" # Jumbo Buffoon Pack: Choose 1 of 4 Joker Cards.
+---| "p_buffoon_mega_1" # Mega Buffoon Pack: Choose up to 2 of 4 Joker Cards.
+
 ---@alias Card.Key.PlayingCard
 ---| "H_2" | "H_3" | "H_4" | "H_5" | "H_6" | "H_7" | "H_8" | "H_9" | "H_T" | "H_J" | "H_Q" | "H_K" | "H_A"
 ---| "D_2" | "D_3" | "D_4" | "D_5" | "D_6" | "D_7" | "D_8" | "D_9" | "D_T" | "D_J" | "D_Q" | "D_K" | "D_A"
@@ -342,6 +376,7 @@
 ---| Card.Key.Joker
 ---| Card.Key.Voucher
 ---| Card.Key.PlayingCard
+---| Card.Key.Pack
 
 ---@alias Card.Modifier.Seal
 ---| "RED" # Retrigger this card 1 time
