@@ -112,18 +112,15 @@ class TestBuyEndpoint:
             "No vouchers to redeem. Defeat boss blind to restock",
         )
 
-    @pytest.mark.skip(
-        reason="Fixture not available yet. We need to be able to skip a pack."
-    )
     def test_buy_packs_slot_empty(self, client: httpx.Client) -> None:
         """Test buy endpoint when player has the maximum number of vouchers."""
         gamestate = load_fixture(client, "buy", "state-SHOP--packs.count-0")
         assert gamestate["state"] == "SHOP"
         assert gamestate["packs"]["count"] == 0
         assert_error_response(
-            api(client, "buy", {"voucher": 0}),
+            api(client, "buy", {"pack": 0}),
             "BAD_REQUEST",
-            "No vouchers to redeem. Defeat boss blind to restock",
+            "No packs to open",
         )
 
     def test_buy_joker_success(self, client: httpx.Client) -> None:
