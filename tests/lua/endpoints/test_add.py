@@ -75,7 +75,7 @@ class TestAddEndpoint:
         gamestate = load_fixture(
             client,
             "add",
-            "state-SHOP--jokers.count-0--consumables.count-0--vouchers.count-0",
+            "state-SHOP--jokers.count-0--consumables.count-0--vouchers.count-0--packs.count-0",
         )
         assert gamestate["state"] == "SHOP"
         assert gamestate["vouchers"]["count"] == 0
@@ -83,6 +83,20 @@ class TestAddEndpoint:
         after = assert_gamestate_response(response)
         assert after["vouchers"]["count"] == 1
         assert after["vouchers"]["cards"][0]["key"] == "v_overstock_norm"
+
+    def test_add_pack(self, client: httpx.Client) -> None:
+        """Test adding a pack with valid key in SHOP state."""
+        gamestate = load_fixture(
+            client,
+            "add",
+            "state-SHOP--jokers.count-0--consumables.count-0--vouchers.count-0--packs.count-0",
+        )
+        assert gamestate["state"] == "SHOP"
+        initial_count = gamestate["packs"]["count"]
+        response = api(client, "add", {"key": "p_arcana_normal_1"})
+        after = assert_gamestate_response(response)
+        assert after["packs"]["count"] == initial_count + 1
+        assert after["packs"]["cards"][initial_count]["key"] == "p_arcana_normal_1"
 
     def test_add_playing_card(self, client: httpx.Client) -> None:
         """Test adding a playing card with valid key."""
@@ -177,7 +191,7 @@ class TestAddEndpointStateRequirements:
         gamestate = load_fixture(
             client,
             "add",
-            "state-SHOP--jokers.count-0--consumables.count-0--vouchers.count-0",
+            "state-SHOP--jokers.count-0--consumables.count-0--vouchers.count-0--packs.count-0",
         )
         assert gamestate["state"] == "SHOP"
         assert_error_response(
@@ -198,6 +212,53 @@ class TestAddEndpointStateRequirements:
             api(client, "add", {"key": "v_overstock"}),
             "INVALID_STATE",
             "Vouchers can only be added in SHOP state",
+        )
+
+    def test_add_pack_from_SELECTING_HAND(self, client: httpx.Client) -> None:
+        """Test that add pack fails from SELECTING_HAND state."""
+        gamestate = load_fixture(
+            client,
+            "add",
+            "state-SELECTING_HAND--jokers.count-0--consumables.count-0--hand.count-8",
+        )
+        assert gamestate["state"] == "SELECTING_HAND"
+        assert_error_response(
+            api(client, "add", {"key": "p_arcana_normal_1"}),
+            "INVALID_STATE",
+            "Packs can only be added in SHOP state",
+        )
+
+
+class TestAddEndpointPack:
+    """Test pack-specific validation for add endpoint."""
+
+    def test_add_pack_invalid_key(self, client: httpx.Client) -> None:
+        """Test that add fails when pack key doesn't exist in G.P_CENTERS."""
+        gamestate = load_fixture(
+            client,
+            "add",
+            "state-SHOP--jokers.count-0--consumables.count-0--vouchers.count-0--packs.count-0",
+        )
+        assert gamestate["state"] == "SHOP"
+        assert_error_response(
+            api(client, "add", {"key": "p_nonexistent_pack_99"}),
+            "BAD_REQUEST",
+            "Pack key not found: p_nonexistent_pack_99",
+        )
+
+    def test_add_pack_shop_full(self, client: httpx.Client) -> None:
+        """Test that add fails when shop booster slots are full."""
+        gamestate = load_fixture(
+            client,
+            "add",
+            "state-SHOP--packs.count-2",
+        )
+        assert gamestate["state"] == "SHOP"
+        assert gamestate["packs"]["count"] == gamestate["packs"]["limit"]
+        assert_error_response(
+            api(client, "add", {"key": "p_arcana_normal_1"}),
+            "NOT_ALLOWED",
+            "Cannot add pack, shop booster slots are full",
         )
 
 
@@ -236,7 +297,9 @@ class TestAddEndpointSeal:
             "Invalid seal value. Expected: RED, BLUE, GOLD, or PURPLE",
         )
 
-    @pytest.mark.parametrize("key", ["j_joker", "c_fool", "v_overstock_norm"])
+    @pytest.mark.parametrize(
+        "key", ["j_joker", "c_fool", "v_overstock_norm", "p_arcana_normal_1"]
+    )
     def test_add_non_playing_card_with_seal_fails(
         self, client: httpx.Client, key: str
     ) -> None:
@@ -244,7 +307,7 @@ class TestAddEndpointSeal:
         gamestate = load_fixture(
             client,
             "add",
-            "state-SHOP--jokers.count-0--consumables.count-0--vouchers.count-0",
+            "state-SHOP--jokers.count-0--consumables.count-0--vouchers.count-0--packs.count-0",
         )
         assert gamestate["state"] == "SHOP"
         response = api(client, "add", {"key": key, "seal": "RED"})
@@ -264,7 +327,7 @@ class TestAddEndpointEdition:
         gamestate = load_fixture(
             client,
             "add",
-            "state-SHOP--jokers.count-0--consumables.count-0--vouchers.count-0",
+            "state-SHOP--jokers.count-0--consumables.count-0--vouchers.count-0--packs.count-0",
         )
         assert gamestate["state"] == "SHOP"
         assert gamestate["jokers"]["count"] == 0
@@ -297,7 +360,7 @@ class TestAddEndpointEdition:
         gamestate = load_fixture(
             client,
             "add",
-            "state-SHOP--jokers.count-0--consumables.count-0--vouchers.count-0",
+            "state-SHOP--jokers.count-0--consumables.count-0--vouchers.count-0--packs.count-0",
         )
         assert gamestate["state"] == "SHOP"
         assert gamestate["consumables"]["count"] == 0
@@ -315,7 +378,7 @@ class TestAddEndpointEdition:
         gamestate = load_fixture(
             client,
             "add",
-            "state-SHOP--jokers.count-0--consumables.count-0--vouchers.count-0",
+            "state-SHOP--jokers.count-0--consumables.count-0--vouchers.count-0--packs.count-0",
         )
         assert gamestate["state"] == "SHOP"
         assert gamestate["consumables"]["count"] == 0
@@ -331,13 +394,26 @@ class TestAddEndpointEdition:
         gamestate = load_fixture(
             client,
             "add",
-            "state-SHOP--jokers.count-0--consumables.count-0--vouchers.count-0",
+            "state-SHOP--jokers.count-0--consumables.count-0--vouchers.count-0--packs.count-0",
         )
         assert gamestate["state"] == "SHOP"
         assert gamestate["vouchers"]["count"] == 0
         response = api(client, "add", {"key": "v_overstock_norm", "edition": "FOIL"})
         assert_error_response(
             response, "BAD_REQUEST", "Edition cannot be applied to vouchers"
+        )
+
+    def test_add_pack_with_edition_fails(self, client: httpx.Client) -> None:
+        """Test that adding a pack with any edition fails."""
+        gamestate = load_fixture(
+            client,
+            "add",
+            "state-SHOP--jokers.count-0--consumables.count-0--vouchers.count-0--packs.count-0",
+        )
+        assert gamestate["state"] == "SHOP"
+        response = api(client, "add", {"key": "p_arcana_normal_1", "edition": "FOIL"})
+        assert_error_response(
+            response, "BAD_REQUEST", "Edition cannot be applied to packs"
         )
 
     def test_add_playing_card_invalid_edition(self, client: httpx.Client) -> None:
@@ -397,7 +473,9 @@ class TestAddEndpointEnhancement:
             "Invalid enhancement value. Expected: BONUS, MULT, WILD, GLASS, STEEL, STONE, GOLD, or LUCKY",
         )
 
-    @pytest.mark.parametrize("key", ["j_joker", "c_fool", "v_overstock_norm"])
+    @pytest.mark.parametrize(
+        "key", ["j_joker", "c_fool", "v_overstock_norm", "p_arcana_normal_1"]
+    )
     def test_add_non_playing_card_with_enhancement_fails(
         self, client: httpx.Client, key: str
     ) -> None:
@@ -405,10 +483,9 @@ class TestAddEndpointEnhancement:
         gamestate = load_fixture(
             client,
             "add",
-            "state-SHOP--jokers.count-0--consumables.count-0--vouchers.count-0",
+            "state-SHOP--jokers.count-0--consumables.count-0--vouchers.count-0--packs.count-0",
         )
         assert gamestate["state"] == "SHOP"
-        assert gamestate["consumables"]["count"] == 0
         response = api(client, "add", {"key": key, "enhancement": "BONUS"})
         assert_error_response(
             response,
@@ -425,7 +502,7 @@ class TestAddEndpointStickers:
         gamestate = load_fixture(
             client,
             "add",
-            "state-SHOP--jokers.count-0--consumables.count-0--vouchers.count-0",
+            "state-SHOP--jokers.count-0--consumables.count-0--vouchers.count-0--packs.count-0",
         )
         assert gamestate["state"] == "SHOP"
         assert gamestate["jokers"]["count"] == 0
@@ -435,7 +512,7 @@ class TestAddEndpointStickers:
         assert after["jokers"]["cards"][0]["key"] == "j_joker"
         assert after["jokers"]["cards"][0]["modifier"]["eternal"] is True
 
-    @pytest.mark.parametrize("key", ["c_fool", "v_overstock_norm"])
+    @pytest.mark.parametrize("key", ["c_fool", "v_overstock_norm", "p_arcana_normal_1"])
     def test_add_non_joker_with_eternal_fails(
         self, client: httpx.Client, key: str
     ) -> None:
@@ -443,10 +520,9 @@ class TestAddEndpointStickers:
         gamestate = load_fixture(
             client,
             "add",
-            "state-SHOP--jokers.count-0--consumables.count-0--vouchers.count-0",
+            "state-SHOP--jokers.count-0--consumables.count-0--vouchers.count-0--packs.count-0",
         )
         assert gamestate["state"] == "SHOP"
-        assert gamestate["consumables"]["count"] == 0
         assert_error_response(
             api(client, "add", {"key": key, "eternal": True}),
             "BAD_REQUEST",
@@ -474,7 +550,7 @@ class TestAddEndpointStickers:
         gamestate = load_fixture(
             client,
             "add",
-            "state-SHOP--jokers.count-0--consumables.count-0--vouchers.count-0",
+            "state-SHOP--jokers.count-0--consumables.count-0--vouchers.count-0--packs.count-0",
         )
         assert gamestate["state"] == "SHOP"
         assert gamestate["jokers"]["count"] == 0
@@ -489,7 +565,7 @@ class TestAddEndpointStickers:
         gamestate = load_fixture(
             client,
             "add",
-            "state-SHOP--jokers.count-0--consumables.count-0--vouchers.count-0",
+            "state-SHOP--jokers.count-0--consumables.count-0--vouchers.count-0--packs.count-0",
         )
         assert gamestate["state"] == "SHOP"
         assert gamestate["jokers"]["count"] == 0
@@ -510,7 +586,7 @@ class TestAddEndpointStickers:
         gamestate = load_fixture(
             client,
             "add",
-            "state-SHOP--jokers.count-0--consumables.count-0--vouchers.count-0",
+            "state-SHOP--jokers.count-0--consumables.count-0--vouchers.count-0--packs.count-0",
         )
         assert gamestate["state"] == "SHOP"
         assert gamestate["jokers"]["count"] == 0
@@ -529,7 +605,7 @@ class TestAddEndpointStickers:
         gamestate = load_fixture(
             client,
             "add",
-            "state-SHOP--jokers.count-0--consumables.count-0--vouchers.count-0",
+            "state-SHOP--jokers.count-0--consumables.count-0--vouchers.count-0--packs.count-0",
         )
         assert gamestate["state"] == "SHOP"
         assert gamestate["jokers"]["count"] == 0
@@ -540,7 +616,7 @@ class TestAddEndpointStickers:
             "Field 'perishable' must be an integer",
         )
 
-    @pytest.mark.parametrize("key", ["c_fool", "v_overstock_norm"])
+    @pytest.mark.parametrize("key", ["c_fool", "v_overstock_norm", "p_arcana_normal_1"])
     def test_add_non_joker_with_perishable_fails(
         self, client: httpx.Client, key: str
     ) -> None:
@@ -548,7 +624,7 @@ class TestAddEndpointStickers:
         gamestate = load_fixture(
             client,
             "add",
-            "state-SHOP--jokers.count-0--consumables.count-0--vouchers.count-0",
+            "state-SHOP--jokers.count-0--consumables.count-0--vouchers.count-0--packs.count-0",
         )
         assert gamestate["state"] == "SHOP"
         response = api(client, "add", {"key": key, "perishable": 5})
@@ -579,7 +655,7 @@ class TestAddEndpointStickers:
         gamestate = load_fixture(
             client,
             "add",
-            "state-SHOP--jokers.count-0--consumables.count-0--vouchers.count-0",
+            "state-SHOP--jokers.count-0--consumables.count-0--vouchers.count-0--packs.count-0",
         )
         assert gamestate["state"] == "SHOP"
         assert gamestate["jokers"]["count"] == 0
@@ -589,7 +665,7 @@ class TestAddEndpointStickers:
         assert after["jokers"]["cards"][0]["key"] == "j_joker"
         assert after["jokers"]["cards"][0]["modifier"]["rental"] is True
 
-    @pytest.mark.parametrize("key", ["c_fool", "v_overstock_norm"])
+    @pytest.mark.parametrize("key", ["c_fool", "v_overstock_norm", "p_arcana_normal_1"])
     def test_add_non_joker_with_rental_fails(
         self, client: httpx.Client, key: str
     ) -> None:
@@ -597,10 +673,9 @@ class TestAddEndpointStickers:
         gamestate = load_fixture(
             client,
             "add",
-            "state-SHOP--jokers.count-0--consumables.count-0--vouchers.count-0",
+            "state-SHOP--jokers.count-0--consumables.count-0--vouchers.count-0--packs.count-0",
         )
         assert gamestate["state"] == "SHOP"
-        assert gamestate["jokers"]["count"] == 0
         assert_error_response(
             api(client, "add", {"key": key, "rental": True}),
             "BAD_REQUEST",
@@ -612,7 +687,7 @@ class TestAddEndpointStickers:
         gamestate = load_fixture(
             client,
             "add",
-            "state-SHOP--jokers.count-0--consumables.count-0--vouchers.count-0",
+            "state-SHOP--jokers.count-0--consumables.count-0--vouchers.count-0--packs.count-0",
         )
         assert gamestate["state"] == "SHOP"
         assert gamestate["jokers"]["count"] == 0
