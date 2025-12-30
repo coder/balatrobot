@@ -1107,6 +1107,67 @@
           "money": 0
         }
       }
+    ],
+    "state-SHOP--packs.count-0": [
+      {
+        "method": "menu",
+        "params": {}
+      },
+      {
+        "method": "start",
+        "params": {
+          "deck": "RED",
+          "stake": "WHITE",
+          "seed": "TEST123"
+        }
+      },
+      {
+        "method": "select",
+        "params": {}
+      },
+      {
+        "method": "set",
+        "params": {
+          "chips": 1000,
+          "money": 1000
+        }
+      },
+      {
+        "method": "play",
+        "params": {
+          "cards": [
+            0
+          ]
+        }
+      },
+      {
+        "method": "cash_out",
+        "params": {}
+      },
+      {
+        "method": "buy",
+        "params": {
+          "pack": 0
+        }
+      },
+      {
+        "method": "pack",
+        "params": {
+          "skip": true
+        }
+      },
+      {
+        "method": "buy",
+        "params": {
+          "pack": 0
+        }
+      },
+      {
+        "method": "pack",
+        "params": {
+          "skip": true
+        }
+      }
     ]
   },
   "pack": {
@@ -1611,7 +1672,7 @@
         "params": {}
       }
     ],
-    "state-SHOP--jokers.count-0--consumables.count-0--vouchers.count-0": [
+    "state-SHOP--packs.count-2": [
       {
         "method": "menu",
         "params": {}
@@ -1645,11 +1706,72 @@
       {
         "method": "cash_out",
         "params": {}
+      }
+    ],
+    "state-SHOP--jokers.count-0--consumables.count-0--vouchers.count-0--packs.count-0": [
+      {
+        "method": "menu",
+        "params": {}
+      },
+      {
+        "method": "start",
+        "params": {
+          "deck": "RED",
+          "stake": "WHITE",
+          "seed": "TEST123"
+        }
+      },
+      {
+        "method": "select",
+        "params": {}
+      },
+      {
+        "method": "set",
+        "params": {
+          "chips": 1000,
+          "money": 1000
+        }
+      },
+      {
+        "method": "play",
+        "params": {
+          "cards": [
+            0
+          ]
+        }
+      },
+      {
+        "method": "cash_out",
+        "params": {}
       },
       {
         "method": "buy",
         "params": {
           "voucher": 0
+        }
+      },
+      {
+        "method": "buy",
+        "params": {
+          "pack": 0
+        }
+      },
+      {
+        "method": "pack",
+        "params": {
+          "skip": true
+        }
+      },
+      {
+        "method": "buy",
+        "params": {
+          "pack": 0
+        }
+      },
+      {
+        "method": "pack",
+        "params": {
+          "skip": true
         }
       }
     ]
