@@ -4,7 +4,7 @@
 -- Pack Select Endpoint Params
 -- ==========================================================================
 
----@class Request.Endpoint.PackSelect.Params
+---@class Request.Endpoint.Pack.Params
 ---@field card integer? 0-based index of card to select from pack
 ---@field targets integer[]? 0-based indices of hand cards to target (for consumables requiring targets)
 ---@field skip boolean? Skip pack selection
@@ -77,7 +77,7 @@ return {
 
   requires_state = { G.STATES.SMODS_BOOSTER_OPENED },
 
-  ---@param args Request.Endpoint.PackSelect.Params
+  ---@param args Request.Endpoint.Pack.Params
   ---@param send_response fun(response: Response.Endpoint)
   execute = function(args, send_response)
     sendDebugMessage("Init pack()", "BB.ENDPOINTS")
@@ -372,7 +372,7 @@ return {
       return
     else
       -- Handle card selection for packs that don't need hand (e.g., Buffoon, Celestial, Standard)
-      return select_card()
+      select_card()
     end
   end,
 }

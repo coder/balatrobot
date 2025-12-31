@@ -157,6 +157,7 @@
 ---| Request.Endpoint.Load.Params
 ---| Request.Endpoint.Menu.Params
 ---| Request.Endpoint.NextRound.Params
+---| Request.Endpoint.Pack.Params
 ---| Request.Endpoint.Play.Params
 ---| Request.Endpoint.Rearrange.Params
 ---| Request.Endpoint.Reroll.Params
