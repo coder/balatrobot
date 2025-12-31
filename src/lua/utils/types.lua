@@ -274,9 +274,11 @@
 ---@field audio boolean Whether to play audio (enables sound thread and sets volume levels)
 ---@field debug boolean Whether debug mode is enabled (requires DebugPlus mod)
 ---@field no_shaders boolean Whether to disable all shaders for better performance (causes visual glitches)
+---@field setup fun()? Initialize and apply all BalatroBot settings
 
 ---@class Debug
 ---@field log table? DebugPlus logger instance with debug/info/error methods (nil if DebugPlus not available)
+---@field setup fun()? Initialize DebugPlus integration if available
 
 ---@class Server
 ---@field host string Hostname for the HTTP server (copied from Settings)

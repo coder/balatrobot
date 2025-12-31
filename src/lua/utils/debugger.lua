@@ -98,7 +98,9 @@ BB_API = setmetatable({}, {
         end
 
         -- Still send to TCP client if connected
-        original_send_response(response)
+        if original_send_response then
+          original_send_response(response)
+        end
       end
 
       -- Dispatch the request

@@ -1,7 +1,12 @@
 ---Simplified game state extraction utilities
 ---This module provides a clean, simplified interface for extracting game state
 ---according to the new gamestate specification
----@module 'gamestate'
+
+---@class GameStateModule
+---@field on_game_over (fun(state: GameState))?
+---@field check_game_over fun()
+---@field get_blinds_info fun(): table<string, Blind>
+---@field get_gamestate fun(): GameState
 local gamestate = {}
 
 -- ==========================================================================
