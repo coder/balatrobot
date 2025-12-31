@@ -116,19 +116,20 @@ return {
       return
     end
 
+    local pos = args.card + 1
+
+    -- Validate card index is in range
+    if not G.pack_cards.cards[pos] then
+      local pack_count = G.pack_cards.config and G.pack_cards.config.card_count or 0
+      send_response({
+        message = "Card index out of range. Index: " .. args.card .. ", Available cards: " .. pack_count,
+        name = BB_ERROR_NAMES.BAD_REQUEST,
+      })
+      return
+    end
+
     -- Helper function to perform card selection and handle response
     local function select_card()
-      local pos = args.card + 1
-
-      -- Validate card index is in range
-      if not G.pack_cards.cards[pos] then
-        local pack_count = G.pack_cards.config and G.pack_cards.config.card_count or 0
-        send_response({
-          message = "Card index out of range. Index: " .. args.card .. ", Available cards: " .. pack_count,
-          name = BB_ERROR_NAMES.BAD_REQUEST,
-        })
-        return true
-      end
 
       local card = G.pack_cards.cards[pos]
       local card_key = card.config and card.config.center and card.config.center.key
@@ -145,7 +146,7 @@ return {
               .. joker_limit,
             name = BB_ERROR_NAMES.NOT_ALLOWED,
           })
-          return true
+          return
         end
       end
 
@@ -320,6 +321,25 @@ return {
           -- Also check that cards are actually positioned in the hand
           local cards_positioned = hand_ready and G.hand.cards[1] and G.hand.cards[1].T and G.hand.cards[1].T.x
 
+          -- Early return to ensure hand is ready before target index validation
+          if not hand_ready or not cards_positioned then
+            return false
+          end
+
+          -- Validate target index is in range if targets are provided
+          if args.targets then
+            for _, target_idx in ipairs(args.targets) do
+              local hand_pos = target_idx + 1
+              if not G.hand.cards[hand_pos] then
+                send_response({
+                  message = "Target card index out of range. Index: " .. target_idx .. ", Hand size: " .. #G.hand.cards,
+                  name = BB_ERROR_NAMES.BAD_REQUEST,
+                })
+                return
+              end
+            end
+          end
+
           -- Validate that all target card indices exist in hand
           local all_targets_exist = true
           if args.targets and #args.targets > 0 then
@@ -332,7 +352,7 @@ return {
             end
           end
 
-          if hand_ready and cards_positioned and all_targets_exist and not selection_executed then
+          if all_targets_exist and not selection_executed then
             selection_executed = true -- Mark as executed to prevent re-running
             return select_card()
           end

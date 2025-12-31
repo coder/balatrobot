@@ -201,37 +201,23 @@ class TestPackEndpointTargets:
             "Card 'c_heirophant' requires 1-2 target card(s). Provided: 0",
         )
 
-    @pytest.mark.dev
-    @pytest.mark.skip(
-        reason="Requires fixture: arcana pack with tarot requiring max 2 targets"
-    )
     def test_pack_tarot_too_many_targets(self, client: httpx.Client) -> None:
         """Test selecting tarot card with too many targets fails."""
-        # Expected fixture: state-SMODS_BOOSTER_OPENED--pack.cards[0].key-c_heirophant
-        # Test implementation:
-        # load_fixture(client, "pack", "state-SMODS_BOOSTER_OPENED--pack.cards[0].key-c_heirophant")
-        # assert_error_response(
-        #     api(client, "pack", {"card": 0, "targets": [0, 1, 2, 3]}),
-        #     "BAD_REQUEST",
-        #     "Card 'c_heirophant' requires 1-2 target card(s). Provided: 4",
-        # )
-        pass
+        load_fixture(client, "pack", "state-SMODS_BOOSTER_OPENED--pack.cards[0].key-c_heirophant")
+        assert_error_response(
+            api(client, "pack", {"card": 0, "targets": [0, 1, 2, 3]}),
+            "BAD_REQUEST",
+            "Card 'c_heirophant' requires 1-2 target card(s). Provided: 4",
+        )
 
-    @pytest.mark.dev
-    @pytest.mark.skip(
-        reason="Requires fixture: arcana pack with any tarot requiring targets"
-    )
     def test_pack_target_index_out_of_range(self, client: httpx.Client) -> None:
         """Test selecting tarot with target index out of range fails."""
-        # Expected fixture: state-SMODS_BOOSTER_OPENED--pack.cards[0].key-c_heirophant
-        # Test implementation:
-        # load_fixture(client, "pack", "state-SMODS_BOOSTER_OPENED--pack.cards[0].key-c_heirophant")
-        # assert_error_response(
-        #     api(client, "pack", {"card": 0, "targets": [99]}),
-        #     "BAD_REQUEST",
-        #     "Target card index out of range. Index: 99, Hand size: 8",
-        # )
-        pass
+        load_fixture(client, "pack", "state-SMODS_BOOSTER_OPENED--pack.cards[0].key-c_heirophant")
+        assert_error_response(
+            api(client, "pack", {"card": 0, "targets": [99]}),
+            "BAD_REQUEST",
+            "Target card index out of range. Index: 99, Hand size: 8",
+        )
 
     # -------------------------------------------------------------------------
     # Aura special case (exactly 1 target)
