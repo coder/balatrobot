@@ -1,6 +1,7 @@
 """Tests for src/lua/endpoints/rearrange.lua"""
 
 import httpx
+import pytest
 
 from tests.lua.conftest import (
     api,
@@ -10,8 +11,8 @@ from tests.lua.conftest import (
 )
 
 
-class TestRearrangeEndpoint:
-    """Test basic rearrange endpoint functionality."""
+class TestRearrangeHandInSelectingHandState:
+    """Test rearranging hand in SELECTING_HAND state."""
 
     def test_rearrange_hand(self, client: httpx.Client) -> None:
         """Test rearranging hand in selecting hand state."""
@@ -29,8 +30,12 @@ class TestRearrangeEndpoint:
         ids = [card["id"] for card in after["hand"]["cards"]]
         assert ids == [prev_ids[i] for i in permutation]
 
+
+class TestRearrangeInShopState:
+    """Test rearranging cards in SHOP state."""
+
     def test_rearrange_jokers(self, client: httpx.Client) -> None:
-        """Test rearranging jokers."""
+        """Test rearranging jokers in shop."""
         before = load_fixture(
             client, "rearrange", "state-SHOP--jokers.count-4--consumables.count-2"
         )
@@ -48,7 +53,7 @@ class TestRearrangeEndpoint:
         assert ids == [prev_ids[i] for i in permutation]
 
     def test_rearrange_consumables(self, client: httpx.Client) -> None:
-        """Test rearranging consumables."""
+        """Test rearranging consumables in shop."""
         before = load_fixture(
             client, "rearrange", "state-SHOP--jokers.count-4--consumables.count-2"
         )
@@ -64,6 +69,106 @@ class TestRearrangeEndpoint:
         after = assert_gamestate_response(response)
         ids = [card["id"] for card in after["consumables"]["cards"]]
         assert ids == [prev_ids[i] for i in permutation]
+
+    def test_rearrange_hand_from_shop_fails(self, client: httpx.Client) -> None:
+        """Test that rearranging hand fails in SHOP state."""
+        gamestate = load_fixture(
+            client, "rearrange", "state-SHOP--jokers.count-4--consumables.count-2"
+        )
+        assert gamestate["state"] == "SHOP"
+        assert_error_response(
+            api(client, "rearrange", {"hand": [0, 1, 2, 3, 4, 5, 6, 7]}),
+            "INVALID_STATE",
+            "Can only rearrange hand during hand selection",
+        )
+
+
+class TestRearrangeHandInPackState:
+    """Test rearranging cards while in SMODS_BOOSTER_OPENED state."""
+
+    @pytest.mark.parametrize(
+        "pack_key",
+        ("p_arcana_normal_1", "p_spectral_normal_1"),
+    )
+    def test_rearrange_hand_in_arcana_or_spectral_pack(
+        self, client: httpx.Client, pack_key: str
+    ) -> None:
+        """Test rearranging hand in Arcana/Spectral pack (which shows hand)."""
+        load_fixture(client, "rearrange", "state-SHOP--packs.count-0")
+        api(client, "add", {"key": pack_key})
+        response = api(client, "buy", {"pack": 0})
+        before = assert_gamestate_response(response)
+        assert before["state"] == "SMODS_BOOSTER_OPENED"
+        assert before["hand"]["count"] >= 0
+
+        prev_ids = [card["id"] for card in before["hand"]["cards"]]
+        permutation = list(range(before["hand"]["count"]))
+        permutation[0], permutation[1] = permutation[1], permutation[0]
+
+        response = api(client, "rearrange", {"hand": permutation})
+        after = assert_gamestate_response(response)
+        assert after["state"] == "SMODS_BOOSTER_OPENED"
+        ids = [card["id"] for card in after["hand"]["cards"]]
+        assert ids == [prev_ids[i] for i in permutation]
+
+    @pytest.mark.parametrize(
+        "pack_key",
+        ("p_buffoon_normal_1", "p_celestial_normal_1", "p_standard_normal_1"),
+    )
+    def test_rearrange_hand_in_non_arcana_or_non_spectral_pack_fails(
+        self, client: httpx.Client, pack_key: str
+    ) -> None:
+        """Test rearranging hand fails in Buffoon pack (no hand visible)."""
+        load_fixture(client, "rearrange", "state-SHOP--packs.count-0")
+        api(client, "add", {"key": pack_key})
+        response = api(client, "buy", {"pack": 0})
+        before = assert_gamestate_response(response)
+        assert before["state"] == "SMODS_BOOSTER_OPENED"
+
+        response = api(client, "rearrange", {"hand": [0, 1, 2, 3, 4, 5, 6, 7]})
+        assert_error_response(
+            response,
+            "NOT_ALLOWED",
+            "No cards to rearrange. You can only rearrange hand in Arcana and Spectral packs.",
+        )
+
+    def test_rearrange_jokers_in_pack_state(self, client: httpx.Client) -> None:
+        """Test rearranging jokers while a booster pack is open."""
+        load_fixture(client, "rearrange", "state-SHOP--packs.count-0")
+        api(client, "add", {"key": "j_joker"})
+        api(client, "add", {"key": "j_greedy_joker"})
+        api(client, "add", {"key": "p_arcana_normal_1"})
+
+        response = api(client, "buy", {"pack": 0})
+        before = assert_gamestate_response(response)
+        assert before["state"] == "SMODS_BOOSTER_OPENED"
+        assert before["jokers"]["count"] == 2
+
+        prev_ids = [card["id"] for card in before["jokers"]["cards"]]
+        response = api(client, "rearrange", {"jokers": [1, 0]})
+        after = assert_gamestate_response(response)
+        assert after["state"] == "SMODS_BOOSTER_OPENED"
+        ids = [card["id"] for card in after["jokers"]["cards"]]
+        assert ids == [prev_ids[1], prev_ids[0]]
+
+    def test_rearrange_consumables_in_pack_state(self, client: httpx.Client) -> None:
+        """Test rearranging consumables while a booster pack is open."""
+        load_fixture(client, "rearrange", "state-SHOP--packs.count-0")
+        api(client, "add", {"key": "c_fool"})
+        api(client, "add", {"key": "c_magician"})
+        api(client, "add", {"key": "p_arcana_normal_1"})
+
+        response = api(client, "buy", {"pack": 0})
+        before = assert_gamestate_response(response)
+        assert before["state"] == "SMODS_BOOSTER_OPENED"
+        assert before["consumables"]["count"] == 2
+
+        prev_ids = [card["id"] for card in before["consumables"]["cards"]]
+        response = api(client, "rearrange", {"consumables": [1, 0]})
+        after = assert_gamestate_response(response)
+        assert after["state"] == "SMODS_BOOSTER_OPENED"
+        ids = [card["id"] for card in after["consumables"]["cards"]]
+        assert ids == [prev_ids[1], prev_ids[0]]
 
 
 class TestRearrangeEndpointValidation:
@@ -219,16 +324,4 @@ class TestRearrangeEndpointStateRequirements:
             api(client, "rearrange", {"jokers": [0, 1]}),
             "INVALID_STATE",
             "Method 'rearrange' requires one of these states: SELECTING_HAND, SHOP",
-        )
-
-    def test_rearrange_hand_from_shop(self, client: httpx.Client) -> None:
-        """Test that rearranging hand fails from SHOP."""
-        gamestate = load_fixture(
-            client, "rearrange", "state-SHOP--jokers.count-4--consumables.count-2"
-        )
-        assert gamestate["state"] == "SHOP"
-        assert_error_response(
-            api(client, "rearrange", {"hand": [0, 1, 2, 3, 4, 5, 6, 7]}),
-            "INVALID_STATE",
-            "Can only rearrange hand during hand selection",
         )
