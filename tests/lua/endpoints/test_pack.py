@@ -192,19 +192,14 @@ class TestPackEndpointTargets:
         result = api(client, "pack", {"card": 0, "targets": [0, 1]})
         assert_gamestate_response(result, state="SHOP")
 
-    @pytest.mark.dev
-    @pytest.mark.skip(reason="Requires fixture: arcana pack with c_heirophant")
     def test_pack_tarot_missing_targets(self, client: httpx.Client) -> None:
         """Test selecting tarot card without required targets fails."""
-        # Expected fixture: state-SMODS_BOOSTER_OPENED--pack.cards[0].key-c_heirophant
-        # Test implementation:
-        # load_fixture(client, "pack", "state-SMODS_BOOSTER_OPENED--pack.cards[0].key-c_heirophant")
-        # assert_error_response(
-        #     api(client, "pack", {"card": 0}),
-        #     "BAD_REQUEST",
-        #     "Card 'c_heirophant' requires 1-2 target card(s). Provided: 0",
-        # )
-        pass
+        load_fixture(client, "pack", "state-SMODS_BOOSTER_OPENED--pack.cards[0].key-c_heirophant")
+        assert_error_response(
+            api(client, "pack", {"card": 0}),
+            "BAD_REQUEST",
+            "Card 'c_heirophant' requires 1-2 target card(s). Provided: 0",
+        )
 
     @pytest.mark.dev
     @pytest.mark.skip(
