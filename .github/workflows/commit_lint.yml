@@ -39,11 +39,9 @@ jobs:
 
       - name: Validate commits
         run: |
-          source .venv/bin/activate
-          cz check --rev-range origin/${{ github.base_ref }}..HEAD
+          uv run cz check --rev-range origin/${{ github.base_ref }}..HEAD
 
       - name: Validate PR title
         if: github.event_name == 'pull_request'
         run: |
-          source .venv/bin/activate
-          echo "${{ github.event.pull_request.title }}" | cz check
+          echo "${{ github.event.pull_request.title }}" | uv run cz check
