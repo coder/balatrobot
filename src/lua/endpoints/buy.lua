@@ -233,7 +233,24 @@ return {
             and G.STATE == G.STATES.SMODS_BOOSTER_OPENED
           )
           if money_deducted and pack_ready then
-            done = true
+            -- Check if this pack type needs hand (Arcana/Spectral packs)
+            local pack_key = G.pack_cards.cards[1].ability and G.pack_cards.cards[1].ability.set
+            local needs_hand = pack_key == "Tarot" or pack_key == "Spectral"
+
+            if needs_hand then
+              -- Wait for hand to be fully loaded and positioned
+              local hand_limit = G.hand and G.hand.config and G.hand.config.card_limit or 8
+              local hand_ready = G.hand
+                and not G.hand.REMOVED
+                and G.hand.cards
+                and #G.hand.cards == hand_limit
+                and G.hand.T
+                and G.hand.T.x
+              local cards_positioned = hand_ready and G.hand.cards[1] and G.hand.cards[1].T and G.hand.cards[1].T.x
+              done = hand_ready and cards_positioned
+            else
+              done = true
+            end
           end
         end
 
