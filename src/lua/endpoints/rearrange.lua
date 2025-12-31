@@ -85,6 +85,15 @@ return {
         return
       end
 
+      -- In SMODS_BOOSTER_OPENED, hand is only available in Arcana/Spectral packs
+      if G.STATE == G.STATES.SMODS_BOOSTER_OPENED and #G.hand.cards == 0 then
+        send_response({
+          message = "No cards to rearrange. You can only rearrange hand in Arcana and Spectral packs.",
+          name = BB_ERROR_NAMES.NOT_ALLOWED,
+        })
+        return
+      end
+
       rearrange_type = "hand"
       source_array = G.hand.cards
       indices = args.hand
@@ -194,11 +203,19 @@ return {
         -- Check that we're still in a valid state and arrays exist
         local done = false
         if args.hand then
-          done = G.STATE == G.STATES.SELECTING_HAND and G.hand ~= nil
+          done = (G.STATE == G.STATES.SELECTING_HAND or G.STATE == G.STATES.SMODS_BOOSTER_OPENED) and G.hand ~= nil
         elseif args.jokers then
-          done = (G.STATE == G.STATES.SHOP or G.STATE == G.STATES.SELECTING_HAND) and G.jokers ~= nil
+          done = (
+            G.STATE == G.STATES.SHOP
+            or G.STATE == G.STATES.SELECTING_HAND
+            or G.STATE == G.STATES.SMODS_BOOSTER_OPENED
+          ) and G.jokers ~= nil
         else -- consumables
-          done = (G.STATE == G.STATES.SHOP or G.STATE == G.STATES.SELECTING_HAND) and G.consumeables ~= nil
+          done = (
+            G.STATE == G.STATES.SHOP
+            or G.STATE == G.STATES.SELECTING_HAND
+            or G.STATE == G.STATES.SMODS_BOOSTER_OPENED
+          ) and G.consumeables ~= nil
         end
 
         if done then
