@@ -39,6 +39,31 @@ pytest tests/cli -m "not integration"
 balatrobot --fast --debug
 ```
 
+### Make Commands
+
+Available make targets:
+
+| Target           | Description                                             |
+| ---------------- | ------------------------------------------------------- |
+| `make help`      | Show all available targets                              |
+| `make lint`      | Run ruff linter (check only)                            |
+| `make format`    | Run ruff and mdformat formatters                        |
+| `make typecheck` | Run type checker (Python and Lua)                       |
+| `make quality`   | Run all code quality checks (lint + typecheck + format) |
+| `make test`      | Run all tests                                           |
+| `make all`       | Run all quality checks and tests                        |
+| `make fixtures`  | Generate test fixtures                                  |
+| `make install`   | Install dependencies                                    |
+
+**Important rules:**
+
+1. **Only run make commands when explicitly asked.** Do not proactively run `make test`, `make quality`, etc.
+2. **Never run bare linting/formatting/typechecking tools.** Always use make targets instead:
+    - Use `make lint` instead of `ruff check`
+    - Use `make format` instead of `ruff format`
+    - Use `make typecheck` instead of `ty check`
+    - Use `make quality` for all checks combined
+
 ## Architecture
 
 ### 1. Python Layer (`src/balatrobot/`)
@@ -48,6 +73,7 @@ Controls the game lifecycle and provides the CLI.
 - **CLI** (`cli.py`): Entry point (`balatrobot`). Handles arguments like `--fast`, `--debug`, `--headless`.
 - **Manager** (`manager.py`): `BalatroInstance` context manager. Starts the game process, handles logging, and waits for the API to be healthy.
 - **Config** (`config.py`): Configuration management using `dataclasses` and environment variables.
+- **Platform Abstraction** (`platforms/`): Cross-platform game launcher system with platform-specific implementations for macOS, Windows, and native Love2D.
 
 ### 2. Lua Layer (`src/lua/`)
 
@@ -74,11 +100,12 @@ Runs inside the game engine and exposes an API.
 
     - Stateless modules defining `schema` and `execute` functions.
     - 0-based indexing in API vs 1-based in Lua.
+    - OpenRPC Specification (`src/lua/utils/openrpc.json`): Machine-readable API documentation describing all endpoints.
 
     **Core Endpoints:**
 
-    - `add.lua`: Add a new card (joker, consumable, voucher, or playing card).
-    - `buy.lua`: Buy a card from the shop.
+    - `add.lua`: Add a new card (joker, consumable, voucher, playing card, or booster pack).
+    - `buy.lua`: Buy a card or booster pack from the shop.
     - `cash_out.lua`: Cash out and collect round rewards.
     - `discard.lua`: Discard cards from the hand.
     - `gamestate.lua`: Get current game state.
@@ -86,6 +113,7 @@ Runs inside the game engine and exposes an API.
     - `load.lua`: Load a saved run state from a file.
     - `menu.lua`: Return to the main menu from any game state.
     - `next_round.lua`: Leave the shop and advance to blind selection.
+    - `pack.lua`: Select or skip a card from an opened booster pack.
     - `play.lua`: Play a card from the hand.
     - `rearrange.lua`: Rearrange cards in hand, jokers, or consumables.
     - `reroll.lua`: Reroll to update the cards in the shop area.

@@ -2,9 +2,7 @@
   "permissions": {
     "allow": [
       "Bash(pytest:*)",
-      "Bash(ruff check:*)",
-      "Bash(ruff format:*)",
-      "Bash(ty check:*)"
+      "Bash(make:*)"
     ],
     "deny": [
       "Edit(CHANGELOG.md)",
@@ -18,27 +16,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "stylua .",
-            "timeout": 5
-          },
-          {
-            "type": "command",
-            "command": "ruff format",
-            "timeout": 5
-          },
-          {
-            "type": "command",
-            "command": "ruff check --select I --fix",
-            "timeout": 5
-          },
-          {
-            "type": "command",
-            "command": "ty check",
-            "timeout": 5
-          },
-          {
-            "type": "command",
-            "command": "mdformat .",
+            "command": "make quality",
             "timeout": 5
           }
         ]
