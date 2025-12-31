@@ -1274,6 +1274,49 @@
           "pack": 1
         }
       }
+    ],
+    "state-SMODS_BOOSTER_OPENED--pack.cards[1].key-c_aura": [
+      {
+        "method": "menu",
+        "params": {}
+      },
+      {
+        "method": "start",
+        "params": {
+          "deck": "RED",
+          "stake": "WHITE",
+          "seed": "3Q1KBVT3"
+        }
+      },
+      {
+        "method": "select",
+        "params": {}
+      },
+      {
+        "method": "set",
+        "params": {
+          "chips": 1000,
+          "money": 1000
+        }
+      },
+      {
+        "method": "play",
+        "params": {
+          "cards": [
+            0
+          ]
+        }
+      },
+      {
+        "method": "cash_out",
+        "params": {}
+      },
+      {
+        "method": "buy",
+        "params": {
+          "pack": 1
+        }
+      }
     ]
   },
   "sell": {

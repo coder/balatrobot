@@ -223,19 +223,14 @@ class TestPackEndpointTargets:
     # Aura special case (exactly 1 target)
     # -------------------------------------------------------------------------
 
-    @pytest.mark.dev
-    @pytest.mark.skip(reason="Requires fixture: spectral pack with c_aura")
     def test_pack_aura_no_targets(self, client: httpx.Client) -> None:
         """Test selecting Aura without targets fails."""
-        # Expected fixture: state-SMODS_BOOSTER_OPENED--pack.cards[0].key-c_aura
-        # Test implementation:
-        # load_fixture(client, "pack", "state-SMODS_BOOSTER_OPENED--pack.cards[0].key-c_aura")
-        # assert_error_response(
-        #     api(client, "pack", {"card": 0}),
-        #     "BAD_REQUEST",
-        #     "Card 'c_aura' requires exactly 1 target card(s). Provided: 0",
-        # )
-        pass
+        load_fixture(client, "pack", "state-SMODS_BOOSTER_OPENED--pack.cards[1].key-c_aura")
+        assert_error_response(
+            api(client, "pack", {"card": 1}),
+            "BAD_REQUEST",
+            "Card 'c_aura' requires exactly 1 target card(s). Provided: 0",
+        )
 
     @pytest.mark.dev
     @pytest.mark.skip(reason="Requires fixture: spectral pack with c_aura")

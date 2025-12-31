@@ -146,7 +146,7 @@ return {
               .. joker_limit,
             name = BB_ERROR_NAMES.NOT_ALLOWED,
           })
-          return
+          return true
         end
       end
 
