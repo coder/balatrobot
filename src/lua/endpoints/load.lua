@@ -154,6 +154,10 @@ return {
           done = num_items(G.shop_booster) > 0 or num_items(G.shop_jokers) > 0 or num_items(G.shop_vouchers) > 0
         end
 
+        if G.STATE == G.STATES.SMODS_BOOSTER_OPENED then
+          done = G.pack_cards and G.pack_cards.cards and #G.pack_cards.cards > 0
+        end
+
         if done then
           sendDebugMessage("Return load() - loaded from " .. path, "BB.ENDPOINTS")
           send_response({

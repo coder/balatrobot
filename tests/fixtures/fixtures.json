@@ -1231,6 +1231,49 @@
           "skip": true
         }
       }
+    ],
+    "state-SMODS_BOOSTER_OPENED--pack.cards[0].key-c_heirophant": [
+      {
+        "method": "menu",
+        "params": {}
+      },
+      {
+        "method": "start",
+        "params": {
+          "deck": "RED",
+          "stake": "WHITE",
+          "seed": "QKNXF682"
+        }
+      },
+      {
+        "method": "select",
+        "params": {}
+      },
+      {
+        "method": "set",
+        "params": {
+          "chips": 1000,
+          "money": 1000
+        }
+      },
+      {
+        "method": "play",
+        "params": {
+          "cards": [
+            0
+          ]
+        }
+      },
+      {
+        "method": "cash_out",
+        "params": {}
+      },
+      {
+        "method": "buy",
+        "params": {
+          "pack": 1
+        }
+      }
     ]
   },
   "sell": {

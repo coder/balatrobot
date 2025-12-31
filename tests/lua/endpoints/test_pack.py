@@ -185,17 +185,12 @@ class TestPackEndpointTargets:
     # Tarot cards with target requirements (min/max highlighted)
     # -------------------------------------------------------------------------
 
-    @pytest.mark.dev
-    @pytest.mark.skip(reason="Requires fixture: arcana pack with c_heirophant")
     def test_pack_tarot_with_valid_targets(self, client: httpx.Client) -> None:
         """Test selecting tarot card with valid target count."""
-        # Expected fixture: state-SMODS_BOOSTER_OPENED--pack.cards[0].key-c_heirophant
-        # Hierophant requires 1-2 targets
-        # Test implementation:
-        # load_fixture(client, "pack", "state-SMODS_BOOSTER_OPENED--pack.cards[0].key-c_heirophant")
-        # result = api(client, "pack", {"card": 0, "targets": [0, 1]})
-        # assert_gamestate_response(result, state="SHOP")
-        pass
+        load_fixture(client, "pack", "state-SMODS_BOOSTER_OPENED--pack.cards[0].key-c_heirophant")
+        print("Loaded fixture for tarot card with targets")
+        result = api(client, "pack", {"card": 0, "targets": [0, 1]})
+        assert_gamestate_response(result, state="SHOP")
 
     @pytest.mark.dev
     @pytest.mark.skip(reason="Requires fixture: arcana pack with c_heirophant")

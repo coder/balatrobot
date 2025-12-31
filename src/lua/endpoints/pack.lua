@@ -223,6 +223,8 @@ return {
         },
       }
 
+      local pack_choices_before = G.GAME.pack_choices or 0
+
       G.FUNCS.use_card(btn)
 
       -- Wait for action to complete - check pack_choices to determine expected state
@@ -231,7 +233,7 @@ return {
         blocking = false,
         func = function()
           -- Check if more selections remain (mega packs decrement pack_choices)
-          if G.GAME.pack_choices and G.GAME.pack_choices > 0 then
+          if pack_choices_before == 2 and G.GAME.pack_choices and G.GAME.pack_choices == 1 then
             -- Pack stays open - wait for stabilization
             local pack_stable = G.pack_cards
               and not G.pack_cards.REMOVED

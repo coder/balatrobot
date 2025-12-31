@@ -47,6 +47,7 @@ return {
     G.STATES.STANDARD_PACK,
     G.STATES.BUFFOON_PACK,
     G.STATES.NEW_ROUND,
+    G.STATES.SMODS_BOOSTER_OPENED,
   },
 
   ---@param args Request.Endpoint.Save.Params
