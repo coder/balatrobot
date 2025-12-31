@@ -116,10 +116,6 @@ return {
       return
     end
 
-    -- Check if this is a Mega pack (allows 2 selections) from metadata stored during purchase
-    local gamestate = BB_GAMESTATE.get_gamestate()
-    local is_mega_pack = gamestate.pack and gamestate.pack.is_mega or false
-
     -- Helper function to perform card selection and handle response
     local function select_card()
       local pos = args.card + 1
@@ -227,63 +223,37 @@ return {
         },
       }
 
-      -- Check pack count BEFORE calling use_card (count decreases after)
-      local pack_cards_remaining = G.pack_cards and G.pack_cards.config and G.pack_cards.config.card_count or 0
-
       G.FUNCS.use_card(btn)
 
-      -- Only wait for pack to close if this is not a Mega pack with more selections
-      if is_mega_pack and pack_cards_remaining > 4 then
-        -- Return for Mega packs with more selections available
-        -- Wait for pack to stabilize after card removal and repositioning
-        local expected_remaining = pack_cards_remaining - 1
-
-        G.E_MANAGER:add_event(Event({
-          trigger = "condition",
-          blocking = false,
-          func = function()
-            -- Check pack still exists and card count has decreased
-            local pack_exists = G.pack_cards
-              and not G.pack_cards.REMOVED
-              and G.pack_cards.config
-              and G.pack_cards.config.card_count == expected_remaining
-
-            -- Check first remaining card is positioned (if any cards remain)
-            local cards_positioned = true
-            if expected_remaining > 0 then
-              cards_positioned = G.pack_cards.cards[1] and G.pack_cards.cards[1].T and G.pack_cards.cards[1].T.x
-            end
-
-            -- Check game state is stable and still in pack opened state
-            local state_stable = G.STATE_COMPLETE and G.STATE == G.STATES.SMODS_BOOSTER_OPENED
-
-            if pack_exists and cards_positioned and state_stable then
-              sendDebugMessage("Return pack() after first Mega pack selection", "BB.ENDPOINTS")
-              send_response(BB_GAMESTATE.get_gamestate())
-              return true
-            end
-
-            return false
-          end,
-        }))
-        return true
-      end
-
-      -- Wait for pack to close and return to shop
+      -- Wait for action to complete - check pack_choices to determine expected state
       G.E_MANAGER:add_event(Event({
         trigger = "condition",
         blocking = false,
         func = function()
-          local pack_closed = not G.pack_cards or G.pack_cards.REMOVED
-          local back_to_shop = G.STATE == G.STATES.SHOP
+          -- Check if more selections remain (mega packs decrement pack_choices)
+          if G.GAME.pack_choices and G.GAME.pack_choices > 0 then
+            -- Pack stays open - wait for stabilization
+            local pack_stable = G.pack_cards
+              and not G.pack_cards.REMOVED
+              and G.STATE_COMPLETE
+              and G.STATE == G.STATES.SMODS_BOOSTER_OPENED
 
-          if pack_closed and back_to_shop then
-            G.GAME.bb_pack_is_mega = nil -- Clear pack metadata
-            sendDebugMessage("Return pack() after selection", "BB.ENDPOINTS")
-            send_response(BB_GAMESTATE.get_gamestate())
-            return true
+            if pack_stable then
+              sendDebugMessage("Return pack() after selection (more choices remain)", "BB.ENDPOINTS")
+              send_response(BB_GAMESTATE.get_gamestate())
+              return true
+            end
+          else
+            -- Pack closes - wait for return to shop
+            local pack_closed = not G.pack_cards or G.pack_cards.REMOVED
+            local back_to_shop = G.STATE == G.STATES.SHOP
+
+            if pack_closed and back_to_shop then
+              sendDebugMessage("Return pack() after selection", "BB.ENDPOINTS")
+              send_response(BB_GAMESTATE.get_gamestate())
+              return true
+            end
           end
-
           return false
         end,
       }))
@@ -304,7 +274,6 @@ return {
           local back_to_shop = G.STATE == G.STATES.SHOP
 
           if pack_closed and back_to_shop then
-            G.GAME.bb_pack_is_mega = nil -- Clear pack metadata
             sendDebugMessage("Return pack() after skip", "BB.ENDPOINTS")
             send_response(BB_GAMESTATE.get_gamestate())
             return true
