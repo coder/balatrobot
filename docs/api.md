@@ -547,6 +547,8 @@ Rearrange cards in hand, jokers, or consumables.
 
 **Errors:** `BAD_REQUEST`, `INVALID_STATE`, `NOT_ALLOWED`
 
+**Required State:** Hand cards can be rearranged in `SELECTING_HAND` or `SMODS_BOOSTER_OPENED`. Jokers and consumables can be rearranged in `SHOP`, `SELECTING_HAND`, or `SMODS_BOOSTER_OPENED`.
+
 **Example:**
 
 ```bash
