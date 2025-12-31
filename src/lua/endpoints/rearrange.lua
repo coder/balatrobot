@@ -41,7 +41,7 @@ return {
     },
   },
 
-  requires_state = { G.STATES.SELECTING_HAND, G.STATES.SHOP },
+  requires_state = { G.STATES.SELECTING_HAND, G.STATES.SHOP, G.STATES.SMODS_BOOSTER_OPENED },
 
   ---@param args Request.Endpoint.Rearrange.Params
   ---@param send_response fun(response: Response.Endpoint)
@@ -68,7 +68,7 @@ return {
 
     if args.hand then
       -- Cards can only be rearranged during SELECTING_HAND
-      if G.STATE ~= G.STATES.SELECTING_HAND then
+      if G.STATE ~= G.STATES.SELECTING_HAND and G.STATE ~= G.STATES.SMODS_BOOSTER_OPENED then
         send_response({
           message = "Can only rearrange hand during hand selection",
           name = BB_ERROR_NAMES.INVALID_STATE,
