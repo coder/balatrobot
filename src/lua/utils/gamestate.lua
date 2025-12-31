@@ -741,6 +741,11 @@ function gamestate.get_gamestate()
   state_data.jokers = extract_area(G.jokers)
   state_data.consumables = extract_area(G.consumeables) -- Note: typo in game code
 
+  -- Cards remaining in deck
+  if G.deck then
+    state_data.cards = extract_area(G.deck)
+  end
+
   -- Phase-specific areas
   -- Hand (available during playing phase)
   if G.hand then

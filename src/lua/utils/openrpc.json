@@ -950,6 +950,10 @@
             "$ref": "#/components/schemas/Area",
             "description": "Hand area (available during playing phase)"
           },
+          "cards": {
+            "$ref": "#/components/schemas/Area",
+            "description": "Cards remaining in deck (available during run)"
+          },
           "pack": {
             "$ref": "#/components/schemas/Area",
             "description": "Currently open pack (available during pack opening phase)"

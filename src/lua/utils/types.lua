@@ -23,6 +23,7 @@
 ---@field jokers Area? Jokers area
 ---@field consumables Area? Consumables area
 ---@field hand Area? Hand area (available during playing phase)
+---@field cards Area? Cards remaining in deck (available during run)
 ---@field pack Area? Currently open pack (available during opeing pack phase)
 ---@field shop Area? Shop area (available during shop phase)
 ---@field vouchers Area? Vouchers area (available during shop phase)
