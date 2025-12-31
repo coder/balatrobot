@@ -232,16 +232,11 @@ class TestPackEndpointTargets:
             "Card 'c_aura' requires exactly 1 target card(s). Provided: 0",
         )
 
-    @pytest.mark.dev
-    @pytest.mark.skip(reason="Requires fixture: spectral pack with c_aura")
     def test_pack_aura_one_target(self, client: httpx.Client) -> None:
         """Test selecting Aura with exactly 1 target succeeds."""
-        # Expected fixture: state-SMODS_BOOSTER_OPENED--pack.cards[0].key-c_aura
-        # Test implementation:
-        # load_fixture(client, "pack", "state-SMODS_BOOSTER_OPENED--pack.cards[0].key-c_aura")
-        # result = api(client, "pack", {"card": 0, "targets": [0]})
-        # assert_gamestate_response(result, state="SHOP")
-        pass
+        load_fixture(client, "pack", "state-SMODS_BOOSTER_OPENED--pack.cards[1].key-c_aura")
+        result = api(client, "pack", {"card": 1, "targets": [0]})
+        assert_gamestate_response(result, state="SHOP")
 
     @pytest.mark.dev
     @pytest.mark.skip(reason="Requires fixture: spectral pack with c_aura")
