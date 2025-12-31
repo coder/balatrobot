@@ -1,0 +1,49 @@
+name: Commit Lint
+
+on:
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  commitizen:
+    name: Validate Commit Messages
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # Need full history for commit range
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version-file: ".python-version"
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+          cache-dependency-glob: "uv.lock"
+
+      - name: Install dependencies
+        run: |
+          uv venv
+          uv sync --group dev
+
+      - name: Validate commits
+        run: |
+          source .venv/bin/activate
+          cz check --rev-range origin/${{ github.base_ref }}..HEAD
+
+      - name: Validate PR title
+        if: github.event_name == 'pull_request'
+        run: |
+          source .venv/bin/activate
+          echo "${{ github.event.pull_request.title }}" | cz check
