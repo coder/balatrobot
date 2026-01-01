@@ -1,5 +1,18 @@
 # Changelog
 
+## [1.2.1](https://github.com/coder/balatrobot/compare/v1.2.0...v1.2.1) (2026-01-01)
+
+
+### Bug Fixes
+
+* **ci:** update release workflow to sync openrpc.json version ([905609f](https://github.com/coder/balatrobot/commit/905609fbf0c72983a63bfabc8fce09825650f311))
+
+
+### Documentation
+
+* **contributing:** update .luarc.json example ([c9c486a](https://github.com/coder/balatrobot/commit/c9c486a4bd6c660bf0feb4a54175d55f69128df1))
+* use white logo version for docs logo ([e532087](https://github.com/coder/balatrobot/commit/e5320870f08b93191de35b4d57ab5dd501b50dd4))
+
 ## [1.2.0](https://github.com/coder/balatrobot/compare/v1.1.0...v1.2.0) (2026-01-01)
 
 
