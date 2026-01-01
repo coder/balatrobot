@@ -1,5 +1,45 @@
 # Changelog
 
+## [1.2.0](https://github.com/coder/balatrobot/compare/v1.1.0...v1.2.0) (2026-01-01)
+
+
+### Features
+
+* **lua.endpoints:** add `pack` endpoint ([32ff3eb](https://github.com/coder/balatrobot/commit/32ff3eb1aae56f81b78070c7d4b080987a29aea1))
+* **lua.endpoints:** add pack endpoint ([9d3031f](https://github.com/coder/balatrobot/commit/9d3031f9405145d608848eacab0d6aa90aba0f2c))
+* **lua.endpoints:** add support for adding packs to the `add` endpoint ([41374a7](https://github.com/coder/balatrobot/commit/41374a718a1616b1e7e5298a510cac27de624771))
+* **lua.endpoints:** allow rearranging cards during booster pack state ([16e4170](https://github.com/coder/balatrobot/commit/16e417074beaa006f71d34d809d7c7f1248971f5))
+* **lua.endpoints:** extend rearrange to pack state ([15f282c](https://github.com/coder/balatrobot/commit/15f282c870e771970ddef3cb2ceca8a29eee1649))
+* **lua.utils:** add `cards` field to gamestate ([8447855](https://github.com/coder/balatrobot/commit/8447855365c08db38cd555810ea92d6cf0098ff8))
+* **lua.utils:** add pack keys enums ([d8cdb33](https://github.com/coder/balatrobot/commit/d8cdb335331332be2b0c2c64bdfbee8f1b10d602))
+
+
+### Bug Fixes
+
+* **lua.endpoints:** await hand to be loaded for Arcana/Spectral packs ([43e41a4](https://github.com/coder/balatrobot/commit/43e41a46f94718996a8f2d8f8b960148471f9cda))
+* **lua.endpoints:** improve await condition when buying a pack ([4993e77](https://github.com/coder/balatrobot/commit/4993e776d8fbcad138eaff63ac463818e8f0102f))
+* **lua.utils:** use appropriate field for the request in debugger ([d79a81d](https://github.com/coder/balatrobot/commit/d79a81d881f64f41293ac5d63ba23d916a29deab))
+* **lua:** fix target selection to wait longer ([e98d4ea](https://github.com/coder/balatrobot/commit/e98d4ea7c5f6673d2e5b397c2eb5fdbc75b7bd04))
+* **validator:** revert to old behaviour for array items ([729e164](https://github.com/coder/balatrobot/commit/729e164105a221c5233255ba6b09a91fae2fb2f5))
+
+
+### Performance Improvements
+
+* change pytest-xdist config from loadfile to loadscope ([d7c2a28](https://github.com/coder/balatrobot/commit/d7c2a289f61ea748778dfe83d94ffcf15767cbd0))
+
+
+### Documentation
+
+* add conventional commits guideline to contributing ([bf164b1](https://github.com/coder/balatrobot/commit/bf164b12a58de69826efc1929db9ed6ab6c7ad87))
+* **api:** add required state for rearrange endpoint ([481d579](https://github.com/coder/balatrobot/commit/481d579ae3c610320e13937eeadcbd45de554cb8))
+* **api:** fix api.md formatting ([4c85dec](https://github.com/coder/balatrobot/commit/4c85decdb9598433ac7295650181aad0b51cd92e))
+* **api:** remove comment from the gamestate example ([44a169f](https://github.com/coder/balatrobot/commit/44a169f1d9c28b96fc20108efe508bc558a86e56))
+* **api:** update the `add` endpoint to support packs ([36868f2](https://github.com/coder/balatrobot/commit/36868f27d1c8c6871580f6c6a20e60b5d278a194))
+* **CLAUDE:** add GitHub repo link to CLAUDE.md ([9013de0](https://github.com/coder/balatrobot/commit/9013de0b30ce5db957cee7833c81f764604b4103))
+* docs fixes ([099147a](https://github.com/coder/balatrobot/commit/099147aaaffd99e516844f90b4f0b721927f128a))
+* **endpoints:** fix pack_select formatting ([535e3b0](https://github.com/coder/balatrobot/commit/535e3b00b45f658680383e278ec887fca566a90b))
+* **endpoints:** fix pack_select formatting ([7c0535c](https://github.com/coder/balatrobot/commit/7c0535c5bf93e87ec54da4c326fe42ce91c7e296))
+
 ## [1.1.0](https://github.com/coder/balatrobot/compare/v1.0.0...v1.1.0) (2025-12-24)
 
 
