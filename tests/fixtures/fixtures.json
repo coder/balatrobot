@@ -1232,6 +1232,166 @@
         }
       }
     ],
+    "state-SMODS_BOOSTER_OPENED--pack.type-buffoon--jokers.count-5": [
+      {
+        "method": "menu",
+        "params": {}
+      },
+      {
+        "method": "start",
+        "params": {
+          "deck": "RED",
+          "stake": "WHITE",
+          "seed": "TEST123"
+        }
+      },
+      {
+        "method": "select",
+        "params": {}
+      },
+      {
+        "method": "set",
+        "params": {
+          "chips": 1000,
+          "money": 1000
+        }
+      },
+      {
+        "method": "play",
+        "params": {
+          "cards": [
+            0
+          ]
+        }
+      },
+      {
+        "method": "cash_out",
+        "params": {}
+      },
+      {
+        "method": "buy",
+        "params": {
+          "card": 0
+        }
+      },
+      {
+        "method": "reroll",
+        "params": {}
+      },
+      {
+        "method": "buy",
+        "params": {
+          "card": 0
+        }
+      },
+      {
+        "method": "reroll",
+        "params": {}
+      },
+      {
+        "method": "buy",
+        "params": {
+          "card": 0
+        }
+      },
+      {
+        "method": "buy",
+        "params": {
+          "card": 0
+        }
+      },
+      {
+        "method": "reroll",
+        "params": {}
+      },
+      {
+        "method": "buy",
+        "params": {
+          "card": 0
+        }
+      },
+      {
+        "method": "buy",
+        "params": {
+          "pack": 0
+        }
+      }
+    ],
+    "state-SMODS_BOOSTER_OPENED--pack.type-buffoon--jokers.count-4": [
+      {
+        "method": "menu",
+        "params": {}
+      },
+      {
+        "method": "start",
+        "params": {
+          "deck": "RED",
+          "stake": "WHITE",
+          "seed": "TEST123"
+        }
+      },
+      {
+        "method": "select",
+        "params": {}
+      },
+      {
+        "method": "set",
+        "params": {
+          "chips": 1000,
+          "money": 1000
+        }
+      },
+      {
+        "method": "play",
+        "params": {
+          "cards": [
+            0
+          ]
+        }
+      },
+      {
+        "method": "cash_out",
+        "params": {}
+      },
+      {
+        "method": "buy",
+        "params": {
+          "card": 0
+        }
+      },
+      {
+        "method": "reroll",
+        "params": {}
+      },
+      {
+        "method": "buy",
+        "params": {
+          "card": 0
+        }
+      },
+      {
+        "method": "reroll",
+        "params": {}
+      },
+      {
+        "method": "buy",
+        "params": {
+          "card": 0
+        }
+      },
+      {
+        "method": "buy",
+        "params": {
+          "card": 0
+        }
+      },
+      {
+        "method": "buy",
+        "params": {
+          "pack": 0
+        }
+      }
+    ],
     "state-SMODS_BOOSTER_OPENED--pack.cards[0].key-c_heirophant": [
       {
         "method": "menu",
@@ -1286,6 +1446,104 @@
           "deck": "RED",
           "stake": "WHITE",
           "seed": "3Q1KBVT3"
+        }
+      },
+      {
+        "method": "select",
+        "params": {}
+      },
+      {
+        "method": "set",
+        "params": {
+          "chips": 1000,
+          "money": 1000
+        }
+      },
+      {
+        "method": "play",
+        "params": {
+          "cards": [
+            0
+          ]
+        }
+      },
+      {
+        "method": "cash_out",
+        "params": {}
+      },
+      {
+        "method": "buy",
+        "params": {
+          "pack": 1
+        }
+      }
+    ],
+    "state-SMODS_BOOSTER_OPENED--pack.cards[0].key-c_ankh--jokers.count-1": [
+      {
+        "method": "menu",
+        "params": {}
+      },
+      {
+        "method": "start",
+        "params": {
+          "deck": "RED",
+          "stake": "WHITE",
+          "seed": "3Q1KBVT3"
+        }
+      },
+      {
+        "method": "select",
+        "params": {}
+      },
+      {
+        "method": "set",
+        "params": {
+          "chips": 1000,
+          "money": 1000
+        }
+      },
+      {
+        "method": "play",
+        "params": {
+          "cards": [
+            0
+          ]
+        }
+      },
+      {
+        "method": "cash_out",
+        "params": {}
+      },
+      {
+        "method": "buy",
+        "params": {
+          "pack": 0
+        }
+      },
+      {
+        "method": "pack",
+        "params": {
+          "card": 0
+        }
+      },
+      {
+        "method": "buy",
+        "params": {
+          "pack": 0
+        }
+      }
+    ],
+    "state-SMODS_BOOSTER_OPENED--pack.key-p_celestial_mega_1": [
+      {
+        "method": "menu",
+        "params": {}
+      },
+      {
+        "method": "start",
+        "params": {
+          "deck": "RED",
+          "stake": "WHITE",
+          "seed": "VPV32ZTY"
         }
       },
       {

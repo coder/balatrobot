@@ -145,32 +145,30 @@ class TestPackEndpointCardIndex:
 class TestPackEndpointJokerSlots:
     """Tests for joker slot validation (pack.lua lines 136-150)."""
 
-    @pytest.mark.dev
-    @pytest.mark.skip(reason="Requires fixture: buffoon pack open with 5 jokers")
     def test_pack_joker_slots_full(self, client: httpx.Client) -> None:
         """Test selecting joker when slots are full fails."""
-        # Expected fixture: state-SMODS_BOOSTER_OPENED--pack.type-buffoon--jokers.count-5
-        # Test implementation:
-        # load_fixture(client, "pack", "state-SMODS_BOOSTER_OPENED--pack.type-buffoon--jokers.count-5")
-        # assert_error_response(
-        #     api(client, "pack", {"card": 0}),
-        #     "NOT_ALLOWED",
-        #     "Cannot select joker, joker slots are full. Current: 5, Limit: 5",
-        # )
-        pass
+        load_fixture(
+            client,
+            "pack",
+            "state-SMODS_BOOSTER_OPENED--pack.type-buffoon--jokers.count-5",
+        )
+        assert_error_response(
+            api(client, "pack", {"card": 0}),
+            "NOT_ALLOWED",
+            "Cannot select joker, joker slots are full. Current: 5, Limit: 5",
+        )
 
-    @pytest.mark.dev
-    @pytest.mark.skip(reason="Requires fixture: buffoon pack open with 4 jokers")
     def test_pack_joker_slots_available(self, client: httpx.Client) -> None:
         """Test selecting joker when slots available succeeds."""
-        # Expected fixture: state-SMODS_BOOSTER_OPENED--pack.type-buffoon--jokers.count-4
-        # Test implementation:
-        # load_fixture(client, "pack", "state-SMODS_BOOSTER_OPENED--pack.type-buffoon--jokers.count-4")
-        # before = api(client, "gamestate", {})
-        # result = api(client, "pack", {"card": 0})
-        # after = assert_gamestate_response(result, state="SHOP")
-        # assert after["jokers"]["count"] == before["result"]["jokers"]["count"] + 1
-        pass
+        load_fixture(
+            client,
+            "pack",
+            "state-SMODS_BOOSTER_OPENED--pack.type-buffoon--jokers.count-4",
+        )
+        before = api(client, "gamestate", {})
+        result = api(client, "pack", {"card": 0})
+        after = assert_gamestate_response(result, state="SHOP")
+        assert after["jokers"]["count"] == before["result"]["jokers"]["count"] + 1
 
 
 # =============================================================================
@@ -187,14 +185,18 @@ class TestPackEndpointTargets:
 
     def test_pack_tarot_with_valid_targets(self, client: httpx.Client) -> None:
         """Test selecting tarot card with valid target count."""
-        load_fixture(client, "pack", "state-SMODS_BOOSTER_OPENED--pack.cards[0].key-c_heirophant")
+        load_fixture(
+            client, "pack", "state-SMODS_BOOSTER_OPENED--pack.cards[0].key-c_heirophant"
+        )
         print("Loaded fixture for tarot card with targets")
         result = api(client, "pack", {"card": 0, "targets": [0, 1]})
         assert_gamestate_response(result, state="SHOP")
 
     def test_pack_tarot_missing_targets(self, client: httpx.Client) -> None:
         """Test selecting tarot card without required targets fails."""
-        load_fixture(client, "pack", "state-SMODS_BOOSTER_OPENED--pack.cards[0].key-c_heirophant")
+        load_fixture(
+            client, "pack", "state-SMODS_BOOSTER_OPENED--pack.cards[0].key-c_heirophant"
+        )
         assert_error_response(
             api(client, "pack", {"card": 0}),
             "BAD_REQUEST",
@@ -203,7 +205,9 @@ class TestPackEndpointTargets:
 
     def test_pack_tarot_too_many_targets(self, client: httpx.Client) -> None:
         """Test selecting tarot card with too many targets fails."""
-        load_fixture(client, "pack", "state-SMODS_BOOSTER_OPENED--pack.cards[0].key-c_heirophant")
+        load_fixture(
+            client, "pack", "state-SMODS_BOOSTER_OPENED--pack.cards[0].key-c_heirophant"
+        )
         assert_error_response(
             api(client, "pack", {"card": 0, "targets": [0, 1, 2, 3]}),
             "BAD_REQUEST",
@@ -212,7 +216,9 @@ class TestPackEndpointTargets:
 
     def test_pack_target_index_out_of_range(self, client: httpx.Client) -> None:
         """Test selecting tarot with target index out of range fails."""
-        load_fixture(client, "pack", "state-SMODS_BOOSTER_OPENED--pack.cards[0].key-c_heirophant")
+        load_fixture(
+            client, "pack", "state-SMODS_BOOSTER_OPENED--pack.cards[0].key-c_heirophant"
+        )
         assert_error_response(
             api(client, "pack", {"card": 0, "targets": [99]}),
             "BAD_REQUEST",
@@ -225,7 +231,9 @@ class TestPackEndpointTargets:
 
     def test_pack_aura_no_targets(self, client: httpx.Client) -> None:
         """Test selecting Aura without targets fails."""
-        load_fixture(client, "pack", "state-SMODS_BOOSTER_OPENED--pack.cards[1].key-c_aura")
+        load_fixture(
+            client, "pack", "state-SMODS_BOOSTER_OPENED--pack.cards[1].key-c_aura"
+        )
         assert_error_response(
             api(client, "pack", {"card": 1}),
             "BAD_REQUEST",
@@ -234,53 +242,48 @@ class TestPackEndpointTargets:
 
     def test_pack_aura_one_target(self, client: httpx.Client) -> None:
         """Test selecting Aura with exactly 1 target succeeds."""
-        load_fixture(client, "pack", "state-SMODS_BOOSTER_OPENED--pack.cards[1].key-c_aura")
+        load_fixture(
+            client, "pack", "state-SMODS_BOOSTER_OPENED--pack.cards[1].key-c_aura"
+        )
         result = api(client, "pack", {"card": 1, "targets": [0]})
         assert_gamestate_response(result, state="SHOP")
 
-    @pytest.mark.dev
-    @pytest.mark.skip(reason="Requires fixture: spectral pack with c_aura")
     def test_pack_aura_two_targets(self, client: httpx.Client) -> None:
         """Test selecting Aura with 2 targets fails."""
-        # Expected fixture: state-SMODS_BOOSTER_OPENED--pack.cards[0].key-c_aura
-        # Test implementation:
-        # load_fixture(client, "pack", "state-SMODS_BOOSTER_OPENED--pack.cards[0].key-c_aura")
-        # assert_error_response(
-        #     api(client, "pack", {"card": 0, "targets": [0, 1]}),
-        #     "BAD_REQUEST",
-        #     "Card 'c_aura' requires exactly 1 target card(s). Provided: 2",
-        # )
-        pass
+        load_fixture(
+            client, "pack", "state-SMODS_BOOSTER_OPENED--pack.cards[1].key-c_aura"
+        )
+        assert_error_response(
+            api(client, "pack", {"card": 1, "targets": [0, 1]}),
+            "BAD_REQUEST",
+            "Card 'c_aura' requires exactly 1 target card(s). Provided: 2",
+        )
 
     # -------------------------------------------------------------------------
     # Ankh special case (requires joker)
     # -------------------------------------------------------------------------
 
-    @pytest.mark.dev
-    @pytest.mark.skip(reason="Requires fixture: spectral pack with c_ankh and 0 jokers")
     def test_pack_ankh_no_jokers(self, client: httpx.Client) -> None:
         """Test selecting Ankh without jokers fails."""
-        # Expected fixture: state-SMODS_BOOSTER_OPENED--pack.cards[0].key-c_ankh--jokers.count-0
-        # Test implementation:
-        # load_fixture(client, "pack", "state-SMODS_BOOSTER_OPENED--pack.cards[0].key-c_ankh--jokers.count-0")
-        # assert_error_response(
-        #     api(client, "pack", {"card": 0}),
-        #     "NOT_ALLOWED",
-        #     "Card 'c_ankh' requires at least 1 joker. Current: 0",
-        # )
-        pass
+        load_fixture(
+            client, "pack", "state-SMODS_BOOSTER_OPENED--pack.cards[1].key-c_aura"
+        )
+        assert_error_response(
+            api(client, "pack", {"card": 0}),
+            "NOT_ALLOWED",
+            "Card 'c_ankh' requires at least 1 joker. Current: 0",
+        )
 
-    @pytest.mark.dev
-    @pytest.mark.skip(reason="Requires fixture: spectral pack with c_ankh and 1 joker")
     def test_pack_ankh_with_joker(self, client: httpx.Client) -> None:
         """Test selecting Ankh with joker succeeds."""
-        # Expected fixture: state-SMODS_BOOSTER_OPENED--pack.cards[0].key-c_ankh--jokers.count-1
-        # Test implementation:
-        # load_fixture(client, "pack", "state-SMODS_BOOSTER_OPENED--pack.cards[0].key-c_ankh--jokers.count-1")
-        # result = api(client, "pack", {"card": 0})
-        # gamestate = assert_gamestate_response(result, state="SHOP")
-        # assert gamestate["jokers"]["count"] == 2  # Original + copy
-        pass
+        load_fixture(
+            client,
+            "pack",
+            "state-SMODS_BOOSTER_OPENED--pack.cards[0].key-c_ankh--jokers.count-1",
+        )
+        result = api(client, "pack", {"card": 0})
+        gamestate = assert_gamestate_response(result, state="SHOP")
+        assert gamestate["jokers"]["count"] == 2  # Original + copy
 
 
 # =============================================================================
@@ -379,31 +382,25 @@ class TestPackEndpointSelection:
 class TestPackEndpointMegaPack:
     """Tests for mega pack multi-selection behavior (pack.lua lines 233-256)."""
 
-    @pytest.mark.dev
-    @pytest.mark.skip(reason="Requires fixture: mega pack already opened")
     def test_mega_pack_first_selection_keeps_open(self, client: httpx.Client) -> None:
         """Test that first selection in mega pack keeps pack open."""
-        # Expected fixture: state-SMODS_BOOSTER_OPENED--pack.key-p_celestial_mega_1
-        # Test implementation:
-        # load_fixture(client, "pack", "state-SMODS_BOOSTER_OPENED--pack.key-p_celestial_mega_1")
-        # result = api(client, "pack", {"card": 0})
-        # gamestate = assert_gamestate_response(result, state="SMODS_BOOSTER_OPENED")
-        # assert "pack" in gamestate
-        # assert gamestate["pack"]["count"] > 0
-        pass
+        load_fixture(
+            client, "pack", "state-SMODS_BOOSTER_OPENED--pack.key-p_celestial_mega_1"
+        )
+        result = api(client, "pack", {"card": 0})
+        gamestate = assert_gamestate_response(result, state="SMODS_BOOSTER_OPENED")
+        assert "pack" in gamestate
+        assert gamestate["pack"]["count"] > 0
 
-    @pytest.mark.dev
-    @pytest.mark.skip(reason="Requires fixture: mega pack already opened")
     def test_mega_pack_second_selection_closes(self, client: httpx.Client) -> None:
         """Test that second selection in mega pack closes pack."""
-        # Expected fixture: state-SMODS_BOOSTER_OPENED--pack.key-p_celestial_mega_1
-        # Test implementation:
-        # load_fixture(client, "pack", "state-SMODS_BOOSTER_OPENED--pack.key-p_celestial_mega_1")
-        # api(client, "pack", {"card": 0})  # First selection
-        # result = api(client, "pack", {"card": 0})  # Second selection
-        # gamestate = assert_gamestate_response(result, state="SHOP")
-        # assert "pack" not in gamestate
-        pass
+        load_fixture(
+            client, "pack", "state-SMODS_BOOSTER_OPENED--pack.key-p_celestial_mega_1"
+        )
+        api(client, "pack", {"card": 0})  # First selection
+        result = api(client, "pack", {"card": 0})  # Second selection
+        gamestate = assert_gamestate_response(result, state="SHOP")
+        assert "pack" not in gamestate
 
 
 # =============================================================================
