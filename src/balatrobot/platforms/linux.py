@@ -42,13 +42,15 @@ def _detect_proton_path(steam_path: Path) -> Path | None:
     if experimental.is_file():
         return experimental
 
-    # Find versioned Proton installations (e.g., "Proton 9.0", "Proton 8.0")
-    proton_dirs = []
+    # Find versioned Proton installations (e.g., "Proton 9.0", "Proton 8.0.5")
+    proton_dirs: list[tuple[tuple[int, ...], Path]] = []
     for entry in common.iterdir():
         if entry.is_dir() and entry.name.startswith("Proton "):
-            match = re.match(r"Proton (\d+(?:\.\d+)?)", entry.name)
+            match = re.match(r"Proton (\d+(?:\.\d+)*)", entry.name)
             if match:
-                version = float(match.group(1))
+                # Parse version as tuple for correct semantic version comparison
+                # e.g., "8.10" -> (8, 10) which correctly compares > (8, 9)
+                version = tuple(int(part) for part in match.group(1).split("."))
                 proton_exec = entry / "proton"
                 if proton_exec.is_file():
                     proton_dirs.append((version, proton_exec))
