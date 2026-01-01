@@ -130,7 +130,6 @@ return {
 
     -- Helper function to perform card selection and handle response
     local function select_card()
-
       local card = G.pack_cards.cards[pos]
       local card_key = card.config and card.config.center and card.config.center.key
 
