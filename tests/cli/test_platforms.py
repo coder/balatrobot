@@ -6,6 +6,7 @@ import pytest
 
 from balatrobot.config import Config
 from balatrobot.platforms import VALID_PLATFORMS, get_launcher
+from balatrobot.platforms.linux import LinuxLauncher
 from balatrobot.platforms.macos import MacOSLauncher
 from balatrobot.platforms.native import NativeLauncher
 from balatrobot.platforms.windows import WindowsLauncher
@@ -38,10 +39,10 @@ class TestGetLauncher:
         launcher = get_launcher("windows")
         assert isinstance(launcher, WindowsLauncher)
 
-    def test_linux_not_implemented(self):
-        """'linux' raises NotImplementedError."""
-        with pytest.raises(NotImplementedError):
-            get_launcher("linux")
+    def test_linux_returns_linux_launcher(self):
+        """'linux' returns LinuxLauncher."""
+        launcher = get_launcher("linux")
+        assert isinstance(launcher, LinuxLauncher)
 
     def test_valid_platforms_constant(self):
         """VALID_PLATFORMS contains expected values."""
@@ -176,3 +177,51 @@ class TestWindowsLauncher:
         cmd = launcher.build_cmd(config)
 
         assert cmd == [r"C:\path\to\Balatro.exe"]
+
+
+@pytest.mark.skipif(not IS_LINUX, reason="Linux only")
+class TestLinuxLauncher:
+    """Tests for LinuxLauncher (Linux only)."""
+
+    def test_validate_paths_missing_steam(self, tmp_path):
+        """Raises RuntimeError when Steam installation not found."""
+        launcher = LinuxLauncher()
+        config = Config(steam_path=str(tmp_path / "nonexistent"))
+
+        with pytest.raises(RuntimeError, match="Steam directory not found"):
+            launcher.validate_paths(config)
+
+    def test_validate_paths_invalid_steam(self, tmp_path):
+        """Raises RuntimeError when Steam directory has no steamapps."""
+        # Create a fake Steam directory without steamapps
+        steam_path = tmp_path / "Steam"
+        steam_path.mkdir()
+
+        launcher = LinuxLauncher()
+        config = Config(steam_path=str(steam_path))
+
+        with pytest.raises(RuntimeError, match="Invalid Steam directory"):
+            launcher.validate_paths(config)
+
+    def test_build_env_includes_proton_vars(self, tmp_path):
+        """build_env includes Proton compatibility environment variables."""
+        launcher = LinuxLauncher()
+        config = Config(steam_path="/path/to/Steam")
+
+        env = launcher.build_env(config)
+
+        assert env["STEAM_COMPAT_CLIENT_INSTALL_PATH"] == "/path/to/Steam"
+        assert "compatdata/2379780" in env["STEAM_COMPAT_DATA_PATH"]
+        assert env["WINEDLLOVERRIDES"] == "version=n,b"
+
+    def test_build_cmd(self, tmp_path):
+        """build_cmd returns proton run command."""
+        launcher = LinuxLauncher()
+        config = Config(
+            balatro_path="/path/to/proton",
+            love_path="/path/to/Balatro.exe",
+        )
+
+        cmd = launcher.build_cmd(config)
+
+        assert cmd == ["/path/to/proton", "run", "/path/to/Balatro.exe"]
