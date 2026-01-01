@@ -27,6 +27,7 @@ All options can be set via CLI flags or environment variables. CLI flags overrid
 | `--balatro-path BALATRO_PATH` | `BALATROBOT_BALATRO_PATH`  | auto-detected | Path to Balatro game directory             |
 | `--lovely-path LOVELY_PATH`   | `BALATROBOT_LOVELY_PATH`   | auto-detected | Path to lovely library (dll/so/dylib)      |
 | `--love-path LOVE_PATH`       | `BALATROBOT_LOVE_PATH`     | auto-detected | Path to LOVE executable (native only)      |
+| `--steam-path STEAM_PATH`     | `BALATROBOT_STEAM_PATH`    | auto-detected | Path to Steam installation (Linux Proton)  |
 | `--platform PLATFORM`         | `BALATROBOT_PLATFORM`      | auto-detected | Platform: darwin, linux, windows, native   |
 | `--logs-path LOGS_PATH`       | `BALATROBOT_LOGS_PATH`     | `logs`        | Directory for log files                    |
 | `-h, --help`                  | -                          | -             | Show help message and exit                 |
@@ -145,6 +146,42 @@ balatrobot --fast
 
 # Or specify custom paths
 balatrobot --love-path "/path/to/love" --lovely-path "/path/to/liblovely.dylib"
+```
+
+### Linux Platform (Proton)
+
+The `linux` platform launches Balatro through Steam's Proton compatibility layer. The CLI auto-detects Steam and Proton installation paths:
+
+**Auto-Detected Paths:**
+
+- `BALATROBOT_STEAM_PATH`: Tries these locations in order:
+    - `~/.local/share/Steam` (standard)
+    - `~/.steam/steam` (symlink)
+    - `~/snap/steam/common/.local/share/Steam` (Snap)
+    - `~/.var/app/com.valvesoftware.Steam/.local/share/Steam` (Flatpak)
+- `BALATROBOT_LOVE_PATH`: `{steam_path}/steamapps/common/Balatro/Balatro.exe`
+- `BALATROBOT_LOVELY_PATH`: `{steam_path}/steamapps/common/Balatro/version.dll`
+- Proton runtime: Auto-detected (prefers `Proton - Experimental`, falls back to latest versioned)
+
+**Requirements:**
+
+- Balatro installed via Steam
+- Proton installed via Steam (Proton - Experimental recommended)
+- [Lovely Injector](https://github.com/ethangreen-dev/lovely-injector) `version.dll` (Windows version) placed in the Balatro game directory
+- Run Balatro at least once through Steam to create the Proton prefix
+- Mods directory: `~/.local/share/Steam/steamapps/compatdata/2379780/pfx/drive_c/users/steamuser/AppData/Roaming/Balatro/Mods`
+
+**Launch:**
+
+```bash
+# Auto-detects Steam and Proton paths
+balatrobot --fast
+
+# Or specify Steam path explicitly
+balatrobot --steam-path ~/.local/share/Steam --fast
+
+# Via environment variable
+BALATROBOT_STEAM_PATH=~/.local/share/Steam balatrobot --fast
 ```
 
 ### Native Platform (Linux Only)
