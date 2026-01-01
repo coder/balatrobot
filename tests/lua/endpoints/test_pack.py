@@ -235,7 +235,7 @@ class TestPackEndpointTargets:
             client, "pack", "state-SMODS_BOOSTER_OPENED--pack.cards[1].key-c_aura"
         )
         assert_error_response(
-            api(client, "pack", {"card": 1}),
+            api(client, "pack", {"card": 1, "targets": [None]}),
             "BAD_REQUEST",
             "Card 'c_aura' requires exactly 1 target card(s). Provided: 0",
         )
