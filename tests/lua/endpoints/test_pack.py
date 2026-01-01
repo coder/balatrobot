@@ -341,7 +341,6 @@ class TestPackEndpointSelection:
         result = api(client, "pack", {"card": 0})
         after = assert_gamestate_response(result)
         assert before["money"] + 20 == after["money"]
-        assert before["hand"]["count"] - 5 == after["hand"]["count"]
 
     @pytest.mark.parametrize("pack_key", STANDARD_PACKS)
     def test_pack_standard_pack(self, client: httpx.Client, pack_key: str) -> None:

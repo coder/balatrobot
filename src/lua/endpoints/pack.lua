@@ -116,20 +116,19 @@ return {
       return
     end
 
-    local pos = args.card + 1
-
-    -- Validate card index is in range
-    if not G.pack_cards.cards[pos] then
-      local pack_count = G.pack_cards.config and G.pack_cards.config.card_count or 0
-      send_response({
-        message = "Card index out of range. Index: " .. args.card .. ", Available cards: " .. pack_count,
-        name = BB_ERROR_NAMES.BAD_REQUEST,
-      })
-      return
-    end
-
     -- Helper function to perform card selection and handle response
     local function select_card()
+      local pos = args.card + 1
+
+      -- Validate card index is in range
+      if not G.pack_cards.cards[pos] then
+        local pack_count = G.pack_cards.config and G.pack_cards.config.card_count or 0
+        send_response({
+          message = "Card index out of range. Index: " .. args.card .. ", Available cards: " .. pack_count,
+          name = BB_ERROR_NAMES.BAD_REQUEST,
+        })
+        return true
+      end
       local card = G.pack_cards.cards[pos]
       local card_key = card.config and card.config.center and card.config.center.key
 
