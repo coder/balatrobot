@@ -45,6 +45,10 @@ markers = [
   "integration: marks integration tests that actually start Balatro (deselect with '-m \"not integration\"')",
 ]
 
+[tool.commitizen]
+name = "cz_conventional_commits"
+version_provider = "pep621"
+
 [dependency-groups]
 test = [
   "pytest>=9.0.2",
@@ -55,6 +59,7 @@ test = [
   "tqdm>=4.67.1",
 ]
 dev = [
+  "commitizen>=4.11.0",
   "mdformat-mkdocs>=5.1.1",
   "mdformat-simple-breaks>=0.0.1",
   "mkdocs-llmstxt>=0.5.0",
