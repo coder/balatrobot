@@ -225,3 +225,28 @@ class TestLinuxLauncher:
         cmd = launcher.build_cmd(config)
 
         assert cmd == ["/path/to/proton", "run", "/path/to/Balatro.exe"]
+
+    def test_validate_paths_missing_proton_prefix(self, tmp_path):
+        """Raises RuntimeError when Proton prefix (compatdata) not found."""
+        # Create valid Steam structure but without compatdata
+        steam_path = tmp_path / "Steam"
+        steamapps = steam_path / "steamapps"
+        steamapps.mkdir(parents=True)
+
+        # Create Balatro and Proton directories
+        balatro_dir = steamapps / "common/Balatro"
+        balatro_dir.mkdir(parents=True)
+        (balatro_dir / "Balatro.exe").touch()
+        (balatro_dir / "version.dll").touch()
+
+        proton_dir = steamapps / "common/Proton - Experimental"
+        proton_dir.mkdir(parents=True)
+        (proton_dir / "proton").touch()
+
+        # No compatdata/2379780 directory
+
+        launcher = LinuxLauncher()
+        config = Config(steam_path=str(steam_path))
+
+        with pytest.raises(RuntimeError, match="Proton prefix not found"):
+            launcher.validate_paths(config)
