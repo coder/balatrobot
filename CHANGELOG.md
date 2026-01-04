@@ -1,5 +1,14 @@
 # Changelog
 
+## [1.2.2](https://github.com/coder/balatrobot/compare/v1.2.1...v1.2.2) (2026-01-04)
+
+
+### Documentation
+
+* **contributing:** add linux native symlink location ([d07c354](https://github.com/coder/balatrobot/commit/d07c35430ef9ea438c11fa22abc82703ef92f5f8))
+* **example-bot:** add example bot page ([73c4313](https://github.com/coder/balatrobot/commit/73c431325877dd38e2b43f67a7ac275da5239ba9))
+* prepend `uvx` to balatrobot command ([e9e48e1](https://github.com/coder/balatrobot/commit/e9e48e1b97fcda33f15e174d8acc926387b17027))
+
 ## [1.2.1](https://github.com/coder/balatrobot/compare/v1.2.0...v1.2.1) (2026-01-01)
 
 
