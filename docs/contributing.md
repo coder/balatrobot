@@ -131,6 +131,7 @@ ln -s "$(pwd)" ~/.config/love/Mods/balatrobot/
 ```powershell
 New-Item -ItemType SymbolicLink -Path "$env:APPDATA\Balatro\Mods\balatrobot" -Target (Get-Location)
 ```
+
 ### 3. Install Dependencies
 
 ```bash

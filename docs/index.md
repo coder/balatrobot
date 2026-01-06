@@ -103,4 +103,3 @@ BalatroBot is a mod for Balatro that serves a JSON-RPC 2.0 HTTP API, exposing ga
     [:octicons-arrow-right-24: llms-full.txt](llms-full.txt)
 
 </div>
-
