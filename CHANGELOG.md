@@ -1,5 +1,18 @@
 # Changelog
 
+## [1.3.0](https://github.com/coder/balatrobot/compare/v1.2.2...v1.3.0) (2026-01-06)
+
+
+### Features
+
+* **lua:** improve logging for endpoints ([680fd45](https://github.com/coder/balatrobot/commit/680fd45c2711c58a461c51cab04e42e5be0fb767))
+
+
+### Documentation
+
+* **cli:** remove resize rule in hyperland config example ([ace84b5](https://github.com/coder/balatrobot/commit/ace84b59db8eb7a5051843adbad0f9dbd86fb32e))
+* update deps and style of the docs ([784b780](https://github.com/coder/balatrobot/commit/784b780ce6c51cbd57e6694b624a75add9aa7df0))
+
 ## [1.2.2](https://github.com/coder/balatrobot/compare/v1.2.1...v1.2.2) (2026-01-04)
 
 
