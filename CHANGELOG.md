@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.3.1](https://github.com/coder/balatrobot/compare/v1.3.0...v1.3.1) (2026-01-11)
+
+
+### Bug Fixes
+
+* **lua.endpoints:** fix `pack` with mega packs with double target selection ([ba3e270](https://github.com/coder/balatrobot/commit/ba3e2700bb31ec90c16cbc1316ee2dc5771dbf7e))
+
 ## [1.3.0](https://github.com/coder/balatrobot/compare/v1.2.2...v1.3.0) (2026-01-06)
 
 
