@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.3.2](https://github.com/coder/balatrobot/compare/v1.3.1...v1.3.2) (2026-01-12)
+
+
+### Bug Fixes
+
+* **lua.endpoint:** add nil checks for race condition in `next_round` endpoint ([ce08dcc](https://github.com/coder/balatrobot/commit/ce08dcc5a13b102ecd0ac56631791903487f7fea))
+* **lua.endpoints:** fix error message for invalid voucher/pack index in buy ([4af3d39](https://github.com/coder/balatrobot/commit/4af3d39c31a2575c7986c4cda81618ee5aa652fe))
+
 ## [1.3.1](https://github.com/coder/balatrobot/compare/v1.3.0...v1.3.1) (2026-01-11)
 
 
