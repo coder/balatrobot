@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.3.4](https://github.com/coder/balatrobot/compare/v1.3.3...v1.3.4) (2026-01-13)
+
+
+### Bug Fixes
+
+* **balatrobot:** add session_id to BalatroInstance ([79230dd](https://github.com/coder/balatrobot/commit/79230dd0eed2afd8cd24430a77ff0abd181c1d82))
+
 ## [1.3.3](https://github.com/coder/balatrobot/compare/v1.3.2...v1.3.3) (2026-01-12)
 
 

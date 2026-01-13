@@ -3,5 +3,5 @@
 from balatrobot.config import Config
 from balatrobot.manager import BalatroInstance
 
-__version__ = "1.3.3"
+__version__ = "1.3.4"
 __all__ = ["BalatroInstance", "Config", "__version__"]
