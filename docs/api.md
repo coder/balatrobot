@@ -701,6 +701,7 @@ The complete game state returned by most methods.
   "blinds": { ... },
   "jokers": { ... },
   "consumables": { ... },
+  "cards": { ... },
   "hand": { ... },
   "shop": { ... },
   "vouchers": { ... },
