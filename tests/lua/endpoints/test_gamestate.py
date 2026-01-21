@@ -86,3 +86,47 @@ class TestGamestateTopLevel:
         load_fixture(client, "gamestate", fixture_name)
         response = api(client, "play", {"cards": [0]})
         assert response["result"]["won"] is True
+
+
+class TestGamestateRound:
+    """Test gamestate round extraction."""
+
+    def test_round_hands_left_and_round_hands_played(
+        self, client: httpx.Client
+    ) -> None:
+        """Test round.hands_left and round.hands_played fields."""
+        fixture_name = (
+            "state-SELECTING_HAND--round.hands_played-1--round.discards_used-1"
+        )
+        gamestate = load_fixture(client, "gamestate", fixture_name)
+        assert gamestate["round"]["hands_left"] == 3
+        assert gamestate["round"]["hands_played"] == 1
+
+    def test_round_discards_left_and_round_discards_used(
+        self, client: httpx.Client
+    ) -> None:
+        """Test round.discards_left and round.discards_used fields."""
+        fixture_name = (
+            "state-SELECTING_HAND--round.hands_played-1--round.discards_used-1"
+        )
+        gamestate = load_fixture(client, "gamestate", fixture_name)
+        assert gamestate["round"]["discards_left"] == 3
+        assert gamestate["round"]["discards_used"] == 1
+
+    def test_round_chips_extraction(self, client: httpx.Client) -> None:
+        """Test round.chips field."""
+        fixture_name = (
+            "state-SELECTING_HAND--round.hands_played-1--round.discards_used-1"
+        )
+        gamestate = load_fixture(client, "gamestate", fixture_name)
+        assert gamestate["round"]["chips"] == 16
+        response = api(client, "play", {"cards": [0]})
+        assert response["result"]["round"]["chips"] == 31
+
+    def test_round_reroll_cost_extraction(self, client: httpx.Client) -> None:
+        """Test round.reroll_cost field."""
+        fixture_name = "state-SHOP"
+        gamestate = load_fixture(client, "gamestate", fixture_name)
+        assert gamestate["round"]["reroll_cost"] == 5
+        response = api(client, "reroll", {})
+        assert response["result"]["round"]["reroll_cost"] == 6
