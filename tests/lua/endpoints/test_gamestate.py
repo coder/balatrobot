@@ -130,3 +130,87 @@ class TestGamestateRound:
         assert gamestate["round"]["reroll_cost"] == 5
         response = api(client, "reroll", {})
         assert response["result"]["round"]["reroll_cost"] == 6
+
+
+class TestGamestateBlinds:
+    """Test gamestate blind extraction."""
+
+    def test_blinds_structure_extraction(self, client: httpx.Client) -> None:
+        """Test blind extraction structure."""
+        fixture_name = "state-BLIND_SELECT--round_num-0--deck-RED--stake-WHITE"
+        gamestate = load_fixture(client, "gamestate", fixture_name)
+        expected_blinds = {
+            "small": {
+                "type": "SMALL",
+                "name": "Small Blind",
+                "effect": "",
+                "score": 300,
+                "tag_effect": "Next base edition shop Joker is free and becomes Polychrome",
+                "tag_name": "Polychrome Tag",
+            },
+            "big": {
+                "effect": "",
+                "name": "Big Blind",
+                "score": 450,
+                "tag_effect": "After defeating the Boss Blind, gain $25",
+                "tag_name": "Investment Tag",
+                "type": "BIG",
+            },
+            "boss": {
+                "effect": "-1 Hand Size",
+                "name": "The Manacle",
+                "score": 600,
+                "tag_effect": "",
+                "tag_name": "",
+                "type": "BOSS",
+            },
+        }
+        actual_blinds = {
+            blind_key: {k: v for k, v in blind_data.items() if k != "status"}
+            for blind_key, blind_data in gamestate["blinds"].items()
+        }
+        assert actual_blinds == expected_blinds
+
+    def test_blinds_zero_skip_extraction(self, client: httpx.Client) -> None:
+        """Test initial blind extraction."""
+        fixture_name = "state-BLIND_SELECT--round_num-0--deck-RED--stake-WHITE"
+        gamestate = load_fixture(client, "gamestate", fixture_name)
+        assert gamestate["blinds"]["small"]["status"] == "SELECT"
+        assert gamestate["blinds"]["big"]["status"] == "UPCOMING"
+        assert gamestate["blinds"]["boss"]["status"] == "UPCOMING"
+
+    def test_blinds_one_skip_extraction(self, client: httpx.Client) -> None:
+        """Test blind extraction after one skip."""
+        fixture_name = "state-BLIND_SELECT--round_num-0--deck-RED--stake-WHITE"
+        load_fixture(client, "gamestate", fixture_name)
+        gamestate = api(client, "skip", {})["result"]
+        assert gamestate["blinds"]["small"]["status"] == "SKIPPED"
+        assert gamestate["blinds"]["big"]["status"] == "SELECT"
+        assert gamestate["blinds"]["boss"]["status"] == "UPCOMING"
+
+    def test_blinds_two_skip_extraction(self, client: httpx.Client) -> None:
+        """Test blind extraction after two skip."""
+        fixture_name = "state-BLIND_SELECT--round_num-0--deck-RED--stake-WHITE"
+        load_fixture(client, "gamestate", fixture_name)
+        api(client, "skip", {})
+        gamestate = api(client, "skip", {})["result"]
+        assert gamestate["blinds"]["small"]["status"] == "SKIPPED"
+        assert gamestate["blinds"]["big"]["status"] == "SKIPPED"
+        assert gamestate["blinds"]["boss"]["status"] == "SELECT"
+
+    def test_blinds_progession_extraction(self, client: httpx.Client) -> None:
+        """Test blind extraction after one completed blind."""
+        fixture_name = (
+            "state-SELECTING_HAND--round.hands_played-1--round.discards_used-1"
+        )
+        gamestate = load_fixture(client, "gamestate", fixture_name)
+        assert gamestate["blinds"]["small"]["status"] == "CURRENT"
+        assert gamestate["blinds"]["big"]["status"] == "UPCOMING"
+        assert gamestate["blinds"]["boss"]["status"] == "UPCOMING"
+        api(client, "set", {"chips": 1000})
+        api(client, "play", {"cards": [0]})
+        api(client, "cash_out", {})
+        gamestate = api(client, "next_round", {})["result"]
+        assert gamestate["blinds"]["small"]["status"] == "DEFEATED"
+        assert gamestate["blinds"]["big"]["status"] == "SELECT"
+        assert gamestate["blinds"]["boss"]["status"] == "UPCOMING"
