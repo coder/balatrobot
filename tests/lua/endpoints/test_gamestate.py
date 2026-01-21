@@ -214,3 +214,199 @@ class TestGamestateBlinds:
         assert gamestate["blinds"]["small"]["status"] == "DEFEATED"
         assert gamestate["blinds"]["big"]["status"] == "SELECT"
         assert gamestate["blinds"]["boss"]["status"] == "UPCOMING"
+
+
+class TestGamestateAreas:
+    """Test gamestate areas extraction."""
+
+    # Jokers ###################################################################
+
+    def test_jokers_area_empty_initial(self, client: httpx.Client) -> None:
+        """Test jokers area is empty at start of run."""
+        fixture_name = "state-BLIND_SELECT--round_num-0--deck-RED--stake-WHITE"
+        gamestate = load_fixture(client, "gamestate", fixture_name)
+        assert gamestate["jokers"]["count"] == 0
+        assert gamestate["jokers"]["cards"] == []
+
+    def test_jokers_area_count_after_add(self, client: httpx.Client) -> None:
+        """Test jokers area count after adding a joker."""
+        fixture_name = (
+            "state-SELECTING_HAND--round.hands_played-1--round.discards_used-1"
+        )
+        load_fixture(client, "gamestate", fixture_name)
+        response = api(client, "add", {"key": "j_joker"})
+        assert response["result"]["jokers"]["count"] == 1
+        assert len(response["result"]["jokers"]["cards"]) == 1
+
+    def test_jokers_area_limit(self, client: httpx.Client) -> None:
+        """Test jokers area limit."""
+        fixture_name = "state-BLIND_SELECT--round_num-0--deck-RED--stake-WHITE"
+        gamestate = load_fixture(client, "gamestate", fixture_name)
+        assert gamestate["jokers"]["limit"] == 5
+
+    # Consumables ##############################################################
+
+    def test_consumables_area_empty_initial(self, client: httpx.Client) -> None:
+        """Test consumables area is empty at start of run."""
+        fixture_name = "state-BLIND_SELECT--round_num-0--deck-RED--stake-WHITE"
+        gamestate = load_fixture(client, "gamestate", fixture_name)
+        assert gamestate["consumables"]["count"] == 0
+        assert gamestate["consumables"]["cards"] == []
+
+    def test_consumables_area_count_after_add(self, client: httpx.Client) -> None:
+        """Test consumables area count after adding a consumable."""
+        fixture_name = (
+            "state-SELECTING_HAND--round.hands_played-1--round.discards_used-1"
+        )
+        load_fixture(client, "gamestate", fixture_name)
+        response = api(client, "add", {"key": "c_fool"})
+        assert response["result"]["consumables"]["count"] == 1
+        assert len(response["result"]["consumables"]["cards"]) == 1
+
+    def test_consumables_area_limit(self, client: httpx.Client) -> None:
+        """Test consumables area limit."""
+        fixture_name = "state-BLIND_SELECT--round_num-0--deck-RED--stake-WHITE"
+        gamestate = load_fixture(client, "gamestate", fixture_name)
+        assert gamestate["consumables"]["limit"] == 2
+
+    # Cards ####################################################################
+
+    def test_cards_area_initial_count(self, client: httpx.Client) -> None:
+        """Test cards area has full deck at blind selection."""
+        fixture_name = "state-BLIND_SELECT--round_num-0--deck-RED--stake-WHITE"
+        gamestate = load_fixture(client, "gamestate", fixture_name)
+        assert gamestate["cards"]["count"] == 52
+
+    def test_cards_area_count_after_draw(self, client: httpx.Client) -> None:
+        """Test cards area count after drawing cards."""
+        fixture_name = "state-BLIND_SELECT--round_num-0--deck-RED--stake-WHITE"
+        load_fixture(client, "gamestate", fixture_name)
+        response = api(client, "select", {})
+        assert response["result"]["cards"]["count"] == 52 - 8  # 8 cards drawn
+
+    def test_cards_area_limit(self, client: httpx.Client) -> None:
+        """Test cards area limit."""
+        fixture_name = "state-BLIND_SELECT--round_num-0--deck-RED--stake-WHITE"
+        gamestate = load_fixture(client, "gamestate", fixture_name)
+        assert gamestate["cards"]["limit"] == 52
+
+    # Hand #####################################################################
+
+    def test_hand_area_count_in_BLIND_SELECT(self, client: httpx.Client) -> None:
+        """Test hand area is absent in BLIND_SELECT state."""
+        fixture_name = "state-BLIND_SELECT--round_num-0--deck-RED--stake-WHITE"
+        gamestate = load_fixture(client, "gamestate", fixture_name)
+        assert gamestate["hand"]["count"] == 0
+
+    def test_hand_area_count_in_SELECTING_HAND(self, client: httpx.Client) -> None:
+        """Test hand area count."""
+        fixture_name = (
+            "state-SELECTING_HAND--round.hands_played-1--round.discards_used-1"
+        )
+        gamestate = load_fixture(client, "gamestate", fixture_name)
+        assert gamestate["hand"]["count"] == 8
+
+    def test_hand_area_limit(self, client: httpx.Client) -> None:
+        """Test hand area limit."""
+        fixture_name = (
+            "state-SELECTING_HAND--round.hands_played-1--round.discards_used-1"
+        )
+        gamestate = load_fixture(client, "gamestate", fixture_name)
+        assert gamestate["hand"]["limit"] == 8
+
+    def test_hand_area_highlighted_limit(self, client: httpx.Client) -> None:
+        """Test hand area highlighted limit."""
+        fixture_name = (
+            "state-SELECTING_HAND--round.hands_played-1--round.discards_used-1"
+        )
+        gamestate = load_fixture(client, "gamestate", fixture_name)
+        assert gamestate["hand"]["highlighted_limit"] == 5
+
+    # Pack #####################################################################
+
+    def test_pack_area_absent_in_SHOP(self, client: httpx.Client) -> None:
+        """Test pack area is absent in non SMODS_BOOSTER_OPENED state (e.g. SHOP)"""
+        fixture_name = "state-SHOP"
+        gamestate = load_fixture(client, "gamestate", fixture_name)
+        assert "pack" not in gamestate
+
+    def test_pack_area_limit(self, client: httpx.Client) -> None:
+        """Test pack area is absent in non SMODS_BOOSTER_OPENED state (e.g. SHOP)"""
+        fixture_name = "state-SMODS_BOOSTER_OPENED"
+        gamestate = load_fixture(client, "gamestate", fixture_name)
+        assert gamestate["pack"]["limit"] > 0
+
+    def test_pack_area_count(self, client: httpx.Client) -> None:
+        """Test pack area count."""
+        fixture_name = "state-SMODS_BOOSTER_OPENED"
+        gamestate = load_fixture(client, "gamestate", fixture_name)
+        assert gamestate["pack"]["count"] > 0
+        assert gamestate["pack"]["count"] == gamestate["pack"]["limit"]
+
+    def test_pack_area_highlighted_limit(self, client: httpx.Client) -> None:
+        """Test pack area highlighted limit."""
+        fixture_name = "state-SMODS_BOOSTER_OPENED"
+        gamestate = load_fixture(client, "gamestate", fixture_name)
+        assert gamestate["pack"]["highlighted_limit"] == 1
+
+    # Shop, Vouchers, Packs ####################################################
+
+    def test_shop_area_absent_in_BLIND_SELECT(self, client: httpx.Client) -> None:
+        """Test shop area is absent in BLIND_SELECT state."""
+        fixture_name = "state-BLIND_SELECT--round_num-0--deck-RED--stake-WHITE"
+        gamestate = load_fixture(client, "gamestate", fixture_name)
+        assert "shop" not in gamestate
+
+    def test_shop_area_count(self, client: httpx.Client) -> None:
+        """Test shop area count."""
+        fixture_name = "state-SHOP"
+        gamestate = load_fixture(client, "gamestate", fixture_name)
+        assert gamestate["shop"]["count"] == 2
+        reponse = api(client, "buy", {"card": 0})
+        assert reponse["result"]["shop"]["count"] == 1
+
+    def test_shop_area_limit(self, client: httpx.Client) -> None:
+        """Test shop area limit."""
+        fixture_name = "state-SHOP"
+        gamestate = load_fixture(client, "gamestate", fixture_name)
+        assert gamestate["shop"]["limit"] == 2
+
+    def test_vouchers_area_absent_in_BLIND_SELECT(self, client: httpx.Client) -> None:
+        """Test vouchers area is absent in BLIND_SELECT state."""
+        fixture_name = "state-BLIND_SELECT--round_num-0--deck-RED--stake-WHITE"
+        gamestate = load_fixture(client, "gamestate", fixture_name)
+        assert "vouchers" not in gamestate
+
+    def test_vouchers_area_count(self, client: httpx.Client) -> None:
+        """Test vouchers area count."""
+        fixture_name = "state-SHOP"
+        gamestate = load_fixture(client, "gamestate", fixture_name)
+        assert gamestate["vouchers"]["count"] == 1
+        reponse = api(client, "buy", {"voucher": 0})
+        assert reponse["result"]["vouchers"]["count"] == 0
+
+    def test_vouchers_area_limit(self, client: httpx.Client) -> None:
+        """Test vouchers area limit."""
+        fixture_name = "state-SHOP"
+        gamestate = load_fixture(client, "gamestate", fixture_name)
+        assert gamestate["vouchers"]["limit"] == 1
+
+    def test_packs_area_absent_in_BLIND_SELECT(self, client: httpx.Client) -> None:
+        """Test packs area is absent in BLIND_SELECT state."""
+        fixture_name = "state-BLIND_SELECT--round_num-0--deck-RED--stake-WHITE"
+        gamestate = load_fixture(client, "gamestate", fixture_name)
+        assert "packs" not in gamestate
+
+    def test_packs_area_count(self, client: httpx.Client) -> None:
+        """Test packs area count."""
+        fixture_name = "state-SHOP"
+        gamestate = load_fixture(client, "gamestate", fixture_name)
+        assert gamestate["packs"]["count"] == 2
+        reponse = api(client, "buy", {"pack": 0})
+        assert reponse["result"]["packs"]["count"] == 1
+
+    def test_packs_area_limit(self, client: httpx.Client) -> None:
+        """Test packs area limit."""
+        fixture_name = "state-SHOP"
+        gamestate = load_fixture(client, "gamestate", fixture_name)
+        assert gamestate["packs"]["limit"] == 2
