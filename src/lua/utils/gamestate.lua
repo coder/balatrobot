@@ -746,8 +746,7 @@ function gamestate.get_gamestate()
     state_data.cards = extract_area(G.deck)
   end
 
-  -- Phase-specific areas
-  -- Hand (available during playing phase)
+  -- Hand (count is 0 during not playing phase)
   if G.hand then
     state_data.hand = extract_area(G.hand)
   end
