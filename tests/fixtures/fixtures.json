@@ -77,6 +77,76 @@
           "chips": 10000000
         }
       }
+    ],
+    "state-SELECTING_HAND--round.hands_played-1--round.discards_used-1": [
+      {
+        "method": "menu",
+        "params": {}
+      },
+      {
+        "method": "start",
+        "params": {
+          "deck": "RED",
+          "stake": "WHITE",
+          "seed": "TEST123"
+        }
+      },
+      {
+        "method": "select",
+        "params": {}
+      },
+      {
+        "method": "play",
+        "params": {
+          "cards": [
+            0
+          ]
+        }
+      },
+      {
+        "method": "discard",
+        "params": {
+          "cards": [
+            0
+          ]
+        }
+      }
+    ],
+    "state-SHOP": [
+      {
+        "method": "menu",
+        "params": {}
+      },
+      {
+        "method": "start",
+        "params": {
+          "deck": "RED",
+          "stake": "WHITE",
+          "seed": "TEST123"
+        }
+      },
+      {
+        "method": "select",
+        "params": {}
+      },
+      {
+        "method": "set",
+        "params": {
+          "chips": 1000
+        }
+      },
+      {
+        "method": "play",
+        "params": {
+          "cards": [
+            0
+          ]
+        }
+      },
+      {
+        "method": "cash_out",
+        "params": {}
+      }
     ]
   },
   "save": {
