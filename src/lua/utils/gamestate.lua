@@ -82,17 +82,49 @@ local function get_stake_name(stake_num)
 end
 
 -- ==========================================================================
--- Card UI Description (from old utils)
+-- Card UI Description
 -- ==========================================================================
 
+---Recursively removes DynaText and other Moveable objects from UI node tree
+---to prevent memory leaks from objects registering in G.I.MOVEABLE
+---@param nodes table|nil UI node tree (array or single node)
+local function cleanup_ui_nodes(nodes)
+  if not nodes then
+    return
+  end
+
+  -- Handle array of nodes (check if it's an array by looking for numeric keys)
+  if nodes[1] ~= nil or next(nodes) == nil then
+    for _, node in ipairs(nodes) do
+      cleanup_ui_nodes(node)
+    end
+    return
+  end
+
+  -- Handle single node with object (DynaText, etc.)
+  -- G.UIT.O is the object node type in Balatro's UI system
+  if nodes.n == G.UIT.O and nodes.config and nodes.config.object then
+    local obj = nodes.config.object
+    if obj and obj.remove then
+      obj:remove() -- Removes from G.I.MOVEABLE and other tracking arrays
+    end
+    nodes.config.object = nil
+  end
+
+  -- Recurse into children/nodes
+  if nodes.nodes then
+    cleanup_ui_nodes(nodes.nodes)
+  end
+end
+
 ---Gets the description text for a card by reading from its UI elements
+---Uses generate_UIBox_ability_table() directly to avoid hover() side effects
+---(sound, animation, h_popup creation)
 ---@param card table The card object
 ---@return string description The description text from UI
 local function get_card_ui_description(card)
-  -- Generate the UI structure (same as hover tooltip)
-  card:hover()
-  card:stop_hover()
-  local ui_table = card.ability_UIBox_table
+  -- Generate UI structure directly (no hover side effects)
+  local ui_table = card:generate_UIBox_ability_table()
   if not ui_table then
     return ""
   end
@@ -111,7 +143,7 @@ local function get_card_ui_description(card)
         elseif section.nodes then
           for _, node in ipairs(section.nodes) do
             if node.config and node.config.text then
-              -- hightlighted text
+              -- highlighted text
               line_texts[#line_texts + 1] = node.config.text
             end
           end
@@ -119,6 +151,14 @@ local function get_card_ui_description(card)
       end
       texts[#texts + 1] = table.concat(line_texts, "")
     end
+  end
+
+  -- Cleanup DynaText and other objects to prevent memory leak
+  -- These objects register in G.I.MOVEABLE when created
+  cleanup_ui_nodes(ui_table.main)
+  cleanup_ui_nodes(ui_table.info)
+  if ui_table.name and type(ui_table.name) == "table" then
+    cleanup_ui_nodes(ui_table.name)
   end
 
   -- Join text lines with spaces (in the game these are separated by newlines)
