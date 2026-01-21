@@ -30,6 +30,53 @@
           "seed": "TEST123"
         }
       }
+    ],
+    "state-BLIND_SELECT--deck-BLUE--stake-RED": [
+      {
+        "method": "menu",
+        "params": {}
+      },
+      {
+        "method": "start",
+        "params": {
+          "deck": "BLUE",
+          "stake": "RED",
+          "seed": "TEST123"
+        }
+      }
+    ],
+    "state-SELECTING_HAND--round_num-8--blinds.boss.status-CURRENT--round.chips-1000000": [
+      {
+        "method": "menu",
+        "params": {}
+      },
+      {
+        "method": "start",
+        "params": {
+          "deck": "RED",
+          "stake": "WHITE",
+          "seed": "TEST123"
+        }
+      },
+      {
+        "method": "skip",
+        "params": {}
+      },
+      {
+        "method": "skip",
+        "params": {}
+      },
+      {
+        "method": "select",
+        "params": {}
+      },
+      {
+        "method": "set",
+        "params": {
+          "ante": 8,
+          "chips": 10000000
+        }
+      }
     ]
   },
   "save": {
