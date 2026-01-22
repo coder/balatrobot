@@ -190,6 +190,24 @@
           "pack": 1
         }
       }
+    ],
+    "state-SELECTING_HAND": [
+      {
+        "method": "menu",
+        "params": {}
+      },
+      {
+        "method": "start",
+        "params": {
+          "deck": "RED",
+          "stake": "WHITE",
+          "seed": "TEST123"
+        }
+      },
+      {
+        "method": "select",
+        "params": {}
+      }
     ]
   },
   "save": {
