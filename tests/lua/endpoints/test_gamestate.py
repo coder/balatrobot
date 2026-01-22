@@ -200,9 +200,7 @@ class TestGamestateBlinds:
 
     def test_blinds_progession_extraction(self, client: httpx.Client) -> None:
         """Test blind extraction after one completed blind."""
-        fixture_name = (
-            "state-SELECTING_HAND--round.hands_played-1--round.discards_used-1"
-        )
+        fixture_name = "state-SELECTING_HAND"
         gamestate = load_fixture(client, "gamestate", fixture_name)
         assert gamestate["blinds"]["small"]["status"] == "CURRENT"
         assert gamestate["blinds"]["big"]["status"] == "UPCOMING"
@@ -230,9 +228,7 @@ class TestGamestateAreas:
 
     def test_jokers_area_count_after_add(self, client: httpx.Client) -> None:
         """Test jokers area count after adding a joker."""
-        fixture_name = (
-            "state-SELECTING_HAND--round.hands_played-1--round.discards_used-1"
-        )
+        fixture_name = "state-SELECTING_HAND"
         load_fixture(client, "gamestate", fixture_name)
         response = api(client, "add", {"key": "j_joker"})
         assert response["result"]["jokers"]["count"] == 1
@@ -255,9 +251,7 @@ class TestGamestateAreas:
 
     def test_consumables_area_count_after_add(self, client: httpx.Client) -> None:
         """Test consumables area count after adding a consumable."""
-        fixture_name = (
-            "state-SELECTING_HAND--round.hands_played-1--round.discards_used-1"
-        )
+        fixture_name = "state-SELECTING_HAND"
         load_fixture(client, "gamestate", fixture_name)
         response = api(client, "add", {"key": "c_fool"})
         assert response["result"]["consumables"]["count"] == 1
@@ -300,25 +294,19 @@ class TestGamestateAreas:
 
     def test_hand_area_count_in_SELECTING_HAND(self, client: httpx.Client) -> None:
         """Test hand area count."""
-        fixture_name = (
-            "state-SELECTING_HAND--round.hands_played-1--round.discards_used-1"
-        )
+        fixture_name = "state-SELECTING_HAND"
         gamestate = load_fixture(client, "gamestate", fixture_name)
         assert gamestate["hand"]["count"] == 8
 
     def test_hand_area_limit(self, client: httpx.Client) -> None:
         """Test hand area limit."""
-        fixture_name = (
-            "state-SELECTING_HAND--round.hands_played-1--round.discards_used-1"
-        )
+        fixture_name = "state-SELECTING_HAND"
         gamestate = load_fixture(client, "gamestate", fixture_name)
         assert gamestate["hand"]["limit"] == 8
 
     def test_hand_area_highlighted_limit(self, client: httpx.Client) -> None:
         """Test hand area highlighted limit."""
-        fixture_name = (
-            "state-SELECTING_HAND--round.hands_played-1--round.discards_used-1"
-        )
+        fixture_name = "state-SELECTING_HAND"
         gamestate = load_fixture(client, "gamestate", fixture_name)
         assert gamestate["hand"]["highlighted_limit"] == 5
 
