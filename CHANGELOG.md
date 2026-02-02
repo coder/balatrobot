@@ -1,5 +1,35 @@
 # Changelog
 
+## [1.4.0](https://github.com/coder/balatrobot/compare/v1.3.4...v1.4.0) (2026-02-02)
+
+
+### Features
+
+* add fps cap setting ([8fefa49](https://github.com/coder/balatrobot/commit/8fefa49f5c34dafa1eadd551ccaef534606d6bd2))
+* add gamespeed, animation_fps, no_reduced_motion settings ([f6c1f81](https://github.com/coder/balatrobot/commit/f6c1f8176313e875fadaa6b476f6f23b680299d9))
+* add pixel art smoothing setting ([b5eff97](https://github.com/coder/balatrobot/commit/b5eff97ebad67cd189db3cf3f5203f461ad7f952))
+* **cli:** add integration tests for new Typer CLI ([dd18bb7](https://github.com/coder/balatrobot/commit/dd18bb7bd3b193ef66adb6a344c7cf3662cf749d))
+
+
+### Bug Fixes
+
+* **balatrobot.cli:** more strict error handling using httpx ([05b5971](https://github.com/coder/balatrobot/commit/05b5971af3f067bdb64c619a406bab6ba9e04d5a))
+* **gamestate:** try to fix memory leaks in UI nodes - again ([42ec1f3](https://github.com/coder/balatrobot/commit/42ec1f3f56aea2f1f3d34b865ab7e68986e9fd4f))
+* **lua.utils:** avoid to use hover to generate UI description ([11fc9f5](https://github.com/coder/balatrobot/commit/11fc9f54dfae9682233d7e2b135f1443f0dcc56f))
+* **make:** correct worker count message for tests/cli ([6e5fdd4](https://github.com/coder/balatrobot/commit/6e5fdd422e9f93a15df5409baa4ed75e1e91e7bb))
+
+
+### Performance Improvements
+
+* **make:** change XDIST_WORKERS to 2 for tests/cli ([27240c8](https://github.com/coder/balatrobot/commit/27240c87875e01c1f2ec89553a80b75d37347191))
+
+
+### Documentation
+
+* **api:** Adding missing cards to GameState schema ([6c4f192](https://github.com/coder/balatrobot/commit/6c4f1921a45ca805e91ac0ffa4578d0bbc5ec9f5))
+* **cli:** add new cli commands - serve and api ([b8355af](https://github.com/coder/balatrobot/commit/b8355af0bbf9c15aaf9cc5b7eb0b73b395dd49e7))
+* remove the breaking changes warning ([b92afe3](https://github.com/coder/balatrobot/commit/b92afe3ecfb0416d88e1db911619b91665a28103))
+
 ## [1.3.4](https://github.com/coder/balatrobot/compare/v1.3.3...v1.3.4) (2026-01-13)
 
 
