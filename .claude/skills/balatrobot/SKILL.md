@@ -129,36 +129,36 @@ The log filename matches the port: `logs/<session>/<port>.log`.
 
 Only do this when explicitly asked for a screenshot.
 
-1) Start the server with the screenshot profile:
+1. Start the server with the screenshot profile:
 
-```bash
-balatrobot serve --port "$PORT" --render-on-api --fast --debug
-```
+    ```bash
+    balatrobot serve --port "$PORT" --render-on-api --fast --debug
+    ```
 
-2) Create the artifacts directory under the newest session:
+2. Create the artifacts directory under the newest session:
 
-```bash
-SESSION="$(ls -1 logs | sort | tail -n 1)"
-mkdir -p "logs/$SESSION/artifacts"
-```
+    ```bash
+    SESSION="$(ls -1 logs | sort | tail -n 1)"
+    mkdir -p "logs/$SESSION/artifacts"
+    ```
 
-3) Call the screenshot endpoint with an absolute path inside that folder:
+3. Call the screenshot endpoint with an absolute path inside that folder:
 
-```bash
-balatrobot api screenshot "{\"path\":\"$(pwd)/logs/$SESSION/artifacts/screenshot.png\"}" --port "$PORT"
-```
+    ```bash
+    balatrobot api screenshot "{\"path\":\"$(pwd)/logs/$SESSION/artifacts/screenshot.png\"}" --port "$PORT"
+    ```
 
 ## Debug workflow (tight loop)
 
-1) Reproduce with the smallest possible sequence of `balatrobot api ...` calls.
-2) Capture:
-   - the exact `balatrobot serve ...` command,
-   - host/port,
-   - the session folder name,
-   - relevant excerpts from `logs/<session>/<port>.log`,
-   - the JSON outputs (stdout) and errors (stderr) from `balatrobot api ...`.
-3) Read the most relevant code before changing anything.
-4) If needed, add minimal logging close to the suspected behavior, then re-run.
+1. Reproduce with the smallest possible sequence of `balatrobot api ...` calls.
+2. Capture:
+    - the exact `balatrobot serve ...` command,
+    - host/port,
+    - the session folder name,
+    - relevant excerpts from `logs/<session>/<port>.log`,
+    - the JSON outputs (stdout) and errors (stderr) from `balatrobot api ...`.
+3. Read the most relevant code before changing anything.
+4. If needed, add minimal logging close to the suspected behavior, then re-run.
 
 ## Where to look in the repo
 
