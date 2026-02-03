@@ -1,6 +1,7 @@
 ---
 name: balatrobot
 description: Run and debug BalatroBot locally. Use when you need to start Balatro with the BalatroBot Lua mod, manually test or reproduce issues via the JSON-RPC HTTP API, inspect the newest session logs under logs/, and capture screenshots into logs/<session>/artifacts/ using only the balatrobot CLI (no curl, no uvx).
+allowed-tools: Bash(balatrobot:*) Bash(mkdir:*) Bash(ls:*) Bash(tail:*) Bash(PORT=:*) Bash(echo:*) Bash(jq:*) Bash(sleep:*) Read Grep
 disable-model-invocation: true
 ---
 
@@ -68,6 +69,34 @@ balatrobot api select --port "$PORT"
 balatrobot api play '{"cards":[0,1,2,3,4]}' --port "$PORT"
 ```
 
+### Filter responses with `jq` (optional)
+
+The `balatrobot api ...` CLI prints the JSON-RPC `result` object to stdout on success (see `docs/api.md`), so `jq` filters target top-level fields like `.state` (not `.result.state`).
+
+```bash
+# Print the current state as a raw string (MENU / BLIND_SELECT / SELECTING_HAND / ...)
+balatrobot api gamestate --port "$PORT" | jq -r '.state'
+
+# Quick summary (useful for bug reports)
+balatrobot api gamestate --port "$PORT" | jq '{state, round_num, ante_num, money, deck, stake, won}'
+
+# Round counters (hands/discards/chips)
+balatrobot api gamestate --port "$PORT" | jq '.round | {hands_left, discards_left, chips, reroll_cost}'
+
+# Cards currently in hand (ids + labels)
+balatrobot api gamestate --port "$PORT" | jq '.hand.cards | map({id, key, label})'
+
+# Joker labels (one per line)
+balatrobot api gamestate --port "$PORT" | jq -r '.jokers.cards[].label'
+```
+
+On failure, `balatrobot api ...` prints a human-readable error to stderr and exits non-zero. To extract fields from that error output, capture stderr and use `jq` raw mode:
+
+```bash
+balatrobot api play '{"cards":[999]}' --port "$PORT" 2>&1 >/dev/null \
+  | jq -R 'capture("^Error: (?<name>.*?) - (?<message>.*)$")'
+```
+
 Always pass the same `--port` to both `serve` and `api`.
 
 ## Logs and sessions
@@ -127,7 +156,7 @@ balatrobot api screenshot "{\"path\":\"$(pwd)/logs/$SESSION/artifacts/screenshot
    - host/port,
    - the session folder name,
    - relevant excerpts from `logs/<session>/<port>.log`,
-   - the JSON outputs/errors from `balatrobot api ...`.
+   - the JSON outputs (stdout) and errors (stderr) from `balatrobot api ...`.
 3) Read the most relevant code before changing anything.
 4) If needed, add minimal logging close to the suspected behavior, then re-run.
 
