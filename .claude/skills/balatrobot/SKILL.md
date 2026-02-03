@@ -113,10 +113,10 @@ SESSION="$(ls -1 logs | sort | tail -n 1)"
 mkdir -p "logs/$SESSION/artifacts"
 ```
 
-3) Call the screenshot endpoint with a path inside that folder:
+3) Call the screenshot endpoint with an absolute path inside that folder:
 
 ```bash
-balatrobot api screenshot "{\"path\":\"logs/$SESSION/artifacts/screenshot.png\"}" --port "$PORT"
+balatrobot api screenshot "{\"path\":\"$(pwd)/logs/$SESSION/artifacts/screenshot.png\"}" --port "$PORT"
 ```
 
 ## Debug workflow (tight loop)
