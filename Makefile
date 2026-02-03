@@ -45,7 +45,7 @@ format: ## Run formatters (ruff, mdformat, stylua)
 	ruff check --select I --fix .
 	ruff format .
 	@$(PRINT) "$(YELLOW)Running mdformat formatter...$(RESET)"
-	mdformat ./docs README.md CLAUDE.md
+	mdformat ./docs README.md CLAUDE.md .claude/skills/balatrobot/SKILL.md
 	@if command -v stylua >/dev/null 2>&1; then \
 		$(PRINT) "$(YELLOW)Running stylua formatter...$(RESET)"; \
 		stylua src/lua; \
