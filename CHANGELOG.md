@@ -1,5 +1,27 @@
 # Changelog
 
+## [1.4.1](https://github.com/coder/balatrobot/compare/v1.4.0...v1.4.1) (2026-02-06)
+
+
+### Bug Fixes
+
+* **make:** add SKILL.md to mdformat ([c171122](https://github.com/coder/balatrobot/commit/c1711220acc969feb03abac159e59d409af2cab0))
+
+
+### Documentation
+
+* **claude:** add allowed-tools and jq examples to balatrobot SKILL.md ([a334125](https://github.com/coder/balatrobot/commit/a33412592ec5beab4f084761a868f6bbb26ae39d))
+* **claude:** add balatrobot SKILL ([b44dede](https://github.com/coder/balatrobot/commit/b44dedeea096a1fe9b832347c9f9480b1d5b4b5e))
+* **claude:** use absolute paths in screenshot endpoint in SKILL.md ([1d961b7](https://github.com/coder/balatrobot/commit/1d961b7e658422e5becc9d3a6511ccaa02f9f183))
+* **example-bot:** add missing link to polina4096/Ballad community bot ([0f7910a](https://github.com/coder/balatrobot/commit/0f7910a78695535d637d706956ebca76ecefe7bf))
+* **example-bot:** add polina4096/Ballad to community bot ([f7c421f](https://github.com/coder/balatrobot/commit/f7c421f1bbcaa07960468551e984dab78a6672ce)), closes [#153](https://github.com/coder/balatrobot/issues/153)
+* improve docs over all ([5ed0eb3](https://github.com/coder/balatrobot/commit/5ed0eb32ba3a8c9ba770cfbca5a4c88d38285b37)), closes [#152](https://github.com/coder/balatrobot/issues/152)
+* **index:** add links to balatrollm and balatrobench ([7662f98](https://github.com/coder/balatrobot/commit/7662f9818eff1b6a1f9abab4d486c317e0cd5a7f))
+* **index:** equal size for all images and add underline ([c84091a](https://github.com/coder/balatrobot/commit/c84091ac98cacbb6fe53eaeb1390f9412909cc8b))
+* **mkdocs:** set accent color to shades of orange ([89b43dc](https://github.com/coder/balatrobot/commit/89b43dc947b516380b79e875073fd17da6f9d710))
+* **readme:** move aknowledgments to bottom ([7e777d4](https://github.com/coder/balatrobot/commit/7e777d40663b3194c4ebe8edac072c63b056e00b))
+* **readme:** remove coming soon from release project ([aa15fd5](https://github.com/coder/balatrobot/commit/aa15fd590ad40d00ef4501f40a76716d9fff78b8))
+
 ## [1.4.0](https://github.com/coder/balatrobot/compare/v1.3.4...v1.4.0) (2026-02-02)
 
 
