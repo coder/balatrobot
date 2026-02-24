@@ -46,7 +46,7 @@ return {
 
     if G.GAME.current_round.discards_left <= 0 then
       send_response({
-        message = "No discards left",
+        message = "No discards left. Play cards using `play` instead.",
         name = BB_ERROR_NAMES.BAD_REQUEST,
       })
       return
@@ -54,7 +54,7 @@ return {
 
     if #args.cards > G.hand.config.highlighted_limit then
       send_response({
-        message = "You can only discard " .. G.hand.config.highlighted_limit .. " cards",
+        message = "You can only discard " .. G.hand.config.highlighted_limit .. " cards. Provide fewer card indices.",
         name = BB_ERROR_NAMES.BAD_REQUEST,
       })
       return

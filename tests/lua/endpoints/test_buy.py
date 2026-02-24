@@ -46,7 +46,7 @@ class TestBuyEndpoint:
         assert_error_response(
             api(client, "buy", {"card": 0}),
             "BAD_REQUEST",
-            "No jokers/consumables/cards in the shop. Reroll to restock the shop",
+            "No jokers/consumables/cards in the shop. Use `reroll` to restock the shop.",
         )
 
     def test_buy_invalid_card_index(self, client: httpx.Client) -> None:
@@ -110,7 +110,7 @@ class TestBuyEndpoint:
         assert_error_response(
             api(client, "buy", {"card": 0}),
             "BAD_REQUEST",
-            "Cannot purchase joker card, joker slots are full. Current: 5, Limit: 5",
+            "Cannot purchase joker card, joker slots are full. Current: 5, Limit: 5. Sell a joker using `sell` to free a slot.",
         )
 
     def test_buy_consumable_slots_full(self, client: httpx.Client) -> None:
@@ -126,7 +126,7 @@ class TestBuyEndpoint:
         assert_error_response(
             api(client, "buy", {"card": 1}),
             "BAD_REQUEST",
-            "Cannot purchase consumable card, consumable slots are full. Current: 2, Limit: 2",
+            "Cannot purchase consumable card, consumable slots are full. Current: 2, Limit: 2. Use `use` to activate a consumable or `sell` to remove one.",
         )
 
     def test_buy_vouchers_slot_empty(self, client: httpx.Client) -> None:
@@ -137,7 +137,7 @@ class TestBuyEndpoint:
         assert_error_response(
             api(client, "buy", {"voucher": 0}),
             "BAD_REQUEST",
-            "No vouchers to redeem. Defeat boss blind to restock",
+            "No vouchers to redeem. Defeat boss blind to restock.",
         )
 
     def test_buy_packs_slot_empty(self, client: httpx.Client) -> None:
@@ -148,7 +148,7 @@ class TestBuyEndpoint:
         assert_error_response(
             api(client, "buy", {"pack": 0}),
             "BAD_REQUEST",
-            "No packs to open",
+            "No packs to open. Use `next_round` to advance to the next blind and restock the shop.",
         )
 
     def test_buy_joker_success(self, client: httpx.Client) -> None:

@@ -86,11 +86,11 @@ return {
     if #area.cards == 0 then
       local msg
       if args.card then
-        msg = "No jokers/consumables/cards in the shop. Reroll to restock the shop"
+        msg = "No jokers/consumables/cards in the shop. Use `reroll` to restock the shop."
       elseif args.voucher then
-        msg = "No vouchers to redeem. Defeat boss blind to restock"
+        msg = "No vouchers to redeem. Defeat boss blind to restock."
       elseif args.pack then
-        msg = "No packs to open"
+        msg = "No packs to open. Use `next_round` to advance to the next blind and restock the shop."
       end
       send_response({
         message = msg,
@@ -136,7 +136,8 @@ return {
           message = "Cannot purchase joker card, joker slots are full. Current: "
             .. gamestate.jokers.count
             .. ", Limit: "
-            .. gamestate.jokers.limit,
+            .. gamestate.jokers.limit
+            .. ". Sell a joker using `sell` to free a slot.",
           name = BB_ERROR_NAMES.BAD_REQUEST,
         })
         return
@@ -150,7 +151,8 @@ return {
           message = "Cannot purchase consumable card, consumable slots are full. Current: "
             .. gamestate.consumables.count
             .. ", Limit: "
-            .. gamestate.consumables.limit,
+            .. gamestate.consumables.limit
+            .. ". Use `use` to activate a consumable or `sell` to remove one.",
           name = BB_ERROR_NAMES.BAD_REQUEST,
         })
         return

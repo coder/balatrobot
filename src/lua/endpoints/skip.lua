@@ -36,7 +36,7 @@ return {
     if blind.type == "BOSS" then
       sendDebugMessage("skip() cannot skip Boss blind: " .. current_blind, "BB.ENDPOINTS")
       send_response({
-        message = "Cannot skip Boss blind",
+        message = "Cannot skip Boss blind. Use `select` to select and play the boss blind.",
         name = BB_ERROR_NAMES.NOT_ALLOWED,
       })
       return

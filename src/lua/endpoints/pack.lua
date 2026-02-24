@@ -113,7 +113,7 @@ return {
     -- Validate pack_cards exists
     if not G.pack_cards or G.pack_cards.REMOVED then
       send_response({
-        message = "No pack is currently open",
+        message = "No pack is currently open. Use `buy` with `pack` parameter to buy and open a pack.",
         name = BB_ERROR_NAMES.INVALID_STATE,
       })
       return
@@ -144,7 +144,8 @@ return {
             message = "Cannot select joker, joker slots are full. Current: "
               .. joker_count
               .. ", Limit: "
-              .. joker_limit,
+              .. joker_limit
+              .. ". Sell a joker using `sell` to free a slot.",
             name = BB_ERROR_NAMES.NOT_ALLOWED,
           })
           return true
@@ -160,7 +161,11 @@ return {
             local joker_count = G.jokers and G.jokers.config and G.jokers.config.card_count or 0
             if joker_count == 0 then
               send_response({
-                message = string.format("Card '%s' requires at least 1 joker. Current: %d", card_key, joker_count),
+                message = string.format(
+                  "Card '%s' requires at least 1 joker. Current: %d. Ensure you have enough jokers before selecting this card.",
+                  card_key,
+                  joker_count
+                ),
                 name = BB_ERROR_NAMES.NOT_ALLOWED,
               })
               return true
@@ -173,14 +178,14 @@ return {
             local msg
             if req.min == req.max then
               msg = string.format(
-                "Card '%s' requires exactly %d target card(s). Provided: %d",
+                "Card '%s' requires exactly %d target card(s). Provided: %d. Ensure you have the required targets before selecting.",
                 card_key,
                 req.min,
                 target_count
               )
             else
               msg = string.format(
-                "Card '%s' requires %d-%d target card(s). Provided: %d",
+                "Card '%s' requires %d-%d target card(s). Provided: %d. Ensure you have the required targets before selecting.",
                 card_key,
                 req.min,
                 req.max,
