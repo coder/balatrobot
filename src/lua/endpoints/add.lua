@@ -121,13 +121,13 @@ return {
 
   name = "add",
 
-  description = "Add a new card to the game (joker, consumable, voucher, or playing card)",
+  description = "Add a new card to the game (joker, consumable, voucher, pack, or playing card)",
 
   schema = {
     key = {
       type = "string",
       required = true,
-      description = "Card key (j_* for jokers, c_* for consumables, v_* for vouchers, SUIT_RANK for playing cards like H_A)",
+      description = "Card key (j_* for jokers, c_* for consumables, v_* for vouchers, p_* for packs, SUIT_RANK for playing cards like H_A)",
     },
     seal = {
       type = "string",
@@ -173,7 +173,7 @@ return {
 
     if not card_type then
       send_response({
-        message = "Invalid card key format. Expected: joker (j_*), consumable (c_*), voucher (v_*), or playing card (SUIT_RANK)",
+        message = "Invalid card key format. Expected: joker (j_*), consumable (c_*), voucher (v_*), pack (p_*), or playing card (SUIT_RANK)",
         name = BB_ERROR_NAMES.BAD_REQUEST,
       })
       return
@@ -378,12 +378,6 @@ return {
       if enhancement_value then
         params.enhancement = enhancement_value
       end
-    elseif card_type == "voucher" then
-      params = {
-        key = args.key,
-        area = G.shop_vouchers,
-        skip_materialize = true,
-      }
     else
       -- For jokers and consumables - just pass the key
       params = {
@@ -429,6 +423,9 @@ return {
     if card_type == "pack" then
       -- Packs use dedicated SMODS function
       success, result = pcall(SMODS.add_booster_to_shop, args.key)
+    elseif card_type == "voucher" then
+      -- Vouchers use dedicated SMODS function
+      success, result = pcall(SMODS.add_voucher_to_shop, args.key)
     else
       -- Other cards use SMODS.add_card
       success, result = pcall(SMODS.add_card, params)
