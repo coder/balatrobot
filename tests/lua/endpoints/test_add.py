@@ -155,7 +155,7 @@ class TestAddEndpointValidation:
         assert_error_response(
             api(client, "add", {"key": "x_unknown"}),
             "BAD_REQUEST",
-            "Invalid card key format. Expected: joker (j_*), consumable (c_*), voucher (v_*), or playing card (SUIT_RANK)",
+            "Invalid card key format. Expected: joker (j_*), consumable (c_*), voucher (v_*), pack (p_*), or playing card (SUIT_RANK)",
         )
 
     def test_invalid_key_known_format(self, client: httpx.Client) -> None:

@@ -148,24 +148,28 @@ class TestGamestateBlinds:
                 "name": "Small Blind",
                 "effect": "",
                 "score": 300,
-                "tag_effect": "Next base edition shop Joker is free and becomes Polychrome",
-                "tag_name": "Polychrome Tag",
+                "tag": {
+                    "key": "tag_polychrome",
+                    "name": "Polychrome Tag",
+                    "effect": "Next base edition shop Joker is free and becomes Polychrome",
+                },
             },
             "big": {
-                "effect": "",
-                "name": "Big Blind",
-                "score": 450,
-                "tag_effect": "After defeating the Boss Blind, gain $25",
-                "tag_name": "Investment Tag",
                 "type": "BIG",
+                "name": "Big Blind",
+                "effect": "",
+                "score": 450,
+                "tag": {
+                    "key": "tag_investment",
+                    "name": "Investment Tag",
+                    "effect": "After defeating the Boss Blind, gain $25",
+                },
             },
             "boss": {
-                "effect": "-1 Hand Size",
-                "name": "The Manacle",
-                "score": 600,
-                "tag_effect": "",
-                "tag_name": "",
                 "type": "BOSS",
+                "name": "The Manacle",
+                "effect": "-1 Hand Size",
+                "score": 600,
             },
         }
         actual_blinds = {
@@ -920,6 +924,62 @@ class TestGamestateUsedVouchers:
         gamestate = assert_gamestate_response(response)
         assert voucher_key in gamestate["used_vouchers"]
         assert gamestate["used_vouchers"][voucher_key] == expected_effect
+
+
+class TestGamestateTags:
+    """Test gamestate Tag structure and owned_tags extraction."""
+
+    def test_blind_tag_structure(self, client: httpx.Client) -> None:
+        """Test blind tag has key, name, effect fields."""
+        fixture_name = "state-BLIND_SELECT--round_num-0--deck-RED--stake-WHITE"
+        gamestate = load_fixture(client, "gamestate", fixture_name)
+
+        # Small blind should have a tag
+        small_tag = gamestate["blinds"]["small"]["tag"]
+        assert small_tag is not None
+        assert "key" in small_tag
+        assert "name" in small_tag
+        assert "effect" in small_tag
+        assert small_tag["key"] == "tag_polychrome"
+        assert small_tag["name"] == "Polychrome Tag"
+        assert "Polychrome" in small_tag["effect"]
+
+        # Big blind should have a tag
+        big_tag = gamestate["blinds"]["big"]["tag"]
+        assert big_tag is not None
+        assert "key" in big_tag
+        assert "name" in big_tag
+        assert "effect" in big_tag
+
+        # Boss blind should not have a tag
+        assert gamestate["blinds"]["boss"].get("tag") is None
+
+    def test_tags_empty_initially(self, client: httpx.Client) -> None:
+        """Test tags is empty/not present at start of run."""
+        fixture_name = "state-BLIND_SELECT--round_num-0--deck-RED--stake-WHITE"
+        gamestate = load_fixture(client, "gamestate", fixture_name)
+        # tags should not be present when empty
+        assert "tags" not in gamestate
+
+    def test_tags_populated_after_skip(self, client: httpx.Client) -> None:
+        """Test tags is populated after skipping a blind."""
+        fixture_name = "state-BLIND_SELECT--round_num-0--deck-RED--stake-WHITE"
+        load_fixture(client, "gamestate", fixture_name)
+
+        # Skip the small blind to get its tag
+        response = api(client, "skip", {})
+        gamestate = assert_gamestate_response(response)
+
+        # Should now have tags
+        assert "tags" in gamestate
+        assert len(gamestate["tags"]) >= 1
+
+        # Check tag structure
+        tag = gamestate["tags"][0]
+        assert "key" in tag
+        assert "name" in tag
+        assert "effect" in tag
+        assert tag["key"].startswith("tag_")
 
 
 class TestGamestateCardModifiers:
