@@ -413,27 +413,27 @@
 ---| "SKIPPED" # Previously skipped blind
 
 ---@alias Tag.Key
----| "tag_uncommon" # Uncommon Tag: Next Joker is Uncommon
----| "tag_rare" # Rare Tag: Next Joker is Rare
----| "tag_negative" # Negative Tag: Next Joker is Negative
----| "tag_foil" # Foil Tag: Next Joker is Foil
----| "tag_holo" # Holographic Tag: Next Joker is Holographic
----| "tag_polychrome" # Polychrome Tag: Next Joker is Polychrome
----| "tag_investment" # Investment Tag: Earn $25 when triggered
----| "tag_voucher" # Voucher Tag: Add a voucher to shop
----| "tag_boss" # Boss Tag: Next blind is a Boss
----| "tag_standard" # Standard Tag: Next shop has Standard Packs
----| "tag_charm" # Charm Tag: Create a Rare Joker
----| "tag_meteor" # Meteor Tag: Create a Spectral Pack
----| "tag_buffoon" # Buffoon Tag: Next shop has 4 Jokers
----| "tag_handy" # Handy Tag: Earn $1 per hand played
----| "tag_garbage" # Garbage Tag: Earn $1 per unused discard
----| "tag_ethereal" # Ethereal Tag: Create a Spectral Pack
----| "tag_coupon" # Coupon Tag: Next Joker is free
----| "tag_double" # Double Tag: Copies next Tag triggered
+---| "tag_uncommon" # Uncommon Tag: Shop has a free Uncommon Joker
+---| "tag_rare" # Rare Tag: Shop has a free Rare Joker
+---| "tag_negative" # Negative Tag: Next base edition shop Joker is free and becomes Negative
+---| "tag_foil" # Foil Tag: Next base edition shop Joker is free and becomes Foil
+---| "tag_holo" # Holographic Tag: Next base edition shop Joker is free and becomes Holographic
+---| "tag_polychrome" # Polychrome Tag: Next base edition shop Joker is free and becomes Polychrome
+---| "tag_investment" # Investment Tag: Gain $25 after defeating the next Boss Blind
+---| "tag_voucher" # Voucher Tag: Adds one Voucher to the next shop
+---| "tag_boss" # Boss Tag: Rerolls the Boss Blind
+---| "tag_standard" # Standard Tag: Gives a free Mega Standard Pack
+---| "tag_charm" # Charm Tag: Gives a free Mega Arcana Pack
+---| "tag_meteor" # Meteor Tag: Gives a free Mega Celestial Pack
+---| "tag_buffoon" # Buffoon Tag: Gives a free Mega Buffoon Pack
+---| "tag_handy" # Handy Tag: Gives $1 per played hand this run
+---| "tag_garbage" # Garbage Tag: Gives $1 per unused discard this run
+---| "tag_ethereal" # Ethereal Tag: Gives a free Spectral Pack
+---| "tag_coupon" # Coupon Tag: Initial cards and booster packs in next shop are free
+---| "tag_double" # Double Tag: Gives a copy of the next selected Tag (Double Tag excluded)
 ---| "tag_juggle" # Juggle Tag: +3 hand size next round
----| "tag_d_six" # D6 Tag: Reroll shop for free
----| "tag_top_up" # Top-up Tag: Create up to 2 Common Jokers
----| "tag_skip" # Skip Tag: Next skip gives extra money
----| "tag_orbital" # Orbital Tag: Upgrade random poker hand by 3 levels
----| "tag_economy" # Economy Tag: Earn $2 per $5 owned (max $40)
+---| "tag_d_six" # D6 Tag: Rerolls in next shop start at $0
+---| "tag_top_up" # Top-up Tag: Create up to 2 Common Jokers (Must have room)
+---| "tag_skip" # Skip Tag (aka Speed Tag): Gives $5 per skipped Blind this run
+---| "tag_orbital" # Orbital Tag: Upgrade [poker hand] by 3 levels
+---| "tag_economy" # Economy Tag: Doubles your money (Max of $40)
