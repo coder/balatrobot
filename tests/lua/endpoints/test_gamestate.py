@@ -911,9 +911,12 @@ class TestGamestateUsedVouchers:
         load_fixture(
             client,
             "gamestate",
-            "state-BLIND_SELECT--round_num-0--deck-RED--stake-WHITE",
+            "state-SHOP",
         )
-        response = api(client, "set", {"used_voucher": voucher_key})
+        response = api(client, "add", {"key": voucher_key})
+        gamestate = assert_gamestate_response(response)
+        assert gamestate["vouchers"]["cards"][1]["value"]["effect"] == expected_effect
+        response = api(client, "buy", {"voucher": 1})
         gamestate = assert_gamestate_response(response)
         assert voucher_key in gamestate["used_vouchers"]
         assert gamestate["used_vouchers"][voucher_key] == expected_effect
