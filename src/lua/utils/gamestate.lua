@@ -652,6 +652,29 @@ local function get_tag_info(tag_key)
   return result
 end
 
+---Gets all owned tags from G.GAME.tags
+---@return Tag[] tags Array of Tag objects
+local function get_owned_tags()
+  local tags = {}
+
+  if not G or not G.GAME or not G.GAME.tags then
+    return tags
+  end
+
+  for _, tag in pairs(G.GAME.tags) do
+    if tag and tag.key then
+      local tag_info = get_tag_info(tag.key)
+      table.insert(tags, {
+        key = tag.key,
+        name = tag_info.name,
+        effect = tag_info.effect,
+      })
+    end
+  end
+
+  return tags
+end
+
 ---Converts game blind status to uppercase enum
 ---@param status string Game status (e.g., "Defeated", "Current", "Select")
 ---@return string uppercase_status Uppercase status enum (e.g., "DEFEATED", "CURRENT", "SELECT")
@@ -682,8 +705,7 @@ function gamestate.get_blinds_info()
       name = "",
       effect = "",
       score = 0,
-      tag_name = "",
-      tag_effect = "",
+      tag = nil, --[[@type Tag?]]
     },
     big = {
       type = "BIG",
@@ -691,8 +713,7 @@ function gamestate.get_blinds_info()
       name = "",
       effect = "",
       score = 0,
-      tag_name = "",
-      tag_effect = "",
+      tag = nil, --[[@type Tag?]]
     },
     boss = {
       type = "BOSS",
@@ -700,8 +721,7 @@ function gamestate.get_blinds_info()
       name = "",
       effect = "",
       score = 0,
-      tag_name = "",
-      tag_effect = "",
+      tag = nil, --[[@type Tag?]]
     },
   }
 
@@ -739,8 +759,11 @@ function gamestate.get_blinds_info()
     local small_tag_key = G.GAME.round_resets.blind_tags and G.GAME.round_resets.blind_tags.Small
     if small_tag_key then
       local tag_info = get_tag_info(small_tag_key)
-      blinds.small.tag_name = tag_info.name
-      blinds.small.tag_effect = tag_info.effect
+      blinds.small.tag = {
+        key = small_tag_key,
+        name = tag_info.name,
+        effect = tag_info.effect,
+      }
     end
   end
 
@@ -763,8 +786,11 @@ function gamestate.get_blinds_info()
     local big_tag_key = G.GAME.round_resets.blind_tags and G.GAME.round_resets.blind_tags.Big
     if big_tag_key then
       local tag_info = get_tag_info(big_tag_key)
-      blinds.big.tag_name = tag_info.name
-      blinds.big.tag_effect = tag_info.effect
+      blinds.big.tag = {
+        key = big_tag_key,
+        name = tag_info.name,
+        effect = tag_info.effect,
+      }
     end
   end
 
@@ -788,7 +814,7 @@ function gamestate.get_blinds_info()
     blinds.boss.score = math.floor(base_amount * 2 * ante_scaling)
   end
 
-  -- Boss blind has no tags (tag_name and tag_effect remain empty strings)
+  -- Boss blind has no tags (tag remains nil)
 
   return blinds
 end
@@ -843,6 +869,12 @@ function gamestate.get_gamestate()
         used_vouchers[voucher_name] = get_voucher_effect(voucher_name)
       end
       state_data.used_vouchers = used_vouchers
+    end
+
+    -- Owned tags (Tag[])
+    local owned_tags = get_owned_tags()
+    if #owned_tags > 0 then
+      state_data.tags = owned_tags
     end
 
     -- Poker hands

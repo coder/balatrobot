@@ -411,3 +411,29 @@
 ---| "UPCOMING" # Future blind
 ---| "DEFEATED" # Previously defeated blind
 ---| "SKIPPED" # Previously skipped blind
+
+---@alias Tag.Key
+---| "tag_uncommon" # Uncommon Tag: Next Joker is Uncommon
+---| "tag_rare" # Rare Tag: Next Joker is Rare
+---| "tag_negative" # Negative Tag: Next Joker is Negative
+---| "tag_foil" # Foil Tag: Next Joker is Foil
+---| "tag_holo" # Holographic Tag: Next Joker is Holographic
+---| "tag_polychrome" # Polychrome Tag: Next Joker is Polychrome
+---| "tag_investment" # Investment Tag: Earn $25 when triggered
+---| "tag_voucher" # Voucher Tag: Add a voucher to shop
+---| "tag_boss" # Boss Tag: Next blind is a Boss
+---| "tag_standard" # Standard Tag: Next shop has Standard Packs
+---| "tag_charm" # Charm Tag: Create a Rare Joker
+---| "tag_meteor" # Meteor Tag: Create a Spectral Pack
+---| "tag_buffoon" # Buffoon Tag: Next shop has 4 Jokers
+---| "tag_handy" # Handy Tag: Earn $1 per hand played
+---| "tag_garbage" # Garbage Tag: Earn $1 per unused discard
+---| "tag_ethereal" # Ethereal Tag: Create a Spectral Pack
+---| "tag_coupon" # Coupon Tag: Next Joker is free
+---| "tag_double" # Double Tag: Copies next Tag triggered
+---| "tag_juggle" # Juggle Tag: +3 hand size next round
+---| "tag_d_six" # D6 Tag: Reroll shop for free
+---| "tag_top_up" # Top-up Tag: Create up to 2 Common Jokers
+---| "tag_skip" # Skip Tag: Next skip gives extra money
+---| "tag_orbital" # Orbital Tag: Upgrade random poker hand by 3 levels
+---| "tag_economy" # Economy Tag: Earn $2 per $5 owned (max $40)
