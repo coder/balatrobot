@@ -32,7 +32,7 @@ return {
     },
   },
 
-  requires_state = { G.STATES.SELECTING_HAND, G.STATES.SHOP },
+  requires_state = { G.STATES.SELECTING_HAND, G.STATES.SHOP, G.STATES.SMODS_BOOSTER_OPENED },
 
   ---@param args Request.Endpoint.Sell.Params
   ---@param send_response fun(response: Response.Endpoint)
@@ -53,6 +53,22 @@ return {
         name = BB_ERROR_NAMES.BAD_REQUEST,
       })
       return
+    end
+
+    -- If in SMODS_BOOSTER_OPENED, verify it's a Buffoon pack (contains Jokers)
+    if G.STATE == G.STATES.SMODS_BOOSTER_OPENED then
+      local pack_set = G.pack_cards
+        and G.pack_cards.cards
+        and G.pack_cards.cards[1]
+        and G.pack_cards.cards[1].ability
+        and G.pack_cards.cards[1].ability.set
+      if pack_set ~= "Joker" then
+        send_response({
+          message = "Can only sell jokers when a Buffoon pack is open",
+          name = BB_ERROR_NAMES.NOT_ALLOWED,
+        })
+        return
+      end
     end
 
     -- Determine which type to sell and validate existence
@@ -144,7 +160,11 @@ return {
         local state_stable = G.STATE_COMPLETE == true
 
         -- 5. Still in valid state
-        local valid_state = (G.STATE == G.STATES.SHOP or G.STATE == G.STATES.SELECTING_HAND)
+        local valid_state = (
+          G.STATE == G.STATES.SHOP
+          or G.STATE == G.STATES.SELECTING_HAND
+          or G.STATE == G.STATES.SMODS_BOOSTER_OPENED
+        )
 
         -- All conditions must be met
         if count_decreased and money_increased and card_gone and state_stable and valid_state then

@@ -395,7 +395,7 @@ curl -X POST http://127.0.0.1:12346 \
 
 ### `sell`
 
-Sell a joker or consumable.
+Sell a joker or consumable. Available in SHOP, SELECTING_HAND states, and when a Buffoon pack is open (to make room for new jokers).
 
 **Parameters:** (exactly one required)
 
@@ -406,7 +406,7 @@ Sell a joker or consumable.
 
 **Returns:** [GameState](#gamestate-schema)
 
-**Errors:** `BAD_REQUEST`, `NOT_ALLOWED`
+**Errors:** `BAD_REQUEST`, `INVALID_STATE`, `NOT_ALLOWED`
 
 **Example:**
 

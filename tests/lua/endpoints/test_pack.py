@@ -158,6 +158,35 @@ class TestPackEndpointJokerSlots:
             "Cannot select joker, joker slots are full. Current: 5, Limit: 5",
         )
 
+    def test_pack_joker_slots_full_sell_joker(self, client: httpx.Client) -> None:
+        """Test selling a joker to make room when joker slots are full during pack selection."""
+        gamestate = load_fixture(
+            client,
+            "pack",
+            "state-SMODS_BOOSTER_OPENED--pack.type-buffoon--jokers.count-5",
+        )
+        assert gamestate["jokers"]["count"] == 5
+        before_jokers = set(j["key"] for j in gamestate["jokers"]["cards"])
+        result = api(client, "sell", {"joker": 0})
+        gamestate = assert_gamestate_response(result)
+        assert gamestate["jokers"]["count"] == 4
+        result = api(client, "pack", {"card": 0})
+        gamestate = assert_gamestate_response(result, state="SHOP")
+        assert gamestate["jokers"]["count"] == 5
+        after_jokers = set(j["key"] for j in gamestate["jokers"]["cards"])
+        assert before_jokers != after_jokers
+
+    def test_pack_tarot_try_to_sell_joker(self, client: httpx.Client) -> None:
+        """Test that selling jokers is not allowed when a non-buffoon pack is open."""
+        load_fixture(
+            client, "pack", "state-SMODS_BOOSTER_OPENED--pack.cards[0].key-c_heirophant"
+        )
+        assert_error_response(
+            api(client, "sell", {"joker": 0}),
+            "NOT_ALLOWED",
+            "Can only sell jokers when a Buffoon pack is open",
+        )
+
     def test_pack_joker_slots_available(self, client: httpx.Client) -> None:
         """Test selecting joker when slots available succeeds."""
         load_fixture(
