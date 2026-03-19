@@ -13,7 +13,7 @@
       <img src="assets/balatrobot.svg" alt="BalatroBot" width="120">
     </a>
     <figcaption>
-      <a href="https://coder.github.io/balatrbot/"><span style="text-decoration: underline; text-underline-offset: 8px;">BalatroBot</span></a><br>
+      <a href="https://coder.github.io/balatrobot/"><span style="text-decoration: underline; text-underline-offset: 8px;">BalatroBot</span></a><br>
       <small>API for developing Balatro bots</small>
     </figcaption>
   </figure>
