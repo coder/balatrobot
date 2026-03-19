@@ -13,7 +13,7 @@ This guide covers installing the BalatroBot mod for Balatro.
 
 ### 1. Download BalatroBot
 
-Download the latest release from the [releases page](https://github.com/your-repo/balatrobot/releases) or clone the repository.
+Download the latest release from the [releases page](https://github.com/coder/balatrobot/releases) or clone the repository.
 
 ### 2. Copy to Mods Folder
 
