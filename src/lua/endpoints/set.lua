@@ -12,6 +12,7 @@
 ---@field hands integer? New number of hands left number
 ---@field discards integer? New number of discards left number
 ---@field shop boolean? Re-stock shop with new items
+---@field blind string? Boss blind key (e.g. "bl_flint") — sets the upcoming boss blind
 
 -- ==========================================================================
 -- Set Endpoint
@@ -59,6 +60,11 @@ return {
       type = "boolean",
       required = false,
       description = "Re-stock shop with new items",
+    },
+    blind = {
+      type = "string",
+      required = false,
+      description = "Boss blind key (e.g. 'bl_flint') — sets the upcoming boss blind",
     },
   },
 

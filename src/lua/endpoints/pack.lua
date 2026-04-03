@@ -3,6 +3,10 @@
 ---@type BB_LOGGER
 local BB_LOGGER = assert(SMODS.load_file("src/lua/utils/logger.lua"))()
 
+-- Re-entrancy guard: prevents double-firing use_card when a previous
+-- pack selection is still being processed (e.g. Black Hole animations).
+local selection_in_progress = false
+
 -- ==========================================================================
 -- Pack Select Endpoint Params
 -- ==========================================================================
@@ -106,6 +110,15 @@ return {
       send_response({
         message = "Invalid arguments. Cannot provide both card and skip",
         name = BB_ERROR_NAMES.BAD_REQUEST,
+      })
+      return
+    end
+
+    -- Block re-entrant calls while a previous selection is processing
+    if selection_in_progress then
+      send_response({
+        message = "Pack selection already in progress",
+        name = BB_ERROR_NAMES.NOT_ALLOWED,
       })
       return
     end
@@ -239,6 +252,7 @@ return {
 
       local pack_choices_before = G.GAME.pack_choices or 0
 
+      selection_in_progress = true
       G.FUNCS.use_card(btn)
 
       -- Wait for action to complete - check pack_choices to determine expected state
@@ -255,6 +269,7 @@ return {
               and G.STATE == G.STATES.SMODS_BOOSTER_OPENED
 
             if pack_stable then
+              selection_in_progress = false
               sendDebugMessage("Return pack() after selection (more choices remain)", "BB.ENDPOINTS")
               send_response(BB_GAMESTATE.get_gamestate())
               return true
@@ -265,10 +280,33 @@ return {
             local back_to_shop = G.STATE == G.STATES.SHOP
 
             if pack_closed and back_to_shop then
+              selection_in_progress = false
               sendDebugMessage("Return pack() after selection", "BB.ENDPOINTS")
               send_response(BB_GAMESTATE.get_gamestate())
               return true
             end
+
+            -- Debug: log what's blocking
+            local state_name = "?"
+            if G.STATES then
+              for name, value in pairs(G.STATES) do
+                if value == G.STATE then
+                  state_name = name
+                  break
+                end
+              end
+            end
+            sendDebugMessage(
+              string.format(
+                "pack() wait: closed=%s state=%s complete=%s choices=%s won=%s",
+                tostring(pack_closed),
+                state_name,
+                tostring(G.STATE_COMPLETE),
+                tostring(G.GAME.pack_choices),
+                tostring(G.GAME.won)
+              ),
+              "BB.ENDPOINTS"
+            )
           end
           return false
         end,
@@ -279,6 +317,7 @@ return {
 
     -- Handle skip
     if args.skip then
+      selection_in_progress = false -- Clear guard so skip can proceed after stuck selection
       local pack_count = G.pack_cards.config and G.pack_cards.config.card_count or 0
       sendDebugMessage(string.format("Pack: skipping (%d cards remaining)", pack_count), "BB.ENDPOINTS")
       G.FUNCS.skip_booster({})
@@ -304,12 +343,10 @@ return {
     end
 
     -- Wait for hand cards to load for Arcana and Spectral packs
-    local pack_key = G.pack_cards
-      and G.pack_cards.cards
-      and G.pack_cards.cards[1]
-      and G.pack_cards.cards[1].ability
-      and G.pack_cards.cards[1].ability.set
-    local needs_hand = pack_key == "Tarot" or pack_key == "Spectral"
+    -- Check if hand cards are dealt (Arcana/Spectral packs deal hand cards).
+    -- Don't infer pack type from the first card's set — Black Hole is
+    -- set=Spectral but appears in Celestial packs, causing a false match.
+    local needs_hand = G.hand and G.hand.cards and #G.hand.cards > 0
 
     if needs_hand then
       -- Wait for hand cards to be fully loaded and positioned

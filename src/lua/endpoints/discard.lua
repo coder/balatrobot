@@ -97,8 +97,6 @@ return {
     G.E_MANAGER:add_event(Event({
       trigger = "immediate",
       blocking = false,
-      blockable = false,
-      created_on_pause = true,
       func = function()
         -- State progression for discard:
         -- Discard always continues current round: HAND_PLAYED -> DRAW_TO_HAND -> SELECTING_HAND

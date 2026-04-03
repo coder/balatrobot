@@ -238,28 +238,65 @@ return {
           end
         elseif args.pack then
           local money_deducted = (G.GAME.dollars == initial_money - card.cost.buy)
-          local pack_ready = (
-            G.pack_cards
-            and not G.pack_cards.REMOVED
-            and G.pack_cards.cards[1]
-            and G.STATE_COMPLETE
-            and G.STATE == G.STATES.SMODS_BOOSTER_OPENED
-          )
+          local has_pack = G.pack_cards and not G.pack_cards.REMOVED and G.pack_cards.cards and G.pack_cards.cards[1]
+          local state_ok = G.STATE_COMPLETE and G.STATE == G.STATES.SMODS_BOOSTER_OPENED
+          local pack_ready = has_pack and state_ok
+
+          if not pack_ready then
+            -- Debug: log what's blocking
+            local state_name = "?"
+            if G.STATES then
+              for name, value in pairs(G.STATES) do
+                if value == G.STATE then
+                  state_name = name
+                  break
+                end
+              end
+            end
+            sendDebugMessage(
+              string.format(
+                "buy(pack) waiting: money_ok=%s pack_exists=%s state=%s state_complete=%s",
+                tostring(money_deducted),
+                tostring(has_pack ~= nil),
+                state_name,
+                tostring(G.STATE_COMPLETE)
+              ),
+              "BB.ENDPOINTS"
+            )
+          end
+
           if money_deducted and pack_ready then
-            -- Check if this pack type needs hand (Arcana/Spectral packs)
-            local pack_key = G.pack_cards.cards[1].ability and G.pack_cards.cards[1].ability.set
-            local needs_hand = pack_key == "Tarot" or pack_key == "Spectral"
+            -- Check if this pack type needs hand (Arcana/Spectral packs deal hand cards)
+            -- Don't infer pack type from the first card's set — Black Hole is
+            -- set=Spectral but appears in Celestial packs, causing a false match.
+            local needs_hand = G.hand and G.hand.cards and #G.hand.cards > 0
 
             if needs_hand then
               -- Wait for hand to be fully loaded and positioned
               local hand_limit = G.hand and G.hand.config and G.hand.config.card_limit or 8
+              local deck_size = G.deck and G.deck.config and G.deck.config.card_count or 52
+              local expected = math.min(deck_size, hand_limit)
+              local hand_count = G.hand and G.hand.cards and #G.hand.cards or 0
               local hand_ready = G.hand
                 and not G.hand.REMOVED
                 and G.hand.cards
-                and #G.hand.cards == hand_limit
+                and hand_count >= expected
                 and G.hand.T
                 and G.hand.T.x
               local cards_positioned = hand_ready and G.hand.cards[1] and G.hand.cards[1].T and G.hand.cards[1].T.x
+              if not done and money_deducted then
+                sendDebugMessage(
+                  string.format(
+                    "buy(pack) hand wait: count=%d expected=%d limit=%d deck=%d positioned=%s",
+                    hand_count,
+                    expected,
+                    hand_limit,
+                    deck_size,
+                    tostring(cards_positioned ~= nil)
+                  ),
+                  "BB.ENDPOINTS"
+                )
+              end
               done = hand_ready and cards_positioned
             else
               done = true

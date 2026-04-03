@@ -102,9 +102,16 @@ return {
       return
     end
 
+    -- Reset win overlay flags from previous run
+    BB_GAMESTATE.win_overlay_dismissed = false
+    BB_GAMESTATE.win_overlay_dismissing = false
+
     -- Reset the game (setup_run and exit_overlay_menu)
-    G.FUNCS.setup_run({ config = {} })
-    G.FUNCS.exit_overlay_menu()
+    -- Use pcall to handle cases where the overlay isn't fully ready
+    pcall(function()
+      G.FUNCS.setup_run({ config = {} })
+      G.FUNCS.exit_overlay_menu()
+    end)
 
     -- Find and set the deck using the mapped deck name
     local deck_found = false
@@ -144,7 +151,23 @@ return {
         .. tostring(args.seed or "none"),
       "BB.ENDPOINTS"
     )
-    G.FUNCS.start_run(nil, run_params)
+    local ok, err = pcall(G.FUNCS.start_run, nil, run_params)
+    if not ok then
+      sendDebugMessage("start_run failed: " .. tostring(err) .. " — retrying after delete_run", "BB.ENDPOINTS")
+      -- Clean up stale state and retry
+      pcall(function()
+        G:delete_run()
+      end)
+      local ok2, err2 = pcall(G.FUNCS.start_run, nil, run_params)
+      if not ok2 then
+        sendDebugMessage("start_run retry also failed: " .. tostring(err2), "BB.ENDPOINTS")
+        send_response({
+          message = "Failed to start run: " .. tostring(err2),
+          name = BB_ERROR_NAMES.INTERNAL_ERROR,
+        })
+        return
+      end
+    end
 
     -- Wait for run to start using Balatro's Event Manager
     G.E_MANAGER:add_event(Event({

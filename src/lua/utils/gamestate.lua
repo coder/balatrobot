@@ -232,14 +232,163 @@ local function extract_card_modifier(card)
     modifier.seal = string.upper(card.seal)
   end
 
-  -- Edition (table with type/key)
-  if card.edition and card.edition.type then
-    modifier.edition = string.upper(card.edition.type)
+  -- Edition: use the card's own scoring methods for reliable detection.
+  -- card:get_chip_mult() returns the holo mult, get_chip_bonus() includes foil chips,
+  -- get_chip_x_mult() returns polychrome xmult. These work regardless of how
+  -- the edition table is structured internally.
+  if card.edition then
+    -- Type string for identification
+    if card.edition.type then
+      modifier.edition = string.upper(card.edition.type)
+    elseif card.edition.holo then
+      modifier.edition = "HOLO"
+    elseif card.edition.foil then
+      modifier.edition = "FOIL"
+    elseif card.edition.polychrome then
+      modifier.edition = "POLYCHROME"
+    elseif card.edition.negative then
+      modifier.edition = "NEGATIVE"
+    elseif card.edition.key then
+      -- SMODS: edition.key = "e_holo" / "e_foil" / "e_polychrome" / "e_negative"
+      local etype = card.edition.key:gsub("^e_", "")
+      modifier.edition = string.upper(etype)
+    end
+
+    -- DEBUG: dump edition fields to detect contamination from enhancements
+    if modifier.edition then
+      local dbg_parts = {}
+      for k, v in pairs(card.edition) do
+        if type(v) ~= "table" and type(v) ~= "function" then
+          dbg_parts[#dbg_parts + 1] = k .. "=" .. tostring(v)
+        end
+      end
+      local ability_mult = card.ability and card.ability.mult or "nil"
+      local ability_effect = card.ability and card.ability.effect or "nil"
+      local get_chip_mult_val = "n/a"
+      if card.get_chip_mult then
+        local ok, val = pcall(function()
+          return card:get_chip_mult()
+        end)
+        if ok then
+          get_chip_mult_val = tostring(val)
+        end
+      end
+      local get_edition_val = "n/a"
+      if card.get_edition then
+        local ok, ed = pcall(function()
+          return card:get_edition()
+        end)
+        if ok and ed then
+          local ed_parts = {}
+          for k, v in pairs(ed) do
+            if type(v) ~= "table" and type(v) ~= "function" then
+              ed_parts[#ed_parts + 1] = k .. "=" .. tostring(v)
+            end
+          end
+          get_edition_val = "{" .. table.concat(ed_parts, ", ") .. "}"
+        end
+      end
+      local config_extra = "n/a"
+      if card.edition.key and G and G.P_CENTERS and G.P_CENTERS[card.edition.key] then
+        local cfg = G.P_CENTERS[card.edition.key].config
+        if cfg then
+          config_extra = "extra="
+            .. tostring(cfg.extra)
+            .. " mult="
+            .. tostring(cfg.mult)
+            .. " chips="
+            .. tostring(cfg.chips)
+            .. " x_mult="
+            .. tostring(cfg.x_mult)
+        end
+      end
+      sendDebugMessage(
+        "EDITION_DEBUG card="
+          .. (card.label or "?")
+          .. " edition_type="
+          .. modifier.edition
+          .. " raw_edition={"
+          .. table.concat(dbg_parts, ", ")
+          .. "}"
+          .. " ability.mult="
+          .. tostring(ability_mult)
+          .. " ability.effect="
+          .. tostring(ability_effect)
+          .. " get_chip_mult()="
+          .. get_chip_mult_val
+          .. " get_edition()="
+          .. get_edition_val
+          .. " P_CENTERS.config={"
+          .. config_extra
+          .. "}",
+        "BB.EDITION"
+      )
+    end
+
+    -- Numeric scoring values
+    if card.edition.mult and card.edition.mult ~= 0 then
+      modifier.edition_mult = card.edition.mult
+    end
+    if card.edition.chips and card.edition.chips ~= 0 then
+      modifier.edition_chips = card.edition.chips
+    end
+    -- Use get_edition() for x_mult: the raw card.edition.x_mult can be
+    -- contaminated by enhancement values (Glass x2 overwrites Polychrome x1.5).
+    -- get_edition() returns the correct edition-only value.
+    if card.get_edition then
+      local ok, ed = pcall(function()
+        return card:get_edition()
+      end)
+      if ok and ed and ed.x_mult_mod and ed.x_mult_mod ~= 0 then
+        modifier.edition_x_mult = ed.x_mult_mod
+      end
+    elseif card.edition.x_mult and card.edition.x_mult ~= 0 then
+      modifier.edition_x_mult = card.edition.x_mult
+    end
+  end
+  -- Fallback: use card scoring methods directly (catches editions not in card.edition table)
+  -- Skip if the card has a MULT or LUCKY enhancement — get_chip_mult() includes
+  -- enhancement mult, which would create a phantom HOLO edition.
+  local has_mult_enhancement = card.ability
+    and card.ability.effect
+    and (card.ability.effect == "Mult Card" or card.ability.effect == "Lucky Card")
+  if not modifier.edition and card.get_chip_mult and not has_mult_enhancement then
+    local ok, emult = pcall(function()
+      return card:get_chip_mult()
+    end)
+    if ok and emult and emult > 0 then
+      modifier.edition = "HOLO"
+      modifier.edition_mult = emult
+    end
+  end
+  -- Note: removed get_chip_x_mult() fallback here — it returns the enhancement
+  -- x_mult (Glass 2.0), not the edition x_mult (Polychrome 1.5). Edition detection
+  -- via get_edition() above is now the primary path.
+  if not modifier.edition_chips and card.get_chip_bonus then
+    -- get_chip_bonus includes base nominal + ability.bonus + perma_bonus + edition chips
+    -- We already handle perma_bonus separately, so only check for foil-level chips
+    local ok, echips = pcall(function()
+      return card:get_chip_bonus()
+    end)
+    if ok and echips then
+      local base_nominal = (card.base and card.base.nominal) or 0
+      local ability_bonus = (card.ability and card.ability.bonus) or 0
+      local perma = (card.ability and card.ability.perma_bonus) or 0
+      local edition_chips = echips - base_nominal - ability_bonus - perma
+      if edition_chips > 0 then
+        modifier.edition = modifier.edition or "FOIL"
+        modifier.edition_chips = edition_chips
+      end
+    end
   end
 
   -- Enhancement (from ability.name for enhanced cards)
   if card.ability and card.ability.effect and card.ability.effect ~= "Base" then
     modifier.enhancement = string.upper(card.ability.effect:gsub(" Card", ""))
+    -- Expose enhancement x_mult separately (Glass = 2.0)
+    if card.ability.x_mult and card.ability.x_mult ~= 1 then
+      modifier.enhancement_x_mult = card.ability.x_mult
+    end
   end
 
   -- Eternal (boolean from ability)
@@ -278,6 +427,62 @@ local function extract_card_value(card)
 
   -- Effect description (for all cards)
   value.effect = get_card_ui_description(card)
+
+  -- Permanent chip bonus (from Hiker etc.) — only for playing cards
+  if card.ability then
+    if card.ability.perma_bonus and card.ability.perma_bonus ~= 0 then
+      value.perma_bonus = card.ability.perma_bonus
+    end
+  end
+
+  -- Joker rarity (1=Common, 2=Uncommon, 3=Rare, 4=Legendary)
+  if card.config and card.config.center and card.config.center.rarity then
+    value.rarity = card.config.center.rarity
+  end
+
+  -- Joker ability data: expose actual scoring values instead of requiring
+  -- text parsing. Includes accumulated values for scaling jokers.
+  if card.ability then
+    local ab = {}
+    -- extra: varies by joker — can be number or table with chips/mult/Xmult/etc.
+    if card.ability.extra ~= nil then
+      if type(card.ability.extra) == "table" then
+        -- Shallow copy the table
+        for k, v in pairs(card.ability.extra) do
+          if type(v) ~= "table" and type(v) ~= "function" then
+            ab[k] = v
+          end
+        end
+      else
+        ab.extra = card.ability.extra
+      end
+    end
+    -- Config-level scoring fields (hand-type jokers like Jolly, Sly, etc.)
+    if card.ability.t_mult and card.ability.t_mult ~= 0 then
+      ab.t_mult = card.ability.t_mult
+    end
+    if card.ability.t_chips and card.ability.t_chips ~= 0 then
+      ab.t_chips = card.ability.t_chips
+    end
+    if card.ability.mult and card.ability.mult ~= 0 then
+      ab.mult = card.ability.mult
+    end
+    if card.ability.x_mult and card.ability.x_mult ~= 0 then
+      ab.x_mult = card.ability.x_mult
+    end
+    -- Driver's License enhanced card count
+    if card.ability.driver_tally then
+      ab.driver_tally = card.ability.driver_tally
+    end
+    -- Loyalty Card: remaining hands until trigger
+    if card.ability.loyalty_remaining ~= nil then
+      ab.loyalty_remaining = card.ability.loyalty_remaining
+    end
+    -- Only include if non-empty
+    if next(ab) ~= nil then
+      value.ability = ab
+    end
+  end
 
   return value
 end
@@ -466,6 +671,13 @@ local function extract_round_info()
   -- Chips is stored in G.GAME not G.GAME.current_round
   if G.GAME.chips then
     round.chips = G.GAME.chips
+  end
+
+  -- Ancient Joker's current rotating suit
+  if G.GAME.current_round.ancient_card and G.GAME.current_round.ancient_card.suit then
+    local suit = G.GAME.current_round.ancient_card.suit
+    local suit_map = { Spades = "S", Hearts = "H", Clubs = "C", Diamonds = "D" }
+    round.ancient_suit = suit_map[suit] or suit
   end
 
   return round
@@ -824,6 +1036,14 @@ end
 -- normal event-based detection from working.
 gamestate.on_game_over = nil
 
+-- Tracks whether we've already dismissed the win overlay for endless mode.
+-- The dismissal happens in love.update (check_win_overlay) because the
+-- overlay sets G.SETTINGS.paused=true which blocks event processing.
+-- Two-phase: dismiss first, then confirm removal on a later frame so the
+-- game has time to fully process the overlay removal before the bot resumes.
+gamestate.win_overlay_dismissed = false
+gamestate.win_overlay_dismissing = false
+
 ---Check and trigger GAME_OVER callback if state is GAME_OVER
 ---Called from love.update before game logic runs
 function gamestate.check_game_over()
@@ -831,6 +1051,37 @@ function gamestate.check_game_over()
     gamestate.on_game_over(gamestate.get_gamestate())
     gamestate.on_game_over = nil
   end
+end
+
+---Auto-dismiss the "YOU WIN" overlay to continue into endless mode.
+---Called from love.update so it works even when the game is paused.
+---Two-phase: first frame dismisses the overlay, subsequent frame confirms
+---it's gone before setting win_overlay_dismissed (which unblocks play.lua).
+function gamestate.check_win_overlay()
+  if gamestate.win_overlay_dismissed then
+    return
+  end
+  if not G.GAME or not G.GAME.won then
+    return
+  end
+
+  -- Phase 2: overlay was dismissed on a previous frame, confirm it's gone
+  if gamestate.win_overlay_dismissing then
+    if not G.OVERLAY_MENU then
+      sendDebugMessage("check_win_overlay() - overlay confirmed gone, resuming", "BB.GAMESTATE")
+      gamestate.win_overlay_dismissed = true
+    end
+    return
+  end
+
+  -- Phase 1: overlay is visible, dismiss it now
+  if not G.OVERLAY_MENU then
+    return
+  end -- not visible yet
+  sendDebugMessage("check_win_overlay() - dismissing win overlay for endless mode", "BB.GAMESTATE")
+  G.FUNCS.exit_overlay_menu()
+  gamestate.on_game_over = nil -- prevent GAME_OVER callback from firing
+  gamestate.win_overlay_dismissing = true
 end
 
 return gamestate

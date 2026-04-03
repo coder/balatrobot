@@ -121,17 +121,13 @@ return {
       trigger = "condition",
       blocking = false,
       func = function()
-        -- Check all 5 completion criteria
         local current_area = sell_type == "joker" and G.jokers or G.consumeables
         local current_array = current_area.cards
 
-        -- 1. Card count decreased by 1
-        local count_decreased = (current_area.config.card_count == initial_count - 1)
-
-        -- 2. Money increased by sell_cost
+        -- 1. Money increased by sell_cost
         local money_increased = (G.GAME.dollars == expected_money)
 
-        -- 3. Card no longer exists (verify by unique_val)
+        -- 2. Card no longer exists (by sort_id)
         local card_gone = true
         for _, c in ipairs(current_array) do
           if c.sort_id == card_id then
@@ -140,14 +136,16 @@ return {
           end
         end
 
-        -- 4. State stability
+        -- 3. State stability
         local state_stable = G.STATE_COMPLETE == true
 
-        -- 5. Still in valid state
+        -- 4. Still in valid state
         local valid_state = (G.STATE == G.STATES.SHOP or G.STATE == G.STATES.SELECTING_HAND)
 
-        -- All conditions must be met
-        if count_decreased and money_increased and card_gone and state_stable and valid_state then
+        -- Note: card count is NOT checked here — some jokers (e.g. Invisible Joker)
+        -- spawn a replacement on sell, leaving count unchanged. card_gone + money_increased
+        -- uniquely identify completion without relying on count.
+        if money_increased and card_gone and state_stable and valid_state then
           sendDebugMessage("Return sell()", "BB.ENDPOINTS")
           send_response(BB_GAMESTATE.get_gamestate())
           return true
