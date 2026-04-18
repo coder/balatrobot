@@ -680,6 +680,18 @@ local function extract_round_info()
     round.ancient_suit = suit_map[suit] or suit
   end
 
+  -- The Idol: target rank+suit that grants X2 Mult, rerolled each round
+  if G.GAME.current_round.idol_card
+    and G.GAME.current_round.idol_card.rank
+    and G.GAME.current_round.idol_card.suit
+  then
+    local suit_map = { Spades = "S", Hearts = "H", Clubs = "C", Diamonds = "D" }
+    round.idol_card = {
+      rank = convert_rank_to_enum(G.GAME.current_round.idol_card.rank) or G.GAME.current_round.idol_card.rank,
+      suit = suit_map[G.GAME.current_round.idol_card.suit] or G.GAME.current_round.idol_card.suit,
+    }
+  end
+
   return round
 end
 
