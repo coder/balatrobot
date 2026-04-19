@@ -9,7 +9,7 @@ from balatrobot.config import Config
 from balatrobot.manager import BalatroInstance
 
 # Platform choices for validation
-PLATFORM_CHOICES = ["darwin", "linux", "windows", "native"]
+PLATFORM_CHOICES = ["darwin", "proton", "windows", "native"]
 
 
 def serve(
@@ -55,10 +55,10 @@ def serve(
         str | None, typer.Option(help="Path to lovely library")
     ] = None,
     love_path: Annotated[
-        str | None, typer.Option(help="Path to LOVE executable")
+        str | None, typer.Option(help="Path to game launcher executable")
     ] = None,
     platform: Annotated[
-        str | None, typer.Option(help="Platform (darwin, linux, windows, native)")
+        str | None, typer.Option(help="Platform (darwin, proton, windows, native)")
     ] = None,
     # fmt: on
 ) -> None:

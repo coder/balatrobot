@@ -6,7 +6,7 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from balatrobot.platforms.base import BaseLauncher
 
-VALID_PLATFORMS = frozenset({"darwin", "linux", "proton", "windows", "native"})
+VALID_PLATFORMS = frozenset({"darwin", "proton", "windows", "native"})
 
 
 def get_launcher(platform: str | None = None) -> "BaseLauncher":
@@ -14,7 +14,7 @@ def get_launcher(platform: str | None = None) -> "BaseLauncher":
 
     Args:
         platform: Optional platform to use instead of auto-detection.
-            Valid values: "darwin", "linux", "proton", "windows", "native"
+            Valid values: "darwin", "proton", "windows", "native"
 
     Returns:
         Launcher instance for the platform
@@ -39,7 +39,7 @@ def get_launcher(platform: str | None = None) -> "BaseLauncher":
             from balatrobot.platforms.macos import MacOSLauncher
 
             return MacOSLauncher()
-        case "linux" | "proton":
+        case "proton":
             from balatrobot.platforms.proton import ProtonLauncher
 
             return ProtonLauncher()
