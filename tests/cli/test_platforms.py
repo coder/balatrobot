@@ -8,6 +8,7 @@ from balatrobot.config import Config
 from balatrobot.platforms import VALID_PLATFORMS, get_launcher
 from balatrobot.platforms.macos import MacOSLauncher
 from balatrobot.platforms.native import NativeLauncher
+from balatrobot.platforms.proton import ProtonLauncher
 from balatrobot.platforms.windows import WindowsLauncher
 
 IS_MACOS = platform_module.system() == "Darwin"
@@ -38,15 +39,15 @@ class TestGetLauncher:
         launcher = get_launcher("windows")
         assert isinstance(launcher, WindowsLauncher)
 
-    def test_linux_not_implemented(self):
-        """'linux' raises NotImplementedError."""
-        with pytest.raises(NotImplementedError):
-            get_launcher("linux")
+    def test_proton_returns_proton_launcher(self):
+        """'proton' returns ProtonLauncher."""
+        launcher = get_launcher("proton")
+        assert isinstance(launcher, ProtonLauncher)
 
     def test_valid_platforms_constant(self):
         """VALID_PLATFORMS contains expected values."""
         assert "darwin" in VALID_PLATFORMS
-        assert "linux" in VALID_PLATFORMS
+        assert "proton" in VALID_PLATFORMS
         assert "windows" in VALID_PLATFORMS
         assert "native" in VALID_PLATFORMS
 
@@ -129,6 +130,87 @@ class TestNativeLauncher:
         cmd = launcher.build_cmd(config)
 
         assert cmd == ["/usr/bin/love", "/path/to/balatro"]
+
+
+class TestProtonLauncher:
+    """Tests for ProtonLauncher (no Linux/Proton required)."""
+
+    def test_build_cmd(self):
+        """build_cmd returns proton run with Balatro.exe path."""
+        launcher = ProtonLauncher()
+        config = Config(
+            love_path="/path/to/proton",
+            balatro_path="/path/to/Balatro",
+        )
+
+        cmd = launcher.build_cmd(config)
+
+        assert cmd == ["/path/to/proton", "run", "/path/to/Balatro/Balatro.exe"]
+
+    def test_build_env_includes_wine_dll_overrides(self):
+        """build_env includes WINEDLLOVERRIDES for lovely-injector."""
+        launcher = ProtonLauncher()
+        config = Config(
+            love_path="/path/to/proton",
+            balatro_path="/path/to/Balatro",
+        )
+
+        env = launcher.build_env(config)
+
+        assert env["WINEDLLOVERRIDES"] == "version=n,b"
+
+    def test_build_env_no_other_injection_vars(self):
+        """build_env does not include DYLD_INSERT_LIBRARIES or LD_PRELOAD."""
+        launcher = ProtonLauncher()
+        config = Config(
+            love_path="/path/to/proton",
+            balatro_path="/path/to/Balatro",
+        )
+
+        env = launcher.build_env(config)
+
+        assert "DYLD_INSERT_LIBRARIES" not in env
+        assert "LD_PRELOAD" not in env
+
+    def test_validate_paths_missing_balatro_exe(self, tmp_path):
+        """Raises RuntimeError when Balatro.exe not found."""
+        launcher = ProtonLauncher()
+        config = Config(
+            love_path=str(tmp_path / "proton"),
+            balatro_path=str(tmp_path),
+        )
+        # Create fake proton
+        (tmp_path / "proton").touch()
+
+        with pytest.raises(RuntimeError, match="Balatro.exe not found"):
+            launcher.validate_paths(config)
+
+    def test_validate_paths_missing_proton(self, tmp_path):
+        """Raises RuntimeError when proton executable not found."""
+        launcher = ProtonLauncher()
+        config = Config(
+            love_path=str(tmp_path / "nonexistent"),
+            balatro_path=str(tmp_path),
+        )
+
+        with pytest.raises(RuntimeError, match="Proton executable not found"):
+            launcher.validate_paths(config)
+
+    def test_validate_paths_missing_version_dll(self, tmp_path):
+        """Raises RuntimeError when version.dll not found."""
+        # Create fake Balatro directory with Balatro.exe
+        (tmp_path / "Balatro.exe").touch()
+        (tmp_path / "proton").touch()
+
+        launcher = ProtonLauncher()
+        config = Config(
+            love_path=str(tmp_path / "proton"),
+            balatro_path=str(tmp_path),
+            lovely_path=str(tmp_path / "nonexistent.dll"),
+        )
+
+        with pytest.raises(RuntimeError, match="version.dll not found"):
+            launcher.validate_paths(config)
 
 
 @pytest.mark.skipif(not IS_WINDOWS, reason="Windows only")
