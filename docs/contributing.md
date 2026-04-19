@@ -2,15 +2,14 @@
 
 Guide for contributing to BalatroBot development.
 
-!!! warning "Help Needed: Linux (Proton) Support"
+## Supported Platforms
 
-    We currently lack CLI support for **Linux (Proton)**. Contributions to implement this platform are highly welcome!
+Platform-specific launchers are located in `src/balatrobot/platforms/`:
 
-    Please refer to the existing implementations for guidance:
-
-    - **macOS:** `src/balatrobot/platforms/macos.py`
-    - **Windows:** `src/balatrobot/platforms/windows.py`
-    - **Linux (Native):** `src/balatrobot/platforms/native.py`
+- **macOS:** `src/balatrobot/platforms/macos.py`
+- **Linux (Proton):** `src/balatrobot/platforms/proton.py`
+- **Windows:** `src/balatrobot/platforms/windows.py`
+- **Linux (Native):** `src/balatrobot/platforms/native.py`
 
 ## Prerequisites
 

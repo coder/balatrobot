@@ -46,8 +46,8 @@ All options can be set via CLI flags or environment variables. CLI flags overrid
 | `--pixel-art-smoothing`         | `BALATROBOT_PIXEL_ART_SMOOTHING` | `0`           | Enable pixel art smoothing                 |
 | `--balatro-path BALATRO_PATH`   | `BALATROBOT_BALATRO_PATH`        | auto-detected | Path to Balatro game directory             |
 | `--lovely-path LOVELY_PATH`     | `BALATROBOT_LOVELY_PATH`         | auto-detected | Path to lovely library (dll/so/dylib)      |
-| `--love-path LOVE_PATH`         | `BALATROBOT_LOVE_PATH`           | auto-detected | Path to LOVE executable (native only)      |
-| `--platform PLATFORM`           | `BALATROBOT_PLATFORM`            | auto-detected | Platform: darwin, linux, windows, native   |
+| `--love-path LOVE_PATH`         | `BALATROBOT_LOVE_PATH`           | auto-detected | Path to game launcher executable           |
+| `--platform PLATFORM`           | `BALATROBOT_PLATFORM`            | auto-detected | Platform: darwin, proton, windows, native  |
 | `--logs-path LOGS_PATH`         | `BALATROBOT_LOGS_PATH`           | `logs`        | Directory for log files                    |
 | `-h, --help`                    | -                                | -             | Show help message and exit                 |
 
@@ -221,6 +221,32 @@ uvx balatrobot serve --fast
 
 # Or specify custom paths
 uvx balatrobot serve --love-path "/path/to/love" --lovely-path "/path/to/liblovely.dylib"
+```
+
+### Linux (Proton) Platform
+
+The `proton` platform launches Balatro via Steam Proton on Linux. The CLI auto-detects Steam and Proton installation paths:
+
+**Auto-Detected Paths:**
+
+- `BALATROBOT_BALATRO_PATH`: `~/.local/share/Steam/steamapps/common/Balatro`
+- `BALATROBOT_LOVE_PATH`: Best available Proton executable (prefers GE-Proton > official Proton > Experimental)
+- `BALATROBOT_LOVELY_PATH`: `~/.local/share/Steam/steamapps/common/Balatro/version.dll`
+
+**Requirements:**
+
+- Balatro installed via Steam with Proton
+- [Lovely Injector](https://github.com/ethangreen-dev/lovely-injector) `version.dll` (Windows version) placed in the Balatro game directory
+- Mods directory: `~/.local/share/Steam/steamapps/compatdata/2379780/pfx/drive_c/users/steamuser/AppData/Roaming/Balatro/Mods`
+
+**Launch:**
+
+```bash
+# Explicit proton platform (required on Linux)
+uvx balatrobot serve --platform proton --fast
+
+# Or specify custom paths
+uvx balatrobot serve --love-path /path/to/proton --balatro-path /path/to/Balatro
 ```
 
 ### Native Platform (Linux Only)

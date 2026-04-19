@@ -73,7 +73,7 @@ Controls the game lifecycle and provides the CLI.
 - **CLI** (`cli.py`): Entry point (`balatrobot`). Handles arguments like `--fast`, `--debug`, `--headless`.
 - **Manager** (`manager.py`): `BalatroInstance` context manager. Starts the game process, handles logging, and waits for the API to be healthy.
 - **Config** (`config.py`): Configuration management using `dataclasses` and environment variables.
-- **Platform Abstraction** (`platforms/`): Cross-platform game launcher system with platform-specific implementations for macOS, Windows, and native Love2D.
+- **Platform Abstraction** (`platforms/`): Cross-platform game launcher system with platform-specific implementations for macOS, Windows, Linux (Proton), and native Love2D.
 
 ### 2. Lua Layer (`src/lua/`)
 
