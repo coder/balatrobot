@@ -11,7 +11,7 @@ import httpx
 from balatrobot.config import Config
 from balatrobot.platforms import get_launcher
 
-HEALTH_TIMEOUT = 30.0
+HEALTH_TIMEOUT = 90.0
 ATTACH_TIMEOUT = 300.0
 
 
