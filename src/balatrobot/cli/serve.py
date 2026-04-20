@@ -15,10 +15,11 @@ PLATFORM_CHOICES = ["darwin", "proton", "windows", "native"]
 def serve(
     # fmt: off
     attach: Annotated[
-        bool, typer.Option(
+        bool,
+        typer.Option(
             help="Attach to a game already launched externally (e.g. snap/Flatpak Steam). "
-                 "Skips launching the game and waits up to 5 minutes for it to come up."
-        )
+            "Skips launching the game and waits up to 5 minutes for it to come up."
+        ),
     ] = False,
     host: Annotated[
         str | None, typer.Option(help="Server hostname (default: 127.0.0.1)")
@@ -119,6 +120,8 @@ async def _serve(config: Config, attach: bool = False) -> None:
             pass
     else:
         async with BalatroInstance(config) as instance:
-            typer.echo(f"Balatro running on port {instance.port}. Press Ctrl+C to stop.")
+            typer.echo(
+                f"Balatro running on port {instance.port}. Press Ctrl+C to stop."
+            )
             while True:
                 await asyncio.sleep(5)

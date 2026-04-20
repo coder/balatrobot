@@ -131,9 +131,7 @@ def _write_wine_environment(compat_data: Path, env_vars: dict[str, str]) -> None
 
     content = user_reg.read_text(encoding="utf-8")
 
-    section_re = re.compile(
-        r"(\[Environment\][^\n]*\n)(.*?)(?=\n\[|\Z)", re.DOTALL
-    )
+    section_re = re.compile(r"(\[Environment\][^\n]*\n)(.*?)(?=\n\[|\Z)", re.DOTALL)
     match = section_re.search(content)
 
     preserved: list[str] = []
@@ -306,5 +304,3 @@ class ProtonLauncher(BaseLauncher):
             return ["flatpak", "run", "com.valvesoftware.Steam", steam_url]
 
         raise RuntimeError(f"Unknown Steam package type: {package}")
-
-
