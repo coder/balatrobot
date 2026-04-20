@@ -18,6 +18,7 @@ def _detect_steam_root() -> Path | None:
         Path("/usr/local/share/Steam"),
         Path.home() / ".var/app/com.valvesoftware.Steam/.local/share/Steam",
         Path.home() / "snap/steam/common/.local/share/Steam",
+        Path.home() / "snap/steam/common/.steam/steam",
     ]
     for p in candidates:
         if (p / "steamapps").is_dir():
