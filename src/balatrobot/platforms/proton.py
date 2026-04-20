@@ -54,16 +54,16 @@ def _detect_steam_package(steam_root: Path) -> str:
 
 
 def _proton_sort_key(p: Path) -> tuple:
-    """Sort key that prefers GE-Proton > official Proton > Experimental."""
+    """Sort key that prefers Proton Experimental > GE-Proton > official Proton."""
     name = p.parent.name
+    if "Experimental" in name:
+        return (0, 0, 0)
     m = re.match(r"GE-Proton(\d+)-(\d+)", name)
     if m:
-        return (0, -int(m.group(1)), -int(m.group(2)))
+        return (1, -int(m.group(1)), -int(m.group(2)))
     m = re.match(r"Proton (\d+)\.(\d+)", name)
     if m:
-        return (1, -int(m.group(1)), -int(m.group(2)))
-    if "Experimental" in name:
-        return (2, 0, 0)
+        return (2, -int(m.group(1)), -int(m.group(2)))
     return (3, 0, 0)
 
 
