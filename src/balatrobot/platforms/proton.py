@@ -16,6 +16,8 @@ def _detect_steam_root() -> Path | None:
         Path.home() / ".local/share/Steam",
         Path.home() / ".steam/steam",
         Path("/usr/local/share/Steam"),
+        Path.home() / ".var/app/com.valvesoftware.Steam/.local/share/Steam",
+        Path.home() / "snap/steam/common/.local/share/Steam",
     ]
     for p in candidates:
         if (p / "steamapps").is_dir():
@@ -144,6 +146,27 @@ class ProtonLauncher(BaseLauncher):
             lovely = Path(config.lovely_path)
             if not lovely.is_file():
                 errors.append(f"version.dll not found: {lovely}")
+
+        # STEAM_COMPAT_* vars are set in build_env() from steam_root.
+        # If steam_root is undetected and they are absent from the environment,
+        # Proton will fail to run.
+        if not steam_root:
+            missing_compat = [
+                v
+                for v in (
+                    "STEAM_COMPAT_CLIENT_INSTALL_PATH",
+                    "STEAM_COMPAT_DATA_PATH",
+                )
+                if v not in os.environ
+            ]
+            if missing_compat:
+                errors.append(
+                    "Steam installation not found; cannot set STEAM_COMPAT_* env vars required by Proton.\n"
+                    "  Searched: ~/.local/share/Steam, ~/.steam/steam, /usr/local/share/Steam,\n"
+                    "            ~/.var/app/com.valvesoftware.Steam/... (Flatpak),\n"
+                    "            ~/snap/steam/common/... (Snap)\n"
+                    "  Set manually: STEAM_COMPAT_CLIENT_INSTALL_PATH, STEAM_COMPAT_DATA_PATH"
+                )
 
         if errors:
             raise RuntimeError("Path validation failed:\n\n" + "\n\n".join(errors))
