@@ -12,6 +12,7 @@ from balatrobot.config import Config
 from balatrobot.platforms import get_launcher
 
 HEALTH_TIMEOUT = 30.0
+ATTACH_TIMEOUT = 300.0
 
 
 class BalatroInstance:
@@ -98,6 +99,19 @@ class BalatroInstance:
             raise RuntimeError(f"{e}. Check log file: {self._log_path}") from e
 
         print(f"Balatro started (PID: {self._process.pid})")
+
+    async def attach(self) -> None:
+        """Wait for a game already launched externally to become healthy.
+
+        Use this when the game is launched via Steam directly (e.g. snap/Flatpak Steam)
+        and balatrobot cannot manage the process lifecycle.
+        """
+        print(f"Waiting for Balatro on {self._config.host}:{self._config.port}...")
+        print("Launch the game via Steam now if you haven't already.")
+        try:
+            await self._wait_for_health(timeout=ATTACH_TIMEOUT)
+        except RuntimeError as e:
+            raise RuntimeError(str(e)) from e
 
     async def stop(self) -> None:
         """Stop the Balatro instance."""
