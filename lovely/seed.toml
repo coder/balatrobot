@@ -1,0 +1,32 @@
+# Replace Balatro's cursor-based auto-seed generator with real entropy.
+#
+# Balatro's generate_starting_seed() (functions/misc_functions.lua) derives
+# randomness from the mouse cursor position and hover timestamp. In headless
+# mode the cursor is stationary, so consecutive auto-seeded runs collide.
+#
+# Swap the cursor expression for os.time() + love.timer.getTime() (sub-µs
+# monotonic clock) + love.math.random() (seeded from OS entropy at LÖVE
+# startup). random_string() stays intact — only its numeric seed changes.
+
+[manifest]
+version = "1.0.0"
+priority = 0
+dump_lua = true
+
+# Legendary-rerolling loop (stake >= #Stake pool).
+[[patches]]
+[patches.pattern]
+target = "functions/misc_functions.lua"
+pattern = "seed_found = random_string(8, extra_num + G.CONTROLLER.cursor_hover.T.x*0.33411983 + G.CONTROLLER.cursor_hover.T.y*0.874146 + 0.412311010*G.CONTROLLER.cursor_hover.time)"
+position = "at"
+match_indent = true
+payload = "seed_found = random_string(8, extra_num + os.time() + (love.timer and love.timer.getTime() or 0) * 1000000 + love.math.random() * 2147483647)"
+
+# Default path — ordinary new run.
+[[patches]]
+[patches.pattern]
+target = "functions/misc_functions.lua"
+pattern = "return random_string(8, G.CONTROLLER.cursor_hover.T.x*0.33411983 + G.CONTROLLER.cursor_hover.T.y*0.874146 + 0.412311010*G.CONTROLLER.cursor_hover.time)"
+position = "at"
+match_indent = true
+payload = "return random_string(8, os.time() + (love.timer and love.timer.getTime() or 0) * 1000000 + love.math.random() * 2147483647)"

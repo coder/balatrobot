@@ -17,7 +17,6 @@
 ---@field ante_num integer Current ante number
 ---@field money integer Current money amount
 ---@field used_vouchers table<string, string>? Vouchers used (name -> description)
----@field tags Tag[]? Accumulated tags owned by the player
 ---@field hands table<string, Hand>? Poker hands information
 ---@field round Round? Current round state
 ---@field blinds table<"small"|"big"|"boss", Blind>? Blind information
@@ -48,18 +47,14 @@
 ---@field reroll_cost integer? Current cost to reroll the shop
 ---@field chips integer? Current chips scored in this round
 
----@class Tag
----@field key string The tag key (e.g., "tag_polychrome", "tag_double")
----@field name string Display name of the tag (e.g., "Polychrome Tag")
----@field effect string Description of the tag's effect
-
 ---@class Blind
 ---@field type Blind.Type Type of the blind
 ---@field status Blind.Status Status of the bilnd
 ---@field name string Name of the blind (e.g., "Small", "Big" or the Boss name)
 ---@field effect string Description of the blind's effect
 ---@field score integer Score requirement to beat this blind
----@field tag Tag? Tag associated with this blind (Small/Big only)
+---@field tag_name string? Name of the tag associated with this blind (Small/Big only)
+---@field tag_effect string? Description of the tag's effect (Small/Big only)
 
 ---@class Area
 ---@field count integer Current number of cards in this area

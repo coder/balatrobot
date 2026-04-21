@@ -62,7 +62,7 @@ return {
       send_response({
         message = "Consumable '"
           .. consumable_card.ability.name
-          .. "' requires card selection and can only be used in SELECTING_HAND state.",
+          .. "' requires card selection and can only be used in SELECTING_HAND state",
         name = BB_ERROR_NAMES.INVALID_STATE,
       })
       return
@@ -72,9 +72,7 @@ return {
     if requires_cards then
       if not args.cards or #args.cards == 0 then
         send_response({
-          message = "Consumable '"
-            .. consumable_card.ability.name
-            .. "' requires card selection. Provide target cards via the `cards` parameter.",
+          message = "Consumable '" .. consumable_card.ability.name .. "' requires card selection",
           name = BB_ERROR_NAMES.BAD_REQUEST,
         })
         return
@@ -102,7 +100,7 @@ return {
       if min_cards == max_cards and card_count ~= min_cards then
         send_response({
           message = string.format(
-            "Consumable '%s' requires exactly %d card%s (provided: %d). Provide the correct number of cards via the `cards` parameter.",
+            "Consumable '%s' requires exactly %d card%s (provided: %d)",
             consumable_card.ability.name,
             min_cards,
             min_cards == 1 and "" or "s",
@@ -117,7 +115,7 @@ return {
       if card_count < min_cards then
         send_response({
           message = string.format(
-            "Consumable '%s' requires at least %d card%s (provided: %d). Provide more cards via the `cards` parameter.",
+            "Consumable '%s' requires at least %d card%s (provided: %d)",
             consumable_card.ability.name,
             min_cards,
             min_cards == 1 and "" or "s",
@@ -131,7 +129,7 @@ return {
       if card_count > max_cards then
         send_response({
           message = string.format(
-            "Consumable '%s' requires at most %d card%s (provided: %d). Provide fewer cards via the `cards` parameter.",
+            "Consumable '%s' requires at most %d card%s (provided: %d)",
             consumable_card.ability.name,
             max_cards,
             max_cards == 1 and "" or "s",
@@ -178,9 +176,7 @@ return {
     -- Step 8: Space Check (not tested)
     if consumable_card:check_use() then
       send_response({
-        message = "Cannot use consumable '"
-          .. consumable_card.ability.name
-          .. "': insufficient space. Use `sell` or `use` to free up space.",
+        message = "Cannot use consumable '" .. consumable_card.ability.name .. "': insufficient space",
         name = BB_ERROR_NAMES.NOT_ALLOWED,
       })
       return

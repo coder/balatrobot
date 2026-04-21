@@ -3,6 +3,8 @@
 ---@type BB_LOGGER
 local BB_LOGGER = assert(SMODS.load_file("src/lua/utils/logger.lua"))()
 
+-- Win overlay state is now tracked in BB_GAMESTATE (shared with love.update)
+
 -- ==========================================================================
 -- Play Endpoint Params
 -- ==========================================================================
@@ -46,7 +48,7 @@ return {
 
     if #args.cards > G.hand.config.highlighted_limit then
       send_response({
-        message = "You can only play " .. G.hand.config.highlighted_limit .. " cards. Provide fewer card indices.",
+        message = "You can only play " .. G.hand.config.highlighted_limit .. " cards",
         name = BB_ERROR_NAMES.BAD_REQUEST,
       })
       return
@@ -92,8 +94,6 @@ return {
     G.E_MANAGER:add_event(Event({
       trigger = "condition",
       blocking = false,
-      blockable = false,
-      created_on_pause = true,
       func = function()
         -- State progression:
         -- Loss: HAND_PLAYED -> NEW_ROUND -> (game paused) -> GAME_OVER
@@ -121,12 +121,10 @@ return {
             return false
           end
 
-          -- Game is won
-          if G.GAME.won then
-            sendDebugMessage("Return play() - won", "BB.ENDPOINTS")
-            local state_data = BB_GAMESTATE.get_gamestate()
-            send_response(state_data)
-            return true
+          -- Game is won — love.update auto-dismisses the overlay.
+          -- Wait here until that's done before looking for cash_out button.
+          if G.GAME.won and not BB_GAMESTATE.win_overlay_dismissed then
+            return false
           end
 
           -- Wait for first scoring row (blind1) to be added to the UI

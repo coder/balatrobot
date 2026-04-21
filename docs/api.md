@@ -395,7 +395,7 @@ curl -X POST http://127.0.0.1:12346 \
 
 ### `sell`
 
-Sell a joker or consumable. Available in SHOP, SELECTING_HAND states, and when a Buffoon pack is open (to make room for new jokers).
+Sell a joker or consumable.
 
 **Parameters:** (exactly one required)
 
@@ -406,7 +406,7 @@ Sell a joker or consumable. Available in SHOP, SELECTING_HAND states, and when a
 
 **Returns:** [GameState](#gamestate-schema)
 
-**Errors:** `BAD_REQUEST`, `INVALID_STATE`, `NOT_ALLOWED`
+**Errors:** `BAD_REQUEST`, `NOT_ALLOWED`
 
 **Example:**
 
@@ -698,7 +698,6 @@ The complete game state returned by most methods.
   "seed": "ABC123",
   "won": false,
   "used_vouchers": {},
-  "tags": [ ... ],
   "hands": { ... },
   "round": { ... },
   "blinds": { ... },
@@ -781,23 +780,8 @@ Represents a card area (hand, jokers, consumables, shop, etc.).
   "name": "Small Blind",
   "effect": "No special effect",
   "score": 300,
-  "tag": {
-    "key": "tag_juggle",
-    "name": "Juggle Tag",
-    "effect": "+3 hand size next round"
-  }
-}
-```
-
-### Tag
-
-Represents a Balatro tag that provides bonuses when triggered.
-
-```json
-{
-  "key": "tag_juggle",
-  "name": "Juggle Tag",
-  "effect": "+3 hand size next round"
+  "tag_name": "Uncommon Tag",
+  "tag_effect": "Shop has a free Uncommon Joker"
 }
 ```
 
@@ -940,37 +924,6 @@ Represents a Balatro tag that provides bonuses when triggered.
 | `UPCOMING` | Future blind       |
 | `DEFEATED` | Previously beaten  |
 | `SKIPPED`  | Previously skipped |
-
-### Tags
-
-Tags provide bonuses when triggered, typically after skipping a blind or defeating a boss blind.
-
-| Value            | Description                                                  |
-| ---------------- | ------------------------------------------------------------ |
-| `tag_uncommon`   | Shop has a free Uncommon Joker                               |
-| `tag_rare`       | Shop has a free Rare Joker                                   |
-| `tag_negative`   | Next base edition shop Joker is free and becomes Negative    |
-| `tag_foil`       | Next base edition shop Joker is free and becomes Foil        |
-| `tag_holo`       | Next base edition shop Joker is free and becomes Holographic |
-| `tag_polychrome` | Next base edition shop Joker is free and becomes Polychrome  |
-| `tag_investment` | Gain $25 after defeating the next Boss Blind                 |
-| `tag_voucher`    | Adds one Voucher to the next shop                            |
-| `tag_boss`       | Rerolls the Boss Blind                                       |
-| `tag_standard`   | Gives a free Mega Standard Pack                              |
-| `tag_charm`      | Gives a free Mega Arcana Pack                                |
-| `tag_meteor`     | Gives a free Mega Celestial Pack                             |
-| `tag_buffoon`    | Gives a free Mega Buffoon Pack                               |
-| `tag_handy`      | Gives $1 per played hand this run                            |
-| `tag_garbage`    | Gives $1 per unused discard this run                         |
-| `tag_ethereal`   | Gives a free Spectral Pack                                   |
-| `tag_coupon`     | Initial cards and booster packs in next shop are free        |
-| `tag_double`     | Gives a copy of the next selected Tag (Double Tag excluded)  |
-| `tag_juggle`     | +3 hand size next round                                      |
-| `tag_d_six`      | Rerolls in next shop start at $0                             |
-| `tag_top_up`     | Create up to 2 Common Jokers (Must have room)                |
-| `tag_skip`       | Gives $5 per skipped Blind this run                          |
-| `tag_orbital`    | Upgrade [poker hand] by 3 levels                             |
-| `tag_economy`    | Doubles your money (Max of $40)                              |
 
 ### Card Keys
 

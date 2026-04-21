@@ -185,8 +185,10 @@ return {
       G.consumeables.cards = new_array
     end
 
-    -- Update order fields on each card
+    -- Update order fields, rank, and visual positions on each card
     for i, card in ipairs(new_array) do
+      -- Set rank so align_cards() respects our ordering
+      card.rank = i
       if rearrange_type == "hand" then
         card.config.card.order = i
         if card.config.center then
@@ -201,6 +203,19 @@ return {
         end
       end
     end
+
+    -- Trigger visual re-layout (mirrors gamepad d-pad reordering in controller.lua)
+    local area
+    if rearrange_type == "hand" then
+      area = G.hand
+    elseif rearrange_type == "jokers" then
+      area = G.jokers
+    else
+      area = G.consumeables
+    end
+    table.sort(area.cards, function(a, b) return a.rank < b.rank end)
+    area:set_ranks()
+    area:align_cards()
 
     -- Wait for completion: state should remain stable after rearranging
     G.E_MANAGER:add_event(Event({

@@ -48,7 +48,7 @@ wheels = [
 
 [[package]]
 name = "balatrobot"
-version = "1.4.1"
+version = "1.4.0"
 source = { editable = "." }
 dependencies = [
     { name = "httpx" },

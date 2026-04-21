@@ -25,6 +25,7 @@ BB_ENDPOINTS = {
   "src/lua/endpoints/skip.lua",
   "src/lua/endpoints/select.lua",
   -- Play/discard endpoints
+  "src/lua/endpoints/highlight.lua",
   "src/lua/endpoints/play.lua",
   "src/lua/endpoints/discard.lua",
   -- Cash out endpoint
@@ -56,6 +57,8 @@ assert(SMODS.load_file("src/lua/core/dispatcher.lua"))() -- define BB_DISPATCHER
 -- Load gamestate and errors utilities
 BB_GAMESTATE = assert(SMODS.load_file("src/lua/utils/gamestate.lua"))()
 assert(SMODS.load_file("src/lua/utils/errors.lua"))()
+BB_EARNINGS = assert(SMODS.load_file("src/lua/utils/earnings.lua"))()
+BB_EARNINGS.install()
 
 -- Initialize Server
 local server_success = BB_SERVER.init()
@@ -73,6 +76,9 @@ local love_update = love.update
 love.update = function(dt) ---@diagnostic disable-line: duplicate-set-field
   -- Check for GAME_OVER before game logic runs
   BB_GAMESTATE.check_game_over()
+  -- Dismiss win overlay when paused — event handlers can't run while paused,
+  -- so we do it here in love.update which always runs
+  BB_GAMESTATE.check_win_overlay()
   love_update(dt)
   BB_SERVER.update(BB_DISPATCHER)
 end

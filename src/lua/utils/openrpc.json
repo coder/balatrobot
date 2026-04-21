@@ -3,7 +3,7 @@
   "info": {
     "title": "BalatroBot API",
     "description": "JSON-RPC 2.0 API for Balatro bot development. This API allows external clients to control the Balatro game, query game state, and execute actions through an HTTP server.",
-    "version": "1.4.1",
+    "version": "1.4.0",
     "license": {
       "name": "MIT"
     }
@@ -37,7 +37,7 @@
     {
       "name": "add",
       "summary": "Add a new card to the game",
-      "description": "Add a new card to the game (joker, consumable, voucher, pack, or playing card). Playing cards use SUIT_RANK format (e.g., H_A for Ace of Hearts).",
+      "description": "Add a new card to the game (joker, consumable, voucher, or playing card). Playing cards use SUIT_RANK format (e.g., H_A for Ace of Hearts).",
       "tags": [
         {
           "$ref": "#/components/tags/cards"
@@ -46,7 +46,7 @@
       "params": [
         {
           "name": "key",
-          "description": "Card key. Format: jokers (j_*), consumables (c_*), vouchers (v_*), packs (p_*), or playing cards (SUIT_RANK like H_A, D_K, C_2, S_T)",
+          "description": "Card key. Format: jokers (j_*), consumables (c_*), vouchers (v_*), or playing cards (SUIT_RANK like H_A, D_K, C_2, S_T)",
           "required": true,
           "schema": {
             "$ref": "#/components/schemas/CardKey"
@@ -577,7 +577,7 @@
     {
       "name": "sell",
       "summary": "Sell a joker or consumable",
-      "description": "Sell a joker or consumable from player inventory. Must provide exactly one of: joker or consumable. Available in SHOP, SELECTING_HAND states, and when a Buffoon pack is open (SMODS_BOOSTER_OPENED state with Joker set pack) to make room for new jokers.",
+      "description": "Sell a joker or consumable from player inventory. Must provide exactly one of: joker or consumable.",
       "tags": [
         {
           "$ref": "#/components/tags/shop"
@@ -613,9 +613,6 @@
       "errors": [
         {
           "$ref": "#/components/errors/BadRequest"
-        },
-        {
-          "$ref": "#/components/errors/InvalidState"
         },
         {
           "$ref": "#/components/errors/NotAllowed"
@@ -916,13 +913,6 @@
               "type": "string"
             }
           },
-          "tags": {
-            "type": "array",
-            "description": "Accumulated tags owned by the player",
-            "items": {
-              "$ref": "#/components/schemas/Tag"
-            }
-          },
           "hands": {
             "type": "object",
             "description": "Poker hands information",
@@ -1063,29 +1053,6 @@
           }
         }
       },
-      "Tag": {
-        "type": "object",
-        "description": "Tag information",
-        "properties": {
-          "key": {
-            "type": "string",
-            "description": "The tag key (e.g., 'tag_polychrome')"
-          },
-          "name": {
-            "type": "string",
-            "description": "Display name (e.g., 'Polychrome Tag')"
-          },
-          "effect": {
-            "type": "string",
-            "description": "Description of the tag's effect"
-          }
-        },
-        "required": [
-          "key",
-          "name",
-          "effect"
-        ]
-      },
       "Blind": {
         "type": "object",
         "description": "Blind information",
@@ -1108,9 +1075,13 @@
             "type": "integer",
             "description": "Score requirement to beat this blind"
           },
-          "tag": {
-            "$ref": "#/components/schemas/Tag",
-            "description": "Tag associated with this blind (Small/Big only)"
+          "tag_name": {
+            "type": "string",
+            "description": "Name of the tag associated with this blind (Small/Big only)"
+          },
+          "tag_effect": {
+            "type": "string",
+            "description": "Description of the tag's effect (Small/Big only)"
           }
         },
         "required": [

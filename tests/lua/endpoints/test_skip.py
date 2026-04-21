@@ -20,12 +20,10 @@ class TestSkipEndpoint:
         )
         assert gamestate["state"] == "BLIND_SELECT"
         assert gamestate["blinds"]["small"]["status"] == "SELECT"
-        assert "tags" not in gamestate
         response = api(client, "skip", {})
         gamestate = assert_gamestate_response(response, state="BLIND_SELECT")
         assert gamestate["blinds"]["small"]["status"] == "SKIPPED"
         assert gamestate["blinds"]["big"]["status"] == "SELECT"
-        assert gamestate["tags"][0]["key"] == "tag_polychrome"
 
     def test_skip_big_blind(self, client: httpx.Client) -> None:
         """Test skipping Big blind in BLIND_SELECT state."""
@@ -34,14 +32,10 @@ class TestSkipEndpoint:
         )
         assert gamestate["state"] == "BLIND_SELECT"
         assert gamestate["blinds"]["big"]["status"] == "SELECT"
-        assert {"tag_polychrome"} == set(k["key"] for k in gamestate["tags"])
         response = api(client, "skip", {})
         gamestate = assert_gamestate_response(response, state="BLIND_SELECT")
         assert gamestate["blinds"]["big"]["status"] == "SKIPPED"
         assert gamestate["blinds"]["boss"]["status"] == "SELECT"
-        assert {"tag_polychrome", "tag_investment"} == set(
-            k["key"] for k in gamestate["tags"]
-        )
 
     def test_skip_big_boss(self, client: httpx.Client) -> None:
         """Test skipping Boss in BLIND_SELECT state."""
@@ -50,10 +44,6 @@ class TestSkipEndpoint:
         )
         assert gamestate["state"] == "BLIND_SELECT"
         assert gamestate["blinds"]["boss"]["status"] == "SELECT"
-        assert gamestate["tags"][0]["key"] == "tag_polychrome"
-        assert {"tag_polychrome", "tag_investment"} == set(
-            k["key"] for k in gamestate["tags"]
-        )
         assert_error_response(
             api(client, "skip", {}),
             "NOT_ALLOWED",

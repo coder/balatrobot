@@ -3,7 +3,6 @@
 import re
 
 import httpx
-import pytest
 
 from tests.lua.conftest import api, assert_gamestate_response, load_fixture
 
@@ -148,28 +147,24 @@ class TestGamestateBlinds:
                 "name": "Small Blind",
                 "effect": "",
                 "score": 300,
-                "tag": {
-                    "key": "tag_polychrome",
-                    "name": "Polychrome Tag",
-                    "effect": "Next base edition shop Joker is free and becomes Polychrome",
-                },
+                "tag_effect": "Next base edition shop Joker is free and becomes Polychrome",
+                "tag_name": "Polychrome Tag",
             },
             "big": {
-                "type": "BIG",
-                "name": "Big Blind",
                 "effect": "",
+                "name": "Big Blind",
                 "score": 450,
-                "tag": {
-                    "key": "tag_investment",
-                    "name": "Investment Tag",
-                    "effect": "After defeating the Boss Blind, gain $25",
-                },
+                "tag_effect": "After defeating the Boss Blind, gain $25",
+                "tag_name": "Investment Tag",
+                "type": "BIG",
             },
             "boss": {
-                "type": "BOSS",
-                "name": "The Manacle",
                 "effect": "-1 Hand Size",
+                "name": "The Manacle",
                 "score": 600,
+                "tag_effect": "",
+                "tag_name": "",
+                "type": "BOSS",
             },
         }
         actual_blinds = {
@@ -819,167 +814,6 @@ class TestGamestateCards:
 
             assert isinstance(joker["cost"]["sell"], int)
             assert joker["cost"]["sell"] > 0
-
-
-class TestGamestateUsedVouchers:
-    """Test gamestate used_vouchers effect text extraction."""
-
-    @pytest.mark.parametrize(
-        "voucher_key,expected_effect",
-        [
-            # --- No loc_vars ---
-            ("v_overstock_norm", "+1 card slot available in shop"),
-            ("v_overstock_plus", "+1 card slot available in shop"),
-            ("v_crystal_ball", "+1 consumable slot"),
-            (
-                "v_omen_globe",
-                "Spectral cards may appear in any of the Arcana Packs",
-            ),
-            (
-                "v_telescope",
-                "Celestial Packs always contain the Planet card for your "
-                "most played poker hand",
-            ),
-            ("v_magic_trick", "Playing cards can be purchased from the shop"),
-            (
-                "v_illusion",
-                "Playing cards in shop may have an Enhancement, Edition, and/or a Seal",
-            ),
-            ("v_blank", "Does nothing?"),
-            ("v_antimatter", "+1 Joker Slot"),
-            # --- Uses center.config.extra_disp ---
-            (
-                "v_tarot_merchant",
-                "Tarot cards appear 2X more frequently in the shop",
-            ),
-            (
-                "v_tarot_tycoon",
-                "Tarot cards appear 4X more frequently in the shop",
-            ),
-            (
-                "v_planet_merchant",
-                "Planet cards appear 2X more frequently in the shop",
-            ),
-            (
-                "v_planet_tycoon",
-                "Planet cards appear 4X more frequently in the shop",
-            ),
-            # --- Uses center.config.extra ---
-            (
-                "v_hone",
-                "Foil, Holographic, and Polychrome cards appear 2X more often",
-            ),
-            (
-                "v_glow_up",
-                "Foil, Holographic, and Polychrome cards appear 4X more often",
-            ),
-            ("v_reroll_surplus", "Rerolls cost $2 less"),
-            ("v_reroll_glut", "Rerolls cost $2 less"),
-            ("v_grabber", "Permanently gain +1 hand per round"),
-            ("v_nacho_tong", "Permanently gain +1 hand per round"),
-            ("v_wasteful", "Permanently gain +1 discard each round"),
-            ("v_recyclomancy", "Permanently gain +1 discard each round"),
-            ("v_clearance_sale", "All cards and packs in shop are 25% off"),
-            ("v_liquidation", "All cards and packs in shop are 50% off"),
-            (
-                "v_directors_cut",
-                "Reroll Boss Blind 1 time per Ante, $10 per roll",
-            ),
-            ("v_retcon", "Reroll Boss Blind unlimited times, $10 per roll"),
-            ("v_paint_brush", "+1 hand size"),
-            ("v_palette", "+1 hand size"),
-            ("v_hieroglyph", "-1 Ante, -1 hand each round"),
-            ("v_petroglyph", "-1 Ante, -1 discard each round"),
-            # --- Uses center.config.extra / 5 ---
-            (
-                "v_seed_money",
-                "Raise the cap on interest earned in each round to $10",
-            ),
-            (
-                "v_money_tree",
-                "Raise the cap on interest earned in each round to $20",
-            ),
-            # --- Uses center.config.extra (mult) ---
-            (
-                "v_observatory",
-                "Planet cards in your consumable area give X1.5 Mult "
-                "for their specified poker hand",
-            ),
-        ],
-        ids=lambda v: v if v.startswith("v_") else "",
-    )
-    def test_voucher_effect_text(
-        self, client: httpx.Client, voucher_key: str, expected_effect: str
-    ) -> None:
-        """Test that used_vouchers contains correct effect text for each voucher."""
-        load_fixture(
-            client,
-            "gamestate",
-            "state-SHOP",
-        )
-        response = api(client, "add", {"key": voucher_key})
-        gamestate = assert_gamestate_response(response)
-        assert gamestate["vouchers"]["cards"][1]["value"]["effect"] == expected_effect
-        response = api(client, "buy", {"voucher": 1})
-        gamestate = assert_gamestate_response(response)
-        assert voucher_key in gamestate["used_vouchers"]
-        assert gamestate["used_vouchers"][voucher_key] == expected_effect
-
-
-class TestGamestateTags:
-    """Test gamestate Tag structure and owned_tags extraction."""
-
-    def test_blind_tag_structure(self, client: httpx.Client) -> None:
-        """Test blind tag has key, name, effect fields."""
-        fixture_name = "state-BLIND_SELECT--round_num-0--deck-RED--stake-WHITE"
-        gamestate = load_fixture(client, "gamestate", fixture_name)
-
-        # Small blind should have a tag
-        small_tag = gamestate["blinds"]["small"]["tag"]
-        assert small_tag is not None
-        assert "key" in small_tag
-        assert "name" in small_tag
-        assert "effect" in small_tag
-        assert small_tag["key"] == "tag_polychrome"
-        assert small_tag["name"] == "Polychrome Tag"
-        assert "Polychrome" in small_tag["effect"]
-
-        # Big blind should have a tag
-        big_tag = gamestate["blinds"]["big"]["tag"]
-        assert big_tag is not None
-        assert "key" in big_tag
-        assert "name" in big_tag
-        assert "effect" in big_tag
-
-        # Boss blind should not have a tag
-        assert gamestate["blinds"]["boss"].get("tag") is None
-
-    def test_tags_empty_initially(self, client: httpx.Client) -> None:
-        """Test tags is empty/not present at start of run."""
-        fixture_name = "state-BLIND_SELECT--round_num-0--deck-RED--stake-WHITE"
-        gamestate = load_fixture(client, "gamestate", fixture_name)
-        # tags should not be present when empty
-        assert "tags" not in gamestate
-
-    def test_tags_populated_after_skip(self, client: httpx.Client) -> None:
-        """Test tags is populated after skipping a blind."""
-        fixture_name = "state-BLIND_SELECT--round_num-0--deck-RED--stake-WHITE"
-        load_fixture(client, "gamestate", fixture_name)
-
-        # Skip the small blind to get its tag
-        response = api(client, "skip", {})
-        gamestate = assert_gamestate_response(response)
-
-        # Should now have tags
-        assert "tags" in gamestate
-        assert len(gamestate["tags"]) >= 1
-
-        # Check tag structure
-        tag = gamestate["tags"][0]
-        assert "key" in tag
-        assert "name" in tag
-        assert "effect" in tag
-        assert tag["key"].startswith("tag_")
 
 
 class TestGamestateCardModifiers:

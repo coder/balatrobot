@@ -46,7 +46,7 @@ return {
 
     if G.GAME.current_round.discards_left <= 0 then
       send_response({
-        message = "No discards left. Play cards using `play` instead.",
+        message = "No discards left",
         name = BB_ERROR_NAMES.BAD_REQUEST,
       })
       return
@@ -54,7 +54,7 @@ return {
 
     if #args.cards > G.hand.config.highlighted_limit then
       send_response({
-        message = "You can only discard " .. G.hand.config.highlighted_limit .. " cards. Provide fewer card indices.",
+        message = "You can only discard " .. G.hand.config.highlighted_limit .. " cards",
         name = BB_ERROR_NAMES.BAD_REQUEST,
       })
       return
@@ -97,8 +97,6 @@ return {
     G.E_MANAGER:add_event(Event({
       trigger = "immediate",
       blocking = false,
-      blockable = false,
-      created_on_pause = true,
       func = function()
         -- State progression for discard:
         -- Discard always continues current round: HAND_PLAYED -> DRAW_TO_HAND -> SELECTING_HAND

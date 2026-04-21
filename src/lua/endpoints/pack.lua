@@ -3,6 +3,10 @@
 ---@type BB_LOGGER
 local BB_LOGGER = assert(SMODS.load_file("src/lua/utils/logger.lua"))()
 
+-- Re-entrancy guard: prevents double-firing use_card when a previous
+-- pack selection is still being processed (e.g. Black Hole animations).
+local selection_in_progress = false
+
 -- ==========================================================================
 -- Pack Select Endpoint Params
 -- ==========================================================================
@@ -110,10 +114,24 @@ return {
       return
     end
 
+    -- Block re-entrant calls while a previous selection is processing.
+    -- Skip bypasses the guard — it's the wedge-recovery path, and the skip
+    -- branch below clears selection_in_progress unconditionally before
+    -- calling skip_booster. Without this bypass a stuck guard (e.g. a
+    -- use_card error that never fires the completion event) wedges the
+    -- pack forever with no way for the bot to escape.
+    if selection_in_progress and not args.skip then
+      send_response({
+        message = "Pack selection already in progress",
+        name = BB_ERROR_NAMES.NOT_ALLOWED,
+      })
+      return
+    end
+
     -- Validate pack_cards exists
     if not G.pack_cards or G.pack_cards.REMOVED then
       send_response({
-        message = "No pack is currently open. Use `buy` with `pack` parameter to buy and open a pack.",
+        message = "No pack is currently open",
         name = BB_ERROR_NAMES.INVALID_STATE,
       })
       return
@@ -144,8 +162,7 @@ return {
             message = "Cannot select joker, joker slots are full. Current: "
               .. joker_count
               .. ", Limit: "
-              .. joker_limit
-              .. ". Sell a joker using `sell` to free a slot.",
+              .. joker_limit,
             name = BB_ERROR_NAMES.NOT_ALLOWED,
           })
           return true
@@ -161,11 +178,7 @@ return {
             local joker_count = G.jokers and G.jokers.config and G.jokers.config.card_count or 0
             if joker_count == 0 then
               send_response({
-                message = string.format(
-                  "Card '%s' requires at least 1 joker. Current: %d. Ensure you have enough jokers before selecting this card.",
-                  card_key,
-                  joker_count
-                ),
+                message = string.format("Card '%s' requires at least 1 joker. Current: %d", card_key, joker_count),
                 name = BB_ERROR_NAMES.NOT_ALLOWED,
               })
               return true
@@ -178,14 +191,14 @@ return {
             local msg
             if req.min == req.max then
               msg = string.format(
-                "Card '%s' requires exactly %d target card(s). Provided: %d. Ensure you have the required targets before selecting.",
+                "Card '%s' requires exactly %d target card(s). Provided: %d",
                 card_key,
                 req.min,
                 target_count
               )
             else
               msg = string.format(
-                "Card '%s' requires %d-%d target card(s). Provided: %d. Ensure you have the required targets before selecting.",
+                "Card '%s' requires %d-%d target card(s). Provided: %d",
                 card_key,
                 req.min,
                 req.max,
@@ -244,7 +257,39 @@ return {
 
       local pack_choices_before = G.GAME.pack_choices or 0
 
-      G.FUNCS.use_card(btn)
+      -- Pre-flight: defer to the game's own validation. Covers cases the
+      -- endpoint-level checks miss — e.g. Ectoplasm/Hex with zero editionless
+      -- jokers (card.lua:1798-1800), which otherwise crashes the game in a
+      -- delayed E_MANAGER event at card.lua:1734 trying to index a nil result
+      -- from pseudorandom_element({}).
+      if card.can_use_consumeable then
+        local usable_ok, usable = pcall(card.can_use_consumeable, card, true)
+        if usable_ok and usable == false then
+          send_response({
+            message = string.format(
+              "Card '%s' cannot be used in current state (game rejected via can_use_consumeable)",
+              card_key or card.ability and card.ability.name or "unknown"
+            ),
+            name = BB_ERROR_NAMES.NOT_ALLOWED,
+          })
+          return true
+        end
+      end
+
+      selection_in_progress = true
+      -- Wrap use_card in pcall: if the game rejects the selection (e.g. Hex
+      -- with no editionless jokers, Ankh with no jokers), the completion
+      -- event never fires and the guard would latch on forever. pcall ensures
+      -- we surface the error and release the guard so the bot can recover.
+      local ok, err = pcall(G.FUNCS.use_card, btn)
+      if not ok then
+        selection_in_progress = false
+        send_response({
+          message = "use_card failed: " .. tostring(err),
+          name = BB_ERROR_NAMES.INVALID_STATE,
+        })
+        return true
+      end
 
       -- Wait for action to complete - check pack_choices to determine expected state
       G.E_MANAGER:add_event(Event({
@@ -260,6 +305,7 @@ return {
               and G.STATE == G.STATES.SMODS_BOOSTER_OPENED
 
             if pack_stable then
+              selection_in_progress = false
               sendDebugMessage("Return pack() after selection (more choices remain)", "BB.ENDPOINTS")
               send_response(BB_GAMESTATE.get_gamestate())
               return true
@@ -270,10 +316,12 @@ return {
             local back_to_shop = G.STATE == G.STATES.SHOP
 
             if pack_closed and back_to_shop then
+              selection_in_progress = false
               sendDebugMessage("Return pack() after selection", "BB.ENDPOINTS")
               send_response(BB_GAMESTATE.get_gamestate())
               return true
             end
+
           end
           return false
         end,
@@ -284,6 +332,7 @@ return {
 
     -- Handle skip
     if args.skip then
+      selection_in_progress = false  -- Clear guard so skip can proceed after stuck selection
       local pack_count = G.pack_cards.config and G.pack_cards.config.card_count or 0
       sendDebugMessage(string.format("Pack: skipping (%d cards remaining)", pack_count), "BB.ENDPOINTS")
       G.FUNCS.skip_booster({})
@@ -309,12 +358,10 @@ return {
     end
 
     -- Wait for hand cards to load for Arcana and Spectral packs
-    local pack_key = G.pack_cards
-      and G.pack_cards.cards
-      and G.pack_cards.cards[1]
-      and G.pack_cards.cards[1].ability
-      and G.pack_cards.cards[1].ability.set
-    local needs_hand = pack_key == "Tarot" or pack_key == "Spectral"
+    -- Check if hand cards are dealt (Arcana/Spectral packs deal hand cards).
+    -- Don't infer pack type from the first card's set — Black Hole is
+    -- set=Spectral but appears in Celestial packs, causing a false match.
+    local needs_hand = G.hand and G.hand.cards and #G.hand.cards > 0
 
     if needs_hand then
       -- Wait for hand cards to be fully loaded and positioned

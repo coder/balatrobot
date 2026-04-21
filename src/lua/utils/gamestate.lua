@@ -232,14 +232,85 @@ local function extract_card_modifier(card)
     modifier.seal = string.upper(card.seal)
   end
 
-  -- Edition (table with type/key)
-  if card.edition and card.edition.type then
-    modifier.edition = string.upper(card.edition.type)
+  -- Edition: use the card's own scoring methods for reliable detection.
+  -- card:get_chip_mult() returns the holo mult, get_chip_bonus() includes foil chips,
+  -- get_chip_x_mult() returns polychrome xmult. These work regardless of how
+  -- the edition table is structured internally.
+  if card.edition then
+    -- Type string for identification
+    if card.edition.type then
+      modifier.edition = string.upper(card.edition.type)
+    elseif card.edition.holo then
+      modifier.edition = "HOLO"
+    elseif card.edition.foil then
+      modifier.edition = "FOIL"
+    elseif card.edition.polychrome then
+      modifier.edition = "POLYCHROME"
+    elseif card.edition.negative then
+      modifier.edition = "NEGATIVE"
+    elseif card.edition.key then
+      -- SMODS: edition.key = "e_holo" / "e_foil" / "e_polychrome" / "e_negative"
+      local etype = card.edition.key:gsub("^e_", "")
+      modifier.edition = string.upper(etype)
+    end
+
+    -- Numeric scoring values
+    if card.edition.mult and card.edition.mult ~= 0 then
+      modifier.edition_mult = card.edition.mult
+    end
+    if card.edition.chips and card.edition.chips ~= 0 then
+      modifier.edition_chips = card.edition.chips
+    end
+    -- Use get_edition() for x_mult: the raw card.edition.x_mult can be
+    -- contaminated by enhancement values (Glass x2 overwrites Polychrome x1.5).
+    -- get_edition() returns the correct edition-only value.
+    if card.get_edition then
+      local ok, ed = pcall(function() return card:get_edition() end)
+      if ok and ed and ed.x_mult_mod and ed.x_mult_mod ~= 0 then
+        modifier.edition_x_mult = ed.x_mult_mod
+      end
+    elseif card.edition.x_mult and card.edition.x_mult ~= 0 then
+      modifier.edition_x_mult = card.edition.x_mult
+    end
+  end
+  -- Fallback: use card scoring methods directly (catches editions not in card.edition table)
+  -- Skip if the card has a MULT or LUCKY enhancement — get_chip_mult() includes
+  -- enhancement mult, which would create a phantom HOLO edition.
+  local has_mult_enhancement = card.ability and card.ability.effect
+    and (card.ability.effect == "Mult Card" or card.ability.effect == "Lucky Card")
+  if not modifier.edition and card.get_chip_mult and not has_mult_enhancement then
+    local ok, emult = pcall(function() return card:get_chip_mult() end)
+    if ok and emult and emult > 0 then
+      modifier.edition = "HOLO"
+      modifier.edition_mult = emult
+    end
+  end
+  -- Note: removed get_chip_x_mult() fallback here — it returns the enhancement
+  -- x_mult (Glass 2.0), not the edition x_mult (Polychrome 1.5). Edition detection
+  -- via get_edition() above is now the primary path.
+  if not modifier.edition_chips and card.get_chip_bonus then
+    -- get_chip_bonus includes base nominal + ability.bonus + perma_bonus + edition chips
+    -- We already handle perma_bonus separately, so only check for foil-level chips
+    local ok, echips = pcall(function() return card:get_chip_bonus() end)
+    if ok and echips then
+      local base_nominal = (card.base and card.base.nominal) or 0
+      local ability_bonus = (card.ability and card.ability.bonus) or 0
+      local perma = (card.ability and card.ability.perma_bonus) or 0
+      local edition_chips = echips - base_nominal - ability_bonus - perma
+      if edition_chips > 0 then
+        modifier.edition = modifier.edition or "FOIL"
+        modifier.edition_chips = edition_chips
+      end
+    end
   end
 
   -- Enhancement (from ability.name for enhanced cards)
   if card.ability and card.ability.effect and card.ability.effect ~= "Base" then
     modifier.enhancement = string.upper(card.ability.effect:gsub(" Card", ""))
+    -- Expose enhancement x_mult separately (Glass = 2.0)
+    if card.ability.x_mult and card.ability.x_mult ~= 1 then
+      modifier.enhancement_x_mult = card.ability.x_mult
+    end
   end
 
   -- Eternal (boolean from ability)
@@ -278,6 +349,50 @@ local function extract_card_value(card)
 
   -- Effect description (for all cards)
   value.effect = get_card_ui_description(card)
+
+  -- Permanent chip bonus (from Hiker etc.) — only for playing cards
+  if card.ability then
+    if card.ability.perma_bonus and card.ability.perma_bonus ~= 0 then
+      value.perma_bonus = card.ability.perma_bonus
+    end
+  end
+
+  -- Joker rarity (1=Common, 2=Uncommon, 3=Rare, 4=Legendary)
+  if card.config and card.config.center and card.config.center.rarity then
+    value.rarity = card.config.center.rarity
+  end
+
+  -- Joker ability data: expose actual scoring values instead of requiring
+  -- text parsing. Includes accumulated values for scaling jokers.
+  if card.ability then
+    local ab = {}
+    -- extra: varies by joker — can be number or table with chips/mult/Xmult/etc.
+    if card.ability.extra ~= nil then
+      if type(card.ability.extra) == "table" then
+        -- Shallow copy the table
+        for k, v in pairs(card.ability.extra) do
+          if type(v) ~= "table" and type(v) ~= "function" then
+            ab[k] = v
+          end
+        end
+      else
+        ab.extra = card.ability.extra
+      end
+    end
+    -- Config-level scoring fields (hand-type jokers like Jolly, Sly, etc.)
+    if card.ability.t_mult and card.ability.t_mult ~= 0 then ab.t_mult = card.ability.t_mult end
+    if card.ability.t_chips and card.ability.t_chips ~= 0 then ab.t_chips = card.ability.t_chips end
+    if card.ability.mult and card.ability.mult ~= 0 then ab.mult = card.ability.mult end
+    if card.ability.x_mult and card.ability.x_mult ~= 0 then ab.x_mult = card.ability.x_mult end
+    -- Driver's License enhanced card count
+    if card.ability.driver_tally then ab.driver_tally = card.ability.driver_tally end
+    -- Loyalty Card: remaining hands until trigger
+    if card.ability.loyalty_remaining ~= nil then ab.loyalty_remaining = card.ability.loyalty_remaining end
+    -- Only include if non-empty
+    if next(ab) ~= nil then
+      value.ability = ab
+    end
+  end
 
   return value
 end
@@ -468,6 +583,30 @@ local function extract_round_info()
     round.chips = G.GAME.chips
   end
 
+  -- The Ox: which hand type triggers money loss
+  if G.GAME.current_round.most_played_poker_hand then
+    round.most_played_poker_hand = G.GAME.current_round.most_played_poker_hand
+  end
+
+  -- Ancient Joker's current rotating suit
+  if G.GAME.current_round.ancient_card and G.GAME.current_round.ancient_card.suit then
+    local suit = G.GAME.current_round.ancient_card.suit
+    local suit_map = {Spades = "S", Hearts = "H", Clubs = "C", Diamonds = "D"}
+    round.ancient_suit = suit_map[suit] or suit
+  end
+
+  -- The Idol: target rank+suit that grants X2 Mult, rerolled each round
+  if G.GAME.current_round.idol_card
+    and G.GAME.current_round.idol_card.rank
+    and G.GAME.current_round.idol_card.suit
+  then
+    local suit_map = { Spades = "S", Hearts = "H", Clubs = "C", Diamonds = "D" }
+    round.idol_card = {
+      rank = convert_rank_to_enum(G.GAME.current_round.idol_card.rank) or G.GAME.current_round.idol_card.rank,
+      suit = suit_map[G.GAME.current_round.idol_card.suit] or G.GAME.current_round.idol_card.suit,
+    }
+  end
+
   return round
 end
 
@@ -513,88 +652,6 @@ local function get_blind_effect_from_ui(blind_config)
   end
 
   return table.concat(effect_parts, " ")
-end
-
----Strips Balatro color codes from text
----Color codes are in format {C:color}text{} or {X:color}text{}
----@param text string The text with color codes
----@return string clean_text The text without color codes
-local function strip_color_codes(text)
-  if not text then
-    return ""
-  end
-  -- Remove color codes: {C:color_name}, {X:mult}, etc. and closing {}
-  return text:gsub("%b{}", ""):gsub("%s+", " "):gsub("^%s+", ""):gsub("%s+$", "")
-end
-
----Gets voucher effect description using the game's localize function
----Uses the same approach as generate_card_ui() in common_events.lua
----@param voucher_key string The voucher key (e.g., "v_overstock_norm")
----@return string effect The effect description
-local function get_voucher_effect(voucher_key)
-  if not voucher_key then
-    return ""
-  end
-
-  -- Get voucher config from G.P_CENTERS
-  local center = G.P_CENTERS and G.P_CENTERS[voucher_key]
-  if not center then
-    return ""
-  end
-
-  -- Build loc_vars based on voucher name (mirrors common_events.lua:2559-2576)
-  local loc_vars = {}
-  local name = center.name
-
-  if name == "Overstock" or name == "Overstock Plus" then
-    -- No vars needed
-  elseif name == "Tarot Merchant" or name == "Tarot Tycoon" then
-    loc_vars = { center.config.extra_disp }
-  elseif name == "Planet Merchant" or name == "Planet Tycoon" then
-    loc_vars = { center.config.extra_disp }
-  elseif name == "Hone" or name == "Glow Up" then
-    loc_vars = { center.config.extra }
-  elseif name == "Reroll Surplus" or name == "Reroll Glut" then
-    loc_vars = { center.config.extra }
-  elseif name == "Grabber" or name == "Nacho Tong" then
-    loc_vars = { center.config.extra }
-  elseif name == "Wasteful" or name == "Recyclomancy" then
-    loc_vars = { center.config.extra }
-  elseif name == "Seed Money" or name == "Money Tree" then
-    loc_vars = { center.config.extra / 5 }
-  elseif name == "Blank" or name == "Antimatter" then
-    -- No vars needed
-  elseif name == "Hieroglyph" or name == "Petroglyph" then
-    loc_vars = { center.config.extra }
-  elseif name == "Director's Cut" or name == "Retcon" then
-    loc_vars = { center.config.extra }
-  elseif name == "Paint Brush" or name == "Palette" then
-    loc_vars = { center.config.extra }
-  elseif name == "Telescope" or name == "Observatory" then
-    loc_vars = { center.config.extra }
-  elseif name == "Clearance Sale" or name == "Liquidation" then
-    loc_vars = { center.config.extra }
-  end
-
-  -- Use localize to get description text
-  if not localize then ---@diagnostic disable-line: undefined-global
-    return ""
-  end
-
-  local text_lines = localize({ ---@diagnostic disable-line: undefined-global
-    type = "raw_descriptions",
-    key = voucher_key,
-    set = "Voucher",
-    vars = loc_vars,
-  })
-
-  if not text_lines or type(text_lines) ~= "table" then
-    return ""
-  end
-
-  -- Concatenate and strip color codes
-  local text = table.concat(text_lines, " ")
-  return strip_color_codes(text)
 end
 
 ---Gets tag information using localize function (same approach as Tag:set_text)
@@ -652,29 +709,6 @@ local function get_tag_info(tag_key)
   return result
 end
 
----Gets all owned tags from G.GAME.tags
----@return Tag[] tags Array of Tag objects
-local function get_owned_tags()
-  local tags = {}
-
-  if not G or not G.GAME or not G.GAME.tags then
-    return tags
-  end
-
-  for _, tag in pairs(G.GAME.tags) do
-    if tag and tag.key then
-      local tag_info = get_tag_info(tag.key)
-      table.insert(tags, {
-        key = tag.key,
-        name = tag_info.name,
-        effect = tag_info.effect,
-      })
-    end
-  end
-
-  return tags
-end
-
 ---Converts game blind status to uppercase enum
 ---@param status string Game status (e.g., "Defeated", "Current", "Select")
 ---@return string uppercase_status Uppercase status enum (e.g., "DEFEATED", "CURRENT", "SELECT")
@@ -705,7 +739,8 @@ function gamestate.get_blinds_info()
       name = "",
       effect = "",
       score = 0,
-      tag = nil, --[[@type Tag?]]
+      tag_name = "",
+      tag_effect = "",
     },
     big = {
       type = "BIG",
@@ -713,7 +748,8 @@ function gamestate.get_blinds_info()
       name = "",
       effect = "",
       score = 0,
-      tag = nil, --[[@type Tag?]]
+      tag_name = "",
+      tag_effect = "",
     },
     boss = {
       type = "BOSS",
@@ -721,7 +757,8 @@ function gamestate.get_blinds_info()
       name = "",
       effect = "",
       score = 0,
-      tag = nil, --[[@type Tag?]]
+      tag_name = "",
+      tag_effect = "",
     },
   }
 
@@ -759,11 +796,8 @@ function gamestate.get_blinds_info()
     local small_tag_key = G.GAME.round_resets.blind_tags and G.GAME.round_resets.blind_tags.Small
     if small_tag_key then
       local tag_info = get_tag_info(small_tag_key)
-      blinds.small.tag = {
-        key = small_tag_key,
-        name = tag_info.name,
-        effect = tag_info.effect,
-      }
+      blinds.small.tag_name = tag_info.name
+      blinds.small.tag_effect = tag_info.effect
     end
   end
 
@@ -786,11 +820,8 @@ function gamestate.get_blinds_info()
     local big_tag_key = G.GAME.round_resets.blind_tags and G.GAME.round_resets.blind_tags.Big
     if big_tag_key then
       local tag_info = get_tag_info(big_tag_key)
-      blinds.big.tag = {
-        key = big_tag_key,
-        name = tag_info.name,
-        effect = tag_info.effect,
-      }
+      blinds.big.tag_name = tag_info.name
+      blinds.big.tag_effect = tag_info.effect
     end
   end
 
@@ -814,7 +845,7 @@ function gamestate.get_blinds_info()
     blinds.boss.score = math.floor(base_amount * 2 * ante_scaling)
   end
 
-  -- Boss blind has no tags (tag remains nil)
+  -- Boss blind has no tags (tag_name and tag_effect remain empty strings)
 
   return blinds
 end
@@ -865,16 +896,14 @@ function gamestate.get_gamestate()
     -- Used vouchers (table<string, string>)
     if G.GAME.used_vouchers then
       local used_vouchers = {}
-      for voucher_name, _ in pairs(G.GAME.used_vouchers) do
-        used_vouchers[voucher_name] = get_voucher_effect(voucher_name)
+      for voucher_name, voucher_data in pairs(G.GAME.used_vouchers) do
+        if type(voucher_data) == "table" and voucher_data.description then
+          used_vouchers[voucher_name] = voucher_data.description
+        else
+          used_vouchers[voucher_name] = ""
+        end
       end
       state_data.used_vouchers = used_vouchers
-    end
-
-    -- Owned tags (Tag[])
-    local owned_tags = get_owned_tags()
-    if #owned_tags > 0 then
-      state_data.tags = owned_tags
     end
 
     -- Poker hands
@@ -887,6 +916,27 @@ function gamestate.get_gamestate()
 
     -- Blinds info
     state_data.blinds = gamestate.get_blinds_info()
+
+    -- JackPotts earnings tracker (per-game money attribution)
+    if G.GAME.jackpotts_earnings and G.GAME.jackpotts_earnings.entries then
+      state_data.earnings = G.GAME.jackpotts_earnings.entries
+    end
+
+    -- Currently held tags (Investment, Handy, Top-up, Speed, Garbage, etc.).
+    -- Each entry: {key, name, ante (acquired)}.
+    if G.GAME.tags and #G.GAME.tags > 0 then
+      local tags_out = {}
+      for _, tag in ipairs(G.GAME.tags) do
+        local t_key = tag.key or ""
+        local t_info = (G.P_TAGS and G.P_TAGS[t_key]) or {}
+        table.insert(tags_out, {
+          key = t_key,
+          name = t_info.name or t_key,
+          ante = tag.ante,
+        })
+      end
+      state_data.tags = tags_out
+    end
   end
 
   -- Always available areas
@@ -934,6 +984,14 @@ end
 -- normal event-based detection from working.
 gamestate.on_game_over = nil
 
+-- Tracks whether we've already dismissed the win overlay for endless mode.
+-- The dismissal happens in love.update (check_win_overlay) because the
+-- overlay sets G.SETTINGS.paused=true which blocks event processing.
+-- Two-phase: dismiss first, then confirm removal on a later frame so the
+-- game has time to fully process the overlay removal before the bot resumes.
+gamestate.win_overlay_dismissed = false
+gamestate.win_overlay_dismissing = false
+
 ---Check and trigger GAME_OVER callback if state is GAME_OVER
 ---Called from love.update before game logic runs
 function gamestate.check_game_over()
@@ -941,6 +999,31 @@ function gamestate.check_game_over()
     gamestate.on_game_over(gamestate.get_gamestate())
     gamestate.on_game_over = nil
   end
+end
+
+---Auto-dismiss the "YOU WIN" overlay to continue into endless mode.
+---Called from love.update so it works even when the game is paused.
+---Two-phase: dismiss first, then confirm removal on a later frame so the
+---game has time to fully process the overlay removal before the bot resumes.
+function gamestate.check_win_overlay()
+  if gamestate.win_overlay_dismissed then return end
+  if not G.GAME or not G.GAME.won then return end
+
+  -- Phase 2: overlay was dismissed on a previous frame, confirm it's gone
+  if gamestate.win_overlay_dismissing then
+    if not G.OVERLAY_MENU then
+      sendDebugMessage("check_win_overlay() - overlay confirmed gone, resuming", "BB.GAMESTATE")
+      gamestate.win_overlay_dismissed = true
+    end
+    return
+  end
+
+  -- Phase 1: overlay is visible, dismiss it now
+  if not G.OVERLAY_MENU then return end  -- not visible yet
+  sendDebugMessage("check_win_overlay() - dismissing win overlay for endless mode", "BB.GAMESTATE")
+  G.FUNCS.exit_overlay_menu()
+  gamestate.on_game_over = nil  -- prevent GAME_OVER callback from firing
+  gamestate.win_overlay_dismissing = true
 end
 
 return gamestate
