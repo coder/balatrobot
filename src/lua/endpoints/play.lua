@@ -62,13 +62,31 @@ return {
       end
     end
 
-    -- NOTE: Clear any existing highlights before selecting new cards
-    -- prevent state pollution. This is a bit of a hack but could interfere
-    -- with Boss Blind like Cerulean Bell.
-    G.hand:unhighlight_all()
+    -- Intelligently match selection to args.cards
+    -- We DON'T use unhighlight_all() because it cheats Boss Blinds (Cerulean Bell).
+    -- Instead, we toggle cards that should be selected but aren't,
+    -- and we don't touch cards that are already selected (even if forced).
+    
+    local target_indices = {}
+    for _, idx in ipairs(args.cards) do
+        target_indices[idx + 1] = true
+    end
 
-    for _, card_index in ipairs(args.cards) do
-      G.hand.cards[card_index + 1]:click()
+    for i, card in ipairs(G.hand.cards) do
+        local is_selected = false
+        for _, highlighted_card in ipairs(G.hand.highlighted) do
+            if highlighted_card == card then
+                is_selected = true
+                break
+            end
+        end
+
+        local should_be_selected = target_indices[i]
+        if should_be_selected and not is_selected then
+            card:click()
+        end
+        -- Note: We don't UNSELECT cards that the AI didn't ask for,
+        -- because if they are selected, they might be forced by a Boss.
     end
 
     -- Log the cards being played
@@ -80,8 +98,7 @@ return {
     assert(play_button ~= nil, "play() play button not found")
     G.FUNCS.play_cards_from_highlighted(play_button)
 
-    local hand_played = false
-    local draw_to_hand = false
+    local left_selecting = false
 
     -- NOTE: GAME_OVER detection cannot happen inside this event function
     -- because when G.STATE becomes GAME_OVER, the game sets G.SETTINGS.paused = true,
@@ -101,19 +118,12 @@ return {
         -- Win game: HAND_PLAYED -> NEW_ROUND -> ROUND_EVAL (with G.GAME.won = true)
         -- Keep playing current round: HAND_PLAYED -> DRAW_TO_HAND -> SELECTING_HAND
 
-        -- Track state transitions
-        if G.STATE == G.STATES.HAND_PLAYED then
-          hand_played = true
+        -- Track that we left SELECTING_HAND (animation started).
+        -- Using != SELECTING_HAND instead of tracking intermediate states
+        -- avoids race conditions when states transition between frames.
+        if G.STATE ~= G.STATES.SELECTING_HAND then
+          left_selecting = true
         end
-
-        if G.STATE == G.STATES.DRAW_TO_HAND then
-          draw_to_hand = true
-        end
-
-        -- if G.STATE == G.STATES.GAME_OVER then
-        --   -- NOTE: GAME_OVER is detected by gamestate.on_game_over callback in love.update
-        --   return true
-        -- end
 
         if G.STATE == G.STATES.ROUND_EVAL then
           -- Early exit if basic conditions not met
@@ -151,7 +161,7 @@ return {
           end
         end
 
-        if draw_to_hand and hand_played and G.buttons and G.STATE == G.STATES.SELECTING_HAND then
+        if left_selecting and G.buttons and G.STATE == G.STATES.SELECTING_HAND then
           sendDebugMessage("Return play() - same round", "BB.ENDPOINTS")
           local state_data = BB_GAMESTATE.get_gamestate()
           send_response(state_data)

@@ -79,6 +79,7 @@ BB_SERVER = {
   current_request_id = nil,
   client_state = nil,
   openrpc_spec = nil,
+  pending_response = false,  -- true while waiting for Event to send response
 }
 
 --- Create fresh client state for HTTP parsing
@@ -150,6 +151,20 @@ function BB_SERVER.accept()
   end
 
   if client then
+    -- If we're waiting for an Event to send a response, reject the new
+    -- connection to protect the pending socket.
+    if BB_SERVER.pending_response and BB_SERVER.client_socket then
+      -- Send a quick "busy" response before closing so the client
+      -- gets a clean HTTP error instead of a TCP abort.
+      local busy_body = '{"jsonrpc":"2.0","error":{"code":-32002,"message":"Server busy (pending response)","data":{"name":"INVALID_STATE"}},"id":null}'
+      local busy_resp = format_http_response(503, "Service Unavailable", busy_body)
+      client:settimeout(1)
+      client:send(busy_resp)
+      client:close()
+      sendDebugMessage("Client rejected with 503 (pending response)", "BB.SERVER")
+      return false
+    end
+
     -- Close existing client if any
     if BB_SERVER.client_socket then
       BB_SERVER.client_socket:close()
@@ -260,6 +275,7 @@ end
 ---@param status_code number HTTP status code
 ---@param message string Error message
 local function send_http_error(status_code, message)
+  BB_SERVER.pending_response = false
   local status_texts = {
     [400] = "Bad Request",
     [404] = "Not Found",
@@ -339,6 +355,7 @@ local function handle_jsonrpc(body, dispatcher)
   end
 
   BB_SERVER.current_request_id = parsed.id
+  BB_SERVER.pending_response = true
 
   -- Dispatch to endpoint
   if dispatcher and dispatcher.dispatch then
@@ -383,6 +400,7 @@ end
 ---@param response Response.Endpoint
 ---@return boolean success
 function BB_SERVER.send_response(response)
+  BB_SERVER.pending_response = false
   if not BB_SERVER.client_socket then
     return false
   end

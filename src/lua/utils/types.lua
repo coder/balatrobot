@@ -55,6 +55,12 @@
 ---@field score integer Score requirement to beat this blind
 ---@field tag_name string? Name of the tag associated with this blind (Small/Big only)
 ---@field tag_effect string? Description of the tag's effect (Small/Big only)
+---@field debuff table? Debuff constraints from G.P_BLINDS (e.g., {suit="Clubs"}, {is_face="face"})
+---@field mult number? Score multiplier (default 1, e.g., 4 for The Wall, 6 for Violet Vessel)
+---@field eye_hands table<string, boolean>? The Eye: which hand types have been played (only for current blind)
+---@field mouth_hand string? The Mouth: locked hand type (only for current blind)
+---@field hands_sub integer? The Needle: number of hands subtracted (only for current blind)
+---@field discards_sub integer? The Water: number of discards subtracted (only for current blind)
 
 ---@class Area
 ---@field count integer Current number of cards in this area
@@ -71,6 +77,7 @@
 ---@field modifier Card.Modifier Modifier information (seals, editions, enhancements)
 ---@field state Card.State Current state information (debuff, hidden, highlighted)
 ---@field cost Card.Cost Cost information (buy/sell prices)
+---@field played_this_ante boolean? Whether this card was played this ante (for The Pillar)
 
 ---@class Card.Value
 ---@field suit Card.Value.Suit? Suit (Hearts, Diamonds, Clubs, Spades) - only for playing cards

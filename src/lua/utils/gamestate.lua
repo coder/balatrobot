@@ -357,7 +357,7 @@ local function extract_card(card)
     end
   end
 
-  return {
+  local result = {
     id = card.sort_id or 0,
     key = key,
     set = set,
@@ -367,6 +367,43 @@ local function extract_card(card)
     state = extract_card_state(card),
     cost = extract_card_cost(card),
   }
+
+  -- Export played_this_ante for playing cards (The Pillar tracking)
+  if card.ability and card.ability.played_this_ante then
+    result.played_this_ante = true
+  end
+
+  -- Export ability dict for jokers (runtime state for growth jokers)
+  if set == "JOKER" and card.ability then
+    local ability_data = {}
+    for k, v in pairs(card.ability) do
+      -- Only export simple types (number, string, boolean) and simple tables
+      if type(v) == "number" or type(v) == "string" or type(v) == "boolean" then
+        ability_data[k] = v
+      elseif type(v) == "table" then
+        -- Serialize one level of nested tables (e.g., extra = {chips = 45})
+        local nested = {}
+        local has_values = false
+        for nk, nv in pairs(v) do
+          if type(nv) == "number" or type(nv) == "string" or type(nv) == "boolean" then
+            nested[nk] = nv
+            has_values = true
+          end
+        end
+        if has_values then
+          ability_data[k] = nested
+        end
+      end
+    end
+    -- Only add if there are meaningful fields
+    local has_ability = false
+    for _ in pairs(ability_data) do has_ability = true; break end
+    if has_ability then
+      result.ability = ability_data
+    end
+  end
+
+  return result
 end
 
 -- ==========================================================================
@@ -647,10 +684,29 @@ function gamestate.get_blinds_info()
     blinds.small.name = small_blind.name or "Small Blind"
     blinds.small.score = math.floor(base_amount * (small_blind.mult or 1) * ante_scaling)
     blinds.small.effect = get_blind_effect_from_ui(small_blind)
+    blinds.small.debuff = small_blind.debuff or {}
+    blinds.small.mult = small_blind.mult or 1
 
     -- Set status
     if blind_states.Small then
       blinds.small.status = convert_status_to_enum(blind_states.Small)
+    end
+
+    -- Export runtime state if this blind is current
+    if blind_states.Small == "Current" and G.GAME.blind then
+      local b = G.GAME.blind
+      if b.hands and type(b.hands) == "table" then
+        local used = {}
+        for name, val in pairs(b.hands) do
+          if val then used[name] = true end
+        end
+        blinds.small.eye_hands = used
+      end
+      if b.only_hand and type(b.only_hand) == "string" then
+        blinds.small.mouth_hand = b.only_hand
+      end
+      if b.hands_sub then blinds.small.hands_sub = b.hands_sub end
+      if b.discards_sub then blinds.small.discards_sub = b.discards_sub end
     end
 
     -- Get tag information
@@ -671,10 +727,29 @@ function gamestate.get_blinds_info()
     blinds.big.name = big_blind.name or "Big Blind"
     blinds.big.score = math.floor(base_amount * (big_blind.mult or 1.5) * ante_scaling)
     blinds.big.effect = get_blind_effect_from_ui(big_blind)
+    blinds.big.debuff = big_blind.debuff or {}
+    blinds.big.mult = big_blind.mult or 1.5
 
     -- Set status
     if blind_states.Big then
       blinds.big.status = convert_status_to_enum(blind_states.Big)
+    end
+
+    -- Export runtime state if this blind is current
+    if blind_states.Big == "Current" and G.GAME.blind then
+      local b = G.GAME.blind
+      if b.hands and type(b.hands) == "table" then
+        local used = {}
+        for name, val in pairs(b.hands) do
+          if val then used[name] = true end
+        end
+        blinds.big.eye_hands = used
+      end
+      if b.only_hand and type(b.only_hand) == "string" then
+        blinds.big.mouth_hand = b.only_hand
+      end
+      if b.hands_sub then blinds.big.hands_sub = b.hands_sub end
+      if b.discards_sub then blinds.big.discards_sub = b.discards_sub end
     end
 
     -- Get tag information
@@ -695,10 +770,29 @@ function gamestate.get_blinds_info()
     blinds.boss.name = boss_blind.name or "Boss Blind"
     blinds.boss.score = math.floor(base_amount * (boss_blind.mult or 2) * ante_scaling)
     blinds.boss.effect = get_blind_effect_from_ui(boss_blind)
+    blinds.boss.debuff = boss_blind.debuff or {}
+    blinds.boss.mult = boss_blind.mult or 2
 
     -- Set status
     if blind_states.Boss then
       blinds.boss.status = convert_status_to_enum(blind_states.Boss)
+    end
+
+    -- Export runtime state if this blind is current
+    if blind_states.Boss == "Current" and G.GAME.blind then
+      local b = G.GAME.blind
+      if b.hands and type(b.hands) == "table" then
+        local used = {}
+        for name, val in pairs(b.hands) do
+          if val then used[name] = true end
+        end
+        blinds.boss.eye_hands = used
+      end
+      if b.only_hand and type(b.only_hand) == "string" then
+        blinds.boss.mouth_hand = b.only_hand
+      end
+      if b.hands_sub then blinds.boss.hands_sub = b.hands_sub end
+      if b.discards_sub then blinds.boss.discards_sub = b.discards_sub end
     end
   else
     -- Fallback if boss blind not yet determined

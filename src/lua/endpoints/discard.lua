@@ -70,13 +70,31 @@ return {
       end
     end
 
-    -- NOTE: Clear any existing highlights before selecting new cards
-    -- prevent state pollution. This is a bit of a hack but could interfere
-    -- with Boss Blind like Cerulean Bell.
-    G.hand:unhighlight_all()
+    -- Intelligently match selection to args.cards
+    -- We DON'T use unhighlight_all() because it cheats Boss Blinds (Cerulean Bell).
+    -- Instead, we toggle cards that should be selected but aren't,
+    -- and we don't touch cards that are already selected (even if forced).
+    
+    local target_indices = {}
+    for _, idx in ipairs(args.cards) do
+        target_indices[idx + 1] = true
+    end
 
-    for _, card_index in ipairs(args.cards) do
-      G.hand.cards[card_index + 1]:click()
+    for i, card in ipairs(G.hand.cards) do
+        local is_selected = false
+        for _, highlighted_card in ipairs(G.hand.highlighted) do
+            if highlighted_card == card then
+                is_selected = true
+                break
+            end
+        end
+
+        local should_be_selected = target_indices[i]
+        if should_be_selected and not is_selected then
+            card:click()
+        end
+        -- Note: We don't UNSELECT cards that the AI didn't ask for,
+        -- because if they are selected, they might be forced by a Boss.
     end
 
     -- Log the cards being discarded
@@ -92,7 +110,7 @@ return {
     assert(discard_button ~= nil, "discard() discard button not found")
     G.FUNCS.discard_cards_from_highlighted(discard_button)
 
-    local draw_to_hand = false
+    local left_selecting = false
 
     G.E_MANAGER:add_event(Event({
       trigger = "immediate",
@@ -101,12 +119,14 @@ return {
       created_on_pause = true,
       func = function()
         -- State progression for discard:
-        -- Discard always continues current round: HAND_PLAYED -> DRAW_TO_HAND -> SELECTING_HAND
-        if G.STATE == G.STATES.DRAW_TO_HAND then
-          draw_to_hand = true
+        -- SELECTING_HAND -> HAND_PLAYED -> DRAW_TO_HAND -> SELECTING_HAND
+        -- Track that we left SELECTING_HAND (animation started) to avoid
+        -- returning before the discard animation even begins.
+        if G.STATE ~= G.STATES.SELECTING_HAND then
+          left_selecting = true
         end
 
-        if draw_to_hand and G.buttons and G.STATE == G.STATES.SELECTING_HAND then
+        if left_selecting and G.buttons and G.STATE == G.STATES.SELECTING_HAND then
           sendDebugMessage("Return discard()", "BB.ENDPOINTS")
           local state_data = BB_GAMESTATE.get_gamestate()
           send_response(state_data)
