@@ -237,8 +237,20 @@ local function extract_card_modifier(card)
     modifier.edition = string.upper(card.edition.type)
   end
 
-  -- Enhancement (from ability.name for enhanced cards)
-  if card.ability and card.ability.effect and card.ability.effect ~= "Base" then
+  -- Enhancement (Check center key for robust identification)
+  if card.config and card.config.center and card.config.center.set == 'Enhanced' then
+    local key = card.config.center.key
+    if key == 'm_bonus' then modifier.enhancement = 'BONUS'
+    elseif key == 'm_mult' then modifier.enhancement = 'MULT'
+    elseif key == 'm_wild' then modifier.enhancement = 'WILD'
+    elseif key == 'm_glass' then modifier.enhancement = 'GLASS'
+    elseif key == 'm_steel' then modifier.enhancement = 'STEEL'
+    elseif key == 'm_stone' then modifier.enhancement = 'STONE'
+    elseif key == 'm_lucky' then modifier.enhancement = 'LUCKY'
+    elseif key == 'm_gold' then modifier.enhancement = 'GOLD'
+    end
+  elseif card.ability and card.ability.effect and card.ability.effect ~= "Base" then
+    -- Fallback for modded enhancements
     modifier.enhancement = string.upper(card.ability.effect:gsub(" Card", ""))
   end
 
