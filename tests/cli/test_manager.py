@@ -167,7 +167,7 @@ class TestBalatroInstanceContextManager:
         instance = BalatroInstance(logs_path=str(tmp_path))
 
         # Mock health check to succeed immediately
-        instance._wait_for_health = AsyncMock()  # type: ignore[assignment]
+        instance._wait_for_health = AsyncMock()  # ty: ignore[invalid-assignment]
 
         async with instance:
             assert instance._process is mock_process
