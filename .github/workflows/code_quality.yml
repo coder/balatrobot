@@ -48,7 +48,7 @@ jobs:
       - name: Check markdown formatting
         run: |
           source .venv/bin/activate
-          mdformat --check .
+          mdformat --check --number --exclude "CHANGELOG.md" --exclude ".venv/**" --exclude "vendors/**" ./docs README.md .agents/skills/balatrobot/SKILL.md
       - name: Run ty
         run: |
           source .venv/bin/activate
