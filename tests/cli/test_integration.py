@@ -13,7 +13,6 @@ def _random_port() -> int:
     return random.randint(20000, 30000)
 
 
-@pytest.mark.integration
 class TestBalatroIntegration:
     """Integration tests that require a running Balatro instance."""
 

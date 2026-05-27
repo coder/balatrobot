@@ -118,15 +118,7 @@ def pytest_unconfigure(config):
 
 
 def pytest_collection_modifyitems(items):
-    """Mark all tests in this directory as integration tests."""
-    from pathlib import Path
-
-    current_dir = Path(__file__).parent
-
-    for item in items:
-        # Check if the test file is within the current directory
-        if current_dir in Path(item.path).parents:
-            item.add_marker(pytest.mark.integration)
+    """No-op placeholder. Kept for pytest hook consistency."""
 
 
 @pytest.fixture(scope="session")
