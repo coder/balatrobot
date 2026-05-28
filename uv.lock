@@ -52,6 +52,7 @@ version = "1.5.2"
 source = { editable = "." }
 dependencies = [
     { name = "httpx" },
+    { name = "platformdirs" },
     { name = "typer" },
 ]
 
@@ -82,6 +83,7 @@ test = [
 [package.metadata]
 requires-dist = [
     { name = "httpx", specifier = ">=0.28.1" },
+    { name = "platformdirs", specifier = ">=4.0" },
     { name = "typer", specifier = ">=0.15" },
 ]
 
