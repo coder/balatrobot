@@ -16,8 +16,8 @@ class TestApiCommand:
     # --- Happy path tests ---
 
     def test_api_health_success(self, cli_port: int):
-        """api health returns JSON result."""
-        result = runner.invoke(app, ["api", "health", "--port", str(cli_port)])
+        """api health returns JSON result with explicit port."""
+        result = runner.invoke(app, ["api", "health", "--port", str(cli_port), "--host", "127.0.0.1"])
         assert result.exit_code == 0
         data = json.loads(result.output)
         assert data["status"] == "ok"
@@ -25,7 +25,7 @@ class TestApiCommand:
     def test_api_gamestate_success(self, cli_port: int, balatro_client: BalatroClient):
         """api gamestate returns state."""
         balatro_client.call("menu")  # Reset state
-        result = runner.invoke(app, ["api", "gamestate", "--port", str(cli_port)])
+        result = runner.invoke(app, ["api", "gamestate", "--port", str(cli_port), "--host", "127.0.0.1"])
         assert result.exit_code == 0
         data = json.loads(result.output)
         assert "state" in data
@@ -34,7 +34,7 @@ class TestApiCommand:
         """api command passes JSON params correctly."""
         balatro_client.call("menu")
         params = json.dumps({"deck": "RED", "stake": "WHITE"})
-        result = runner.invoke(app, ["api", "start", params, "--port", str(cli_port)])
+        result = runner.invoke(app, ["api", "start", params, "--port", str(cli_port), "--host", "127.0.0.1"])
         assert result.exit_code == 0
 
     # --- Method validation tests ---
@@ -66,7 +66,7 @@ class TestApiCommand:
 
     def test_api_empty_params_default(self, cli_port: int):
         """Empty params default to {}."""
-        result = runner.invoke(app, ["api", "health", "--port", str(cli_port)])
+        result = runner.invoke(app, ["api", "health", "--port", str(cli_port), "--host", "127.0.0.1"])
         assert result.exit_code == 0
 
     # --- API error handling tests ---
@@ -75,7 +75,7 @@ class TestApiCommand:
         """API errors formatted as 'Error: NAME - message'."""
         balatro_client.call("menu")
         result = runner.invoke(
-            app, ["api", "play", '{"cards": [0]}', "--port", str(cli_port)]
+            app, ["api", "play", '{"cards": [0]}', "--port", str(cli_port), "--host", "127.0.0.1"]
         )
         assert result.exit_code == 1
         assert "Error: INVALID_STATE" in result.output
@@ -84,7 +84,7 @@ class TestApiCommand:
 
     def test_api_connection_error(self):
         """Connection error formatted correctly."""
-        result = runner.invoke(app, ["api", "health", "--port", "1"])
+        result = runner.invoke(app, ["api", "health", "--port", "1", "--host", "127.0.0.1"])
         assert result.exit_code == 1
         assert "Connection failed" in result.output
 
@@ -92,7 +92,15 @@ class TestApiCommand:
 
     def test_api_output_is_indented_json(self, cli_port: int):
         """Output is pretty-printed JSON."""
-        result = runner.invoke(app, ["api", "health", "--port", str(cli_port)])
+        result = runner.invoke(app, ["api", "health", "--port", str(cli_port), "--host", "127.0.0.1"])
         assert result.exit_code == 0
         # Check for indentation (2 spaces) or compact format
         assert '  "status"' in result.output or '"status": "ok"' in result.output
+
+    # --- Discovery tests ---
+
+    def test_api_no_state_file_error(self, tmp_path, monkeypatch):
+        """Discovery fails gracefully when no state file."""
+        monkeypatch.setenv("BALATROBOT_STATE_DIR", str(tmp_path))
+        result = runner.invoke(app, ["api", "health"])
+        assert result.exit_code == 1

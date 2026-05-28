@@ -8,6 +8,7 @@ import httpx
 import typer
 
 from balatrobot.cli.client import APIError, BalatroClient
+from balatrobot.state import StateFile
 
 
 class Method(StrEnum):
@@ -39,8 +40,11 @@ class Method(StrEnum):
 def api(
     method: Annotated[Method, typer.Argument(help="API method to call")],
     params: Annotated[str, typer.Argument(help="JSON params object")] = "{}",
-    host: Annotated[str, typer.Option(help="Server hostname")] = "127.0.0.1",
-    port: Annotated[int, typer.Option(help="Server port")] = 12346,
+    host: Annotated[str | None, typer.Option(help="Server hostname")] = None,
+    port: Annotated[int | None, typer.Option(help="Server port")] = None,
+    index: Annotated[
+        int | None, typer.Option("--index", "-i", help="Instance index (default: 0)")
+    ] = None,
 ) -> None:
     """Call API endpoint on a running BalatroBot server."""
     # Validate JSON params
@@ -50,8 +54,21 @@ def api(
         typer.echo(f"Error: Invalid JSON params - {e}", err=True)
         raise typer.Exit(code=1)
 
+    # Resolve instance: explicit host+port, or discover from state file
+    if host is not None and port is not None:
+        target_host = host
+        target_port = port
+    else:
+        try:
+            info = StateFile.resolve(host=host, port=port, index=index)
+            target_host = info.host
+            target_port = info.port
+        except Exception as e:
+            typer.echo(f"Error: {e}", err=True)
+            raise typer.Exit(code=1)
+
     # Make API call
-    client = BalatroClient(host=host, port=port)
+    client = BalatroClient(host=target_host, port=target_port)
     try:
         result = client.call(method.value, params_dict)
         typer.echo(json.dumps(result, indent=2))
