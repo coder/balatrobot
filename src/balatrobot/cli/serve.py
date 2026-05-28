@@ -1,4 +1,4 @@
-"""Serve command - Start Balatro with BalatroBot mod loaded."""
+"""Serve command — start Balatro with BalatroBot mod loaded."""
 
 import asyncio
 from typing import Annotated
@@ -6,7 +6,8 @@ from typing import Annotated
 import typer
 
 from balatrobot.config import Config
-from balatrobot.manager import BalatroInstance
+from balatrobot.pool import BalatroPool
+from balatrobot.state import StateFile
 
 # Platform choices for validation
 PLATFORM_CHOICES = ["darwin", "linux", "windows", "native"]
@@ -20,6 +21,9 @@ def serve(
     port: Annotated[
         int | None, typer.Option(help="Server port (default: 12346)")
     ] = None,
+    num_instances: Annotated[
+        int, typer.Option("-n", "--num-instances", help="Number of instances to start (default: 1)")
+    ] = 1,
     fps_cap: Annotated[
         int | None, typer.Option(help="Maximum FPS cap (default: 60)")
     ] = None,
@@ -95,14 +99,18 @@ def serve(
     )
 
     try:
-        asyncio.run(_serve(config))
+        asyncio.run(_serve(config, num_instances))
     except KeyboardInterrupt:
         typer.echo("\nShutting down server...")
 
 
-async def _serve(config: Config) -> None:
-    """Async serve implementation."""
-    async with BalatroInstance(config) as instance:
-        typer.echo(f"Balatro running on port {instance.port}. Press Ctrl+C to stop.")
+async def _serve(config: Config, n: int) -> None:
+    """Async serve implementation using StateFile + BalatroPool."""
+    pool = BalatroPool(config, n=n)
+    async with StateFile(pool) as sf:
+        instances = sf.instances
+        for i, info in enumerate(instances):
+            typer.echo(f"Instance [{i}]: {info.url}")
+        typer.echo(f"PID: {sf._pool._session_id}. Press Ctrl+C to stop.")
         while True:
             await asyncio.sleep(5)

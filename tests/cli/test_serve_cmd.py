@@ -35,6 +35,7 @@ class TestServeCommand:
         assert "--fast" in result.output
         assert "--headless" in result.output
         assert "--platform" in result.output
+        assert "--num-instances" in result.output or "-n" in result.output
 
     # --- Config.from_kwargs tests ---
 
@@ -78,6 +79,7 @@ class TestMainApp:
         assert result.exit_code == 0
         assert "serve" in result.output
         assert "api" in result.output
+        assert "list" in result.output
 
     def test_no_args_shows_help(self):
         """Running without args shows help (exit code 2 for multi-command apps)."""
