@@ -6,7 +6,7 @@ from unittest.mock import AsyncMock, MagicMock
 import pytest
 
 from balatrobot.config import Config
-from balatrobot.manager import BalatroInstance
+from balatrobot.instance import BalatroInstance
 
 
 class TestBalatroInstanceInit:
@@ -162,7 +162,7 @@ class TestBalatroInstanceContextManager:
         mock_launcher.build_env = MagicMock(return_value={})
         mock_launcher.build_cmd = MagicMock(return_value=["echo"])
 
-        monkeypatch.setattr("balatrobot.manager.get_launcher", lambda x: mock_launcher)
+        monkeypatch.setattr("balatrobot.instance.get_launcher", lambda x: mock_launcher)
 
         instance = BalatroInstance(logs_path=str(tmp_path))
 
