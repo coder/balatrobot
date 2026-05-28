@@ -3,6 +3,7 @@
 import typer
 
 from balatrobot.cli.api import api
+from balatrobot.cli.list import list_cmd
 from balatrobot.cli.serve import serve
 
 app = typer.Typer(
@@ -14,6 +15,7 @@ app = typer.Typer(
 # Register commands
 app.command()(serve)
 app.command()(api)
+app.command(name="list")(list_cmd)
 
 
 def main() -> None:
