@@ -9,7 +9,7 @@ import pytest
 
 from balatrobot.cli.client import BalatroClient
 from balatrobot.config import ENV_MAP, Config
-from balatrobot.manager import BalatroInstance
+from balatrobot.instance import BalatroInstance
 
 # ============================================================================
 # Constants

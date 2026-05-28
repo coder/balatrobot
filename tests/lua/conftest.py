@@ -13,7 +13,9 @@ import httpx
 import pytest
 
 from balatrobot.config import Config
-from balatrobot.manager import BalatroInstance
+from balatrobot.instance import BalatroInstance
+from balatrobot.pool import InstanceInfo
+from balatrobot.state import StateFile
 
 # ============================================================================
 # Constants
@@ -122,53 +124,49 @@ def pytest_collection_modifyitems(items):
 
 
 @pytest.fixture(scope="session")
-def host() -> str:
-    """Return the default Balatro server host."""
-    return HOST
-
-
-@pytest.fixture(scope="session")
-def port(worker_id) -> int:
-    """Get assigned port for this worker from env var."""
+def instance(worker_id) -> InstanceInfo:
+    """Return InstanceInfo for this worker's assigned instance."""
     ports_str = os.environ.get("BALATROBOT_PORTS", "12346")
     ports = [int(p) for p in ports_str.split(",")]
 
     if worker_id == "master":
-        return ports[0]
+        port = ports[0]
+    else:
+        worker_num = int(worker_id.replace("gw", ""))
+        port = ports[worker_num]
 
-    worker_num = int(worker_id.replace("gw", ""))
-    return ports[worker_num]
+    return InstanceInfo(host=HOST, port=port)
 
 
 @pytest.fixture(scope="session")
-async def balatro_server(port: int, worker_id) -> AsyncGenerator[None, None]:
+async def balatro_server(instance: InstanceInfo) -> AsyncGenerator[None, None]:
     """Wait for pre-started Balatro instance to be healthy."""
     timeout = 10.0
     elapsed = 0.0
     while elapsed < timeout:
-        if _check_health(HOST, port):
-            print(f"[{worker_id}] Connected to Balatro on port {port}")
+        if _check_health(instance.host, instance.port):
+            print(f"[worker] Connected to Balatro on port {instance.port}")
             yield None
             return
         await asyncio.sleep(0.5)
         elapsed += 0.5
 
-    pytest.fail(f"Balatro instance on port {port} not responding")
+    pytest.fail(f"Balatro instance on port {instance.port} not responding")
 
 
 @pytest.fixture
-def client(host: str, port: int, balatro_server) -> Generator[httpx.Client, None, None]:
+def client(instance: InstanceInfo, balatro_server) -> Generator[httpx.Client, None, None]:
     """Create an HTTP client connected to Balatro game instance.
 
     Args:
-        host: The hostname or IP address of the Balatro game server.
-        port: The port number the Balatro game server is listening on.
+        instance: The InstanceInfo for the assigned instance.
+        balatro_server: Ensures the server is healthy.
 
     Yields:
         An httpx.Client for communicating with the game.
     """
     with httpx.Client(
-        base_url=f"http://{host}:{port}",
+        base_url=instance.url,
         timeout=httpx.Timeout(CONNECTION_TIMEOUT, read=REQUEST_TIMEOUT),
     ) as http_client:
         yield http_client
