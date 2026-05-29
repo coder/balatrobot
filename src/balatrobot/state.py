@@ -17,7 +17,6 @@ from platformdirs import user_state_dir
 
 from balatrobot.pool import BalatroPool, InstanceInfo
 
-
 # ---------------------------------------------------------------------------
 # Port allocation
 # ---------------------------------------------------------------------------
@@ -55,9 +54,7 @@ class StateFileBusy(StateFileError):
     def __init__(self, path: str | Path, pid: int) -> None:
         self.path = str(path)
         self.pid = pid
-        super().__init__(
-            f"State file {path!s} is locked by PID {pid}"
-        )
+        super().__init__(f"State file {path!s} is locked by PID {pid}")
 
 
 class StateFileNotFound(StateFileError):
@@ -65,7 +62,9 @@ class StateFileNotFound(StateFileError):
 
     def __init__(self, path: str | Path | None = None) -> None:
         self.path = str(path) if path is not None else None
-        super().__init__(f"No state file found at {path!s}" if path else "No state file found")
+        super().__init__(
+            f"No state file found at {path!s}" if path else "No state file found"
+        )
 
 
 class InstanceNotFoundError(StateFileError):
@@ -236,11 +235,13 @@ class StateFile:
         if existing is not None:
             raise StateFileBusy(path=self._path, pid=existing["pid"])
 
-        # Start the pool
-        await self._pool.start()
-
-        # Write state file atomically
-        self._write_state()
+        # Start the pool and write state file; clean up on failure
+        try:
+            await self._pool.start()
+            self._write_state()
+        except BaseException:
+            await self._pool.stop()
+            raise
 
         return self
 
@@ -257,8 +258,7 @@ class StateFile:
             "pid": os.getpid(),
             "started_at": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
             "instances": [
-                {"host": info.host, "port": info.port}
-                for info in self._pool.instances
+                {"host": info.host, "port": info.port} for info in self._pool.instances
             ],
         }
         # Ensure parent directory exists
