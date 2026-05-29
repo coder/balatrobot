@@ -3,6 +3,7 @@
 import asyncio
 import os
 import signal
+import sys
 from pathlib import Path
 from typing import Annotated
 
@@ -73,14 +74,20 @@ class Server:
         """
         assert self._pool is not None  # set by __aenter__
         loop = asyncio.get_running_loop()
-        loop.add_signal_handler(signal.SIGTERM, self._shutdown.set)
 
-        while not self._shutdown.is_set():
-            self._pool.check_alive()
-            try:
-                await asyncio.wait_for(self._shutdown.wait(), timeout=5)
-            except asyncio.TimeoutError:
-                pass
+        if sys.platform != "win32":
+            loop.add_signal_handler(signal.SIGTERM, self._shutdown.set)
+
+        try:
+            while not self._shutdown.is_set():
+                self._pool.check_alive()
+                try:
+                    await asyncio.wait_for(self._shutdown.wait(), timeout=5)
+                except asyncio.TimeoutError:
+                    pass
+        finally:
+            if sys.platform != "win32":
+                loop.remove_signal_handler(signal.SIGTERM)
 
 
 def serve(
