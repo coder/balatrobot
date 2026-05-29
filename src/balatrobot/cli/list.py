@@ -30,4 +30,6 @@ def list_cmd(
     typer.echo(f"Started: {started_at}")
     typer.echo(f"Instances ({len(instances)}):")
     for i, inst in enumerate(instances):
-        typer.echo(f"  [{i}] http://{inst['host']}:{inst['port']}  log: {inst['log_path']}")
+        typer.echo(
+            f"  [{i}] http://{inst['host']}:{inst['port']}  log: {inst['log_path']}"
+        )

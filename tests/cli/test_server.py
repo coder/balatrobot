@@ -29,8 +29,10 @@ class TestServerContextManager:
         mock_inst.stop = AsyncMock()
         mock_inst.check_alive = MagicMock()
 
-        with patch("balatrobot.pool.BalatroInstance", return_value=mock_inst), \
-             patch("balatrobot.state.allocate_ports", return_value=[14001]):
+        with (
+            patch("balatrobot.pool.BalatroInstance", return_value=mock_inst),
+            patch("balatrobot.state.allocate_ports", return_value=[14001]),
+        ):
             async with Server(config, n=1, state_path=state_path) as _server:
                 assert state_path.exists()
                 data = json.loads(state_path.read_text())
@@ -77,8 +79,10 @@ class TestServerContextManager:
         mock_inst.start = AsyncMock(side_effect=RuntimeError("start failed"))
         mock_inst.stop = AsyncMock()
 
-        with patch("balatrobot.pool.BalatroInstance", return_value=mock_inst), \
-             patch("balatrobot.state.allocate_ports", return_value=[14001]):
+        with (
+            patch("balatrobot.pool.BalatroInstance", return_value=mock_inst),
+            patch("balatrobot.state.allocate_ports", return_value=[14001]),
+        ):
             server = Server(config, n=1, state_path=state_path)
             with pytest.raises(RuntimeError, match="start failed"):
                 await server.__aenter__()
@@ -98,8 +102,10 @@ class TestServerContextManager:
         mock_inst.start = AsyncMock()
         mock_inst.stop = AsyncMock()
 
-        with patch("balatrobot.pool.BalatroInstance", return_value=mock_inst), \
-             patch("balatrobot.state.allocate_ports", return_value=[14001]):
+        with (
+            patch("balatrobot.pool.BalatroInstance", return_value=mock_inst),
+            patch("balatrobot.state.allocate_ports", return_value=[14001]),
+        ):
             async with Server(config, n=1, state_path=state_path) as server:
                 assert server.pool is not None
                 assert isinstance(server.pool, BalatroPool)
@@ -122,8 +128,10 @@ class TestServerRun:
         mock_inst.stop = AsyncMock()
         mock_inst.check_alive = MagicMock()
 
-        with patch("balatrobot.pool.BalatroInstance", return_value=mock_inst), \
-             patch("balatrobot.state.allocate_ports", return_value=[14001]):
+        with (
+            patch("balatrobot.pool.BalatroInstance", return_value=mock_inst),
+            patch("balatrobot.state.allocate_ports", return_value=[14001]),
+        ):
             async with Server(config, n=1, state_path=state_path) as server:
                 # Pre-set the shutdown event so run() exits immediately
                 server._shutdown.set()
@@ -141,8 +149,10 @@ class TestServerRun:
         mock_inst.start = AsyncMock()
         mock_inst.stop = AsyncMock()
 
-        with patch("balatrobot.pool.BalatroInstance", return_value=mock_inst), \
-             patch("balatrobot.state.allocate_ports", return_value=[14001]):
+        with (
+            patch("balatrobot.pool.BalatroInstance", return_value=mock_inst),
+            patch("balatrobot.state.allocate_ports", return_value=[14001]),
+        ):
             async with Server(config, n=1, state_path=state_path) as server:
                 # Mock check_alive to raise InstanceDiedError
                 assert server._pool is not None
@@ -171,10 +181,12 @@ class TestServerRun:
         mock_inst.stop = AsyncMock()
         mock_inst.check_alive = MagicMock()
 
-        with patch("balatrobot.pool.BalatroInstance", return_value=mock_inst), \
-             patch("balatrobot.state.allocate_ports", return_value=[14001]), \
-             patch("balatrobot.cli.serve.sys") as mock_sys, \
-             patch("balatrobot.cli.serve.asyncio.get_running_loop") as mock_get_loop:
+        with (
+            patch("balatrobot.pool.BalatroInstance", return_value=mock_inst),
+            patch("balatrobot.state.allocate_ports", return_value=[14001]),
+            patch("balatrobot.cli.serve.sys") as mock_sys,
+            patch("balatrobot.cli.serve.asyncio.get_running_loop") as mock_get_loop,
+        ):
             mock_sys.platform = "win32"
             mock_loop = MagicMock()
             mock_get_loop.return_value = mock_loop
