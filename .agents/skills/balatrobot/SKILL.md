@@ -5,7 +5,7 @@ description: Launch Balatro with the BalatroBot mod and interact via the CLI. Us
 
 # BalatroBot CLI
 
-Three commands: `serve`, `api`, `list`. Explore any with `--help`.
+Four commands: `serve`, `api`, `list`, `stop`. Explore any with `--help`.
 
 ## `serve` — start Balatro
 
@@ -24,6 +24,14 @@ Key flags: `--headless`, `--fast` (10× speed), `--debug` (DebugPlus logging), `
 All flags have `BALATROBOT_*` env var equivalents (e.g. `BALATROBOT_FAST=1`). See `src/balatrobot/config.py` for the full mapping.
 
 `serve` auto-allocates ports, prints instance URLs and the session logs directory, then blocks until Ctrl+C. It writes a state file so other commands can discover the running instances.
+
+## `stop` — stop a running server
+
+```bash
+balatrobot stop
+```
+
+Reads the session state file, sends SIGTERM to the server PID, then polls up to 5 s for it to exit. Cleans up the state file on success. Safe to call when nothing is running (prints "No running instances.").
 
 ## `list` — show running instances
 
