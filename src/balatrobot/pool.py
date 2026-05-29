@@ -26,8 +26,8 @@ class BalatroPool:
     """Manages N BalatroInstance instances with port allocation.
 
     The pool creates ``n`` instances from a base config, assigning unique
-    ports to each.  It supports ``start()``/``stop()`` as well as the
-    async context-manager protocol.
+    ports to each.  Use ``start()``/``stop()`` to manage the lifecycle
+    and ``check_alive()`` to detect child-death.
 
     Fail-fast: if any instance fails to start, all already-started
     instances are stopped and the error is re-raised.
