@@ -128,9 +128,10 @@ class BalatroPool:
         self._infos = []
         self._started = False
 
-    async def __aenter__(self) -> "BalatroPool":
-        await self.start()
-        return self
+    def check_alive(self) -> None:
+        """Check all instances are still running.
 
-    async def __aexit__(self, *args) -> None:
-        await self.stop()
+        Raises InstanceDiedError from the first dead instance found.
+        """
+        for inst in self._instances:
+            inst.check_alive()
