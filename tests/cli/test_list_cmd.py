@@ -2,14 +2,10 @@
 
 import json
 import os
-from unittest.mock import MagicMock, patch
 
-import pytest
 from typer.testing import CliRunner
 
 from balatrobot.cli import app
-from balatrobot.pool import InstanceInfo
-from balatrobot.state import StateFile
 
 runner = CliRunner()
 

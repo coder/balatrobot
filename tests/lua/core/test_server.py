@@ -24,14 +24,18 @@ from balatrobot.pool import InstanceInfo
 class TestHTTPServerInit:
     """Tests for HTTP server initialization and port binding."""
 
-    def test_server_binds_to_configured_port(self, instance: InstanceInfo, balatro_server) -> None:
+    def test_server_binds_to_configured_port(
+        self, instance: InstanceInfo, balatro_server
+    ) -> None:
         """Test that server is listening on the expected port."""
         with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
             sock.settimeout(2)
             sock.connect(("127.0.0.1", instance.port))
             assert sock.fileno() != -1, f"Should connect to port {instance.port}"
 
-    def test_port_is_exclusively_bound(self, instance: InstanceInfo, balatro_server) -> None:
+    def test_port_is_exclusively_bound(
+        self, instance: InstanceInfo, balatro_server
+    ) -> None:
         """Test that server exclusively binds the port."""
         with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
             with pytest.raises(OSError) as exc_info:

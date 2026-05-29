@@ -1,6 +1,5 @@
 """Tests for balatrobot.pool module."""
 
-import asyncio
 from dataclasses import FrozenInstanceError
 from unittest.mock import AsyncMock, MagicMock, patch
 
@@ -9,7 +8,6 @@ import pytest
 from balatrobot.config import Config
 from balatrobot.instance import BalatroInstance
 from balatrobot.pool import BalatroPool, InstanceInfo
-
 
 # ============================================================================
 # InstanceInfo tests
@@ -34,7 +32,7 @@ class TestInstanceInfo:
         """InstanceInfo is immutable."""
         info = InstanceInfo(host="127.0.0.1", port=12346)
         with pytest.raises(FrozenInstanceError):
-            info.port = 9999  # type: ignore[misc]
+            setattr(info, "port", 9999)
 
     def test_equality(self):
         """Two InstanceInfo with same values are equal."""
@@ -109,7 +107,9 @@ class TestBalatroPoolStartStop:
             created_instances.append(inst)
             return inst
 
-        with patch("balatrobot.pool.BalatroInstance", side_effect=mock_instance_factory):
+        with patch(
+            "balatrobot.pool.BalatroInstance", side_effect=mock_instance_factory
+        ):
             pool = BalatroPool(config, ports=[14001, 14002])
             await pool.start()
 
@@ -157,7 +157,9 @@ class TestBalatroPoolStartStop:
         failed_inst.start = AsyncMock(side_effect=RuntimeError("start failed"))
         failed_inst.stop = AsyncMock()
 
-        with patch("balatrobot.pool.BalatroInstance", side_effect=[started_inst, failed_inst]):
+        with patch(
+            "balatrobot.pool.BalatroInstance", side_effect=[started_inst, failed_inst]
+        ):
             pool = BalatroPool(config, ports=[14001, 14002])
             with pytest.raises(RuntimeError, match="start failed"):
                 await pool.start()
@@ -259,7 +261,9 @@ class TestBalatroPoolPortAllocation:
             inst.stop = AsyncMock()
             return inst
 
-        with patch("balatrobot.pool.BalatroInstance", side_effect=mock_instance_factory):
+        with patch(
+            "balatrobot.pool.BalatroInstance", side_effect=mock_instance_factory
+        ):
             await pool.start()
 
         assert len(captured_ports) == 2
@@ -289,7 +293,9 @@ class TestBalatroPoolConfigDerivation:
             inst.stop = AsyncMock()
             return inst
 
-        with patch("balatrobot.pool.BalatroInstance", side_effect=mock_instance_factory):
+        with patch(
+            "balatrobot.pool.BalatroInstance", side_effect=mock_instance_factory
+        ):
             pool = BalatroPool(config, ports=[14001, 14002])
             await pool.start()
 
@@ -302,27 +308,29 @@ class TestBalatroPoolConfigDerivation:
         await pool.stop()
 
     @pytest.mark.asyncio
-    async def test_shared_session_id(self, tmp_path):
-        """Pool generates a shared session ID for all instances."""
+    async def test_shared_session_name(self, tmp_path):
+        """Pool generates a shared session name for all instances."""
         config = Config(logs_path=str(tmp_path))
 
-        captured_session_ids = []
+        captured_session_names = []
 
         def mock_instance_factory(config_arg, **kwargs):
-            session_id = kwargs.get("session_id")
-            captured_session_ids.append(session_id)
+            session_name = kwargs.get("session_name")
+            captured_session_names.append(session_name)
             inst = MagicMock(spec=BalatroInstance)
             inst.port = kwargs.get("port", 12346)
             inst.start = AsyncMock()
             inst.stop = AsyncMock()
             return inst
 
-        with patch("balatrobot.pool.BalatroInstance", side_effect=mock_instance_factory):
+        with patch(
+            "balatrobot.pool.BalatroInstance", side_effect=mock_instance_factory
+        ):
             pool = BalatroPool(config, ports=[14001, 14002])
             await pool.start()
 
-        # All instances share the same session ID
-        assert len(set(captured_session_ids)) == 1
-        assert captured_session_ids[0] is not None
+        # All instances share the same session name
+        assert len(set(captured_session_names)) == 1
+        assert captured_session_names[0] is not None
 
         await pool.stop()

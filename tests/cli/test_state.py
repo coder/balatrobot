@@ -2,14 +2,12 @@
 
 import json
 import os
-import tempfile
-from pathlib import Path
 from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
 
 from balatrobot.config import Config
-from balatrobot.pool import BalatroPool, InstanceInfo
+from balatrobot.pool import BalatroPool
 from balatrobot.state import (
     InstanceNotFoundError,
     StateFile,
@@ -18,7 +16,6 @@ from balatrobot.state import (
     StateFileNotFound,
     allocate_ports,
 )
-
 
 # ============================================================================
 # allocate_ports tests
@@ -366,6 +363,30 @@ class TestStateFileContextManager:
             async with sf:
                 # Should succeed — stale file cleaned up
                 assert sf.is_started is True
+
+    @pytest.mark.asyncio
+    async def test_write_failure_stops_pool(self, tmp_path):
+        """Pool is stopped if state file write fails after pool start."""
+        state_path = tmp_path / "state.json"
+        config = Config(logs_path=str(tmp_path))
+
+        mock_inst = MagicMock()
+        mock_inst.port = 14001
+        mock_inst.start = AsyncMock()
+        mock_inst.stop = AsyncMock()
+
+        with patch("balatrobot.pool.BalatroInstance", return_value=mock_inst):
+            pool = BalatroPool(config, ports=[14001])
+            sf = StateFile(pool, path=state_path)
+
+            # Make _write_state fail after pool starts
+            with patch.object(sf, "_write_state", side_effect=OSError("disk full")):
+                with pytest.raises(OSError, match="disk full"):
+                    async with sf:
+                        pass
+
+        # Pool should have been stopped (stop called on mock_inst)
+        mock_inst.stop.assert_called()
 
 
 # ============================================================================

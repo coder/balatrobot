@@ -15,7 +15,6 @@ import pytest
 from balatrobot.config import Config
 from balatrobot.instance import BalatroInstance
 from balatrobot.pool import InstanceInfo
-from balatrobot.state import StateFile
 
 # ============================================================================
 # Constants
@@ -155,7 +154,9 @@ async def balatro_server(instance: InstanceInfo) -> AsyncGenerator[None, None]:
 
 
 @pytest.fixture
-def client(instance: InstanceInfo, balatro_server) -> Generator[httpx.Client, None, None]:
+def client(
+    instance: InstanceInfo, balatro_server
+) -> Generator[httpx.Client, None, None]:
     """Create an HTTP client connected to Balatro game instance.
 
     Args:

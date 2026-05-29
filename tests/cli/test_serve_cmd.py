@@ -24,18 +24,33 @@ class TestServeCommand:
         """All valid platforms in list."""
         assert PLATFORM_CHOICES == ["darwin", "linux", "windows", "native"]
 
+    # --- Num instances validation tests ---
+
+    def test_serve_num_instances_zero(self):
+        """--num-instances 0 rejected with error message."""
+        result = runner.invoke(app, ["serve", "-n", "0"])
+        assert result.exit_code == 1
+        assert "--num-instances must be >= 1" in result.output
+
+    def test_serve_num_instances_negative(self):
+        """Negative --num-instances rejected."""
+        result = runner.invoke(app, ["serve", "-n", "-1"])
+        assert result.exit_code == 1
+        assert "--num-instances must be >= 1" in result.output
+
     # --- Help text tests ---
 
     def test_serve_help(self):
         """serve --help shows all options."""
         result = runner.invoke(app, ["serve", "--help"])
         assert result.exit_code == 0
-        assert "--host" in result.output
-        assert "--port" in result.output
         assert "--fast" in result.output
         assert "--headless" in result.output
         assert "--platform" in result.output
         assert "--num-instances" in result.output or "-n" in result.output
+        # --host and --port removed from serve (ephemeral ports, state file discovery)
+        assert "--host" not in result.output
+        assert "--port" not in result.output
 
     # --- Config.from_kwargs tests ---
 
