@@ -9,9 +9,7 @@ from balatrobot.state import StateFile
 
 
 def list_cmd(
-    json_output: Annotated[
-        bool, typer.Option("--json", help="Output as JSON")
-    ] = False,
+    json_output: Annotated[bool, typer.Option("--json", help="Output as JSON")] = False,
 ) -> None:
     """List running BalatroBot instances."""
     data = StateFile.read()
@@ -28,8 +26,8 @@ def list_cmd(
         return
 
     instances = data["instances"]
-    typer.echo(f"PID: {data['pid']}")
-    typer.echo(f"Started: {data['started_at']}")
+    started_at = data.get("started_at", "unknown")
+    typer.echo(f"Started: {started_at}")
     typer.echo(f"Instances ({len(instances)}):")
     for i, inst in enumerate(instances):
         typer.echo(f"  [{i}] http://{inst['host']}:{inst['port']}")
