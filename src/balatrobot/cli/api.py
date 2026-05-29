@@ -54,6 +54,11 @@ def api(
         typer.echo(f"Error: Invalid JSON params - {e}", err=True)
         raise typer.Exit(code=1)
 
+    # Validate: --host and --port must be provided together or not at all
+    if (host is None) != (port is None):
+        typer.echo("Error: --host and --port must be provided together.", err=True)
+        raise typer.Exit(code=1)
+
     # Resolve instance: explicit host+port, or discover from state file
     if host is not None and port is not None:
         target_host = host
