@@ -1,16 +1,86 @@
 """Serve command — start Balatro with BalatroBot mod loaded."""
 
 import asyncio
+import os
+import signal
+from pathlib import Path
 from typing import Annotated
 
 import typer
 
 from balatrobot.config import Config
+from balatrobot.instance import InstanceDiedError
 from balatrobot.pool import BalatroPool
-from balatrobot.state import StateFile
+from balatrobot.state import StateFile, StateFileBusy, _default_state_path
 
 # Platform choices for validation
 PLATFORM_CHOICES = ["darwin", "linux", "windows", "native"]
+
+
+class Server:
+    """Owns the full serve lifecycle: pool start/stop, state file write/delete,
+    and a supervision loop that watches for SIGTERM or child-death.
+
+    Usage::
+
+        async with Server(config, n=2) as server:
+            await server.run()
+    """
+
+    def __init__(
+        self,
+        config: Config,
+        n: int,
+        state_path: Path | None = None,
+    ) -> None:
+        self._config = config
+        self._n = n
+        self._state_path = state_path or _default_state_path()
+        self._pool: BalatroPool | None = None
+        self._shutdown = asyncio.Event()
+
+    @property
+    def pool(self) -> BalatroPool | None:
+        return self._pool
+
+    async def __aenter__(self) -> "Server":
+        # 1. Check for existing live state file
+        existing = StateFile.read(self._state_path)
+        if existing is not None:
+            raise StateFileBusy(path=self._state_path, pid=existing["pid"])
+
+        # 2. Start pool
+        self._pool = BalatroPool(self._config, n=self._n)
+        try:
+            await self._pool.start()
+            # 3. Write state file
+            StateFile.write(self._state_path, os.getpid(), self._pool.instances)
+        except BaseException:
+            await self._pool.stop()
+            raise
+
+        return self
+
+    async def __aexit__(self, *args: object) -> None:
+        StateFile.delete(self._state_path)
+        if self._pool is not None:
+            await self._pool.stop()
+
+    async def run(self) -> None:
+        """Block until SIGTERM or child death.
+
+        Raises InstanceDiedError on child death.
+        """
+        assert self._pool is not None  # set by __aenter__
+        loop = asyncio.get_running_loop()
+        loop.add_signal_handler(signal.SIGTERM, self._shutdown.set)
+
+        while not self._shutdown.is_set():
+            self._pool.check_alive()
+            try:
+                await asyncio.wait_for(self._shutdown.wait(), timeout=5)
+            except asyncio.TimeoutError:
+                pass
 
 
 def serve(
@@ -105,18 +175,22 @@ def serve(
         asyncio.run(_serve(config, num_instances))
     except KeyboardInterrupt:
         typer.echo("\nShutting down server...")
+    except InstanceDiedError as e:
+        typer.echo(str(e), err=True)
+        raise typer.Exit(code=1)
+    except StateFileBusy as e:
+        typer.echo(str(e), err=True)
+        raise typer.Exit(code=1)
 
 
 async def _serve(config: Config, n: int) -> None:
-    """Async serve implementation using StateFile + BalatroPool."""
-    pool = BalatroPool(config, n=n)
-    async with StateFile(pool) as sf:
-        instances = sf.instances
-        for i, info in enumerate(instances):
+    async with Server(config, n) as server:
+        pool = server.pool
+        assert pool is not None
+        for i, info in enumerate(pool.instances):
             typer.echo(f"Instance [{i}]: {info.url}")
-        session_name = pool.session_name
-        logs_dir = f"{config.logs_path}/{session_name}/"
-        typer.echo(f"Session: {session_name} | Logs: {logs_dir}")
+        typer.echo(
+            f"Session: {pool.session_name} | Logs: {config.logs_path}/{pool.session_name}/"
+        )
         typer.echo("Press Ctrl+C to stop.")
-        while True:
-            await asyncio.sleep(5)
+        await server.run()
