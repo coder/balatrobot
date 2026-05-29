@@ -15,6 +15,18 @@ from balatrobot.platforms.base import BaseLauncher
 HEALTH_TIMEOUT = 30.0
 
 
+class InstanceDiedError(Exception):
+    """Raised when a Balatro subprocess has exited unexpectedly."""
+
+    def __init__(self, port: int, log_path: str | None = None) -> None:
+        self.port = port
+        self.log_path = log_path
+        msg = f"Instance on port {port} died unexpectedly."
+        if log_path is not None:
+            msg += f"\nLog: {log_path}"
+        super().__init__(msg)
+
+
 class BalatroInstance:
     """Context manager for a single Balatro instance."""
 
@@ -130,6 +142,20 @@ class BalatroInstance:
             print(f"Force killing instance on port {self._config.port}...")
             process.kill()
             await loop.run_in_executor(None, process.wait)
+
+    def check_alive(self) -> None:
+        """Check if the subprocess is still running.
+
+        Raises InstanceDiedError if the process has exited.
+        Silently returns if the instance hasn't been started or is already stopped.
+        """
+        if self._process is None:
+            return
+        if self._process.poll() is not None:
+            raise InstanceDiedError(
+                port=self._config.port,
+                log_path=str(self._log_path) if self._log_path is not None else None,
+            )
 
     async def __aenter__(self) -> "BalatroInstance":
         """Start instance on context entry."""
