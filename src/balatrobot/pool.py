@@ -1,8 +1,8 @@
 """BalatroPool — manages N BalatroInstance instances."""
 
 import asyncio
-import uuid
 from dataclasses import dataclass
+from datetime import datetime
 
 from balatrobot.config import Config
 from balatrobot.instance import BalatroInstance
@@ -47,7 +47,12 @@ class BalatroPool:
         self._instances: list[BalatroInstance] = []
         self._infos: list[InstanceInfo] = []
         self._started = False
-        self._session_id: str | None = None
+        self._session_name: str | None = None
+
+    @property
+    def session_name(self) -> str | None:
+        """Session directory name (timestamp), available after start()."""
+        return self._session_name
 
     @property
     def n(self) -> int:
@@ -74,10 +79,11 @@ class BalatroPool:
             ports = self._ports
         else:
             from balatrobot.state import allocate_ports
+
             ports = allocate_ports(self._n)
 
-        # Generate shared session ID
-        self._session_id = uuid.uuid4().hex[:12]
+        # Generate shared session directory name (timestamp)
+        self._session_name = datetime.now().strftime("%Y-%m-%dT%H-%M-%S")
 
         # Create and start instances
         self._instances = []
@@ -87,14 +93,12 @@ class BalatroPool:
             for port in ports:
                 inst = BalatroInstance(
                     self._config,
-                    session_id=self._session_id,
+                    session_name=self._session_name,
                     port=port,
                 )
                 await inst.start()
                 self._instances.append(inst)
-                self._infos.append(
-                    InstanceInfo(host=self._config.host, port=port)
-                )
+                self._infos.append(InstanceInfo(host=self._config.host, port=port))
         except Exception:
             # Fail-fast: stop all instances that were started
             await self._stop_all()

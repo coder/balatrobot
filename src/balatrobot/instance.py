@@ -19,20 +19,20 @@ class BalatroInstance:
     """Context manager for a single Balatro instance."""
 
     def __init__(
-        self, config: Config | None = None, session_id: str | None = None, **overrides
+        self, config: Config | None = None, session_name: str | None = None, **overrides
     ) -> None:
         """Initialize a Balatro instance.
 
         Args:
             config: Base configuration. If None, uses Config from environment.
-            session_id: Optional session ID for log directory. If None, generated at start().
+            session_name: Session directory name (timestamp). If None, generated at start().
             **overrides: Override specific config fields (e.g., port=12347).
         """
         base = config or Config.from_env()
         self._config = replace(base, **overrides) if overrides else base
         self._process: subprocess.Popen | None = None
         self._log_path: Path | None = None
-        self._session_id = session_id
+        self._session_name = session_name
         self._launcher: BaseLauncher | None = None
 
     @property
@@ -79,9 +79,11 @@ class BalatroInstance:
         if self._process is not None:
             raise RuntimeError("Instance already started")
 
-        # Create session directory (use provided session_id or generate one)
-        timestamp = self._session_id or datetime.now().strftime("%Y-%m-%dT%H-%M-%S")
-        session_dir = Path(self._config.logs_path) / timestamp
+        # Create session directory (use provided session_name or generate one)
+        session_name = self._session_name or datetime.now().strftime(
+            "%Y-%m-%dT%H-%M-%S"
+        )
+        session_dir = Path(self._config.logs_path) / session_name
         session_dir.mkdir(parents=True, exist_ok=True)
         self._log_path = session_dir / f"{self._config.port}.log"
 
