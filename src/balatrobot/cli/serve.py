@@ -15,14 +15,11 @@ PLATFORM_CHOICES = ["darwin", "linux", "windows", "native"]
 
 def serve(
     # fmt: off
-    host: Annotated[
-        str | None, typer.Option(help="Server hostname (default: 127.0.0.1)")
-    ] = None,
-    port: Annotated[
-        int | None, typer.Option(help="Server port (default: 12346)")
-    ] = None,
     num_instances: Annotated[
-        int, typer.Option("-n", "--num-instances", help="Number of instances to start (default: 1)")
+        int,
+        typer.Option(
+            "-n", "--num-instances", help="Number of instances to start (default: 1)"
+        ),
     ] = 1,
     fps_cap: Annotated[
         int | None, typer.Option(help="Maximum FPS cap (default: 60)")
@@ -76,10 +73,16 @@ def serve(
         )
         raise typer.Exit(code=1)
 
+    # Validate num_instances
+    if num_instances < 1:
+        typer.echo(
+            f"Error: --num-instances must be >= 1, got {num_instances}.",
+            err=True,
+        )
+        raise typer.Exit(code=1)
+
     # Build config from kwargs with env var fallback
     config = Config.from_kwargs(
-        host=host,
-        port=port,
         fps_cap=fps_cap,
         gamespeed=gamespeed,
         animation_fps=animation_fps,
@@ -111,6 +114,9 @@ async def _serve(config: Config, n: int) -> None:
         instances = sf.instances
         for i, info in enumerate(instances):
             typer.echo(f"Instance [{i}]: {info.url}")
-        typer.echo(f"PID: {sf._pool._session_id}. Press Ctrl+C to stop.")
+        session_name = pool.session_name
+        logs_dir = f"{config.logs_path}/{session_name}/"
+        typer.echo(f"Session: {session_name} | Logs: {logs_dir}")
+        typer.echo("Press Ctrl+C to stop.")
         while True:
             await asyncio.sleep(5)
