@@ -198,3 +198,66 @@ class TestServerRun:
             # add_signal_handler should never be called on Windows
             mock_loop.add_signal_handler.assert_not_called()
             mock_loop.remove_signal_handler.assert_not_called()
+
+    @pytest.mark.asyncio
+    async def test_run_registers_sigterm_handler(self, tmp_path):
+        """run() registers a SIGTERM handler on non-Windows."""
+        state_path = tmp_path / "state.json"
+        config = Config(logs_path=str(tmp_path))
+
+        mock_inst = MagicMock()
+        mock_inst.port = 14001
+        mock_inst.log_path = "/tmp/test-logs/14001.log"
+        mock_inst.start = AsyncMock()
+        mock_inst.stop = AsyncMock()
+        mock_inst.check_alive = MagicMock()
+
+        with (
+            patch("balatrobot.pool.BalatroInstance", return_value=mock_inst),
+            patch("balatrobot.state.allocate_ports", return_value=[14001]),
+            patch("balatrobot.cli.serve.asyncio.get_running_loop") as mock_get_loop,
+            patch("balatrobot.cli.serve.signal.SIGTERM", object()),
+        ):
+            mock_loop = MagicMock()
+            mock_get_loop.return_value = mock_loop
+
+            async with Server(config, n=1, state_path=state_path) as server:
+                server._shutdown.set()
+                await server.run()
+
+            # Verify SIGTERM handler was registered and later removed
+            mock_loop.add_signal_handler.assert_called_once()
+            mock_loop.remove_signal_handler.assert_called_once()
+            call_args = mock_loop.add_signal_handler.call_args
+            assert call_args[0][1] == server._shutdown.set
+
+    @pytest.mark.asyncio
+    async def test_sigterm_triggers_clean_shutdown(self, tmp_path):
+        """SIGTERM sets shutdown event → run() exits → __aexit__ cleans up."""
+        state_path = tmp_path / "state.json"
+        config = Config(logs_path=str(tmp_path))
+
+        mock_inst = MagicMock()
+        mock_inst.port = 14001
+        mock_inst.log_path = "/tmp/test-logs/14001.log"
+        mock_inst.start = AsyncMock()
+        mock_inst.stop = AsyncMock()
+        mock_inst.check_alive = MagicMock()
+
+        with (
+            patch("balatrobot.pool.BalatroInstance", return_value=mock_inst),
+            patch("balatrobot.state.allocate_ports", return_value=[14001]),
+        ):
+            # Verify state file and pool are cleaned up after SIGTERM-like flow
+            async with Server(config, n=1, state_path=state_path) as server:
+                assert state_path.exists()
+                assert server.pool is not None
+                assert server.pool.is_started
+
+                # Simulate SIGTERM: set the shutdown event
+                server._shutdown.set()
+                await server.run()
+
+            # After __aexit__: state file deleted, pool stopped
+            assert not state_path.exists()
+            mock_inst.stop.assert_called()
