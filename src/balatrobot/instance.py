@@ -26,6 +26,7 @@ class InstanceInfo:
         """Full HTTP URL for this instance."""
         return f"http://{self.host}:{self.port}"
 
+
 HEALTH_TIMEOUT = 30.0
 
 

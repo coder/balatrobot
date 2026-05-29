@@ -30,9 +30,7 @@ def stop() -> None:
         typer.echo(f"Server stopped (PID {pid}).")
         return
     except PermissionError:
-        typer.echo(
-            f"Permission denied: PID {pid} is owned by another user.", err=True
-        )
+        typer.echo(f"Permission denied: PID {pid} is owned by another user.", err=True)
         raise typer.Exit(code=1)
     except OSError as e:
         typer.echo(str(e), err=True)

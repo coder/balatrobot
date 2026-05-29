@@ -27,7 +27,9 @@ class TestInstanceInfo:
 
     def test_create_with_log_path(self):
         """InstanceInfo stores log_path."""
-        info = InstanceInfo(host="127.0.0.1", port=12346, log_path=Path("/tmp/test.log"))
+        info = InstanceInfo(
+            host="127.0.0.1", port=12346, log_path=Path("/tmp/test.log")
+        )
         assert info.log_path == Path("/tmp/test.log")
 
     def test_url_property(self):

@@ -191,7 +191,9 @@ class StateFile:
                     return InstanceInfo(
                         host=inst["host"],
                         port=inst["port"],
-                        log_path=Path(inst["log_path"]) if inst["log_path"] is not None else None,
+                        log_path=Path(inst["log_path"])
+                        if inst["log_path"] is not None
+                        else None,
                     )
             raise InstanceNotFoundError(index=None, total=len(instances))
 
@@ -202,7 +204,9 @@ class StateFile:
 
         inst = instances[idx]
         return InstanceInfo(
-            host=inst["host"], port=inst["port"], log_path=Path(inst["log_path"]) if inst["log_path"] is not None else None
+            host=inst["host"],
+            port=inst["port"],
+            log_path=Path(inst["log_path"]) if inst["log_path"] is not None else None,
         )
 
     # -- Write / Delete ----------------------------------------------------
@@ -227,7 +231,13 @@ class StateFile:
             "pid": pid,
             "started_at": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
             "instances": [
-                {"host": info.host, "port": info.port, "log_path": str(info.log_path) if info.log_path is not None else None}
+                {
+                    "host": info.host,
+                    "port": info.port,
+                    "log_path": str(info.log_path)
+                    if info.log_path is not None
+                    else None,
+                }
                 for info in instances
             ],
         }

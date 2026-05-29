@@ -88,7 +88,9 @@ class BalatroPool:
                 await inst.start()
                 self._instances.append(inst)
                 self._infos.append(
-                    InstanceInfo(host=self._config.host, port=port, log_path=inst.log_path)
+                    InstanceInfo(
+                        host=self._config.host, port=port, log_path=inst.log_path
+                    )
                 )
         except Exception:
             # Fail-fast: stop all instances that were started

@@ -139,9 +139,7 @@ class TestStopCommand:
                 raise PermissionError("Not allowed")
             return None
 
-        with patch(
-            "balatrobot.cli.stop.os.kill", side_effect=kill_permission_denied
-        ):
+        with patch("balatrobot.cli.stop.os.kill", side_effect=kill_permission_denied):
             result = runner.invoke(app, ["stop"])
 
         assert result.exit_code == 1
