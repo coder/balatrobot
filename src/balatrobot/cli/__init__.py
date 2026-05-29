@@ -5,6 +5,7 @@ import typer
 from balatrobot.cli.api import api
 from balatrobot.cli.list import list_cmd
 from balatrobot.cli.serve import serve
+from balatrobot.cli.stop import stop
 
 app = typer.Typer(
     name="balatrobot",
@@ -16,6 +17,7 @@ app = typer.Typer(
 app.command()(serve)
 app.command()(api)
 app.command(name="list")(list_cmd)
+app.command()(stop)
 
 
 def main() -> None:

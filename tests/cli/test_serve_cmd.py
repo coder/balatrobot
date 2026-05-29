@@ -95,6 +95,7 @@ class TestMainApp:
         assert "serve" in result.output
         assert "api" in result.output
         assert "list" in result.output
+        assert "stop" in result.output
 
     def test_no_args_shows_help(self):
         """Running without args shows help (exit code 2 for multi-command apps)."""
