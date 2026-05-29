@@ -10,10 +10,11 @@ from balatrobot.instance import BalatroInstance
 
 @dataclass(frozen=True)
 class InstanceInfo:
-    """Immutable connection info for a running Balatro instance."""
+    """Immutable metadata for a running Balatro instance."""
 
     host: str
     port: int
+    log_path: str | None = None
 
     @property
     def url(self) -> str:
@@ -98,7 +99,10 @@ class BalatroPool:
                 )
                 await inst.start()
                 self._instances.append(inst)
-                self._infos.append(InstanceInfo(host=self._config.host, port=port))
+                log_path = str(inst.log_path) if inst.log_path is not None else None
+                self._infos.append(
+                    InstanceInfo(host=self._config.host, port=port, log_path=log_path)
+                )
         except Exception:
             # Fail-fast: stop all instances that were started
             await self._stop_all()

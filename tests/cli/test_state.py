@@ -99,8 +99,16 @@ class TestStateFileRead:
             "pid": os.getpid(),
             "started_at": "2026-05-28T12:00:00Z",
             "instances": [
-                {"host": "127.0.0.1", "port": 14001},
-                {"host": "127.0.0.1", "port": 14002},
+                {
+                    "host": "127.0.0.1",
+                    "port": 14001,
+                    "log_path": "/tmp/logs/s/14001.log",
+                },
+                {
+                    "host": "127.0.0.1",
+                    "port": 14002,
+                    "log_path": "/tmp/logs/s/14002.log",
+                },
             ],
         }
         state_path.write_text(json.dumps(state_data))
@@ -121,7 +129,13 @@ class TestStateFileRead:
         state_data = {
             "pid": 999999999,  # Non-existent PID
             "started_at": "2026-05-28T12:00:00Z",
-            "instances": [{"host": "127.0.0.1", "port": 14001}],
+            "instances": [
+                {
+                    "host": "127.0.0.1",
+                    "port": 14001,
+                    "log_path": "/tmp/logs/s/14001.log",
+                }
+            ],
         }
         state_path.write_text(json.dumps(state_data))
 
@@ -159,8 +173,16 @@ class TestStateFileResolve:
             "pid": os.getpid(),
             "started_at": "2026-05-28T12:00:00Z",
             "instances": [
-                {"host": "127.0.0.1", "port": 14001},
-                {"host": "127.0.0.1", "port": 14002},
+                {
+                    "host": "127.0.0.1",
+                    "port": 14001,
+                    "log_path": "/tmp/logs/s/14001.log",
+                },
+                {
+                    "host": "127.0.0.1",
+                    "port": 14002,
+                    "log_path": "/tmp/logs/s/14002.log",
+                },
             ],
         }
         state_path.write_text(json.dumps(state_data))
@@ -168,6 +190,7 @@ class TestStateFileResolve:
 
         info = StateFile.resolve(host="127.0.0.1", port=14002)
         assert info.port == 14002
+        assert info.log_path == "/tmp/logs/s/14002.log"
 
     def test_resolve_by_index(self, tmp_path, monkeypatch):
         """Resolves by index."""
@@ -176,8 +199,16 @@ class TestStateFileResolve:
             "pid": os.getpid(),
             "started_at": "2026-05-28T12:00:00Z",
             "instances": [
-                {"host": "127.0.0.1", "port": 14001},
-                {"host": "127.0.0.1", "port": 14002},
+                {
+                    "host": "127.0.0.1",
+                    "port": 14001,
+                    "log_path": "/tmp/logs/s/14001.log",
+                },
+                {
+                    "host": "127.0.0.1",
+                    "port": 14002,
+                    "log_path": "/tmp/logs/s/14002.log",
+                },
             ],
         }
         state_path.write_text(json.dumps(state_data))
@@ -185,6 +216,7 @@ class TestStateFileResolve:
 
         info = StateFile.resolve(index=1)
         assert info.port == 14002
+        assert info.log_path == "/tmp/logs/s/14002.log"
 
     def test_resolve_no_state_file(self, tmp_path, monkeypatch):
         """Raises StateFileNotFound when no state file."""
@@ -212,7 +244,13 @@ class TestStateFileResolve:
         state_data = {
             "pid": os.getpid(),
             "started_at": "2026-05-28T12:00:00Z",
-            "instances": [{"host": "127.0.0.1", "port": 14001}],
+            "instances": [
+                {
+                    "host": "127.0.0.1",
+                    "port": 14001,
+                    "log_path": "/tmp/logs/s/14001.log",
+                }
+            ],
         }
         state_path.write_text(json.dumps(state_data))
         monkeypatch.setenv("BALATROBOT_STATE_DIR", str(tmp_path))
@@ -229,8 +267,16 @@ class TestStateFileResolve:
             "pid": os.getpid(),
             "started_at": "2026-05-28T12:00:00Z",
             "instances": [
-                {"host": "127.0.0.1", "port": 14001},
-                {"host": "127.0.0.1", "port": 14002},
+                {
+                    "host": "127.0.0.1",
+                    "port": 14001,
+                    "log_path": "/tmp/logs/s/14001.log",
+                },
+                {
+                    "host": "127.0.0.1",
+                    "port": 14002,
+                    "log_path": "/tmp/logs/s/14002.log",
+                },
             ],
         }
         state_path.write_text(json.dumps(state_data))
@@ -238,6 +284,7 @@ class TestStateFileResolve:
 
         info = StateFile.resolve()
         assert info.port == 14001  # index=0 by default
+        assert info.log_path == "/tmp/logs/s/14001.log"
 
     def test_resolve_host_port_not_in_instances(self, tmp_path, monkeypatch):
         """Raises InstanceNotFoundError when host:port not found in instances."""
@@ -245,7 +292,13 @@ class TestStateFileResolve:
         state_data = {
             "pid": os.getpid(),
             "started_at": "2026-05-28T12:00:00Z",
-            "instances": [{"host": "127.0.0.1", "port": 14001}],
+            "instances": [
+                {
+                    "host": "127.0.0.1",
+                    "port": 14001,
+                    "log_path": "/tmp/logs/s/14001.log",
+                }
+            ],
         }
         state_path.write_text(json.dumps(state_data))
         monkeypatch.setenv("BALATROBOT_STATE_DIR", str(tmp_path))
@@ -270,6 +323,7 @@ class TestStateFileContextManager:
 
         mock_inst = MagicMock()
         mock_inst.port = 14001
+        mock_inst.log_path = "/tmp/test-logs/14001.log"
         mock_inst.start = AsyncMock()
         mock_inst.stop = AsyncMock()
 
@@ -282,6 +336,7 @@ class TestStateFileContextManager:
                 assert data["pid"] == os.getpid()
                 assert len(data["instances"]) == 1
                 assert data["instances"][0]["port"] == 14001
+                assert data["instances"][0]["log_path"] == "/tmp/test-logs/14001.log"
                 assert "started_at" in data
 
         assert not state_path.exists()
@@ -293,6 +348,7 @@ class TestStateFileContextManager:
 
         mock_inst = MagicMock()
         mock_inst.port = 14001
+        mock_inst.log_path = "/tmp/test-logs/14001.log"
         mock_inst.start = AsyncMock()
         mock_inst.stop = AsyncMock()
 
@@ -302,6 +358,7 @@ class TestStateFileContextManager:
             async with sf:
                 assert len(sf.instances) == 1
                 assert sf.instances[0].port == 14001
+                assert sf.instances[0].log_path == "/tmp/test-logs/14001.log"
 
     @pytest.mark.asyncio
     async def test_path_property(self, tmp_path):
@@ -321,13 +378,20 @@ class TestStateFileContextManager:
         state_data = {
             "pid": os.getpid(),
             "started_at": "2026-05-28T12:00:00Z",
-            "instances": [{"host": "127.0.0.1", "port": 14001}],
+            "instances": [
+                {
+                    "host": "127.0.0.1",
+                    "port": 14001,
+                    "log_path": "/tmp/logs/s/14001.log",
+                }
+            ],
         }
         state_path.write_text(json.dumps(state_data))
 
         config = Config(logs_path=str(tmp_path))
         mock_inst = MagicMock()
         mock_inst.port = 14001
+        mock_inst.log_path = "/tmp/test-logs/14001.log"
         mock_inst.start = AsyncMock()
         mock_inst.stop = AsyncMock()
 
@@ -347,13 +411,20 @@ class TestStateFileContextManager:
         state_data = {
             "pid": 999999999,
             "started_at": "2026-05-28T12:00:00Z",
-            "instances": [{"host": "127.0.0.1", "port": 14001}],
+            "instances": [
+                {
+                    "host": "127.0.0.1",
+                    "port": 14001,
+                    "log_path": "/tmp/logs/s/14001.log",
+                }
+            ],
         }
         state_path.write_text(json.dumps(state_data))
 
         config = Config(logs_path=str(tmp_path))
         mock_inst = MagicMock()
         mock_inst.port = 14001
+        mock_inst.log_path = "/tmp/test-logs/14001.log"
         mock_inst.start = AsyncMock()
         mock_inst.stop = AsyncMock()
 
@@ -372,6 +443,7 @@ class TestStateFileContextManager:
 
         mock_inst = MagicMock()
         mock_inst.port = 14001
+        mock_inst.log_path = "/tmp/test-logs/14001.log"
         mock_inst.start = AsyncMock()
         mock_inst.stop = AsyncMock()
 

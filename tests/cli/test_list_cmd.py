@@ -30,8 +30,16 @@ class TestListCommand:
             "pid": os.getpid(),
             "started_at": "2026-05-28T12:00:00Z",
             "instances": [
-                {"host": "127.0.0.1", "port": 14001},
-                {"host": "127.0.0.1", "port": 14002},
+                {
+                    "host": "127.0.0.1",
+                    "port": 14001,
+                    "log_path": "/tmp/logs/s/14001.log",
+                },
+                {
+                    "host": "127.0.0.1",
+                    "port": 14002,
+                    "log_path": "/tmp/logs/s/14002.log",
+                },
             ],
         }
         state_path.write_text(json.dumps(state_data))
@@ -40,6 +48,8 @@ class TestListCommand:
         assert result.exit_code == 0
         assert "14001" in result.output
         assert "14002" in result.output
+        assert "/tmp/logs/s/14001.log" in result.output
+        assert "/tmp/logs/s/14002.log" in result.output
 
     def test_list_json_output(self, tmp_path, monkeypatch):
         """List --json outputs structured JSON."""
@@ -50,7 +60,11 @@ class TestListCommand:
             "pid": os.getpid(),
             "started_at": "2026-05-28T12:00:00Z",
             "instances": [
-                {"host": "127.0.0.1", "port": 14001},
+                {
+                    "host": "127.0.0.1",
+                    "port": 14001,
+                    "log_path": "/tmp/logs/s/14001.log",
+                },
             ],
         }
         state_path.write_text(json.dumps(state_data))
@@ -60,6 +74,7 @@ class TestListCommand:
         data = json.loads(result.output)
         assert len(data["instances"]) == 1
         assert data["instances"][0]["port"] == 14001
+        assert data["instances"][0]["log_path"] == "/tmp/logs/s/14001.log"
 
     def test_list_help(self):
         """List --help shows options."""

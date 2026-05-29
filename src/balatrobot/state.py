@@ -215,7 +215,11 @@ class StateFile:
         if host is not None and port is not None:
             for inst in instances:
                 if inst["host"] == host and inst["port"] == port:
-                    return InstanceInfo(host=inst["host"], port=inst["port"])
+                    return InstanceInfo(
+                        host=inst["host"],
+                        port=inst["port"],
+                        log_path=inst["log_path"],
+                    )
             raise InstanceNotFoundError(index=None, total=len(instances))
 
         # Index-based lookup (default to 0)
@@ -224,7 +228,9 @@ class StateFile:
             raise InstanceNotFoundError(index=idx, total=len(instances))
 
         inst = instances[idx]
-        return InstanceInfo(host=inst["host"], port=inst["port"])
+        return InstanceInfo(
+            host=inst["host"], port=inst["port"], log_path=inst["log_path"]
+        )
 
     # -- Context manager ----------------------------------------------------
 
@@ -258,7 +264,8 @@ class StateFile:
             "pid": os.getpid(),
             "started_at": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
             "instances": [
-                {"host": info.host, "port": info.port} for info in self._pool.instances
+                {"host": info.host, "port": info.port, "log_path": info.log_path}
+                for info in self._pool.instances
             ],
         }
         # Ensure parent directory exists

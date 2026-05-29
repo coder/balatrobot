@@ -22,6 +22,12 @@ class TestInstanceInfo:
         info = InstanceInfo(host="127.0.0.1", port=12346)
         assert info.host == "127.0.0.1"
         assert info.port == 12346
+        assert info.log_path is None
+
+    def test_create_with_log_path(self):
+        """InstanceInfo stores log_path."""
+        info = InstanceInfo(host="127.0.0.1", port=12346, log_path="/tmp/test.log")
+        assert info.log_path == "/tmp/test.log"
 
     def test_url_property(self):
         """url property returns formatted URL."""
@@ -102,6 +108,7 @@ class TestBalatroPoolStartStop:
             inst = MagicMock(spec=BalatroInstance)
             port = kwargs.get("port", 12346)
             inst.port = port
+            inst.log_path = f"/tmp/test-logs/{port}.log"
             inst.start = AsyncMock()
             inst.stop = AsyncMock()
             created_instances.append(inst)
@@ -129,6 +136,7 @@ class TestBalatroPoolStartStop:
         for port in [14001, 14002]:
             inst = MagicMock(spec=BalatroInstance)
             inst.port = port
+            inst.log_path = f"/tmp/test-logs/{port}.log"
             inst.start = AsyncMock()
             inst.stop = AsyncMock()
             mock_instances.append(inst)
@@ -149,11 +157,13 @@ class TestBalatroPoolStartStop:
 
         started_inst = MagicMock(spec=BalatroInstance)
         started_inst.port = 14001
+        started_inst.log_path = "/tmp/test-logs/14001.log"
         started_inst.start = AsyncMock()
         started_inst.stop = AsyncMock()
 
         failed_inst = MagicMock(spec=BalatroInstance)
         failed_inst.port = 14002
+        failed_inst.log_path = "/tmp/test-logs/14002.log"
         failed_inst.start = AsyncMock(side_effect=RuntimeError("start failed"))
         failed_inst.stop = AsyncMock()
 
@@ -184,6 +194,7 @@ class TestBalatroPoolStartStop:
 
         mock_inst = MagicMock(spec=BalatroInstance)
         mock_inst.port = 14001
+        mock_inst.log_path = "/tmp/test-logs/14001.log"
         mock_inst.start = AsyncMock()
         mock_inst.stop = AsyncMock()
 
@@ -202,6 +213,7 @@ class TestBalatroPoolStartStop:
         for port in [14001, 14002]:
             inst = MagicMock(spec=BalatroInstance)
             inst.port = port
+            inst.log_path = f"/tmp/test-logs/{port}.log"
             inst.start = AsyncMock()
             inst.stop = AsyncMock()
             mock_instances.append(inst)
@@ -216,6 +228,8 @@ class TestBalatroPoolStartStop:
         assert infos[0].port == 14001
         assert infos[1].port == 14002
         assert infos[0].host == config.host
+        assert infos[0].log_path == "/tmp/test-logs/14001.log"
+        assert infos[1].log_path == "/tmp/test-logs/14002.log"
 
         await pool.stop()
 
@@ -230,6 +244,7 @@ class TestBalatroPoolContextManager:
 
         mock_inst = MagicMock(spec=BalatroInstance)
         mock_inst.port = 14001
+        mock_inst.log_path = "/tmp/test-logs/14001.log"
         mock_inst.start = AsyncMock()
         mock_inst.stop = AsyncMock()
 
@@ -257,6 +272,7 @@ class TestBalatroPoolPortAllocation:
             captured_ports.append(port)
             inst = MagicMock(spec=BalatroInstance)
             inst.port = port
+            inst.log_path = f"/tmp/test-logs/{port}.log"
             inst.start = AsyncMock()
             inst.stop = AsyncMock()
             return inst
@@ -289,6 +305,7 @@ class TestBalatroPoolConfigDerivation:
             captured_overrides.append(kwargs)
             inst = MagicMock(spec=BalatroInstance)
             inst.port = kwargs.get("port", 12346)
+            inst.log_path = f"/tmp/test-logs/{kwargs.get('port', 12346)}.log"
             inst.start = AsyncMock()
             inst.stop = AsyncMock()
             return inst
@@ -319,6 +336,7 @@ class TestBalatroPoolConfigDerivation:
             captured_session_names.append(session_name)
             inst = MagicMock(spec=BalatroInstance)
             inst.port = kwargs.get("port", 12346)
+            inst.log_path = f"/tmp/test-logs/{kwargs.get('port', 12346)}.log"
             inst.start = AsyncMock()
             inst.stop = AsyncMock()
             return inst
