@@ -2,12 +2,9 @@
 
 import json
 import os
-from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
 
-from balatrobot.config import Config
-from balatrobot.pool import BalatroPool
 from balatrobot.state import (
     InstanceNotFoundError,
     StateFile,
@@ -308,157 +305,69 @@ class TestStateFileResolve:
 
 
 # ============================================================================
-# StateFile context manager tests
+# StateFile.write / delete tests
 # ============================================================================
 
 
-class TestStateFileContextManager:
-    """Tests for StateFile as async context manager."""
+class TestStateFileWriteDelete:
+    """Tests for StateFile.write and StateFile.delete static methods."""
 
-    @pytest.mark.asyncio
-    async def test_context_manager_writes_state(self, tmp_path):
-        """StateFile writes state file on enter, deletes on exit."""
+    def test_write_creates_state_file(self, tmp_path):
+        """write() creates a valid state file."""
+        from balatrobot.pool import InstanceInfo
+
         state_path = tmp_path / "state.json"
-        config = Config(logs_path=str(tmp_path))
+        instances = [
+            InstanceInfo(host="127.0.0.1", port=14001, log_path="/tmp/a.log"),
+            InstanceInfo(host="127.0.0.1", port=14002, log_path=None),
+        ]
+        StateFile.write(state_path, pid=12345, instances=instances)
 
-        mock_inst = MagicMock()
-        mock_inst.port = 14001
-        mock_inst.log_path = "/tmp/test-logs/14001.log"
-        mock_inst.start = AsyncMock()
-        mock_inst.stop = AsyncMock()
+        assert state_path.exists()
+        data = json.loads(state_path.read_text())
+        assert data["pid"] == 12345
+        assert "started_at" in data
+        assert len(data["instances"]) == 2
+        assert data["instances"][0]["host"] == "127.0.0.1"
+        assert data["instances"][0]["port"] == 14001
+        assert data["instances"][0]["log_path"] == "/tmp/a.log"
+        assert data["instances"][1]["log_path"] is None
 
-        with patch("balatrobot.pool.BalatroInstance", return_value=mock_inst):
-            pool = BalatroPool(config, ports=[14001])
-            sf = StateFile(pool, path=state_path)
-            async with sf:
-                assert state_path.exists()
-                data = json.loads(state_path.read_text())
-                assert data["pid"] == os.getpid()
-                assert len(data["instances"]) == 1
-                assert data["instances"][0]["port"] == 14001
-                assert data["instances"][0]["log_path"] == "/tmp/test-logs/14001.log"
-                assert "started_at" in data
+    def test_write_atomic(self, tmp_path):
+        """write() succeeds (smoke test for atomicity)."""
+        from balatrobot.pool import InstanceInfo
 
+        state_path = tmp_path / "state.json"
+        instances = [InstanceInfo(host="127.0.0.1", port=14001)]
+        StateFile.write(state_path, pid=os.getpid(), instances=instances)
+        assert state_path.exists()
+
+    def test_write_creates_parent_dir(self, tmp_path):
+        """write() creates parent directories if they don't exist."""
+        from balatrobot.pool import InstanceInfo
+
+        state_path = tmp_path / "nested" / "dir" / "state.json"
+        instances = [InstanceInfo(host="127.0.0.1", port=14001)]
+        StateFile.write(state_path, pid=os.getpid(), instances=instances)
+        assert state_path.exists()
+
+    def test_delete_removes_file(self, tmp_path):
+        """delete() removes an existing state file."""
+        from balatrobot.pool import InstanceInfo
+
+        state_path = tmp_path / "state.json"
+        instances = [InstanceInfo(host="127.0.0.1", port=14001)]
+        StateFile.write(state_path, pid=os.getpid(), instances=instances)
+        assert state_path.exists()
+
+        StateFile.delete(state_path)
         assert not state_path.exists()
 
-    @pytest.mark.asyncio
-    async def test_delegates_instances(self, tmp_path):
-        """StateFile.instances delegates to pool."""
-        config = Config(logs_path=str(tmp_path))
-
-        mock_inst = MagicMock()
-        mock_inst.port = 14001
-        mock_inst.log_path = "/tmp/test-logs/14001.log"
-        mock_inst.start = AsyncMock()
-        mock_inst.stop = AsyncMock()
-
-        with patch("balatrobot.pool.BalatroInstance", return_value=mock_inst):
-            pool = BalatroPool(config, ports=[14001])
-            sf = StateFile(pool, path=tmp_path / "state.json")
-            async with sf:
-                assert len(sf.instances) == 1
-                assert sf.instances[0].port == 14001
-                assert sf.instances[0].log_path == "/tmp/test-logs/14001.log"
-
-    @pytest.mark.asyncio
-    async def test_path_property(self, tmp_path):
-        """StateFile.path returns resolved path."""
-        state_path = tmp_path / "state.json"
-        config = Config()
-        pool = BalatroPool(config)
-        sf = StateFile(pool, path=state_path)
-        assert sf.path == state_path
-
-    @pytest.mark.asyncio
-    async def test_double_start_raises_busy(self, tmp_path):
-        """StateFileBusy raised if another live state file exists."""
-        state_path = tmp_path / "state.json"
-
-        # Write a "live" state file with current PID
-        state_data = {
-            "pid": os.getpid(),
-            "started_at": "2026-05-28T12:00:00Z",
-            "instances": [
-                {
-                    "host": "127.0.0.1",
-                    "port": 14001,
-                    "log_path": "/tmp/logs/s/14001.log",
-                }
-            ],
-        }
-        state_path.write_text(json.dumps(state_data))
-
-        config = Config(logs_path=str(tmp_path))
-        mock_inst = MagicMock()
-        mock_inst.port = 14001
-        mock_inst.log_path = "/tmp/test-logs/14001.log"
-        mock_inst.start = AsyncMock()
-        mock_inst.stop = AsyncMock()
-
-        with patch("balatrobot.pool.BalatroInstance", return_value=mock_inst):
-            pool = BalatroPool(config, ports=[14001])
-            sf = StateFile(pool, path=state_path)
-            with pytest.raises(StateFileBusy):
-                async with sf:
-                    pass
-
-    @pytest.mark.asyncio
-    async def test_stale_state_does_not_raise_busy(self, tmp_path):
-        """Stale state file is cleaned up and doesn't raise StateFileBusy."""
-        state_path = tmp_path / "state.json"
-
-        # Write a "stale" state file with dead PID
-        state_data = {
-            "pid": 999999999,
-            "started_at": "2026-05-28T12:00:00Z",
-            "instances": [
-                {
-                    "host": "127.0.0.1",
-                    "port": 14001,
-                    "log_path": "/tmp/logs/s/14001.log",
-                }
-            ],
-        }
-        state_path.write_text(json.dumps(state_data))
-
-        config = Config(logs_path=str(tmp_path))
-        mock_inst = MagicMock()
-        mock_inst.port = 14001
-        mock_inst.log_path = "/tmp/test-logs/14001.log"
-        mock_inst.start = AsyncMock()
-        mock_inst.stop = AsyncMock()
-
-        with patch("balatrobot.pool.BalatroInstance", return_value=mock_inst):
-            pool = BalatroPool(config, ports=[14001])
-            sf = StateFile(pool, path=state_path)
-            async with sf:
-                # Should succeed — stale file cleaned up
-                assert sf.is_started is True
-
-    @pytest.mark.asyncio
-    async def test_write_failure_stops_pool(self, tmp_path):
-        """Pool is stopped if state file write fails after pool start."""
-        state_path = tmp_path / "state.json"
-        config = Config(logs_path=str(tmp_path))
-
-        mock_inst = MagicMock()
-        mock_inst.port = 14001
-        mock_inst.log_path = "/tmp/test-logs/14001.log"
-        mock_inst.start = AsyncMock()
-        mock_inst.stop = AsyncMock()
-
-        with patch("balatrobot.pool.BalatroInstance", return_value=mock_inst):
-            pool = BalatroPool(config, ports=[14001])
-            sf = StateFile(pool, path=state_path)
-
-            # Make _write_state fail after pool starts
-            with patch.object(sf, "_write_state", side_effect=OSError("disk full")):
-                with pytest.raises(OSError, match="disk full"):
-                    async with sf:
-                        pass
-
-        # Pool should have been stopped (stop called on mock_inst)
-        mock_inst.stop.assert_called()
+    def test_delete_silent_on_missing(self, tmp_path):
+        """delete() doesn't raise for non-existent path."""
+        state_path = tmp_path / "nonexistent.json"
+        StateFile.delete(state_path)  # Should not raise
+        assert not state_path.exists()
 
 
 # ============================================================================
@@ -469,21 +378,9 @@ class TestStateFileContextManager:
 class TestStateFilePath:
     """Tests for StateFile default path resolution."""
 
-    def test_default_path_uses_platformdirs(self, tmp_path, monkeypatch):
-        """Default path uses platformdirs.user_state_dir."""
-        monkeypatch.setenv("BALATROBOT_STATE_DIR", str(tmp_path))
-        config = Config()
-        pool = BalatroPool(config)
-        sf = StateFile(pool, path=tmp_path / "state.json")
-        assert sf.path == tmp_path / "state.json"
-
-    def test_env_var_overrides_path(self, tmp_path, monkeypatch):
+    def test_default_path_uses_env_var(self, tmp_path, monkeypatch):
         """BALATROBOT_STATE_DIR overrides default path."""
-        state_dir = tmp_path / "custom_state"
-        state_dir.mkdir()
-        monkeypatch.setenv("BALATROBOT_STATE_DIR", str(state_dir))
+        monkeypatch.setenv("BALATROBOT_STATE_DIR", str(tmp_path))
+        from balatrobot.state import _default_state_path
 
-        config = Config()
-        pool = BalatroPool(config)
-        sf = StateFile(pool)
-        assert sf.path == state_dir / "state.json"
+        assert _default_state_path() == tmp_path / "state.json"

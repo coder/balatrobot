@@ -6,7 +6,7 @@ from unittest.mock import AsyncMock, MagicMock, patch
 import pytest
 
 from balatrobot.config import Config
-from balatrobot.instance import BalatroInstance
+from balatrobot.instance import BalatroInstance, InstanceDiedError
 from balatrobot.pool import BalatroPool, InstanceInfo
 
 # ============================================================================
@@ -234,26 +234,48 @@ class TestBalatroPoolStartStop:
         await pool.stop()
 
 
-class TestBalatroPoolContextManager:
-    """Tests for BalatroPool async context manager."""
+class TestBalatroPoolCheckAlive:
+    """Tests for BalatroPool.check_alive() method."""
 
-    @pytest.mark.asyncio
-    async def test_context_manager(self, tmp_path):
-        """Pool works as async context manager."""
-        config = Config(logs_path=str(tmp_path))
+    def test_check_alive_all_healthy(self):
+        """No exception when all instances are alive."""
+        config = Config()
+        pool = BalatroPool(config, ports=[14001, 14002])
 
-        mock_inst = MagicMock(spec=BalatroInstance)
-        mock_inst.port = 14001
-        mock_inst.log_path = "/tmp/test-logs/14001.log"
-        mock_inst.start = AsyncMock()
-        mock_inst.stop = AsyncMock()
+        mock_inst1 = MagicMock(spec=BalatroInstance)
+        mock_inst1.check_alive = MagicMock()
+        mock_inst2 = MagicMock(spec=BalatroInstance)
+        mock_inst2.check_alive = MagicMock()
 
-        with patch("balatrobot.pool.BalatroInstance", return_value=mock_inst):
-            async with BalatroPool(config, ports=[14001]) as pool:
-                assert pool.is_started is True
-                assert len(pool.instances) == 1
+        pool._instances = [mock_inst1, mock_inst2]
+        pool.check_alive()  # Should not raise
 
-        assert pool.is_started is False
+        mock_inst1.check_alive.assert_called_once()
+        mock_inst2.check_alive.assert_called_once()
+
+    def test_check_alive_one_dead(self):
+        """Raises InstanceDiedError from first dead instance."""
+        config = Config()
+        pool = BalatroPool(config, ports=[14001, 14002])
+
+        mock_inst1 = MagicMock(spec=BalatroInstance)
+        mock_inst1.check_alive = MagicMock()
+        mock_inst2 = MagicMock(spec=BalatroInstance)
+        mock_inst2.check_alive = MagicMock(
+            side_effect=InstanceDiedError(port=14002, log_path="/tmp/14002.log")
+        )
+
+        pool._instances = [mock_inst1, mock_inst2]
+        with pytest.raises(InstanceDiedError) as exc_info:
+            pool.check_alive()
+        assert exc_info.value.port == 14002
+
+    def test_check_alive_empty_pool(self):
+        """No exception when pool has no instances."""
+        config = Config()
+        pool = BalatroPool(config)
+        pool._instances = []
+        pool.check_alive()  # Should not raise
 
 
 class TestBalatroPoolPortAllocation:

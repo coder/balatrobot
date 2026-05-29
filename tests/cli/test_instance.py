@@ -6,7 +6,7 @@ from unittest.mock import AsyncMock, MagicMock
 import pytest
 
 from balatrobot.config import Config
-from balatrobot.instance import BalatroInstance
+from balatrobot.instance import BalatroInstance, InstanceDiedError
 
 
 class TestBalatroInstanceInit:
@@ -174,3 +174,52 @@ class TestBalatroInstanceContextManager:
 
         # After exit, process should be cleared
         assert instance._process is None
+
+
+class TestBalatroInstanceCheckAlive:
+    """Tests for BalatroInstance.check_alive() method."""
+
+    def test_check_alive_healthy(self):
+        """No exception when process is running (poll returns None)."""
+        instance = BalatroInstance(port=14001)
+        mock_process = MagicMock()
+        mock_process.poll.return_value = None
+        instance._process = mock_process
+
+        instance.check_alive()  # Should not raise
+
+    def test_check_alive_dead(self):
+        """Raises InstanceDiedError when process has exited."""
+        instance = BalatroInstance(port=14001)
+        mock_process = MagicMock()
+        mock_process.poll.return_value = 1  # Exit code 1
+        instance._process = mock_process
+        instance._log_path = MagicMock()
+        instance._log_path.__str__ = lambda self: "/tmp/test/14001.log"
+
+        with pytest.raises(InstanceDiedError) as exc_info:
+            instance.check_alive()
+        assert exc_info.value.port == 14001
+        assert "14001" in str(exc_info.value)
+
+    def test_check_alive_dead_with_log_path(self):
+        """InstanceDiedError includes log_path in message."""
+        from pathlib import Path
+
+        instance = BalatroInstance(port=14002)
+        mock_process = MagicMock()
+        mock_process.poll.return_value = 0
+        instance._process = mock_process
+        instance._log_path = Path("/tmp/logs/session/14002.log")
+
+        with pytest.raises(InstanceDiedError) as exc_info:
+            instance.check_alive()
+        assert exc_info.value.port == 14002
+        assert exc_info.value.log_path == "/tmp/logs/session/14002.log"
+        assert "/tmp/logs/session/14002.log" in str(exc_info.value)
+
+    def test_check_alive_not_started(self):
+        """No exception when _process is None (not started)."""
+        instance = BalatroInstance(port=14001)
+        assert instance._process is None
+        instance.check_alive()  # Should not raise
