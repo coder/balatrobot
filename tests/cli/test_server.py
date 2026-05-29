@@ -157,3 +157,32 @@ class TestServerRun:
 
         # State file should be cleaned up by __aexit__
         assert not state_path.exists()
+
+    @pytest.mark.asyncio
+    async def test_run_skips_signal_handler_on_windows(self, tmp_path):
+        """run() does not register signal handlers on Windows."""
+        state_path = tmp_path / "state.json"
+        config = Config(logs_path=str(tmp_path))
+
+        mock_inst = MagicMock()
+        mock_inst.port = 14001
+        mock_inst.log_path = "/tmp/test-logs/14001.log"
+        mock_inst.start = AsyncMock()
+        mock_inst.stop = AsyncMock()
+        mock_inst.check_alive = MagicMock()
+
+        with patch("balatrobot.pool.BalatroInstance", return_value=mock_inst), \
+             patch("balatrobot.state.allocate_ports", return_value=[14001]), \
+             patch("balatrobot.cli.serve.sys") as mock_sys, \
+             patch("balatrobot.cli.serve.asyncio.get_running_loop") as mock_get_loop:
+            mock_sys.platform = "win32"
+            mock_loop = MagicMock()
+            mock_get_loop.return_value = mock_loop
+
+            async with Server(config, n=1, state_path=state_path) as server:
+                server._shutdown.set()
+                await server.run()
+
+            # add_signal_handler should never be called on Windows
+            mock_loop.add_signal_handler.assert_not_called()
+            mock_loop.remove_signal_handler.assert_not_called()
