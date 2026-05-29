@@ -1,8 +1,8 @@
-"""StateFile — filesystem-based discovery for running BalatroPool instances.
+"""StateFile — static utilities for BalatroPool state-file discovery.
 
-StateFile wraps a BalatroPool with a JSON state file (Jupyter pattern).
-It writes connection info atomically on pool start and deletes it on pool
-stop, enabling discovery by CLI tools and test fixtures.
+Provides read / write / delete / resolve helpers for the JSON state file
+that enables discovery of running BalatroPool instances by CLI tools and
+test fixtures.
 """
 
 import json
@@ -15,7 +15,7 @@ from typing import Any
 
 from platformdirs import user_state_dir
 
-from balatrobot.pool import BalatroPool, InstanceInfo
+from balatrobot.pool import InstanceInfo
 
 # ---------------------------------------------------------------------------
 # Port allocation
@@ -113,38 +113,11 @@ def _is_pid_alive(pid: int) -> bool:
 
 
 class StateFile:
-    """Wraps a :class:`BalatroPool` with filesystem-based discovery.
+    """Static utilities for reading, writing, and resolving state files.
 
-    Usage::
-
-        async with StateFile(BalatroPool(config, n=2)) as sf:
-            # state file written; other processes can discover instances
-            print(sf.instances)
-        # state file deleted on exit
+    All methods are static.  The state file is a JSON document that enables
+    discovery of running BalatroPool instances by CLI tools and test fixtures.
     """
-
-    def __init__(
-        self,
-        pool: BalatroPool,
-        path: Path | None = None,
-    ) -> None:
-        self._pool = pool
-        self._path = path or _default_state_path()
-
-    @property
-    def path(self) -> Path:
-        """Resolved state file path."""
-        return self._path
-
-    @property
-    def instances(self) -> list[InstanceInfo]:
-        """Delegates to pool.instances."""
-        return self._pool.instances
-
-    @property
-    def is_started(self) -> bool:
-        """Delegates to pool.is_started."""
-        return self._pool.is_started
 
     # -- Static helpers -----------------------------------------------------
 
@@ -232,55 +205,45 @@ class StateFile:
             host=inst["host"], port=inst["port"], log_path=inst["log_path"]
         )
 
-    # -- Context manager ----------------------------------------------------
+    # -- Write / Delete ----------------------------------------------------
 
-    async def __aenter__(self) -> "StateFile":
-        """Check for existing live PID, start pool, write state file."""
-        # Check for existing live state file
-        existing = StateFile.read(self._path)
-        if existing is not None:
-            raise StateFileBusy(path=self._path, pid=existing["pid"])
+    @staticmethod
+    def write(
+        path: Path,
+        pid: int,
+        instances: list[InstanceInfo],
+    ) -> None:
+        """Write a state file atomically.
 
-        # Start the pool and write state file; clean up on failure
-        try:
-            await self._pool.start()
-            self._write_state()
-        except BaseException:
-            await self._pool.stop()
-            raise
+        Creates parent directories if needed. Uses temp file + ``os.replace``
+        for atomicity.
 
-        return self
-
-    async def __aexit__(self, *args: object) -> None:
-        """Delete state file and stop pool."""
-        self._delete_state()
-        await self._pool.stop()
-
-    # -- Internal -----------------------------------------------------------
-
-    def _write_state(self) -> None:
-        """Write state file atomically."""
+        Args:
+            path: Destination file path.
+            pid: Process ID of the server.
+            instances: List of InstanceInfo to record.
+        """
         data = {
-            "pid": os.getpid(),
+            "pid": pid,
             "started_at": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
             "instances": [
                 {"host": info.host, "port": info.port, "log_path": info.log_path}
-                for info in self._pool.instances
+                for info in instances
             ],
         }
         # Ensure parent directory exists
-        self._path.parent.mkdir(parents=True, exist_ok=True)
+        path.parent.mkdir(parents=True, exist_ok=True)
 
         # Atomic write: write to temp file, then rename
         fd, tmp_path = tempfile.mkstemp(
-            dir=str(self._path.parent),
+            dir=str(path.parent),
             prefix=".state-",
             suffix=".tmp",
         )
         try:
             with os.fdopen(fd, "w") as f:
                 json.dump(data, f)
-            os.replace(tmp_path, str(self._path))
+            os.replace(tmp_path, str(path))
         except BaseException:
             # Clean up temp file on error
             try:
@@ -289,9 +252,10 @@ class StateFile:
                 pass
             raise
 
-    def _delete_state(self) -> None:
-        """Delete state file."""
+    @staticmethod
+    def delete(path: Path) -> None:
+        """Delete a state file. Silent if the file doesn't exist."""
         try:
-            self._path.unlink(missing_ok=True)
+            path.unlink(missing_ok=True)
         except OSError:
             pass
