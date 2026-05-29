@@ -1,4 +1,4 @@
-"""Tests for balatrobot.manager module."""
+"""Tests for balatrobot.instance module."""
 
 import asyncio
 from unittest.mock import AsyncMock, MagicMock

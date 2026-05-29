@@ -2,7 +2,7 @@
 
 import asyncio
 import subprocess
-from dataclasses import replace
+from dataclasses import dataclass, replace
 from datetime import datetime
 from pathlib import Path
 
@@ -11,6 +11,20 @@ import httpx
 from balatrobot.config import Config
 from balatrobot.platforms import get_launcher
 from balatrobot.platforms.base import BaseLauncher
+
+
+@dataclass(frozen=True)
+class InstanceInfo:
+    """Immutable metadata for a running Balatro instance."""
+
+    host: str
+    port: int
+    log_path: Path | None = None
+
+    @property
+    def url(self) -> str:
+        """Full HTTP URL for this instance."""
+        return f"http://{self.host}:{self.port}"
 
 HEALTH_TIMEOUT = 30.0
 

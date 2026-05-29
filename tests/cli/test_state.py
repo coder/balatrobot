@@ -2,6 +2,7 @@
 
 import json
 import os
+from pathlib import Path
 
 import pytest
 
@@ -187,7 +188,7 @@ class TestStateFileResolve:
 
         info = StateFile.resolve(host="127.0.0.1", port=14002)
         assert info.port == 14002
-        assert info.log_path == "/tmp/logs/s/14002.log"
+        assert info.log_path == Path("/tmp/logs/s/14002.log")
 
     def test_resolve_by_index(self, tmp_path, monkeypatch):
         """Resolves by index."""
@@ -213,7 +214,7 @@ class TestStateFileResolve:
 
         info = StateFile.resolve(index=1)
         assert info.port == 14002
-        assert info.log_path == "/tmp/logs/s/14002.log"
+        assert info.log_path == Path("/tmp/logs/s/14002.log")
 
     def test_resolve_no_state_file(self, tmp_path, monkeypatch):
         """Raises StateFileNotFound when no state file."""
@@ -281,7 +282,7 @@ class TestStateFileResolve:
 
         info = StateFile.resolve()
         assert info.port == 14001  # index=0 by default
-        assert info.log_path == "/tmp/logs/s/14001.log"
+        assert info.log_path == Path("/tmp/logs/s/14001.log")
 
     def test_resolve_host_port_not_in_instances(self, tmp_path, monkeypatch):
         """Raises InstanceNotFoundError when host:port not found in instances."""
@@ -314,11 +315,11 @@ class TestStateFileWriteDelete:
 
     def test_write_creates_state_file(self, tmp_path):
         """write() creates a valid state file."""
-        from balatrobot.pool import InstanceInfo
+        from balatrobot.instance import InstanceInfo
 
         state_path = tmp_path / "state.json"
         instances = [
-            InstanceInfo(host="127.0.0.1", port=14001, log_path="/tmp/a.log"),
+            InstanceInfo(host="127.0.0.1", port=14001, log_path=Path("/tmp/a.log")),
             InstanceInfo(host="127.0.0.1", port=14002, log_path=None),
         ]
         StateFile.write(state_path, pid=12345, instances=instances)
@@ -335,7 +336,7 @@ class TestStateFileWriteDelete:
 
     def test_write_atomic(self, tmp_path):
         """write() succeeds (smoke test for atomicity)."""
-        from balatrobot.pool import InstanceInfo
+        from balatrobot.instance import InstanceInfo
 
         state_path = tmp_path / "state.json"
         instances = [InstanceInfo(host="127.0.0.1", port=14001)]
@@ -344,7 +345,7 @@ class TestStateFileWriteDelete:
 
     def test_write_creates_parent_dir(self, tmp_path):
         """write() creates parent directories if they don't exist."""
-        from balatrobot.pool import InstanceInfo
+        from balatrobot.instance import InstanceInfo
 
         state_path = tmp_path / "nested" / "dir" / "state.json"
         instances = [InstanceInfo(host="127.0.0.1", port=14001)]
@@ -353,7 +354,7 @@ class TestStateFileWriteDelete:
 
     def test_delete_removes_file(self, tmp_path):
         """delete() removes an existing state file."""
-        from balatrobot.pool import InstanceInfo
+        from balatrobot.instance import InstanceInfo
 
         state_path = tmp_path / "state.json"
         instances = [InstanceInfo(host="127.0.0.1", port=14001)]
@@ -381,6 +382,6 @@ class TestStateFilePath:
     def test_default_path_uses_env_var(self, tmp_path, monkeypatch):
         """BALATROBOT_STATE_DIR overrides default path."""
         monkeypatch.setenv("BALATROBOT_STATE_DIR", str(tmp_path))
-        from balatrobot.state import _default_state_path
+        from balatrobot.state import default_state_path
 
-        assert _default_state_path() == tmp_path / "state.json"
+        assert default_state_path() == tmp_path / "state.json"

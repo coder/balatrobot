@@ -12,7 +12,7 @@ import typer
 from balatrobot.config import Config
 from balatrobot.instance import InstanceDiedError
 from balatrobot.pool import BalatroPool
-from balatrobot.state import StateFile, StateFileBusy, _default_state_path
+from balatrobot.state import StateFile, StateFileBusy, default_state_path
 
 # Platform choices for validation
 PLATFORM_CHOICES = ["darwin", "linux", "windows", "native"]
@@ -36,7 +36,7 @@ class Server:
     ) -> None:
         self._config = config
         self._n = n
-        self._state_path = state_path or _default_state_path()
+        self._state_path = state_path or default_state_path()
         self._pool: BalatroPool | None = None
         self._shutdown = asyncio.Event()
 
@@ -63,9 +63,9 @@ class Server:
         return self
 
     async def __aexit__(self, *args: object) -> None:
-        StateFile.delete(self._state_path)
         if self._pool is not None:
             await self._pool.stop()
+        StateFile.delete(self._state_path)
 
     async def run(self) -> None:
         """Block until SIGTERM or child death.

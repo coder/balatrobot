@@ -1,25 +1,10 @@
 """BalatroPool — manages N BalatroInstance instances."""
 
 import asyncio
-from dataclasses import dataclass
 from datetime import datetime
 
 from balatrobot.config import Config
-from balatrobot.instance import BalatroInstance
-
-
-@dataclass(frozen=True)
-class InstanceInfo:
-    """Immutable metadata for a running Balatro instance."""
-
-    host: str
-    port: int
-    log_path: str | None = None
-
-    @property
-    def url(self) -> str:
-        """Full HTTP URL for this instance."""
-        return f"http://{self.host}:{self.port}"
+from balatrobot.instance import BalatroInstance, InstanceInfo
 
 
 class BalatroPool:
@@ -31,6 +16,9 @@ class BalatroPool:
 
     Fail-fast: if any instance fails to start, all already-started
     instances are stopped and the error is re-raised.
+
+    **Not designed for restart.**  Calling ``start()`` again after
+    ``stop()`` is undefined behaviour.
     """
 
     def __init__(
@@ -75,7 +63,7 @@ class BalatroPool:
         if self._started:
             raise RuntimeError("Pool already started")
 
-        # Allocate ports (lazy import to avoid circular dependency)
+        # Allocate ports
         if self._ports is not None:
             ports = self._ports
         else:
@@ -99,9 +87,8 @@ class BalatroPool:
                 )
                 await inst.start()
                 self._instances.append(inst)
-                log_path = str(inst.log_path) if inst.log_path is not None else None
                 self._infos.append(
-                    InstanceInfo(host=self._config.host, port=port, log_path=log_path)
+                    InstanceInfo(host=self._config.host, port=port, log_path=inst.log_path)
                 )
         except Exception:
             # Fail-fast: stop all instances that were started

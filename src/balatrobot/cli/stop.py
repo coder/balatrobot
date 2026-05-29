@@ -3,7 +3,6 @@
 import os
 import signal
 import time
-from typing import Annotated
 
 import typer
 

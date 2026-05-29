@@ -15,7 +15,7 @@ from typing import Any
 
 from platformdirs import user_state_dir
 
-from balatrobot.pool import InstanceInfo
+from balatrobot.instance import InstanceInfo
 
 # ---------------------------------------------------------------------------
 # Port allocation
@@ -89,7 +89,7 @@ _DEFAULT_FILENAME = "state.json"
 _ENV_STATE_DIR = "BALATROBOT_STATE_DIR"
 
 
-def _default_state_path() -> Path:
+def default_state_path() -> Path:
     """Resolve the default state file path.
 
     Uses ``BALATROBOT_STATE_DIR`` env var if set, otherwise falls back
@@ -131,7 +131,7 @@ class StateFile:
         Args:
             path: Path to read. Defaults to the platform-default path.
         """
-        state_path = path or _default_state_path()
+        state_path = path or default_state_path()
 
         if not state_path.exists():
             return None
@@ -178,11 +178,11 @@ class StateFile:
         """
         data = StateFile.read(path)
         if data is None:
-            raise StateFileNotFound(path or _default_state_path())
+            raise StateFileNotFound(path or default_state_path())
 
         instances = data.get("instances", [])
         if not instances:
-            raise StateFileNotFound(path or _default_state_path())
+            raise StateFileNotFound(path or default_state_path())
 
         # Explicit host+port lookup
         if host is not None and port is not None:
@@ -191,7 +191,7 @@ class StateFile:
                     return InstanceInfo(
                         host=inst["host"],
                         port=inst["port"],
-                        log_path=inst["log_path"],
+                        log_path=Path(inst["log_path"]) if inst["log_path"] is not None else None,
                     )
             raise InstanceNotFoundError(index=None, total=len(instances))
 
@@ -202,7 +202,7 @@ class StateFile:
 
         inst = instances[idx]
         return InstanceInfo(
-            host=inst["host"], port=inst["port"], log_path=inst["log_path"]
+            host=inst["host"], port=inst["port"], log_path=Path(inst["log_path"]) if inst["log_path"] is not None else None
         )
 
     # -- Write / Delete ----------------------------------------------------
@@ -227,7 +227,7 @@ class StateFile:
             "pid": pid,
             "started_at": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
             "instances": [
-                {"host": info.host, "port": info.port, "log_path": info.log_path}
+                {"host": info.host, "port": info.port, "log_path": str(info.log_path) if info.log_path is not None else None}
                 for info in instances
             ],
         }

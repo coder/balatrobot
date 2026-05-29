@@ -13,8 +13,7 @@ import httpx
 import pytest
 
 from balatrobot.config import Config
-from balatrobot.instance import BalatroInstance
-from balatrobot.pool import InstanceInfo
+from balatrobot.instance import BalatroInstance, InstanceInfo
 
 # ============================================================================
 # Constants

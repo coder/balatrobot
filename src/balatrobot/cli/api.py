@@ -65,7 +65,7 @@ def api(
         target_port = port
     else:
         try:
-            info = StateFile.resolve(host=host, port=port, index=index)
+            info = StateFile.resolve(index=index)
             target_host = info.host
             target_port = info.port
         except Exception as e:
