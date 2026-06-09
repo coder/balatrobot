@@ -79,6 +79,9 @@ BB_SERVER = {
   current_request_id = nil,
   client_state = nil,
   openrpc_spec = nil,
+  -- JSONL recording
+  req_file = nil,
+  res_file = nil,
 }
 
 --- Create fresh client state for HTTP parsing
@@ -131,6 +134,26 @@ function BB_SERVER.init()
   end
 
   sendInfoMessage("HTTP server listening on http://" .. BB_SERVER.host .. ":" .. BB_SERVER.port, "BB.SERVER")
+
+  -- Open JSONL recording files if BALATROBOT_LOGS_PATH is set
+  local logs_path = os.getenv("BALATROBOT_LOGS_PATH")
+  if logs_path and logs_path ~= "" then
+    local req_path = logs_path .. "/" .. BB_SERVER.port .. ".req.jsonl"
+    local res_path = logs_path .. "/" .. BB_SERVER.port .. ".res.jsonl"
+    local rf, rf_err = io.open(req_path, "a")
+    if rf then
+      BB_SERVER.req_file = rf
+    else
+      sendDebugMessage("Cannot open req JSONL: " .. tostring(rf_err), "BB.SERVER")
+    end
+    local sf, sf_err = io.open(res_path, "a")
+    if sf then
+      BB_SERVER.res_file = sf
+    else
+      sendDebugMessage("Cannot open res JSONL: " .. tostring(sf_err), "BB.SERVER")
+    end
+  end
+
   return true
 end
 
@@ -340,6 +363,12 @@ local function handle_jsonrpc(body, dispatcher)
 
   BB_SERVER.current_request_id = parsed.id
 
+  -- Record request to JSONL
+  if BB_SERVER.req_file then
+    BB_SERVER.req_file:write(body .. "\n")
+    BB_SERVER.req_file:flush()
+  end
+
   -- Dispatch to endpoint
   if dispatcher and dispatcher.dispatch then
     dispatcher.dispatch(parsed)
@@ -416,6 +445,12 @@ function BB_SERVER.send_response(response)
     return false
   end
 
+  -- Record response to JSONL
+  if BB_SERVER.res_file then
+    BB_SERVER.res_file:write(json_str .. "\n")
+    BB_SERVER.res_file:flush()
+  end
+
   -- Send HTTP response
   local http_response = format_http_response(200, "OK", json_str)
   local sent = send_raw(http_response)
@@ -462,6 +497,16 @@ end
 --- Close server and all connections
 function BB_SERVER.close()
   close_client()
+
+  -- Close JSONL recording files
+  if BB_SERVER.req_file then
+    BB_SERVER.req_file:close()
+    BB_SERVER.req_file = nil
+  end
+  if BB_SERVER.res_file then
+    BB_SERVER.res_file:close()
+    BB_SERVER.res_file = nil
+  end
 
   if BB_SERVER.server_socket then
     BB_SERVER.server_socket:close()
