@@ -76,12 +76,12 @@ return {
   ---@param args Request.Endpoint.Start.Params
   ---@param send_response fun(response: Response.Endpoint)
   execute = function(args, send_response)
-    sendDebugMessage("Init start()", "BB.ENDPOINTS")
+    sendDebugMessage("start()", "BB.ENDPOINTS")
 
     -- Validate and map stake enum
     local stake_number = STAKE_ENUM_TO_NUMBER[args.stake]
     if not stake_number then
-      sendDebugMessage("start() called with invalid stake enum: " .. tostring(args.stake), "BB.ENDPOINTS")
+      sendWarnMessage("Invalid stake enum: " .. tostring(args.stake), "BB.ENDPOINTS")
       send_response({
         message = "Invalid stake enum. Must be one of: WHITE, RED, GREEN, BLACK, BLUE, PURPLE, ORANGE, GOLD. Got: "
           .. tostring(args.stake),
@@ -93,7 +93,7 @@ return {
     -- Validate and map deck enum
     local deck_name = DECK_ENUM_TO_NAME[args.deck]
     if not deck_name then
-      sendDebugMessage("start() called with invalid deck enum: " .. tostring(args.deck), "BB.ENDPOINTS")
+      sendWarnMessage("Invalid deck enum: " .. tostring(args.deck), "BB.ENDPOINTS")
       send_response({
         message = "Invalid deck enum. Must be one of: RED, BLUE, YELLOW, GREEN, BLACK, MAGIC, NEBULA, GHOST, ABANDONED, CHECKERED, ZODIAC, PAINTED, ANAGLYPH, PLASMA, ERRATIC. Got: "
           .. tostring(args.deck),
@@ -111,7 +111,6 @@ return {
     if G.P_CENTER_POOLS and G.P_CENTER_POOLS.Back then
       for _, deck_data in pairs(G.P_CENTER_POOLS.Back) do
         if deck_data.name == deck_name then
-          sendDebugMessage("Setting deck to: " .. deck_data.name .. " (from enum: " .. args.deck .. ")", "BB.ENDPOINTS")
           G.GAME.selected_back:change_to(deck_data)
           G.GAME.viewed_back:change_to(deck_data)
           deck_found = true
@@ -121,7 +120,7 @@ return {
     end
 
     if not deck_found then
-      sendDebugMessage("start() deck not found in game data: " .. deck_name, "BB.ENDPOINTS")
+      sendWarnMessage("Deck not found: " .. deck_name, "BB.ENDPOINTS")
       send_response({
         message = "Deck not found in game data: " .. deck_name,
         name = BB_ERROR_NAMES.INTERNAL_ERROR,
@@ -135,8 +134,10 @@ return {
       run_params.seed = args.seed
     end
 
-    sendDebugMessage(
-      "Starting run with stake="
+    sendInfoMessage(
+      "Starting run: "
+        .. deck_name
+        .. ", stake="
         .. tostring(stake_number)
         .. " ("
         .. args.stake
@@ -158,7 +159,7 @@ return {
           and G.blind_select_opts["small"]:get_UIE_by_ID("tag_Small") ~= nil
         )
         if done then
-          sendDebugMessage("Return start()", "BB.ENDPOINTS")
+          sendDebugMessage("start() → BLIND_SELECT", "BB.ENDPOINTS")
           local state_data = BB_GAMESTATE.get_gamestate()
           send_response(state_data)
         end

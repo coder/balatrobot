@@ -166,7 +166,7 @@ return {
   ---@param args Request.Endpoint.Add.Params
   ---@param send_response fun(response: Response.Endpoint)
   execute = function(args, send_response)
-    sendDebugMessage("Init add()", "BB.ENDPOINTS")
+    sendDebugMessage("add()", "BB.ENDPOINTS")
 
     -- Detect card type
     local card_type = detect_card_type(args.key)
@@ -408,14 +408,14 @@ return {
       end
     end
 
+    sendInfoMessage(string.format("Adding %s '%s'", card_type, args.key), "BB.ENDPOINTS")
+
     -- Track initial state for verification
     local initial_joker_count = G.jokers and G.jokers.config and G.jokers.config.card_count or 0
     local initial_consumable_count = G.consumeables and G.consumeables.config and G.consumeables.config.card_count or 0
     local initial_voucher_count = G.shop_vouchers and G.shop_vouchers.config and G.shop_vouchers.config.card_count or 0
     local initial_hand_count = G.hand and G.hand.config and G.hand.config.card_count or 0
     local initial_pack_count = G.shop_booster and G.shop_booster.config and G.shop_booster.config.card_count or 0
-
-    sendDebugMessage("Initial voucher count: " .. initial_voucher_count, "BB.ENDPOINTS")
 
     -- Call SMODS function with error handling
     local success, result
@@ -443,8 +443,6 @@ return {
     if args.perishable and result and result.ability then
       result.ability.perish_tally = args.perishable
     end
-
-    sendDebugMessage("SMODS.add_card called for: " .. args.key .. " (" .. card_type .. ")", "BB.ENDPOINTS")
 
     -- Wait for card addition to complete with event-based verification
     G.E_MANAGER:add_event(Event({
@@ -484,7 +482,7 @@ return {
 
         -- All conditions must be met
         if added and state_stable and valid_state then
-          sendDebugMessage("Card added successfully: " .. args.key, "BB.ENDPOINTS")
+          sendDebugMessage("add() → ok", "BB.ENDPOINTS")
           send_response(BB_GAMESTATE.get_gamestate())
           return true
         end

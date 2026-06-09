@@ -37,10 +37,11 @@ return {
   ---@param args Request.Endpoint.Load.Params
   ---@param send_response fun(response: Response.Endpoint)
   execute = function(args, send_response)
-    sendDebugMessage("Init load()", "BB.ENDPOINTS")
+    sendDebugMessage("load()", "BB.ENDPOINTS")
     local path = args.path
 
     -- Read file using nativefs
+    sendInfoMessage("Loading from " .. path, "BB.ENDPOINTS")
     -- NOTE: We intentionally skip nativefs.getInfo() and go straight to
     -- nativefs.read().  On Proton/Wine, getInfo() uses PHYSFS_mount which
     -- cannot resolve Linux absolute paths, but read() goes through fopen()
@@ -153,7 +154,7 @@ return {
         end
 
         if done then
-          sendDebugMessage("Return load() - loaded from " .. path, "BB.ENDPOINTS")
+          sendDebugMessage("load() → ok", "BB.ENDPOINTS")
           send_response({
             success = true,
             path = path,

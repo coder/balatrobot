@@ -185,7 +185,7 @@ local function configure_headless()
     end
   end
 
-  sendDebugMessage("Headless mode enabled", "BB.SETTINGS")
+  sendInfoMessage("Headless mode enabled", "BB.SETTINGS")
 end
 
 --- Configures render-on-API mode where frames are only rendered when BB_RENDER is true
@@ -217,7 +217,7 @@ local function configure_render_on_api()
     end
   end
 
-  sendDebugMessage("Render on API mode enabled", "BB.SETTINGS")
+  sendInfoMessage("Render on API mode enabled", "BB.SETTINGS")
 end
 
 --- Configures fast mode with unlimited FPS, 10x game speed, and 60 FPS animations
@@ -239,7 +239,7 @@ local function configure_no_shaders()
   love.graphics.setShader = function()
     return love_graphics_setShader()
   end
-  sendDebugMessage("Disabled all shaders", "BB.SETTINGS")
+  sendInfoMessage("Disabled all shaders", "BB.SETTINGS")
 end
 
 --- Enables audio by setting volume levels and enabling sound thread

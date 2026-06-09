@@ -1,7 +1,7 @@
 -- src/lua/endpoints/play.lua
 
----@type BB_LOGGER
-local BB_LOGGER = assert(SMODS.load_file("src/lua/utils/logger.lua"))()
+---@type BB_FORMAT
+local BB_FORMAT = assert(SMODS.load_file("src/lua/utils/format.lua"))()
 
 -- ==========================================================================
 -- Play Endpoint Params
@@ -35,7 +35,7 @@ return {
   ---@param args Request.Endpoint.Play.Params
   ---@param send_response fun(response: Response.Endpoint)
   execute = function(args, send_response)
-    sendDebugMessage("Init play()", "BB.ENDPOINTS")
+    sendDebugMessage("play()", "BB.ENDPOINTS")
     if #args.cards == 0 then
       send_response({
         message = "Must provide at least one card to play",
@@ -72,8 +72,8 @@ return {
     end
 
     -- Log the cards being played
-    local card_str = BB_LOGGER.format_playing_cards(G.hand.cards, args.cards)
-    sendDebugMessage(string.format("Playing %d cards: %s", #args.cards, card_str), "BB.ENDPOINTS")
+    local card_str = BB_FORMAT.format_playing_cards(G.hand.cards, args.cards)
+    sendInfoMessage(string.format("Playing %d cards: %s", #args.cards, card_str), "BB.ENDPOINTS")
 
     ---@diagnostic disable-next-line: undefined-field
     local play_button = UIBox:get_UIE_by_ID("play_button", G.buttons.UIRoot)
@@ -123,7 +123,7 @@ return {
 
           -- Game is won
           if G.GAME.won then
-            sendDebugMessage("Return play() - won", "BB.ENDPOINTS")
+            sendDebugMessage("play() → won", "BB.ENDPOINTS")
             local state_data = BB_GAMESTATE.get_gamestate()
             send_response(state_data)
             return true
@@ -145,14 +145,14 @@ return {
           -- Both first and last scoring rows must be present
           if has_blind1 and has_cash_out_button then
             local state_data = BB_GAMESTATE.get_gamestate()
-            sendDebugMessage("Return play() - cash out", "BB.ENDPOINTS")
+            sendDebugMessage("play() → cash_out", "BB.ENDPOINTS")
             send_response(state_data)
             return true
           end
         end
 
         if draw_to_hand and hand_played and G.buttons and G.STATE == G.STATES.SELECTING_HAND then
-          sendDebugMessage("Return play() - same round", "BB.ENDPOINTS")
+          sendDebugMessage("play() → continue", "BB.ENDPOINTS")
           local state_data = BB_GAMESTATE.get_gamestate()
           send_response(state_data)
           return true

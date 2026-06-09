@@ -1,7 +1,7 @@
 -- src/lua/endpoints/discard.lua
 
----@type BB_LOGGER
-local BB_LOGGER = assert(SMODS.load_file("src/lua/utils/logger.lua"))()
+---@type BB_FORMAT
+local BB_FORMAT = assert(SMODS.load_file("src/lua/utils/format.lua"))()
 
 -- ==========================================================================
 -- Discard Endpoint Params
@@ -35,7 +35,7 @@ return {
   ---@param args Request.Endpoint.Discard.Params
   ---@param send_response fun(response: Response.Endpoint)
   execute = function(args, send_response)
-    sendDebugMessage("Init discard()", "BB.ENDPOINTS")
+    sendDebugMessage("discard()", "BB.ENDPOINTS")
     if #args.cards == 0 then
       send_response({
         message = "Must provide at least one card to discard",
@@ -80,10 +80,10 @@ return {
     end
 
     -- Log the cards being discarded
-    local card_str = BB_LOGGER.format_playing_cards(G.hand.cards, args.cards)
+    local card_str = BB_FORMAT.format_playing_cards(G.hand.cards, args.cards)
     local remaining = G.GAME.current_round.discards_left - 1
-    sendDebugMessage(
-      string.format("Discarding %d cards: %s (%d discards left)", #args.cards, card_str, remaining),
+    sendInfoMessage(
+      string.format("Discarding %d cards: %s (%d left)", #args.cards, card_str, remaining),
       "BB.ENDPOINTS"
     )
 
@@ -107,7 +107,7 @@ return {
         end
 
         if draw_to_hand and G.buttons and G.STATE == G.STATES.SELECTING_HAND then
-          sendDebugMessage("Return discard()", "BB.ENDPOINTS")
+          sendDebugMessage("discard() → SELECTING_HAND", "BB.ENDPOINTS")
           local state_data = BB_GAMESTATE.get_gamestate()
           send_response(state_data)
           return true

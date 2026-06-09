@@ -6,8 +6,8 @@
 
 ---@type Validator
 local Validator = assert(SMODS.load_file("src/lua/core/validator.lua"))()
----@type BB_LOGGER
-local BB_LOGGER = assert(SMODS.load_file("src/lua/utils/logger.lua"))()
+---@type BB_FORMAT
+local BB_FORMAT = assert(SMODS.load_file("src/lua/utils/format.lua"))()
 local socket = require("socket")
 
 ---@type table<integer, string>?
@@ -98,7 +98,7 @@ function BB_DISPATCHER.load_endpoints(endpoint_files)
     end
     loaded_count = loaded_count + 1
   end
-  sendDebugMessage("Loaded " .. loaded_count .. " endpoint(s)", "BB.DISPATCHER")
+  sendInfoMessage("Loaded " .. loaded_count .. " endpoint(s)", "BB.DISPATCHER")
   return true
 end
 
@@ -113,7 +113,7 @@ function BB_DISPATCHER.init(server_module, endpoint_files)
     sendErrorMessage("Dispatcher initialization failed: " .. err, "BB.DISPATCHER")
     return false
   end
-  sendDebugMessage("Dispatcher initialized successfully", "BB.DISPATCHER")
+  sendInfoMessage("Dispatcher initialized", "BB.DISPATCHER")
   return true
 end
 
@@ -121,7 +121,7 @@ end
 ---@param error_code string
 function BB_DISPATCHER.send_error(message, error_code)
   if not BB_DISPATCHER.Server then
-    sendDebugMessage("Cannot send error - Server not initialized", "BB.DISPATCHER")
+    sendErrorMessage("Cannot send error - Server not initialized", "BB.DISPATCHER")
     return
   end
   BB_DISPATCHER.Server.send_response({
@@ -168,7 +168,7 @@ function BB_DISPATCHER.dispatch(request)
 
   -- Log incoming request with params
   local start_time = socket.gettime()
-  sendDebugMessage(request.method .. BB_LOGGER.serialize_params(params), "BB.REQUEST")
+  sendDebugMessage(request.method .. BB_FORMAT.serialize_params(params), "BB.REQUEST")
 
   -- TIER 2: Schema Validation
   local valid, err_msg, err_code = Validator.validate(params, endpoint.schema)
@@ -213,13 +213,13 @@ function BB_DISPATCHER.dispatch(request)
       local duration_ms = (socket.gettime() - start_time) * 1000
       local is_error = response.message ~= nil
       if is_error then
-        sendDebugMessage(string.format("%s ERR (%.0fms)", request.method, duration_ms), "BB.RESPONSE")
+        sendWarnMessage(string.format("%s ERR (%.0fms)", request.method, duration_ms), "BB.RESPONSE")
       else
-        sendDebugMessage(string.format("%s OK (%.0fms)", request.method, duration_ms), "BB.RESPONSE")
+        sendInfoMessage(string.format("%s OK (%.0fms)", request.method, duration_ms), "BB.RESPONSE")
       end
       BB_DISPATCHER.Server.send_response(response)
     else
-      sendDebugMessage("Cannot send response - Server not initialized", "BB.DISPATCHER")
+      sendErrorMessage("Cannot send response - Server not initialized", "BB.DISPATCHER")
     end
   end
   local exec_success, exec_error = pcall(function()

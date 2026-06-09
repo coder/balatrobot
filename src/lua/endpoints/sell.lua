@@ -37,7 +37,7 @@ return {
   ---@param args Request.Endpoint.Sell.Params
   ---@param send_response fun(response: Response.Endpoint)
   execute = function(args, send_response)
-    sendDebugMessage("Init sell()", "BB.ENDPOINTS")
+    sendDebugMessage("sell()", "BB.ENDPOINTS")
 
     -- Validate exactly one parameter is provided
     local param_count = (args.joker and 1 or 0) + (args.consumable and 1 or 0)
@@ -120,7 +120,7 @@ return {
 
     -- Log what we're selling
     local item_name = card.ability and card.ability.name or "Unknown"
-    sendDebugMessage(string.format("Selling %s '%s' for $%d", sell_type, item_name, card.sell_cost), "BB.ENDPOINTS")
+    sendInfoMessage(string.format("Selling %s '%s' for $%d", sell_type, item_name, card.sell_cost), "BB.ENDPOINTS")
 
     -- Create mock UI element for G.FUNCS.sell_card
     local mock_element = {
@@ -168,7 +168,7 @@ return {
 
         -- All conditions must be met
         if count_decreased and money_increased and card_gone and state_stable and valid_state then
-          sendDebugMessage("Return sell()", "BB.ENDPOINTS")
+          sendDebugMessage("sell() → ok", "BB.ENDPOINTS")
           send_response(BB_GAMESTATE.get_gamestate())
           return true
         end

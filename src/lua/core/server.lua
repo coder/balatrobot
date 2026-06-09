@@ -124,13 +124,13 @@ function BB_SERVER.init()
   if spec_file then
     BB_SERVER.openrpc_spec = spec_file:read("*a")
     spec_file:close()
-    sendDebugMessage("Loaded OpenRPC spec from " .. spec_path, "BB.SERVER")
+    sendInfoMessage("Loaded OpenRPC spec from " .. spec_path, "BB.SERVER")
   else
     sendWarnMessage("OpenRPC spec not found at " .. spec_path, "BB.SERVER")
     BB_SERVER.openrpc_spec = '{"error": "OpenRPC spec not found"}'
   end
 
-  sendDebugMessage("HTTP server listening on http://" .. BB_SERVER.host .. ":" .. BB_SERVER.port, "BB.SERVER")
+  sendInfoMessage("HTTP server listening on http://" .. BB_SERVER.host .. ":" .. BB_SERVER.port, "BB.SERVER")
   return true
 end
 
@@ -250,7 +250,7 @@ local function send_raw(response_str)
 
   local _, err = BB_SERVER.client_socket:send(response_str)
   if err then
-    sendDebugMessage("Failed to send response: " .. err, "BB.SERVER")
+    sendErrorMessage("Failed to send response: " .. err, "BB.SERVER")
     return false
   end
   return true
@@ -412,7 +412,7 @@ function BB_SERVER.send_response(response)
 
   local success, json_str = pcall(json.encode, wrapped)
   if not success then
-    sendDebugMessage("Failed to encode response: " .. tostring(json_str), "BB.SERVER")
+    sendErrorMessage("Failed to encode response: " .. tostring(json_str), "BB.SERVER")
     return false
   end
 
@@ -466,6 +466,6 @@ function BB_SERVER.close()
   if BB_SERVER.server_socket then
     BB_SERVER.server_socket:close()
     BB_SERVER.server_socket = nil
-    sendDebugMessage("Server closed", "BB.SERVER")
+    sendInfoMessage("Server closed", "BB.SERVER")
   end
 end

@@ -1,7 +1,7 @@
 -- src/lua/endpoints/use.lua
 
----@type BB_LOGGER
-local BB_LOGGER = assert(SMODS.load_file("src/lua/utils/logger.lua"))()
+---@type BB_FORMAT
+local BB_FORMAT = assert(SMODS.load_file("src/lua/utils/format.lua"))()
 
 -- ==========================================================================
 -- Use Endpoint Params
@@ -41,7 +41,7 @@ return {
   ---@param args Request.Endpoint.Use.Params
   ---@param send_response fun(response: Response.Endpoint)
   execute = function(args, send_response)
-    sendDebugMessage("Init use()", "BB.ENDPOINTS")
+    sendDebugMessage("use()", "BB.ENDPOINTS")
 
     -- Step 1: Consumable Index Validation
     if args.consumable < 0 or args.consumable >= #G.consumeables.cards then
@@ -160,10 +160,10 @@ return {
     -- Log what we're using with target cards
     local cons_name = consumable_card.ability.name
     if args.cards and #args.cards > 0 then
-      local targets = BB_LOGGER.format_playing_cards(G.hand.cards, args.cards)
-      sendDebugMessage(string.format("Using '%s' on: %s", cons_name, targets), "BB.ENDPOINTS")
+      local targets = BB_FORMAT.format_playing_cards(G.hand.cards, args.cards)
+      sendInfoMessage(string.format("Using '%s' on: %s", cons_name, targets), "BB.ENDPOINTS")
     else
-      sendDebugMessage(string.format("Using '%s' (no targets)", cons_name), "BB.ENDPOINTS")
+      sendInfoMessage(string.format("Using '%s'", cons_name), "BB.ENDPOINTS")
     end
 
     -- Step 7: Game-Level Validation (e.g. try to use Familiar Spectral when G.hand is not available)
@@ -211,7 +211,7 @@ return {
         local no_stop_use = not (G.GAME.STOP_USE and G.GAME.STOP_USE > 0)
 
         if state_restored and controller_unlocked and no_stop_use then
-          sendDebugMessage("Return use()", "BB.ENDPOINTS")
+          sendDebugMessage("use() → ok", "BB.ENDPOINTS")
           send_response(BB_GAMESTATE.get_gamestate())
           return true
         end

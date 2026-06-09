@@ -67,7 +67,32 @@ return {
   ---@param args Request.Endpoint.Set.Params
   ---@param send_response fun(response: Response.Endpoint)
   execute = function(args, send_response)
-    sendDebugMessage("Init set()", "BB.ENDPOINTS")
+    sendDebugMessage("set()", "BB.ENDPOINTS")
+
+    -- Build fields string for logging
+    local fields = {}
+    if args.money ~= nil then
+      table.insert(fields, "money=" .. args.money)
+    end
+    if args.chips ~= nil then
+      table.insert(fields, "chips=" .. args.chips)
+    end
+    if args.ante ~= nil then
+      table.insert(fields, "ante=" .. args.ante)
+    end
+    if args.round ~= nil then
+      table.insert(fields, "round=" .. args.round)
+    end
+    if args.hands ~= nil then
+      table.insert(fields, "hands=" .. args.hands)
+    end
+    if args.discards ~= nil then
+      table.insert(fields, "discards=" .. args.discards)
+    end
+    if args.shop ~= nil then
+      table.insert(fields, "shop")
+    end
+    sendInfoMessage("Setting " .. table.concat(fields, ", "), "BB.ENDPOINTS")
 
     -- Validate we're in a run
     if G.STAGE and G.STAGE ~= G.STAGES.RUN then
@@ -197,14 +222,14 @@ return {
           local done_packs = G.shop_booster and G.shop_booster.config and G.shop_booster.config.card_count > 0
           local done_jokers = G.shop_jokers and G.shop_jokers.config and G.shop_jokers.config.card_count > 0
           if done_vouchers or done_packs or done_jokers then
-            sendDebugMessage("Return set()", "BB.ENDPOINTS")
+            sendDebugMessage("set() → ok", "BB.ENDPOINTS")
             local state_data = BB_GAMESTATE.get_gamestate()
             send_response(state_data)
             return true
           end
           return false
         else
-          sendDebugMessage("Return set()", "BB.ENDPOINTS")
+          sendDebugMessage("set() → ok", "BB.ENDPOINTS")
           local state_data = BB_GAMESTATE.get_gamestate()
           send_response(state_data)
           return true

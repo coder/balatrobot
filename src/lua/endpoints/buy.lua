@@ -43,7 +43,7 @@ return {
   ---@param args Request.Endpoint.Buy.Params
   ---@param send_response fun(response: Response.Endpoint)
   execute = function(args, send_response)
-    sendDebugMessage("Init buy()", "BB.ENDPOINTS")
+    sendDebugMessage("buy()", "BB.ENDPOINTS")
     local gamestate = BB_GAMESTATE.get_gamestate()
     local area
     local pos
@@ -196,7 +196,7 @@ return {
     -- Log what we're buying
     local item_name = card.name or (card.ability and card.ability.name) or card.label or "Unknown"
     local item_type = args.voucher and "Voucher" or args.pack and "Booster" or card.set or "item"
-    sendDebugMessage(string.format("Buying %s '%s' for $%d", item_type, item_name, card.cost.buy), "BB.ENDPOINTS")
+    sendInfoMessage(string.format("Buying %s '%s' for $%d", item_type, item_name, card.cost.buy), "BB.ENDPOINTS")
 
     -- Use appropriate function: use_card for vouchers, buy_from_shop for others
     if args.voucher or args.pack then
@@ -270,7 +270,7 @@ return {
         end
 
         if done then
-          sendDebugMessage("Return buy()", "BB.ENDPOINTS")
+          sendDebugMessage("buy() → ok", "BB.ENDPOINTS")
           send_response(BB_GAMESTATE.get_gamestate())
           return true
         end

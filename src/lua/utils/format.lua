@@ -1,10 +1,10 @@
 --[[
-  Logger utilities for BalatroBot
-  Provides helpers for consistent, readable log output
+  Format utilities for BalatroBot
+  Provides helpers for serializing values, params, and cards
 ]]
 
----@class BB_LOGGER
-local BB_LOGGER = {}
+---@class BB_FORMAT
+local BB_FORMAT = {}
 
 --- Serialize a value for logging (handles tables, strings, etc.)
 ---@param value any
@@ -51,7 +51,7 @@ end
 --- Examples: "({cards=[0,2,4], deck="RED"})" or "()"
 ---@param params table|nil
 ---@return string
-function BB_LOGGER.serialize_params(params)
+function BB_FORMAT.serialize_params(params)
   if params == nil or next(params) == nil then
     return "()"
   end
@@ -67,7 +67,7 @@ end
 --- Format a playing card as "R♠" style (e.g., "A♠", "K♥", "10♦")
 ---@param card table The card object with card.base.value and card.base.suit
 ---@return string
-function BB_LOGGER.format_playing_card(card)
+function BB_FORMAT.format_playing_card(card)
   if not card or not card.base then
     return "?"
   end
@@ -87,13 +87,13 @@ end
 ---@param cards table[] Array of card objects (1-based Lua array)
 ---@param indices integer[] Array of 0-based indices
 ---@return string Comma-separated card strings like "A♠, K♥, Q♦"
-function BB_LOGGER.format_playing_cards(cards, indices)
+function BB_FORMAT.format_playing_cards(cards, indices)
   local parts = {}
   for _, idx in ipairs(indices) do
     local card = cards[idx + 1] -- 0-based to 1-based
-    table.insert(parts, BB_LOGGER.format_playing_card(card))
+    table.insert(parts, BB_FORMAT.format_playing_card(card))
   end
   return table.concat(parts, ", ")
 end
 
-return BB_LOGGER
+return BB_FORMAT

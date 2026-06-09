@@ -24,7 +24,7 @@ return {
   ---@param _ Request.Endpoint.Skip.Params
   ---@param send_response fun(response: Response.Endpoint)
   execute = function(_, send_response)
-    sendDebugMessage("Init skip()", "BB.ENDPOINTS")
+    sendDebugMessage("skip()", "BB.ENDPOINTS")
 
     -- Get the current blind on deck (similar to select endpoint)
     local current_blind = G.GAME.blind_on_deck
@@ -34,7 +34,7 @@ return {
     assert(blind ~= nil, "skip() blind not found: " .. current_blind)
 
     if blind.type == "BOSS" then
-      sendDebugMessage("skip() cannot skip Boss blind: " .. current_blind, "BB.ENDPOINTS")
+      sendWarnMessage("Cannot skip Boss blind", "BB.ENDPOINTS")
       send_response({
         message = "Cannot skip Boss blind. Use `select` to select and play the boss blind.",
         name = BB_ERROR_NAMES.NOT_ALLOWED,
@@ -51,6 +51,7 @@ return {
     assert(skip_button ~= nil, "skip() skip button not found: " .. current_blind)
 
     -- Execute blind skip
+    sendInfoMessage("Skipping " .. current_blind_key .. " blind", "BB.ENDPOINTS")
     G.FUNCS.skip_blind(skip_button)
 
     -- Wait for the skip to complete
@@ -67,7 +68,7 @@ return {
           and blinds[current_blind_key].status == "SKIPPED"
         )
         if done then
-          sendDebugMessage("Return skip()", "BB.ENDPOINTS")
+          sendDebugMessage("skip() → BLIND_SELECT", "BB.ENDPOINTS")
           local state_data = BB_GAMESTATE.get_gamestate()
           send_response(state_data)
         end

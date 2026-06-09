@@ -24,7 +24,7 @@ return {
   ---@param _ Request.Endpoint.NextRound.Params
   ---@param send_response fun(response: Response.Endpoint)
   execute = function(_, send_response)
-    sendDebugMessage("Init next_round()", "BB.ENDPOINTS")
+    sendDebugMessage("next_round()", "BB.ENDPOINTS")
     G.FUNCS.toggle_shop({})
 
     -- Wait for BLIND_SELECT state after leaving shop
@@ -51,7 +51,7 @@ return {
           return false
         end
 
-        sendDebugMessage("Return next_round() - reached BLIND_SELECT state", "BB.ENDPOINTS")
+        sendDebugMessage("next_round() → BLIND_SELECT", "BB.ENDPOINTS")
         send_response(BB_GAMESTATE.get_gamestate())
         return true
       end,
