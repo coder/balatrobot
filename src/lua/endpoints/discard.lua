@@ -84,7 +84,9 @@ return {
         end
         if not included then
           send_response({
-            message = "Card at index " .. (i - 1) .. " is forced-selected by the boss blind. Include it in your discard.",
+            message = "Card at index "
+              .. (i - 1)
+              .. " is forced-selected by the boss blind. Include it in your discard.",
             name = BB_ERROR_NAMES.BAD_REQUEST,
           })
           return

@@ -656,16 +656,16 @@ Set in-game values (debug/testing).
 
 **Parameters:** (at least one required)
 
-| Name       | Type    | Required | Description                                                      |
-| ---------- | ------- | -------- | ---------------------------------------------------------------- |
-| `money`    | integer | No       | Set money amount                                                 |
-| `chips`    | integer | No       | Set chips scored                                                 |
-| `ante`     | integer | No       | Set ante number                                                  |
-| `round`    | integer | No       | Set round number                                                 |
-| `hands`    | integer | No       | Set hands remaining                                              |
-| `discards` | integer | No       | Set discards remaining                                           |
-| `shop`     | boolean | No       | Re-stock shop (SHOP state only)                                  |
-| `boss`     | string  | No       | Override Boss Blind (BLIND\_SELECT state, boss must be Upcoming) |
+| Name       | Type    | Required | Description                                                     |
+| ---------- | ------- | -------- | --------------------------------------------------------------- |
+| `money`    | integer | No       | Set money amount                                                |
+| `chips`    | integer | No       | Set chips scored                                                |
+| `ante`     | integer | No       | Set ante number                                                 |
+| `round`    | integer | No       | Set round number                                                |
+| `hands`    | integer | No       | Set hands remaining                                             |
+| `discards` | integer | No       | Set discards remaining                                          |
+| `shop`     | boolean | No       | Re-stock shop (SHOP state only)                                 |
+| `boss`     | string  | No       | Override Boss Blind (BLIND_SELECT state, boss must be Upcoming) |
 
 **Returns:** [GameState](#gamestate-schema)
 
@@ -940,36 +940,36 @@ Represents a Balatro tag that provides bonuses when triggered.
 
 ### Boss Blind Keys
 
-| Key               | Name             |
-| ----------------- | ---------------- |
-| `bl_hook`         | The Hook         |
-| `bl_ox`           | The Ox           |
-| `bl_mouth`        | The Mouth        |
-| `bl_fish`         | The Fish         |
-| `bl_club`         | The Club         |
-| `bl_manacle`      | The Manacle      |
-| `bl_tooth`        | The Tooth        |
-| `bl_wall`         | The Wall         |
-| `bl_house`        | The House        |
-| `bl_mark`         | The Mark         |
-| `bl_wheel`        | The Wheel        |
-| `bl_arm`          | The Arm          |
-| `bl_psychic`      | The Psychic      |
-| `bl_goad`         | The Goad         |
-| `bl_water`        | The Water        |
-| `bl_eye`          | The Eye          |
-| `bl_plant`        | The Plant        |
-| `bl_needle`       | The Needle       |
-| `bl_head`         | The Head         |
-| `bl_window`       | The Window       |
-| `bl_serpent`      | The Serpent      |
-| `bl_pillar`       | The Pillar       |
-| `bl_flint`        | The Flint        |
-| `bl_final_bell`   | The Bell         |
-| `bl_final_leaf`   | The Leaf         |
-| `bl_final_vessel` | The Vessel       |
-| `bl_final_acorn`  | The Acorn       |
-| `bl_final_heart`  | The Heart        |
+| Key               | Name        |
+| ----------------- | ----------- |
+| `bl_hook`         | The Hook    |
+| `bl_ox`           | The Ox      |
+| `bl_mouth`        | The Mouth   |
+| `bl_fish`         | The Fish    |
+| `bl_club`         | The Club    |
+| `bl_manacle`      | The Manacle |
+| `bl_tooth`        | The Tooth   |
+| `bl_wall`         | The Wall    |
+| `bl_house`        | The House   |
+| `bl_mark`         | The Mark    |
+| `bl_wheel`        | The Wheel   |
+| `bl_arm`          | The Arm     |
+| `bl_psychic`      | The Psychic |
+| `bl_goad`         | The Goad    |
+| `bl_water`        | The Water   |
+| `bl_eye`          | The Eye     |
+| `bl_plant`        | The Plant   |
+| `bl_needle`       | The Needle  |
+| `bl_head`         | The Head    |
+| `bl_window`       | The Window  |
+| `bl_serpent`      | The Serpent |
+| `bl_pillar`       | The Pillar  |
+| `bl_flint`        | The Flint   |
+| `bl_final_bell`   | The Bell    |
+| `bl_final_leaf`   | The Leaf    |
+| `bl_final_vessel` | The Vessel  |
+| `bl_final_acorn`  | The Acorn   |
+| `bl_final_heart`  | The Heart   |
 
 ### Blind Status
 
