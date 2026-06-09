@@ -62,13 +62,41 @@ return {
       end
     end
 
-    -- NOTE: Clear any existing highlights before selecting new cards
-    -- prevent state pollution. This is a bit of a hack but could interfere
-    -- with Boss Blind like Cerulean Bell.
-    G.hand:unhighlight_all()
+    -- Validate forced-selection cards (e.g. Cerulean Bell boss blind)
+    -- If any card has forced_selection, it MUST be included in the play
+    for i = 1, #G.hand.cards do
+      local card = G.hand.cards[i]
+      if card.ability and card.ability.forced_selection then
+        local included = false
+        for _, card_index in ipairs(args.cards) do
+          if card_index + 1 == i then
+            included = true
+            break
+          end
+        end
+        if not included then
+          send_response({
+            message = "Card at index " .. (i - 1) .. " is forced-selected by the boss blind. Include it in your play.",
+            name = BB_ERROR_NAMES.BAD_REQUEST,
+          })
+          return
+        end
+      end
+    end
 
+    -- Clear non-forced highlights only (preserves forced-selection cards)
+    for i = #G.hand.highlighted, 1, -1 do
+      if not G.hand.highlighted[i].ability.forced_selection then
+        G.hand.highlighted[i]:highlight(false)
+        table.remove(G.hand.highlighted, i)
+      end
+    end
+
+    -- Click only cards not already highlighted
     for _, card_index in ipairs(args.cards) do
-      G.hand.cards[card_index + 1]:click()
+      if not G.hand.cards[card_index + 1].highlighted then
+        G.hand.cards[card_index + 1]:click()
+      end
     end
 
     -- Log the cards being played
