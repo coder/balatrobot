@@ -1,6 +1,6 @@
 [project]
 name = "balatrobot"
-version = "1.5.0"
+version = "1.5.1"
 description = "API for developing Balatro bots"
 readme = "README.md"
 authors = [

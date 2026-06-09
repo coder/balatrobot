@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.5.1](https://github.com/coder/balatrobot/compare/v1.5.0...v1.5.1) (2026-06-09)
+
+
+### Bug Fixes
+
+* **linux:** respect pre-existing STEAM_COMPAT_DATA_PATH and STEAM_COMPAT_CLIENT_INSTALL_PATH env vars ([ef75d31](https://github.com/coder/balatrobot/commit/ef75d3117c9a57363b79a98066b67509a8070bc1))
+
 ## [1.5.0](https://github.com/coder/balatrobot/compare/v1.4.1...v1.5.0) (2026-05-27)
 
 
