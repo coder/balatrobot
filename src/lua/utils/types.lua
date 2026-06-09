@@ -54,6 +54,7 @@
 ---@field effect string Description of the tag's effect
 
 ---@class Blind
+---@field key Blind.Key Key of the blind (e.g., "bl_small", "bl_hook")
 ---@field type Blind.Type Type of the blind
 ---@field status Blind.Status Status of the bilnd
 ---@field name string Name of the blind (e.g., "Small", "Big" or the Boss name)

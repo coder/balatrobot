@@ -412,6 +412,38 @@
 ---| "DEFEATED" # Previously defeated blind
 ---| "SKIPPED" # Previously skipped blind
 
+---@alias Blind.Key
+---| "bl_small"
+---| "bl_big"
+---| "bl_hook"
+---| "bl_ox"
+---| "bl_mouth"
+---| "bl_fish"
+---| "bl_club"
+---| "bl_manacle"
+---| "bl_tooth"
+---| "bl_wall"
+---| "bl_house"
+---| "bl_mark"
+---| "bl_final_bell"
+---| "bl_wheel"
+---| "bl_arm"
+---| "bl_psychic"
+---| "bl_goad"
+---| "bl_water"
+---| "bl_eye"
+---| "bl_plant"
+---| "bl_needle"
+---| "bl_head"
+---| "bl_final_leaf"
+---| "bl_final_vessel"
+---| "bl_window"
+---| "bl_serpent"
+---| "bl_pillar"
+---| "bl_flint"
+---| "bl_final_acorn"
+---| "bl_final_heart"
+
 ---@alias Tag.Key
 ---| "tag_uncommon" # Uncommon Tag: Shop has a free Uncommon Joker
 ---| "tag_rare" # Rare Tag: Shop has a free Rare Joker

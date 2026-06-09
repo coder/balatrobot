@@ -693,6 +693,14 @@
           "schema": {
             "type": "boolean"
           }
+        },
+        {
+          "name": "boss",
+          "description": "Override which Boss Blind appears (only in BLIND_SELECT state, boss must be Upcoming)",
+          "required": false,
+          "schema": {
+            "type": "string"
+          }
         }
       ],
       "result": {
@@ -1090,6 +1098,10 @@
         "type": "object",
         "description": "Blind information",
         "properties": {
+          "key": {
+            "type": "string",
+            "description": "Key of the blind (e.g., 'bl_small', 'bl_hook')"
+          },
           "type": {
             "$ref": "#/components/schemas/BlindType"
           },
@@ -1114,6 +1126,7 @@
           }
         },
         "required": [
+          "key",
           "type",
           "status",
           "name",

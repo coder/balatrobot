@@ -744,6 +744,7 @@ function gamestate.get_blinds_info()
   -- Small Blind
   -- ====================
   local small_choice = blind_choices.Small or "bl_small"
+  blinds.small.key = small_choice
   if G.P_BLINDS and G.P_BLINDS[small_choice] then
     local small_blind = G.P_BLINDS[small_choice]
     blinds.small.name = small_blind.name or "Small Blind"
@@ -771,6 +772,7 @@ function gamestate.get_blinds_info()
   -- Big Blind
   -- ====================
   local big_choice = blind_choices.Big or "bl_big"
+  blinds.big.key = big_choice
   if G.P_BLINDS and G.P_BLINDS[big_choice] then
     local big_blind = G.P_BLINDS[big_choice]
     blinds.big.name = big_blind.name or "Big Blind"
@@ -798,6 +800,9 @@ function gamestate.get_blinds_info()
   -- Boss Blind
   -- ====================
   local boss_choice = blind_choices.Boss
+  if boss_choice then
+    blinds.boss.key = boss_choice
+  end
   if boss_choice and G.P_BLINDS and G.P_BLINDS[boss_choice] then
     local boss_blind = G.P_BLINDS[boss_choice]
     blinds.boss.name = boss_blind.name or "Boss Blind"

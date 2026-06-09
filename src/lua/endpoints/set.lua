@@ -12,6 +12,7 @@
 ---@field hands integer? New number of hands left number
 ---@field discards integer? New number of discards left number
 ---@field shop boolean? Re-stock shop with new items
+---@field boss string? Override which Boss Blind appears
 
 -- ==========================================================================
 -- Set Endpoint
@@ -60,6 +61,11 @@ return {
       required = false,
       description = "Re-stock shop with new items",
     },
+    boss = {
+      type = "string",
+      required = false,
+      description = "Override which Boss Blind appears",
+    },
   },
 
   requires_state = nil,
@@ -92,6 +98,9 @@ return {
     if args.shop ~= nil then
       table.insert(fields, "shop")
     end
+    if args.boss ~= nil then
+      table.insert(fields, "boss=" .. tostring(args.boss))
+    end
     sendInfoMessage("Setting " .. table.concat(fields, ", "), "BB.ENDPOINTS")
 
     -- Validate we're in a run
@@ -112,12 +121,58 @@ return {
       and args.hands == nil
       and args.discards == nil
       and args.shop == nil
+      and args.boss == nil
     then
       send_response({
         message = "Must provide at least one field to set",
         name = BB_ERROR_NAMES.BAD_REQUEST,
       })
       return
+    end
+
+    -- Boss + shop mutual exclusion
+    if args.boss and args.shop then
+      send_response({
+        message = "Cannot set boss and shop at the same time",
+        name = BB_ERROR_NAMES.BAD_REQUEST,
+      })
+      return
+    end
+
+    -- Boss validation
+    if args.boss then
+      if G.STATE ~= G.STATES.BLIND_SELECT then
+        send_response({
+          message = "Can only set boss blind during blind selection (BLIND_SELECT state)",
+          name = BB_ERROR_NAMES.INVALID_STATE,
+        })
+        return
+      end
+
+      local boss_state = G.GAME.round_resets.blind_states.Boss
+      if boss_state ~= "Upcoming" then
+        send_response({
+          message = "Boss blind is not selectable (current state: " .. tostring(boss_state) .. ")",
+          name = BB_ERROR_NAMES.INVALID_STATE,
+        })
+        return
+      end
+
+      if not G.P_BLINDS[args.boss] then
+        send_response({
+          message = "Unknown boss blind key: " .. args.boss,
+          name = BB_ERROR_NAMES.BAD_REQUEST,
+        })
+        return
+      end
+
+      if not G.P_BLINDS[args.boss].boss then
+        send_response({
+          message = "Not a boss blind: " .. args.boss,
+          name = BB_ERROR_NAMES.BAD_REQUEST,
+        })
+        return
+      end
     end
 
     -- Set money
@@ -213,6 +268,14 @@ return {
       G:update_shop()
     end
 
+    -- Boss execution: inject desired boss via perscribed_bosses and reroll
+    if args.boss then
+      G.GAME.perscribed_bosses = G.GAME.perscribed_bosses or {}
+      G.GAME.perscribed_bosses[G.GAME.round_resets.ante] = args.boss
+      G.from_boss_tag = true
+      G.FUNCS.reroll_boss()
+    end
+
     G.E_MANAGER:add_event(Event({
       trigger = "condition",
       blocking = false,
@@ -223,6 +286,16 @@ return {
           local done_jokers = G.shop_jokers and G.shop_jokers.config and G.shop_jokers.config.card_count > 0
           if done_vouchers or done_packs or done_jokers then
             sendDebugMessage("set() → ok", "BB.ENDPOINTS")
+            local state_data = BB_GAMESTATE.get_gamestate()
+            send_response(state_data)
+            return true
+          end
+          return false
+        elseif args.boss then
+          -- Wait for boss reroll to complete (controller lock releases after 0.5s)
+          if G.CONTROLLER.locks.boss_reroll == nil then
+            G.GAME.round_resets.boss_rerolled = false
+            sendDebugMessage("set() → ok (boss)", "BB.ENDPOINTS")
             local state_data = BB_GAMESTATE.get_gamestate()
             send_response(state_data)
             return true
