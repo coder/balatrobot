@@ -413,36 +413,36 @@
 ---| "SKIPPED" # Previously skipped blind
 
 ---@alias Blind.Key
----| "bl_small"
----| "bl_big"
----| "bl_hook"
----| "bl_ox"
----| "bl_mouth"
----| "bl_fish"
----| "bl_club"
----| "bl_manacle"
----| "bl_tooth"
----| "bl_wall"
----| "bl_house"
----| "bl_mark"
----| "bl_final_bell"
----| "bl_wheel"
----| "bl_arm"
----| "bl_psychic"
----| "bl_goad"
----| "bl_water"
----| "bl_eye"
----| "bl_plant"
----| "bl_needle"
----| "bl_head"
----| "bl_final_leaf"
----| "bl_final_vessel"
----| "bl_window"
----| "bl_serpent"
----| "bl_pillar"
----| "bl_flint"
----| "bl_final_acorn"
----| "bl_final_heart"
+---| "bl_small" # Small Blind: No special effects - can be skipped to receive a Tag
+---| "bl_big" # Big Blind: No special effects - can be skipped to receive a Tag
+---| "bl_hook" # The Hook: Discards 2 random cards held in hand after every played hand
+---| "bl_ox" # The Ox: Playing the most played hand this run sets money to $0
+---| "bl_mouth" # The Mouth: Only one hand type can be played this round
+---| "bl_fish" # The Fish: Cards drawn face down after each hand played
+---| "bl_club" # The Club: All Club cards are debuffed
+---| "bl_manacle" # The Manacle: −1 Hand Size
+---| "bl_tooth" # The Tooth: Lose $1 per card played
+---| "bl_wall" # The Wall: Extra large blind (4× base chips required)
+---| "bl_house" # The House: First hand is drawn face down
+---| "bl_mark" # The Mark: All face cards are drawn face down
+---| "bl_wheel" # The Wheel: 1 in 7 cards get drawn face down during the round
+---| "bl_arm" # The Arm: Decrease level of played poker hand by 1
+---| "bl_psychic" # The Psychic: Must play 5 cards (not all cards need to score)
+---| "bl_goad" # The Goad: All Spade cards are debuffed
+---| "bl_water" # The Water: Start with 0 discards
+---| "bl_eye" # The Eye: No repeat hand types this round
+---| "bl_plant" # The Plant: All face cards are debuffed
+---| "bl_needle" # The Needle: Play only 1 hand
+---| "bl_head" # The Head: All Heart cards are debuffed
+---| "bl_window" # The Window: All Diamond cards are debuffed
+---| "bl_serpent" # The Serpent: After Play or Discard, always draw 3 cards (ignores hand size)
+---| "bl_pillar" # The Pillar: Cards played previously this Ante are debuffed
+---| "bl_flint" # The Flint: Base Chips and Mult for played poker hands are halved
+---| "bl_final_acorn" # Amber Acorn: Flips and shuffles all Joker cards (Showdown)
+---| "bl_final_bell" # Cerulean Bell: Forces 1 card to always be selected (Showdown)
+---| "bl_final_heart" # Crimson Heart: One random Joker disabled every hand (Showdown)
+---| "bl_final_leaf" # Verdant Leaf: All cards debuffed until 1 Joker is sold (Showdown)
+---| "bl_final_vessel" # Violet Vessel: Very large blind, 6× base chips required (Showdown)
 
 ---@alias Tag.Key
 ---| "tag_uncommon" # Uncommon Tag: Shop has a free Uncommon Joker
