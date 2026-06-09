@@ -75,6 +75,13 @@ Full API reference (methods, errors, states): `docs/api.md`.
 
 ## Logs
 
-Each instance has a log file (Balatro/Love2D output, Lovely traces, Lua errors, HTTP server logs). Find log paths via `balatrobot list` or `balatrobot list --json | jq '.instances[].log_path'`.
+Each session directory (`logs/<timestamp>/`) contains per-instance files: `<port>.log` (Balatro/Love2D output, traces, errors), `<port>.req.jsonl` (JSON-RPC requests), `<port>.res.jsonl` (JSON-RPC responses). JSONL traces are written automatically by the Lua server. Find paths via `balatrobot list` or `balatrobot list --json | jq '.instances[].log_path'`.
 
-Logs are stored under `logs/<timestamp>/<port>.log` (configurable via `--logs-path`). When `serve` fails or endpoints behave unexpectedly, check the log file.
+## `api --requests` — replay & verify
+
+```bash
+balatrobot api --requests logs/<ts>/<port>.req.jsonl
+balatrobot api --requests logs/<ts>/<port>.req.jsonl --responses logs/<ts>/<port>.res.jsonl
+```
+
+Replays a JSONL request trace against a running instance. `--responses` compares each live response against the recorded one (exits on first divergence). Mutually exclusive with positional `METHOD`.
