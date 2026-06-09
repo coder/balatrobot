@@ -53,6 +53,7 @@ source = { editable = "." }
 dependencies = [
     { name = "httpx" },
     { name = "platformdirs" },
+    { name = "tqdm" },
     { name = "typer" },
 ]
 
@@ -77,13 +78,13 @@ test = [
     { name = "pytest-asyncio" },
     { name = "pytest-rerunfailures" },
     { name = "pytest-xdist", extra = ["psutil"] },
-    { name = "tqdm" },
 ]
 
 [package.metadata]
 requires-dist = [
     { name = "httpx", specifier = ">=0.28.1" },
     { name = "platformdirs", specifier = ">=4.0" },
+    { name = "tqdm", specifier = ">=4.67.1" },
     { name = "typer", specifier = ">=0.15" },
 ]
 
@@ -108,7 +109,6 @@ test = [
     { name = "pytest-asyncio", specifier = ">=1.3.0" },
     { name = "pytest-rerunfailures", specifier = ">=16.1" },
     { name = "pytest-xdist", extras = ["psutil"], specifier = ">=3.8.0" },
-    { name = "tqdm", specifier = ">=4.67.1" },
 ]
 
 [[package]]
