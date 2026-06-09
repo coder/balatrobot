@@ -145,6 +145,7 @@ class TestGamestateBlinds:
         expected_blinds = {
             "small": {
                 "type": "SMALL",
+                "key": "bl_small",
                 "name": "Small Blind",
                 "effect": "",
                 "score": 300,
@@ -156,6 +157,7 @@ class TestGamestateBlinds:
             },
             "big": {
                 "type": "BIG",
+                "key": "bl_big",
                 "name": "Big Blind",
                 "effect": "",
                 "score": 450,
@@ -167,6 +169,7 @@ class TestGamestateBlinds:
             },
             "boss": {
                 "type": "BOSS",
+                "key": "bl_manacle",
                 "name": "The Manacle",
                 "effect": "-1 Hand Size",
                 "score": 600,
