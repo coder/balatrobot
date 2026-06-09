@@ -96,6 +96,34 @@ class TestDiscardEndpointValidation:
             "Field 'cards' must be an array",
         )
 
+    def test_cerulean_bell_forced_card_not_included_in_discard(
+        self, client: httpx.Client
+    ) -> None:
+        """Discard a single non-forced card; the forced card must NOT be silently included."""
+
+        prev_gs = load_fixture(
+            client, "discard", "state-SELECTING_HAND--blinds.boss.key-bl_final_bell"
+        )
+        assert prev_gs["blinds"]["boss"]["key"] == "bl_final_bell"
+
+        # Find the forced card (highlighted by The Bell)
+        h_idx, h_card = None, None
+        for i, c in enumerate(prev_gs["hand"]["cards"]):
+            if isinstance(c["state"], dict) and c["state"]["highlight"]:
+                h_idx = i
+                h_card = c
+                break
+        assert h_card is not None, "The Bell should force exactly one card"
+        assert h_idx is not None, "The Bell should force exactly one card"
+
+        # Select another card to discard, this should raise an error in the API.
+        response = api(client, "discard", {"cards": [1 if h_idx == 0 else 0]})
+        assert_error_response(
+            response,
+            "BAD_REQUEST",
+            "forced-selected by the boss blind",
+        )
+
 
 class TestDiscardEndpointStateRequirements:
     """Test discard endpoint state requirements."""
