@@ -571,6 +571,38 @@
           "chips": 1000000
         }
       }
+    ],
+    "state-SELECTING_HAND--blinds.boss.key-bl_final_bell": [
+      {
+        "method": "menu",
+        "params": {}
+      },
+      {
+        "method": "start",
+        "params": {
+          "deck": "RED",
+          "stake": "WHITE",
+          "seed": "TEST123"
+        }
+      },
+      {
+        "method": "set",
+        "params": {
+          "boss": "bl_final_bell"
+        }
+      },
+      {
+        "method": "skip",
+        "params": {}
+      },
+      {
+        "method": "skip",
+        "params": {}
+      },
+      {
+        "method": "select",
+        "params": {}
+      }
     ]
   },
   "discard": {
@@ -628,6 +660,38 @@
         "params": {
           "discards": 0
         }
+      }
+    ],
+    "state-SELECTING_HAND--blinds.boss.key-bl_final_bell": [
+      {
+        "method": "menu",
+        "params": {}
+      },
+      {
+        "method": "start",
+        "params": {
+          "deck": "RED",
+          "stake": "WHITE",
+          "seed": "TEST123"
+        }
+      },
+      {
+        "method": "set",
+        "params": {
+          "boss": "bl_final_bell"
+        }
+      },
+      {
+        "method": "skip",
+        "params": {}
+      },
+      {
+        "method": "skip",
+        "params": {}
+      },
+      {
+        "method": "select",
+        "params": {}
       }
     ]
   },
