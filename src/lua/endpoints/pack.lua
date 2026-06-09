@@ -262,9 +262,9 @@ return {
               return true
             end
           else
-            -- Pack closes - wait for return to shop
+            -- Pack closes - wait for return to shop or blind select
             local pack_closed = not G.pack_cards or G.pack_cards.REMOVED
-            local back_to_shop = G.STATE == G.STATES.SHOP
+            local back_to_shop = G.STATE == G.STATES.SHOP or G.STATE == G.STATES.BLIND_SELECT
 
             if pack_closed and back_to_shop then
               sendDebugMessage("pack() → selected", "BB.ENDPOINTS")
@@ -291,7 +291,7 @@ return {
         blocking = false,
         func = function()
           local pack_closed = not G.pack_cards or G.pack_cards.REMOVED
-          local back_to_shop = G.STATE == G.STATES.SHOP
+          local back_to_shop = G.STATE == G.STATES.SHOP or G.STATE == G.STATES.BLIND_SELECT
 
           if pack_closed and back_to_shop then
             sendDebugMessage("pack() → skipped", "BB.ENDPOINTS")

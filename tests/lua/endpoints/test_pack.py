@@ -514,6 +514,24 @@ class TestPackEndpointSkip:
         gamestate = assert_gamestate_response(result, state="SHOP")
         assert "pack" not in gamestate
 
+    def test_pack_skip_from_tag_reward(self, client: httpx.Client) -> None:
+        # Test skipping a pack opened by Charm Tag returns to BLIND_SELECT.
+        #
+        # When skipping a blind with a Charm Tag, a free Mega Arcana Pack opens
+        # from BLIND_SELECT. After skipping the pack, the game must return to
+        # BLIND_SELECT (not SHOP) because the pack interrupted that state.
+
+        load_fixture(
+            client,
+            "pack",
+            "seed-TAGTEST2--state-SMODS_BOOSTER_OPENED--blinds.small.tag.key-tag_charm",
+        )
+
+        result = api(client, "pack", {"skip": True})
+        gamestate = assert_gamestate_response(result)
+        assert gamestate["state"] == "BLIND_SELECT"
+        assert "pack" not in gamestate
+
 
 # =============================================================================
 # Schema Validation Tests
