@@ -59,7 +59,7 @@ class TestMacOSLauncher:
     def test_validate_paths_missing_love(self, tmp_path):
         """Raises RuntimeError when love executable missing."""
         launcher = MacOSLauncher()
-        config = Config(love_path=str(tmp_path / "nonexistent"))
+        config = Config(path_love=str(tmp_path / "nonexistent"))
 
         with pytest.raises(RuntimeError, match="LOVE executable not found"):
             launcher.validate_paths(config)
@@ -67,13 +67,13 @@ class TestMacOSLauncher:
     def test_validate_paths_missing_lovely(self, tmp_path):
         """Raises RuntimeError when liblovely.dylib missing."""
         # Create a fake love executable
-        love_path = tmp_path / "love"
-        love_path.touch()
+        path_love = tmp_path / "love"
+        path_love.touch()
 
         launcher = MacOSLauncher()
         config = Config(
-            love_path=str(love_path),
-            lovely_path=str(tmp_path / "nonexistent.dylib"),
+            path_love=str(path_love),
+            path_lovely=str(tmp_path / "nonexistent.dylib"),
         )
 
         with pytest.raises(RuntimeError, match="liblovely.dylib not found"):
@@ -82,7 +82,7 @@ class TestMacOSLauncher:
     def test_build_env_includes_dyld(self, tmp_path):
         """build_env includes DYLD_INSERT_LIBRARIES."""
         launcher = MacOSLauncher()
-        config = Config(lovely_path="/path/to/liblovely.dylib")
+        config = Config(path_lovely="/path/to/liblovely.dylib")
 
         env = launcher.build_env(config)
 
@@ -91,7 +91,7 @@ class TestMacOSLauncher:
     def test_build_cmd(self, tmp_path):
         """build_cmd returns love executable path."""
         launcher = MacOSLauncher()
-        config = Config(love_path="/path/to/love")
+        config = Config(path_love="/path/to/love")
 
         cmd = launcher.build_cmd(config)
 
@@ -144,8 +144,8 @@ class TestLinuxLauncher:
         config = Config()
         launcher.validate_paths(config)
 
-        assert config.balatro_path is not None
-        assert "Balatro" in config.balatro_path
+        assert config.path_balatro is not None
+        assert "Balatro" in config.path_balatro
 
     def test_validate_paths_missing_balatro_exe(self, tmp_path, monkeypatch):
         """Raises RuntimeError when Balatro.exe is missing."""
@@ -194,8 +194,8 @@ class TestLinuxLauncher:
         """build_cmd returns proton run with Balatro.exe."""
         launcher = LinuxLauncher()
         config = Config(
-            love_path="/path/to/proton",
-            balatro_path="/path/to/Balatro",
+            path_love="/path/to/proton",
+            path_balatro="/path/to/Balatro",
         )
         cmd = launcher.build_cmd(config)
         assert cmd == ["/path/to/proton", "run", "/path/to/Balatro/Balatro.exe"]
@@ -209,8 +209,8 @@ class TestNativeLauncher:
         """Raises RuntimeError when love executable missing."""
         launcher = NativeLauncher()
         config = Config(
-            love_path=str(tmp_path / "nonexistent"),
-            balatro_path=str(tmp_path),
+            path_love=str(tmp_path / "nonexistent"),
+            path_balatro=str(tmp_path),
         )
 
         with pytest.raises(RuntimeError, match="LOVE executable not found"):
@@ -219,7 +219,7 @@ class TestNativeLauncher:
     def test_build_env_includes_ld_preload(self, tmp_path):
         """build_env includes LD_PRELOAD."""
         launcher = NativeLauncher()
-        config = Config(lovely_path="/path/to/liblovely.so")
+        config = Config(path_lovely="/path/to/liblovely.so")
 
         env = launcher.build_env(config)
 
@@ -228,7 +228,7 @@ class TestNativeLauncher:
     def test_build_cmd(self, tmp_path):
         """build_cmd returns love and balatro path."""
         launcher = NativeLauncher()
-        config = Config(love_path="/usr/bin/love", balatro_path="/path/to/balatro")
+        config = Config(path_love="/usr/bin/love", path_balatro="/path/to/balatro")
 
         cmd = launcher.build_cmd(config)
 
@@ -242,7 +242,7 @@ class TestWindowsLauncher:
     def test_validate_paths_missing_balatro_exe(self, tmp_path):
         """Raises RuntimeError when Balatro.exe missing."""
         launcher = WindowsLauncher()
-        config = Config(love_path=str(tmp_path / "nonexistent.exe"))
+        config = Config(path_love=str(tmp_path / "nonexistent.exe"))
 
         with pytest.raises(RuntimeError, match="Balatro executable not found"):
             launcher.validate_paths(config)
@@ -255,8 +255,8 @@ class TestWindowsLauncher:
 
         launcher = WindowsLauncher()
         config = Config(
-            love_path=str(exe_path),
-            lovely_path=str(tmp_path / "nonexistent.dll"),
+            path_love=str(exe_path),
+            path_lovely=str(tmp_path / "nonexistent.dll"),
         )
 
         with pytest.raises(RuntimeError, match="version.dll not found"):
@@ -265,7 +265,7 @@ class TestWindowsLauncher:
     def test_build_env_no_dll_injection_var(self, tmp_path):
         """build_env does not include DLL injection environment variable."""
         launcher = WindowsLauncher()
-        config = Config(lovely_path=r"C:\path\to\version.dll")
+        config = Config(path_lovely=r"C:\path\to\version.dll")
 
         env = launcher.build_env(config)
 
@@ -275,7 +275,7 @@ class TestWindowsLauncher:
     def test_build_cmd(self, tmp_path):
         """build_cmd returns Balatro.exe path."""
         launcher = WindowsLauncher()
-        config = Config(love_path=r"C:\path\to\Balatro.exe")
+        config = Config(path_love=r"C:\path\to\Balatro.exe")
 
         cmd = launcher.build_cmd(config)
 

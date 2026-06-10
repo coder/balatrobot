@@ -20,7 +20,7 @@ class TestServerContextManager:
     async def test_enter_writes_state_exit_deletes(self, tmp_path):
         """State file exists inside with block, gone after exit."""
         state_path = tmp_path / "state.json"
-        config = Config(logs_path=str(tmp_path))
+        config = Config(path_logs=str(tmp_path))
 
         mock_inst = MagicMock()
         mock_inst.port = 14001
@@ -61,7 +61,7 @@ class TestServerContextManager:
         }
         state_path.write_text(json.dumps(state_data))
 
-        config = Config(logs_path=str(tmp_path))
+        config = Config(path_logs=str(tmp_path))
         server = Server(config, n=1, state_path=state_path)
 
         with pytest.raises(StateFileBusy):
@@ -71,7 +71,7 @@ class TestServerContextManager:
     async def test_enter_pool_failure_cleans_up(self, tmp_path):
         """No state file left if pool.start() fails."""
         state_path = tmp_path / "state.json"
-        config = Config(logs_path=str(tmp_path))
+        config = Config(path_logs=str(tmp_path))
 
         mock_inst = MagicMock()
         mock_inst.port = 14001
@@ -94,7 +94,7 @@ class TestServerContextManager:
     async def test_pool_property(self, tmp_path):
         """Server.pool returns the pool after enter."""
         state_path = tmp_path / "state.json"
-        config = Config(logs_path=str(tmp_path))
+        config = Config(path_logs=str(tmp_path))
 
         mock_inst = MagicMock()
         mock_inst.port = 14001
@@ -119,7 +119,7 @@ class TestServerRun:
     async def test_run_sigterm_exits_cleanly(self, tmp_path):
         """run() returns normally when shutdown event is set."""
         state_path = tmp_path / "state.json"
-        config = Config(logs_path=str(tmp_path))
+        config = Config(path_logs=str(tmp_path))
 
         mock_inst = MagicMock()
         mock_inst.port = 14001
@@ -141,7 +141,7 @@ class TestServerRun:
     async def test_run_child_death_raises(self, tmp_path):
         """run() raises InstanceDiedError when child dies, state file cleaned up."""
         state_path = tmp_path / "state.json"
-        config = Config(logs_path=str(tmp_path))
+        config = Config(path_logs=str(tmp_path))
 
         mock_inst = MagicMock()
         mock_inst.port = 14001
@@ -172,7 +172,7 @@ class TestServerRun:
     async def test_run_skips_signal_handler_on_windows(self, tmp_path):
         """run() does not register signal handlers on Windows."""
         state_path = tmp_path / "state.json"
-        config = Config(logs_path=str(tmp_path))
+        config = Config(path_logs=str(tmp_path))
 
         mock_inst = MagicMock()
         mock_inst.port = 14001
@@ -203,7 +203,7 @@ class TestServerRun:
     async def test_run_registers_sigterm_handler(self, tmp_path):
         """run() registers a SIGTERM handler on non-Windows."""
         state_path = tmp_path / "state.json"
-        config = Config(logs_path=str(tmp_path))
+        config = Config(path_logs=str(tmp_path))
 
         mock_inst = MagicMock()
         mock_inst.port = 14001
@@ -235,7 +235,7 @@ class TestServerRun:
     async def test_sigterm_triggers_clean_shutdown(self, tmp_path):
         """SIGTERM sets shutdown event → run() exits → __aexit__ cleans up."""
         state_path = tmp_path / "state.json"
-        config = Config(logs_path=str(tmp_path))
+        config = Config(path_logs=str(tmp_path))
 
         mock_inst = MagicMock()
         mock_inst.port = 14001

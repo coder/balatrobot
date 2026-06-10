@@ -25,8 +25,8 @@ class TestBalatroInstanceInit:
 
     def test_init_with_overrides(self):
         """Overrides apply to base config."""
-        config = Config(port=8888, fast=False)
-        instance = BalatroInstance(config, port=9999, fast=True)
+        config = Config(port=8888)
+        instance = BalatroInstance(config, port=9999)
         assert instance.port == 9999
 
     def test_init_overrides_without_config(self):
@@ -164,7 +164,7 @@ class TestBalatroInstanceContextManager:
 
         monkeypatch.setattr("balatrobot.instance.get_launcher", lambda x: mock_launcher)
 
-        instance = BalatroInstance(logs_path=str(tmp_path))
+        instance = BalatroInstance(path_logs=str(tmp_path))
 
         # Mock health check to succeed immediately
         instance._wait_for_health = AsyncMock()  # ty: ignore[invalid-assignment]

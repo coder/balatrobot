@@ -4,6 +4,7 @@ from typer.testing import CliRunner
 
 from balatrobot.cli import app
 from balatrobot.cli.serve import PLATFORM_CHOICES
+from balatrobot.config import Config
 
 runner = CliRunner()
 
@@ -27,16 +28,33 @@ class TestServeCommand:
     # --- Num instances validation tests ---
 
     def test_serve_num_instances_zero(self):
-        """--num-instances 0 rejected with error message."""
-        result = runner.invoke(app, ["serve", "-n", "0"])
+        """--num 0 rejected with error message."""
+        result = runner.invoke(app, ["serve", "--num", "0"])
         assert result.exit_code == 1
-        assert "--num-instances must be >= 1" in result.output
+        assert "--num must be >= 1" in result.output
 
     def test_serve_num_instances_negative(self):
-        """Negative --num-instances rejected."""
-        result = runner.invoke(app, ["serve", "-n", "-1"])
+        """Negative --num rejected."""
+        result = runner.invoke(app, ["serve", "--num", "-1"])
         assert result.exit_code == 1
-        assert "--num-instances must be >= 1" in result.output
+        assert "--num must be >= 1" in result.output
+
+    # --- Render mode validation tests ---
+
+    def test_serve_invalid_render_mode(self):
+        """Invalid render mode rejected with error message."""
+        result = runner.invoke(app, ["serve", "--render", "invalid"])
+        assert result.exit_code == 1
+        assert "Invalid render mode 'invalid'" in result.output
+
+    def test_serve_render_validation_uses_config(self, clean_env):
+        """Render modes are validated against RENDER_CHOICES constant."""
+        from balatrobot.config import RENDER_CHOICES
+
+        # All render modes should be valid config values
+        for mode in RENDER_CHOICES:
+            config = Config(render=mode)
+            assert config.render == mode
 
     # --- Help text tests ---
 
@@ -44,13 +62,26 @@ class TestServeCommand:
         """serve --help shows all options."""
         result = runner.invoke(app, ["serve", "--help"])
         assert result.exit_code == 0
-        assert "--fast" in result.output
-        assert "--headless" in result.output
+        assert "--settings" in result.output
+        assert "--render" in result.output
         assert "--platform" in result.output
-        assert "--num-instances" in result.output or "-n" in result.output
-        # --host and --port removed from serve (ephemeral ports, state file discovery)
-        assert "--host" not in result.output
-        assert "--port" not in result.output
+        assert "--num" in result.output
+        assert "--debug" in result.output
+        assert "--path-balatro" in result.output
+        assert "--path-lovely" in result.output
+        assert "--path-love" in result.output
+        assert "--path-logs" in result.output
+        # Old flags should NOT be present
+        assert "--fast" not in result.output
+        assert "--headless" not in result.output
+        assert "--render-on-api" not in result.output
+        assert "--audio" not in result.output
+        assert "--no-shaders" not in result.output
+        assert "--gamespeed" not in result.output
+        assert "--fps-cap" not in result.output
+        assert "--animation-fps" not in result.output
+        assert "--no-reduced-motion" not in result.output
+        assert "--pixel-art-smoothing" not in result.output
 
     # --- Config.from_kwargs tests ---
 
@@ -77,11 +108,11 @@ class TestServeCommand:
         """Env vars used when options not provided."""
         from balatrobot.config import Config
 
-        monkeypatch.setenv("BALATROBOT_FAST", "1")
+        monkeypatch.setenv("BALATROBOT_DEBUG", "1")
         monkeypatch.setenv("BALATROBOT_PORT", "8888")
 
-        config = Config.from_kwargs(fast=None, port=None)
-        assert config.fast is True
+        config = Config.from_kwargs(debug=None, port=None)
+        assert config.debug is True
         assert config.port == 8888
 
 

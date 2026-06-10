@@ -97,7 +97,7 @@ class TestBalatroPoolStartStop:
     @pytest.mark.asyncio
     async def test_start_creates_instances(self, tmp_path, monkeypatch):
         """start() creates n instances and populates instances list."""
-        config = Config(logs_path=str(tmp_path))
+        config = Config(path_logs=str(tmp_path))
 
         # Mock BalatroInstance
         mock_inst = AsyncMock(spec=BalatroInstance)
@@ -133,7 +133,7 @@ class TestBalatroPoolStartStop:
     @pytest.mark.asyncio
     async def test_stop_concurrent(self, tmp_path):
         """stop() stops all instances concurrently."""
-        config = Config(logs_path=str(tmp_path))
+        config = Config(path_logs=str(tmp_path))
 
         mock_instances = []
         for port in [14001, 14002]:
@@ -156,7 +156,7 @@ class TestBalatroPoolStartStop:
     @pytest.mark.asyncio
     async def test_start_fail_cleans_up(self, tmp_path):
         """If one instance fails to start, all are stopped."""
-        config = Config(logs_path=str(tmp_path))
+        config = Config(path_logs=str(tmp_path))
 
         started_inst = MagicMock(spec=BalatroInstance)
         started_inst.port = 14001
@@ -185,14 +185,14 @@ class TestBalatroPoolStartStop:
     @pytest.mark.asyncio
     async def test_stop_idempotent(self, tmp_path):
         """stop() is safe to call when not started."""
-        config = Config(logs_path=str(tmp_path))
+        config = Config(path_logs=str(tmp_path))
         pool = BalatroPool(config)
         await pool.stop()  # Should not raise
 
     @pytest.mark.asyncio
     async def test_start_already_started(self, tmp_path):
         """start() raises if already started."""
-        config = Config(logs_path=str(tmp_path))
+        config = Config(path_logs=str(tmp_path))
         pool = BalatroPool(config)
 
         mock_inst = MagicMock(spec=BalatroInstance)
@@ -210,7 +210,7 @@ class TestBalatroPoolStartStop:
     @pytest.mark.asyncio
     async def test_instances_populated_after_start(self, tmp_path):
         """instances returns InstanceInfo list after start."""
-        config = Config(logs_path=str(tmp_path))
+        config = Config(path_logs=str(tmp_path))
 
         mock_instances = []
         for port in [14001, 14002]:
@@ -287,7 +287,7 @@ class TestBalatroPoolPortAllocation:
     @pytest.mark.asyncio
     async def test_auto_allocate_ports(self, tmp_path):
         """Pool allocates ports automatically when none specified."""
-        config = Config(logs_path=str(tmp_path))
+        config = Config(path_logs=str(tmp_path))
         pool = BalatroPool(config, n=2)
 
         captured_ports = []
@@ -320,7 +320,7 @@ class TestBalatroPoolConfigDerivation:
     @pytest.mark.asyncio
     async def test_derives_config_per_instance(self, tmp_path):
         """Pool derives configs from base config, each with unique port."""
-        config = Config(host="0.0.0.0", logs_path=str(tmp_path))
+        config = Config(host="0.0.0.0", path_logs=str(tmp_path))
 
         captured_configs = []
         captured_overrides = []
@@ -341,7 +341,7 @@ class TestBalatroPoolConfigDerivation:
             pool = BalatroPool(config, ports=[14001, 14002])
             await pool.start()
 
-        # All configs should share host/logs_path
+        # All configs should share host/path_logs
         assert all(c.host == "0.0.0.0" for c in captured_configs)
         # Each gets a different port
         assert captured_overrides[0]["port"] == 14001
@@ -352,7 +352,7 @@ class TestBalatroPoolConfigDerivation:
     @pytest.mark.asyncio
     async def test_shared_session_name(self, tmp_path):
         """Pool generates a shared session name for all instances."""
-        config = Config(logs_path=str(tmp_path))
+        config = Config(path_logs=str(tmp_path))
 
         captured_session_names = []
 
