@@ -2,7 +2,9 @@
 assert(SMODS.load_file("src/lua/settings.lua"))() -- define BB_SETTINGS
 
 -- Configure Balatro with appropriate settings from environment variables
-BB_SETTINGS.setup()
+if not BB_SETTINGS.setup() then
+  return
+end
 
 -- Endpoints for the BalatroBot API
 BB_ENDPOINTS = {

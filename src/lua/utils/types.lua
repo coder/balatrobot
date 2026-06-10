@@ -275,18 +275,10 @@
 ---@class Settings
 ---@field host string Hostname for the HTTP server (default: "127.0.0.1")
 ---@field port integer Port number for the HTTP server (default: 12346)
----@field headless boolean Whether to run in headless mode (minimizes window, disables rendering)
----@field fast boolean Whether to run in fast mode (unlimited FPS, 10x game speed, 60 FPS animations)
----@field render_on_api boolean Whether to render frames only on API calls (mutually exclusive with headless)
----@field audio boolean Whether to play audio (enables sound thread and sets volume levels)
+---@field render string Render mode: headfull|headless|ondemand (default: "headfull")
 ---@field debug boolean Whether debug mode is enabled (requires DebugPlus mod)
----@field no_shaders boolean Whether to disable all shaders for better performance (causes visual glitches)
----@field fps_cap integer Maximum FPS cap for the game (default: 60)
----@field gamespeed integer Game speed multiplier (default: 4)
----@field animation_fps integer Animation FPS (default: 10)
----@field no_reduced_motion boolean Whether to disable reduced motion for faster animations
----@field pixel_art_smoothing boolean Whether to enable pixel art smoothing (texture_scaling = 2)
----@field setup fun()? Initialize and apply all BalatroBot settings
+---@field settings_path string? Path to balatrosettings profile directory (nil if not provided)
+---@field setup fun(): boolean Initialize BalatroBot settings. Returns false if "BalatroBot" profile not selected.
 
 ---@class Debug
 ---@field log table? DebugPlus logger instance with debug/info/error methods (nil if DebugPlus not available)
