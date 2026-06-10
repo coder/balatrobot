@@ -16,12 +16,19 @@ balatrobot serve --help
 Typical invocation:
 
 ```bash
-balatrobot serve --headless --fast --debug
+balatrobot serve --render headless --settings ~/balatrosettings/profiles/fast --debug
 ```
 
-Key flags: `--headless`, `--fast` (10× speed), `--debug` (DebugPlus logging), `-n`/`--num-instances` (pool).
+Key flags:
+- `--render [headfull|headless|ondemand]` — rendering mode (default: headfull)
+- `--settings PATH` — path to balatrosettings profile directory
+- `--debug` — enable debug endpoints
+- `--num` — number of instances
+- `--path-*` — path overrides (`--path-balatro`, `--path-lovely`, `--path-love`, `--path-logs`)
 
-All flags have `BALATROBOT_*` env var equivalents (e.g. `BALATROBOT_FAST=1`). See `src/balatrobot/config.py` for the full mapping.
+All flags have `BALATROBOT_*` env var equivalents (e.g. `BALATROBOT_RENDER=headless`). See `src/balatrobot/config.py` for the full mapping.
+
+**Requirement:** The mod only activates when the selected Balatro in-game profile is named exactly `BalatroBot`. Create this profile in Balatro's profile selector and select it before launching via `serve`.
 
 `serve` auto-allocates ports, prints instance URLs and the session logs directory, then blocks until Ctrl+C. It writes a state file so other commands can discover the running instances.
 
