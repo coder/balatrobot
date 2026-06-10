@@ -110,7 +110,7 @@ class BalatroInstance:
         session_name = self._session_name or datetime.now().strftime(
             "%Y-%m-%dT%H-%M-%S"
         )
-        session_dir = Path(self._config.path_logs) / session_name
+        session_dir = Path(self._config.path_logs or "logs") / session_name
         session_dir.mkdir(parents=True, exist_ok=True)
         self._log_path = session_dir / f"{self._config.port}.log"
 

@@ -62,6 +62,7 @@ class TestServeCommand:
         assert "--path-lovely" in result.output
         assert "--path-love" in result.output
         assert "--path-logs" in result.output
+        assert "--host" in result.output
         # Old flags should NOT be present
         assert "--fast" not in result.output
         assert "--headless" not in result.output
@@ -132,7 +133,7 @@ class TestServeCommand:
 
         monkeypatch.setenv("BALATROBOT_HOST", "env-host")
 
-        config = Config.from_kwargs(host="cli-host", port=None)
+        config = Config.from_kwargs(host="cli-host")
         assert config.host == "cli-host"
 
     def test_config_from_kwargs_falls_back_to_env(self, clean_env, monkeypatch):
@@ -141,20 +142,17 @@ class TestServeCommand:
 
         monkeypatch.setenv("BALATROBOT_HOST", "env-host")
 
-        config = Config.from_kwargs(host=None, port=9999)
+        config = Config.from_kwargs(host=None)
         assert config.host == "env-host"
-        assert config.port == 9999
 
     def test_config_from_kwargs_env_var_fallback(self, clean_env, monkeypatch):
         """Env vars used when options not provided."""
         from balatrobot.config import Config
 
         monkeypatch.setenv("BALATROBOT_DEBUG", "1")
-        monkeypatch.setenv("BALATROBOT_PORT", "8888")
 
-        config = Config.from_kwargs(debug=None, port=None)
+        config = Config.from_kwargs(debug=None)
         assert config.debug is True
-        assert config.port == 8888
 
 
 class TestMainApp:

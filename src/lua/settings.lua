@@ -3,7 +3,7 @@ BalatroBot v2 settings — profile-based configuration.
 
 Environment variables read by the Lua mod:
   BALATROBOT_HOST          - Server hostname (default: 127.0.0.1)
-  BALATROBOT_PORT          - Server port (default: 12346)
+  BALATROBOT_PORT          - Server port (set internally by launcher, default: 12346)
   BALATROBOT_RENDER        - Render mode: headfull|headless|ondemand (default: headfull)
   BALATROBOT_DEBUG         - Enable debug endpoints (1/0, default: 0)
   BALATROBOT_SETTINGS      - Settings profile name (bare name, e.g. "fast", "turbo", "light")

@@ -1,7 +1,5 @@
 """Tests for balatrobot.config module."""
 
-from argparse import Namespace
-
 import pytest
 
 from balatrobot.config import RENDER_CHOICES, Config, _parse_env_value
@@ -20,16 +18,6 @@ class TestParseEnvValue:
         assert _parse_env_value("debug", "0") is False
         assert _parse_env_value("debug", "false") is False
         assert _parse_env_value("debug", "yes") is False
-
-    def test_int_valid(self):
-        """Integer fields parse valid numbers."""
-        assert _parse_env_value("port", "12346") == 12346
-        assert _parse_env_value("port", "9999") == 9999
-
-    def test_int_invalid(self):
-        """Integer fields raise ValueError for invalid input."""
-        with pytest.raises(ValueError):
-            _parse_env_value("port", "abc")
 
     def test_string_passthrough(self):
         """String fields pass through unchanged."""
@@ -50,7 +38,7 @@ class TestConfigDefaults:
         assert config.render == "headfull"
         assert config.debug is False
         assert config.settings is None
-        assert config.path_logs == "logs"
+        assert config.path_logs is None
         assert config.path_balatro is None
         assert config.path_lovely is None
         assert config.path_love is None
@@ -72,102 +60,17 @@ class TestConfigRenderValidation:
             Config(render="invalid")
 
 
-class TestConfigFromArgs:
-    """Tests for Config.from_args() method."""
-
-    def test_cli_args_used(self, clean_env):
-        """CLI arguments are used when provided."""
-        args = Namespace(
-            host="0.0.0.0",
-            port=9999,
-            render="headless",
-            debug=None,
-            settings=None,
-            path_balatro=None,
-            path_lovely=None,
-            path_love=None,
-            platform=None,
-            path_logs=None,
-        )
-        config = Config.from_args(args)
-
-        assert config.host == "0.0.0.0"
-        assert config.port == 9999
-        assert config.render == "headless"
-
-    def test_cli_overrides_env(self, clean_env, monkeypatch):
-        """CLI args override environment variables."""
-        monkeypatch.setenv("BALATROBOT_PORT", "8888")
-
-        args = Namespace(
-            host=None,
-            port=9999,
-            render=None,
-            debug=None,
-            settings=None,
-            path_balatro=None,
-            path_lovely=None,
-            path_love=None,
-            platform=None,
-            path_logs=None,
-        )
-        config = Config.from_args(args)
-
-        assert config.port == 9999  # CLI wins over env
-
-    def test_env_fallback(self, clean_env, monkeypatch):
-        """Environment variables used when CLI args are None."""
-        monkeypatch.setenv("BALATROBOT_PORT", "8888")
-        monkeypatch.setenv("BALATROBOT_DEBUG", "1")
-
-        args = Namespace(
-            host=None,
-            port=None,
-            render=None,
-            debug=None,
-            settings=None,
-            path_balatro=None,
-            path_lovely=None,
-            path_love=None,
-            platform=None,
-            path_logs=None,
-        )
-        config = Config.from_args(args)
-
-        assert config.port == 8888
-        assert config.debug is True
-
-    def test_settings_from_cli(self, clean_env):
-        """Settings profile name from CLI args."""
-        args = Namespace(
-            host=None,
-            port=None,
-            render=None,
-            debug=None,
-            settings="fast",
-            path_balatro=None,
-            path_lovely=None,
-            path_love=None,
-            platform=None,
-            path_logs=None,
-        )
-        config = Config.from_args(args)
-
-        assert config.settings == "fast"
-
-
 class TestConfigFromEnv:
     """Tests for Config.from_env() method."""
 
     def test_loads_env_vars(self, clean_env, monkeypatch):
         """Loads configuration from environment variables."""
-        monkeypatch.setenv("BALATROBOT_PORT", "9999")
         monkeypatch.setenv("BALATROBOT_HOST", "0.0.0.0")
         monkeypatch.setenv("BALATROBOT_DEBUG", "1")
 
         config = Config.from_env()
 
-        assert config.port == 9999
+        assert config.port == 12346
         assert config.host == "0.0.0.0"
         assert config.debug is True
 

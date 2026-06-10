@@ -39,7 +39,6 @@ All options can be set via CLI flags or environment variables. CLI flags overrid
 | `--render MODE`       | `BALATROBOT_RENDER`       | `headfull`    | Render mode: `headfull`, `headless`, or `ondemand` |
 | `--debug`             | `BALATROBOT_DEBUG`        | `0`           | Enable debug mode (requires DebugPlus mod)         |
 | `--host HOST`         | `BALATROBOT_HOST`         | `127.0.0.1`   | Server hostname                                    |
-| `--port PORT`         | `BALATROBOT_PORT`         | `12346`       | Server port                                        |
 | `--num N`             | -                         | `1`           | Number of instances to start (CLI only)            |
 | `--path-balatro PATH` | `BALATROBOT_PATH_BALATRO` | auto-detected | Path to Balatro game directory                     |
 | `--path-lovely PATH`  | `BALATROBOT_PATH_LOVELY`  | auto-detected | Path to lovely library (dll/so/dylib)              |
@@ -142,9 +141,6 @@ uvx balatrobot serve --settings fast --debug
 ### Custom Configuration
 
 ```bash
-# Use a different port
-uvx balatrobot serve --port 8080
-
 # Custom Balatro installation
 uvx balatrobot serve --path-balatro /path/to/Balatro
 
@@ -158,21 +154,16 @@ uvx balatrobot serve --render ondemand
 
 ```bash
 # Configure via environment variables
-export BALATROBOT_PORT=8080
 export BALATROBOT_RENDER=headless
 export BALATROBOT_SETTINGS=fast
 
 # Launch with defaults from env vars
 uvx balatrobot serve
-
-# CLI flags override env vars
-uvx balatrobot serve --port 9000  # Uses port 9000, not 8080
 ```
 
 **Windows PowerShell:**
 
 ```powershell
-$env:BALATROBOT_PORT = "8080"
 $env:BALATROBOT_RENDER = "headless"
 uvx balatrobot serve
 ```
@@ -322,6 +313,6 @@ uvx balatrobot serve --platform native --path-balatro /path/to/balatro/source
 
 **Mod not loading**: Verify that Lovely Injector and Steamodded are installed correctly. Ensure you have a Balatro profile named `"BalatroBot"` and it is selected.
 
-**Port in use**: Change the port with `--port` or set `BALATROBOT_PORT` to a different value.
+**Port in use**: Ports are allocated ephemerally. If you need a specific port, adjust your firewall rules to allow the ephemeral range.
 
 **Game crashes**: Try running in headless mode with `--render headless` and the `fast` profile (`--settings fast`).

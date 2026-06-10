@@ -6,7 +6,6 @@ from typing import Any, Self
 
 ENV_MAP: dict[str, str] = {
     "host": "BALATROBOT_HOST",
-    "port": "BALATROBOT_PORT",
     "render": "BALATROBOT_RENDER",
     "debug": "BALATROBOT_DEBUG",
     "settings": "BALATROBOT_SETTINGS",
@@ -19,17 +18,13 @@ ENV_MAP: dict[str, str] = {
 
 BOOL_FIELDS = frozenset({"debug"})
 
-INT_FIELDS = frozenset({"port"})
-
 RENDER_CHOICES = frozenset({"headfull", "headless", "ondemand"})
 
 
-def _parse_env_value(field: str, value: str) -> str | int | bool:
-    """Convert env var string to proper type. Raises ValueError on invalid int."""
+def _parse_env_value(field: str, value: str) -> str | bool:
+    """Convert env var string to proper type."""
     if field in BOOL_FIELDS:
         return value in ("1", "true")
-    if field in INT_FIELDS:
-        return int(value)
     return value
 
 
@@ -55,7 +50,7 @@ class Config:
     path_lovely: str | None = None
     path_love: str | None = None
     platform: str | None = None
-    path_logs: str = "logs"
+    path_logs: str | None = None
 
     def __post_init__(self) -> None:
         if self.render not in RENDER_CHOICES:
@@ -63,20 +58,6 @@ class Config:
                 f"Invalid render mode '{self.render}'. "
                 f"Choose from: {', '.join(sorted(RENDER_CHOICES))}"
             )
-
-    @classmethod
-    def from_args(cls, args) -> Self:
-        """Create Config from CLI args with env var fallback."""
-        kwargs: dict[str, Any] = {}
-
-        for field, env_var in ENV_MAP.items():
-            cli_val = getattr(args, field, None)
-            if cli_val is not None:
-                kwargs[field] = cli_val
-            elif (env_val := os.environ.get(env_var)) is not None:
-                kwargs[field] = _parse_env_value(field, env_val)
-
-        return cls(**kwargs)
 
     @classmethod
     def from_env(cls) -> Self:
@@ -114,4 +95,5 @@ class Config:
                     env[env_var] = "1"
             else:
                 env[env_var] = str(value)
+        env["BALATROBOT_PORT"] = str(self.port)
         return env

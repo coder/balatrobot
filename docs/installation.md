@@ -68,7 +68,7 @@ Expected response:
 
 - **Connection refused**: Ensure Balatro is running and the mod loaded successfully
 - **Mod not loading**: Check that Lovely and Steamodded are installed correctly
-- **Port in use**: Use `uvx balatrobot serve --port PORT` to specify a different port
+- **Port in use**: Ports are allocated ephemerally. Check the state file or logs for the actual port assigned.
 - **No display server (Linux)**: Ensure `DISPLAY` or `WAYLAND_DISPLAY` is set in your environment
 
 For more troubleshooting help, see the [CLI Reference](cli.md).

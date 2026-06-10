@@ -124,7 +124,6 @@ def serve(
         bool | None, typer.Option("--debug", help="Enable debug endpoints")
     ] = None,
     host: Annotated[str | None, typer.Option("--host", help="Server hostname")] = None,
-    port: Annotated[int | None, typer.Option("--port", help="Server port")] = None,
     path_balatro: Annotated[
         str | None, typer.Option("--path-balatro", help="Path to Balatro directory")
     ] = None,
@@ -164,7 +163,6 @@ def serve(
             render=render,
             debug=debug,
             host=host,
-            port=port,
             path_balatro=path_balatro,
             path_lovely=path_lovely,
             path_love=path_love,
@@ -194,7 +192,7 @@ async def _serve(config: Config, n: int) -> None:
         for i, info in enumerate(pool.instances):
             typer.echo(f"Instance [{i}]: {info.url}")
         typer.echo(
-            f"Session: {pool.session_name} | Logs: {config.path_logs}/{pool.session_name}/"
+            f"Session: {pool.session_name} | Logs: {config.path_logs or 'logs'}/{pool.session_name}/"
         )
         typer.echo("Press Ctrl+C to stop.")
         await server.run()
