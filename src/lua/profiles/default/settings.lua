@@ -6,11 +6,8 @@ return {
     ["volume"] = 50,
   },
   ["WINDOW"] = {
-    ["screenmode"] = "Borderless",
-    ["screen_res"] = {
-      ["h"] = 480,
-      ["w"] = 820,
-    },
+    ["screenmode"] = "Windowed",
+    ["vsync"] = 0,
   },
   ["crashreports"] = false,
   ["language"] = "en-us",
