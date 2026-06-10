@@ -9,11 +9,11 @@ return {
     ["shadows"] = "Off",
     ["texture_scaling"] = 1,
     ["crt"] = 0,
-    ["bloom"] = 1,
+    ["bloom"] = 0,
   },
   ["WINDOW"] = {
     ["screenmode"] = "Windowed",
-    ["vsync"] = 0,
+    ["vsync"] = 1,
   },
   ["screenshake"] = 0,
   ["reduced_motion"] = true,
@@ -21,5 +21,4 @@ return {
   ["tutorial_complete"] = true,
   ["current_setup"] = "New Run",
   ["crashreports"] = false,
-  ["language"] = "en-us",
 }

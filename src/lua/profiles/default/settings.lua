@@ -21,5 +21,4 @@ return {
   ["tutorial_complete"] = true,
   ["current_setup"] = "New Run",
   ["crashreports"] = false,
-  ["language"] = "en-us",
 }
