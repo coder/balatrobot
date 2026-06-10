@@ -167,10 +167,18 @@ BB_SETTINGS.setup = function()
   apply_profile(BB_SETTINGS.settings)
 
   -- Render mode
-  if BB_SETTINGS.render == "headless" then
+  if BB_SETTINGS.render == "headfull" then
+    -- default, no special configuration needed
+  elseif BB_SETTINGS.render == "headless" then
     configure_headless()
   elseif BB_SETTINGS.render == "ondemand" then
     configure_ondemand()
+  else
+    sendErrorMessage(
+      "Invalid render mode '" .. BB_SETTINGS.render .. "'. Must be headfull, headless, or ondemand. Aborting.",
+      "BB.SETTINGS"
+    )
+    return false
   end
 
   return true
