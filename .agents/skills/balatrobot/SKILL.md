@@ -16,12 +16,13 @@ balatrobot serve --help
 Typical invocation:
 
 ```bash
-balatrobot serve --render headless --settings ~/balatrosettings/profiles/fast --debug
+balatrobot serve --render headless --settings fast --debug
 ```
 
 Key flags:
+
 - `--render [headfull|headless|ondemand]` — rendering mode (default: headfull)
-- `--settings PATH` — path to balatrosettings profile directory
+- `--settings NAME` — settings profile name (default: "default")
 - `--debug` — enable debug endpoints
 - `--num` — number of instances
 - `--path-*` — path overrides (`--path-balatro`, `--path-lovely`, `--path-love`, `--path-logs`)

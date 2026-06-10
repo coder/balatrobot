@@ -35,12 +35,12 @@ All options can be set via CLI flags or environment variables. CLI flags overrid
 
 | CLI Flag              | Environment Variable      | Default       | Description                                        |
 | --------------------- | ------------------------- | ------------- | -------------------------------------------------- |
-| `--settings PATH`     | `BALATROBOT_SETTINGS`     | *(none)*      | Path to balatrosettings profile directory          |
+| `--settings NAME`     | `BALATROBOT_SETTINGS`     | `default`     | Settings profile name                              |
 | `--render MODE`       | `BALATROBOT_RENDER`       | `headfull`    | Render mode: `headfull`, `headless`, or `ondemand` |
 | `--debug`             | `BALATROBOT_DEBUG`        | `0`           | Enable debug mode (requires DebugPlus mod)         |
 | `--host HOST`         | `BALATROBOT_HOST`         | `127.0.0.1`   | Server hostname                                    |
 | `--port PORT`         | `BALATROBOT_PORT`         | `12346`       | Server port                                        |
-| `--num N`             | -                         | `1`           | Number of instances to start (CLI only)             |
+| `--num N`             | -                         | `1`           | Number of instances to start (CLI only)            |
 | `--path-balatro PATH` | `BALATROBOT_PATH_BALATRO` | auto-detected | Path to Balatro game directory                     |
 | `--path-lovely PATH`  | `BALATROBOT_PATH_LOVELY`  | auto-detected | Path to lovely library (dll/so/dylib)              |
 | `--path-love PATH`    | `BALATROBOT_PATH_LOVE`    | auto-detected | Path to game launcher executable                   |
@@ -58,18 +58,22 @@ All options can be set via CLI flags or environment variables. CLI flags overrid
 
 ### Settings Profiles
 
-The `--settings` flag points to a [balatrosettings](https://github.com/S1M0N38/balatrosettings) profile directory containing `settings.lua` and `1/profile.lua`. These are deep-merged into Balatro's `G.SETTINGS` and `G.PROFILES` tables, allowing partial overrides.
+BalatroBot bundles settings profiles that configure Balatro's game settings (speed, graphics, audio, window, etc.). Use `--settings` with a bare profile name:
 
-Example profile structure:
+```bash
+# Use the "fast" profile (max speed, no audio, minimal graphics)
+uvx balatrobot serve --settings fast
 
+# Use the "headless" profile (silent, no graphics)
+uvx balatrobot serve --settings headless --render headless
+
+# Default profile is applied when --settings is omitted
+uvx balatrobot serve
 ```
-my-profile/
-  settings.lua     # Returns table merged into G.SETTINGS
-  1/
-    profile.lua    # Returns table merged into G.PROFILES[1]
-```
 
-**Note:** When using `--settings`, both files must exist and return valid Lua tables. The profile load fails fast with a clear error if files are missing or malformed.
+Available profiles: `default`, `fast`, `headless`.
+
+The profile contains `settings.lua` (merged into `G.SETTINGS`) and optionally `profile.lua` (merged into `G.PROFILES`). Profiles live in `src/lua/profiles/<name>/`. Custom profiles can be added by creating a new directory with a `settings.lua` file.
 
 ## api Command
 
@@ -128,14 +132,14 @@ On error, prints `Error: NAME - message` to stderr (exit code 1).
 ### Basic Usage
 
 ```bash
-# Start with default settings (headfull, no profile)
+# Start with default settings profile (headfull)
 uvx balatrobot serve
 
-# Start headless with a fast profile
-uvx balatrobot serve --settings ~/balatrosettings/profiles/headless --render headless
+# Start headless with the fast profile
+uvx balatrobot serve --settings fast --render headless
 
 # Start with debug mode (requires DebugPlus mod)
-uvx balatrobot serve --settings ~/balatrosettings/profiles/headless --debug
+uvx balatrobot serve --settings fast --debug
 ```
 
 ### Custom Configuration
@@ -148,7 +152,7 @@ uvx balatrobot serve --port 8080
 uvx balatrobot serve --path-balatro /path/to/Balatro
 
 # On-demand rendering for screenshot capture
-uvx balatrobot serve --settings ~/balatrosettings/profiles/headless --render ondemand
+uvx balatrobot serve --settings headless --render ondemand
 ```
 
 ## Examples with Environment Variables
@@ -159,7 +163,7 @@ uvx balatrobot serve --settings ~/balatrosettings/profiles/headless --render ond
 # Configure via environment variables
 export BALATROBOT_PORT=8080
 export BALATROBOT_RENDER=headless
-export BALATROBOT_SETTINGS=~/balatrosettings/profiles/headless
+export BALATROBOT_SETTINGS=headless
 
 # Launch with defaults from env vars
 uvx balatrobot serve
@@ -205,7 +209,7 @@ The `windows` platform launches Balatro via Steam on Windows. The CLI auto-detec
 
 ```powershell
 # Auto-detects paths
-uvx balatrobot serve --settings ~/balatrosettings/profiles/headless --render headless
+uvx balatrobot serve --settings headless --render headless
 
 # Or specify custom paths
 uvx balatrobot serve --path-love "C:\Custom\Path\Balatro.exe" --path-lovely "C:\Custom\Path\version.dll"
@@ -232,7 +236,7 @@ The `darwin` platform launches Balatro via Steam on macOS. The CLI auto-detects 
 
 ```bash
 # Auto-detects paths
-uvx balatrobot serve --settings ~/balatrosettings/profiles/headless --render headless
+uvx balatrobot serve --settings headless --render headless
 
 # Or specify custom paths
 uvx balatrobot serve --path-love "/path/to/love" --path-lovely "/path/to/liblovely.dylib"
@@ -259,7 +263,7 @@ The `linux` platform launches Balatro via Steam Proton. The CLI auto-detects Ste
 
 ```bash
 # Auto-detects paths
-uvx balatrobot serve --settings ~/balatrosettings/profiles/headless --render headless
+uvx balatrobot serve --settings headless --render headless
 
 # Or specify custom paths
 uvx balatrobot serve --path-love /path/to/proton --path-balatro /path/to/Balatro
