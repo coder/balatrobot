@@ -2,6 +2,7 @@
 
 import asyncio
 import os
+import re
 import signal
 import sys
 from pathlib import Path
@@ -16,6 +17,20 @@ from balatrobot.state import StateFile, StateFileBusy, default_state_path
 
 # Platform choices for validation
 PLATFORM_CHOICES = ["darwin", "linux", "windows", "native"]
+
+# Regex for valid settings profile names
+_SETTINGS_RE = re.compile(r"^[a-zA-Z0-9][a-zA-Z0-9_-]*$")
+
+
+def settings_callback(value: str | None) -> str | None:
+    """Validate --settings as a bare profile name."""
+    if value is None:
+        return None
+    if not _SETTINGS_RE.match(value):
+        raise typer.BadParameter(
+            f"Must be a valid profile name (alphanumeric, hyphens, underscores). Got: '{value}'"
+        )
+    return value
 
 
 class Server:
@@ -97,7 +112,9 @@ def serve(
     ] = 1,
     settings: Annotated[
         str | None,
-        typer.Option("--settings", help="Path to balatrosettings profile directory"),
+        typer.Option(
+            "--settings", help="Settings profile name", callback=settings_callback
+        ),
     ] = None,
     render: Annotated[
         str | None,

@@ -35,7 +35,7 @@ class TestParseEnvValue:
         """String fields pass through unchanged."""
         assert _parse_env_value("host", "localhost") == "localhost"
         assert _parse_env_value("render", "headless") == "headless"
-        assert _parse_env_value("settings", "/path/to/profile") == "/path/to/profile"
+        assert _parse_env_value("settings", "fast") == "fast"
 
 
 class TestConfigDefaults:
@@ -138,13 +138,13 @@ class TestConfigFromArgs:
         assert config.debug is True
 
     def test_settings_from_cli(self, clean_env):
-        """Settings path from CLI args."""
+        """Settings profile name from CLI args."""
         args = Namespace(
             host=None,
             port=None,
             render=None,
             debug=None,
-            settings="/path/to/profile",
+            settings="fast",
             path_balatro=None,
             path_lovely=None,
             path_love=None,
@@ -153,7 +153,7 @@ class TestConfigFromArgs:
         )
         config = Config.from_args(args)
 
-        assert config.settings == "/path/to/profile"
+        assert config.settings == "fast"
 
 
 class TestConfigFromEnv:
@@ -187,12 +187,12 @@ class TestConfigFromEnv:
         assert config.render == "headless"
 
     def test_settings_from_env(self, clean_env, monkeypatch):
-        """Settings path loaded from environment."""
-        monkeypatch.setenv("BALATROBOT_SETTINGS", "/path/to/profile")
+        """Settings profile name loaded from environment."""
+        monkeypatch.setenv("BALATROBOT_SETTINGS", "headless")
 
         config = Config.from_env()
 
-        assert config.settings == "/path/to/profile"
+        assert config.settings == "headless"
 
     def test_path_fields_use_new_names(self, clean_env, monkeypatch):
         """New path field names work from environment."""
@@ -243,11 +243,11 @@ class TestConfigToEnv:
         assert env["BALATROBOT_RENDER"] == "headless"
 
     def test_includes_settings(self):
-        """Settings path is included in env output."""
-        config = Config(settings="/path/to/profile")
+        """Settings profile name is included in env output."""
+        config = Config(settings="fast")
         env = config.to_env()
 
-        assert env["BALATROBOT_SETTINGS"] == "/path/to/profile"
+        assert env["BALATROBOT_SETTINGS"] == "fast"
 
     def test_uses_new_env_var_names(self):
         """Uses BALATROBOT_PATH_* naming convention."""

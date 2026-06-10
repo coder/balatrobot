@@ -41,7 +41,7 @@ class Config:
     host: str = "127.0.0.1"
     port: int = 12346
 
-    # Settings profile
+    # Settings profile name (bare name, e.g. "fast", "headless")
     settings: str | None = None
 
     # Render mode

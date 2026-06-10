@@ -1,5 +1,6 @@
 """Integration tests for balatrobot serve command."""
 
+import pytest
 from typer.testing import CliRunner
 
 from balatrobot.cli import app
@@ -72,6 +73,56 @@ class TestServeCommand:
         assert "--animation-fps" not in result.output
         assert "--no-reduced-motion" not in result.output
         assert "--pixel-art-smoothing" not in result.output
+
+    def test_serve_settings_help_text(self):
+        """--settings help shows profile name description."""
+        result = runner.invoke(app, ["serve", "--help"])
+        assert result.exit_code == 0
+        assert (
+            "profile name" in result.output.lower()
+            or "Settings profile" in result.output
+        )
+
+    # --- Settings callback validation tests ---
+
+    def test_serve_settings_valid_name(self):
+        """Valid profile names accepted by --settings."""
+        from balatrobot.cli.serve import settings_callback
+
+        assert settings_callback(None) is None
+        assert settings_callback("fast") == "fast"
+        assert settings_callback("headless") == "headless"
+        assert settings_callback("my-profile") == "my-profile"
+        assert settings_callback("my_profile") == "my_profile"
+        assert settings_callback("Profile123") == "Profile123"
+
+    def test_serve_settings_rejects_path(self):
+        """--settings rejects paths with slashes."""
+        result = runner.invoke(app, ["serve", "--settings", "/path/to/profile"])
+        assert result.exit_code != 0
+
+    def test_serve_settings_rejects_dotdot(self):
+        """--settings rejects '..' traversal."""
+        result = runner.invoke(app, ["serve", "--settings", "../etc/passwd"])
+        assert result.exit_code != 0
+
+    def test_serve_settings_rejects_empty(self):
+        """--settings rejects empty-ish names."""
+        import typer
+
+        from balatrobot.cli.serve import settings_callback
+
+        with pytest.raises(typer.BadParameter):
+            settings_callback("")
+
+    def test_serve_settings_rejects_leading_hyphen(self):
+        """--settings rejects names starting with hyphen."""
+        import typer
+
+        from balatrobot.cli.serve import settings_callback
+
+        with pytest.raises(typer.BadParameter):
+            settings_callback("-bad")
 
     # --- Config.from_kwargs tests ---
 
