@@ -58,7 +58,7 @@ typecheck: ## Run type checkers (Python and Lua)
 	@ty check
 	@if command -v lua-language-server >/dev/null 2>&1 && [ -f .luarc.json ]; then \
 		$(PRINT) "$(YELLOW)Running Lua type checker...$(RESET)"; \
-		lua-language-server --check balatrobot.lua src/lua \
+		lua-language-server --check="$(CURDIR)" \
 			--configpath="$(CURDIR)/.luarc.json" 2>/dev/null; \
 	else \
 		$(PRINT) "$(BLUE)Skipping Lua type checker (lua-language-server not found or .luarc.json missing)$(RESET)"; \
