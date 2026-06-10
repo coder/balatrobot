@@ -490,11 +490,11 @@ local function get_blind_effect_from_ui(blind_config)
 
   -- Access localization data directly (more reliable than using localize function)
   -- Path: G.localization.descriptions.Blind[blind_key].text
-  if not G or not G.localization then ---@diagnostic disable-line: undefined-global
+  if not G or not G.localization then
     return ""
   end
 
-  local loc_data = G.localization.descriptions ---@diagnostic disable-line: undefined-global
+  local loc_data = G.localization.descriptions
   if not loc_data or not loc_data.Blind or not loc_data.Blind[blind_config.key] then
     return ""
   end
@@ -578,11 +578,11 @@ local function get_voucher_effect(voucher_key)
   end
 
   -- Use localize to get description text
-  if not localize then ---@diagnostic disable-line: undefined-global
+  if not localize then
     return ""
   end
 
-  local text_lines = localize({ ---@diagnostic disable-line: undefined-global
+  local text_lines = localize({
     type = "raw_descriptions",
     key = voucher_key,
     set = "Voucher",
@@ -608,7 +608,7 @@ local function get_tag_info(tag_key)
     return result
   end
 
-  if not localize then ---@diagnostic disable-line: undefined-global
+  if not localize then
     return result
   end
 
@@ -645,7 +645,7 @@ local function get_tag_info(tag_key)
   end
 
   -- Use localize with raw_descriptions type (matches Balatro's internal approach)
-  local text_lines = localize({ type = "raw_descriptions", key = tag_key, set = "Tag", vars = loc_vars }) ---@diagnostic disable-line: undefined-global
+  local text_lines = localize({ type = "raw_descriptions", key = tag_key, set = "Tag", vars = loc_vars })
   if text_lines and type(text_lines) == "table" then
     result.effect = table.concat(text_lines, " ")
   end
@@ -732,7 +732,7 @@ function gamestate.get_blinds_info()
 
   -- Get base blind amount for current ante
   local ante = G.GAME.round_resets.ante or 1
-  local base_amount = get_blind_amount(ante) ---@diagnostic disable-line: undefined-global
+  local base_amount = get_blind_amount(ante)
 
   -- Apply ante scaling with null check
   local ante_scaling = (G.GAME.starting_params and G.GAME.starting_params.ante_scaling) or 1

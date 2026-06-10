@@ -67,10 +67,10 @@ return {
 
     -- Call save_run() and use compress_and_save
     sendInfoMessage("Saving to " .. path, "BB.ENDPOINTS")
-    save_run() ---@diagnostic disable-line: undefined-global
+    save_run()
 
     local temp_filename = "balatrobot_temp_save_" .. BB_SETTINGS.port .. ".jkr"
-    compress_and_save(temp_filename, G.ARGS.save_run) ---@diagnostic disable-line: undefined-global
+    compress_and_save(temp_filename, G.ARGS.save_run)
 
     -- Read from temp and write to target path using nativefs
     local save_dir = love.filesystem.getSaveDirectory()

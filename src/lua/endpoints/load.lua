@@ -72,7 +72,7 @@ return {
 
     -- Load using game's built-in functions
     G:delete_run()
-    G.SAVED_GAME = get_compressed(temp_filename) ---@diagnostic disable-line: undefined-global
+    G.SAVED_GAME = get_compressed(temp_filename)
 
     if G.SAVED_GAME == nil then
       send_response({
