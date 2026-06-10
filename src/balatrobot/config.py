@@ -57,6 +57,13 @@ class Config:
     platform: str | None = None
     path_logs: str = "logs"
 
+    def __post_init__(self) -> None:
+        if self.render not in RENDER_CHOICES:
+            raise ValueError(
+                f"Invalid render mode '{self.render}'. "
+                f"Choose from: {', '.join(sorted(RENDER_CHOICES))}"
+            )
+
     @classmethod
     def from_args(cls, args) -> Self:
         """Create Config from CLI args with env var fallback."""

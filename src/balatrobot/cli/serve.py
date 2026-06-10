@@ -9,7 +9,7 @@ from typing import Annotated
 
 import typer
 
-from balatrobot.config import RENDER_CHOICES, Config
+from balatrobot.config import Config
 from balatrobot.instance import InstanceDiedError
 from balatrobot.pool import BalatroPool
 from balatrobot.state import StateFile, StateFileBusy, default_state_path
@@ -136,31 +136,27 @@ def serve(
         )
         raise typer.Exit(code=1)
 
-    if render is not None and render not in RENDER_CHOICES:
-        typer.echo(
-            f"Error: Invalid render mode '{render}'. "
-            f"Choose from: {', '.join(sorted(RENDER_CHOICES))}",
-            err=True,
-        )
-        raise typer.Exit(code=1)
-
     if num < 1:
         typer.echo(f"Error: --num must be >= 1, got {num}.", err=True)
         raise typer.Exit(code=1)
 
     # Build config from kwargs with env var fallback
-    config = Config.from_kwargs(
-        settings=settings,
-        render=render,
-        debug=debug,
-        host=host,
-        port=port,
-        path_balatro=path_balatro,
-        path_lovely=path_lovely,
-        path_love=path_love,
-        platform=platform,
-        path_logs=path_logs,
-    )
+    try:
+        config = Config.from_kwargs(
+            settings=settings,
+            render=render,
+            debug=debug,
+            host=host,
+            port=port,
+            path_balatro=path_balatro,
+            path_lovely=path_lovely,
+            path_love=path_love,
+            platform=platform,
+            path_logs=path_logs,
+        )
+    except ValueError as e:
+        typer.echo(f"Error: {e}", err=True)
+        raise typer.Exit(code=1)
 
     try:
         asyncio.run(_serve(config, num))
