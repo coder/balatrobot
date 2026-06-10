@@ -54,7 +54,7 @@ class BaseLauncher(ABC):
         """
         self.validate_paths(config)
         env = self.build_env(config)
-        env["BALATROBOT_LOGS_PATH"] = str(session_dir.resolve())
+        env["BALATROBOT_PATH_LOGS"] = str(session_dir.resolve())
         cmd = self.build_cmd(config)
 
         log_path = session_dir / f"{config.port}.log"

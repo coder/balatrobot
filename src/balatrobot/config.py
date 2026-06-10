@@ -4,41 +4,24 @@ import os
 from dataclasses import dataclass
 from typing import Any, Self
 
-# Mapping: config field -> env var
 ENV_MAP: dict[str, str] = {
     "host": "BALATROBOT_HOST",
     "port": "BALATROBOT_PORT",
-    "fast": "BALATROBOT_FAST",
-    "headless": "BALATROBOT_HEADLESS",
-    "render_on_api": "BALATROBOT_RENDER_ON_API",
-    "audio": "BALATROBOT_AUDIO",
+    "render": "BALATROBOT_RENDER",
     "debug": "BALATROBOT_DEBUG",
-    "no_shaders": "BALATROBOT_NO_SHADERS",
-    "fps_cap": "BALATROBOT_FPS_CAP",
-    "gamespeed": "BALATROBOT_GAMESPEED",
-    "animation_fps": "BALATROBOT_ANIMATION_FPS",
-    "no_reduced_motion": "BALATROBOT_NO_REDUCED_MOTION",
-    "pixel_art_smoothing": "BALATROBOT_PIXEL_ART_SMOOTHING",
-    "balatro_path": "BALATROBOT_BALATRO_PATH",
-    "lovely_path": "BALATROBOT_LOVELY_PATH",
-    "love_path": "BALATROBOT_LOVE_PATH",
+    "settings": "BALATROBOT_SETTINGS",
+    "path_balatro": "BALATROBOT_PATH_BALATRO",
+    "path_lovely": "BALATROBOT_PATH_LOVELY",
+    "path_love": "BALATROBOT_PATH_LOVE",
     "platform": "BALATROBOT_PLATFORM",
-    "logs_path": "BALATROBOT_LOGS_PATH",
+    "path_logs": "BALATROBOT_PATH_LOGS",
 }
 
-BOOL_FIELDS = frozenset(
-    {
-        "fast",
-        "headless",
-        "render_on_api",
-        "audio",
-        "debug",
-        "no_shaders",
-        "no_reduced_motion",
-        "pixel_art_smoothing",
-    }
-)
-INT_FIELDS = frozenset({"port", "fps_cap", "gamespeed", "animation_fps"})
+BOOL_FIELDS = frozenset({"debug"})
+
+INT_FIELDS = frozenset({"port"})
+
+RENDER_CHOICES = frozenset({"headfull", "headless", "ondemand"})
 
 
 def _parse_env_value(field: str, value: str) -> str | int | bool:
@@ -46,7 +29,7 @@ def _parse_env_value(field: str, value: str) -> str | int | bool:
     if field in BOOL_FIELDS:
         return value in ("1", "true")
     if field in INT_FIELDS:
-        return int(value)  # Raises ValueError if invalid
+        return int(value)
     return value
 
 
@@ -58,27 +41,21 @@ class Config:
     host: str = "127.0.0.1"
     port: int = 12346
 
-    # Balatro
-    fast: bool = False
-    headless: bool = False
-    render_on_api: bool = False
-    audio: bool = False
+    # Settings profile
+    settings: str | None = None
+
+    # Render mode
+    render: str = "headfull"
+
+    # Debug
     debug: bool = False
-    no_shaders: bool = False
-    fps_cap: int = 60
-    gamespeed: int = 4
-    animation_fps: int = 10
-    no_reduced_motion: bool = False
-    pixel_art_smoothing: bool = False
 
     # Launcher
-    balatro_path: str | None = None
-    lovely_path: str | None = None
-    love_path: str | None = None
-
-    # Instance
+    path_balatro: str | None = None
+    path_lovely: str | None = None
+    path_love: str | None = None
     platform: str | None = None
-    logs_path: str = "logs"
+    path_logs: str = "logs"
 
     @classmethod
     def from_args(cls, args) -> Self:

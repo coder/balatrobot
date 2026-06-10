@@ -9,7 +9,7 @@ from typing import Annotated
 
 import typer
 
-from balatrobot.config import Config
+from balatrobot.config import RENDER_CHOICES, Config
 from balatrobot.instance import InstanceDiedError
 from balatrobot.pool import BalatroPool
 from balatrobot.state import StateFile, StateFileBusy, default_state_path
@@ -92,51 +92,37 @@ class Server:
 
 def serve(
     # fmt: off
-    num_instances: Annotated[
-        int,
-        typer.Option(
-            "-n", "--num-instances", help="Number of instances to start (default: 1)"
-        ),
+    num: Annotated[
+        int, typer.Option("--num", help="Number of instances to start (default: 1)")
     ] = 1,
-    fps_cap: Annotated[
-        int | None, typer.Option(help="Maximum FPS cap (default: 60)")
+    settings: Annotated[
+        str | None,
+        typer.Option("--settings", help="Path to balatrosettings profile directory"),
     ] = None,
-    gamespeed: Annotated[
-        int | None, typer.Option(help="Game speed multiplier (default: 4)")
+    render: Annotated[
+        str | None,
+        typer.Option("--render", help="Render mode: headfull|headless|ondemand"),
     ] = None,
-    animation_fps: Annotated[
-        int | None, typer.Option(help="Animation FPS (default: 10)")
+    debug: Annotated[
+        bool | None, typer.Option("--debug", help="Enable debug endpoints")
     ] = None,
-    logs_path: Annotated[
-        str | None, typer.Option(help="Directory for log files (default: logs)")
+    host: Annotated[str | None, typer.Option("--host", help="Server hostname")] = None,
+    port: Annotated[int | None, typer.Option("--port", help="Server port")] = None,
+    path_balatro: Annotated[
+        str | None, typer.Option("--path-balatro", help="Path to Balatro directory")
     ] = None,
-    fast: Annotated[
-        bool | None, typer.Option(help="Enable fast mode (10x speed)")
+    path_lovely: Annotated[
+        str | None, typer.Option("--path-lovely", help="Path to lovely library")
     ] = None,
-    headless: Annotated[bool | None, typer.Option(help="Enable headless mode")] = None,
-    render_on_api: Annotated[
-        bool | None, typer.Option(help="Render only on API calls")
-    ] = None,
-    audio: Annotated[bool | None, typer.Option(help="Enable audio")] = None,
-    debug: Annotated[bool | None, typer.Option(help="Enable debug mode")] = None,
-    no_shaders: Annotated[bool | None, typer.Option(help="Disable shaders")] = None,
-    no_reduced_motion: Annotated[
-        bool | None, typer.Option(help="Disable reduced motion")
-    ] = None,
-    pixel_art_smoothing: Annotated[
-        bool | None, typer.Option(help="Enable pixel art smoothing")
-    ] = None,
-    balatro_path: Annotated[
-        str | None, typer.Option(help="Path to Balatro executable")
-    ] = None,
-    lovely_path: Annotated[
-        str | None, typer.Option(help="Path to lovely library")
-    ] = None,
-    love_path: Annotated[
-        str | None, typer.Option(help="Path to game launcher executable")
+    path_love: Annotated[
+        str | None, typer.Option("--path-love", help="Path to LOVE executable")
     ] = None,
     platform: Annotated[
-        str | None, typer.Option(help="Platform (darwin, linux, windows, native)")
+        str | None,
+        typer.Option("--platform", help="Platform (darwin, linux, windows, native)"),
+    ] = None,
+    path_logs: Annotated[
+        str | None, typer.Option("--path-logs", help="Log directory")
     ] = None,
     # fmt: on
 ) -> None:
@@ -150,36 +136,34 @@ def serve(
         )
         raise typer.Exit(code=1)
 
-    # Validate num_instances
-    if num_instances < 1:
+    if render is not None and render not in RENDER_CHOICES:
         typer.echo(
-            f"Error: --num-instances must be >= 1, got {num_instances}.",
+            f"Error: Invalid render mode '{render}'. "
+            f"Choose from: {', '.join(sorted(RENDER_CHOICES))}",
             err=True,
         )
         raise typer.Exit(code=1)
 
+    if num < 1:
+        typer.echo(f"Error: --num must be >= 1, got {num}.", err=True)
+        raise typer.Exit(code=1)
+
     # Build config from kwargs with env var fallback
     config = Config.from_kwargs(
-        fps_cap=fps_cap,
-        gamespeed=gamespeed,
-        animation_fps=animation_fps,
-        logs_path=logs_path,
-        fast=fast,
-        headless=headless,
-        render_on_api=render_on_api,
-        audio=audio,
+        settings=settings,
+        render=render,
         debug=debug,
-        no_shaders=no_shaders,
-        no_reduced_motion=no_reduced_motion,
-        pixel_art_smoothing=pixel_art_smoothing,
-        balatro_path=balatro_path,
-        lovely_path=lovely_path,
-        love_path=love_path,
+        host=host,
+        port=port,
+        path_balatro=path_balatro,
+        path_lovely=path_lovely,
+        path_love=path_love,
         platform=platform,
+        path_logs=path_logs,
     )
 
     try:
-        asyncio.run(_serve(config, num_instances))
+        asyncio.run(_serve(config, num))
     except KeyboardInterrupt:
         typer.echo("\nShutting down server...")
     except InstanceDiedError as e:
@@ -197,7 +181,7 @@ async def _serve(config: Config, n: int) -> None:
         for i, info in enumerate(pool.instances):
             typer.echo(f"Instance [{i}]: {info.url}")
         typer.echo(
-            f"Session: {pool.session_name} | Logs: {config.logs_path}/{pool.session_name}/"
+            f"Session: {pool.session_name} | Logs: {config.path_logs}/{pool.session_name}/"
         )
         typer.echo("Press Ctrl+C to stop.")
         await server.run()
