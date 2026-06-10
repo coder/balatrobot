@@ -6,7 +6,7 @@ Environment variables read by the Lua mod:
   BALATROBOT_PORT          - Server port (default: 12346)
   BALATROBOT_RENDER        - Render mode: headfull|headless|ondemand (default: headfull)
   BALATROBOT_DEBUG         - Enable debug endpoints (1/0, default: 0)
-  BALATROBOT_SETTINGS      - Settings profile name (bare name, e.g. "fast")
+  BALATROBOT_SETTINGS      - Settings profile name (bare name, e.g. "fast", "turbo", "light")
 ]]
 
 ---@diagnostic disable: duplicate-set-field
@@ -37,7 +37,7 @@ local function deep_merge(target, source)
 end
 
 --- Apply settings profile by name
----@param name string Profile name (e.g. "default", "fast", "headless")
+---@param name string Profile name (e.g. "default", "fast", "turbo", "light")
 local function apply_profile(name)
   assert(name:match("^[a-zA-Z0-9][a-zA-Z0-9_-]*$"), "Invalid profile name: " .. name)
   local NFS = require("nativefs")

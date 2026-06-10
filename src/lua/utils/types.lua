@@ -277,7 +277,7 @@
 ---@field port integer Port number for the HTTP server (default: 12346)
 ---@field render string Render mode: headfull|headless|ondemand (default: "headfull")
 ---@field debug boolean Whether debug mode is enabled (requires DebugPlus mod)
----@field settings string? Settings profile name, e.g. "fast" (nil if not provided, defaults to "default" in Lua)
+---@field settings string? Settings profile name, e.g. "fast", "turbo", "light" (nil if not provided, defaults to "default" in Lua)
 ---@field setup fun(): boolean Initialize BalatroBot settings. Returns false if "BalatroBot" profile not selected.
 
 ---@class Debug
