@@ -40,7 +40,7 @@ All options can be set via CLI flags or environment variables. CLI flags overrid
 | `--debug`             | `BALATROBOT_DEBUG`        | `0`           | Enable debug mode (requires DebugPlus mod)         |
 | `--host HOST`         | `BALATROBOT_HOST`         | `127.0.0.1`   | Server hostname                                    |
 | `--port PORT`         | `BALATROBOT_PORT`         | `12346`       | Server port                                        |
-| `--num N`             | `BALATROBOT_NUM`          | `1`           | Number of instances to start                       |
+| `--num N`             | -                         | `1`           | Number of instances to start (CLI only)             |
 | `--path-balatro PATH` | `BALATROBOT_PATH_BALATRO` | auto-detected | Path to Balatro game directory                     |
 | `--path-lovely PATH`  | `BALATROBOT_PATH_LOVELY`  | auto-detected | Path to lovely library (dll/so/dylib)              |
 | `--path-love PATH`    | `BALATROBOT_PATH_LOVE`    | auto-detected | Path to game launcher executable                   |
