@@ -123,7 +123,7 @@ return {
       func = function()
         local done = false
 
-        if not G.STATE_COMPLETE or G.CONTROLLER.locked then
+        if not G.STATE_COMPLETE or G.CONTROLLER.locked or (G.GAME.STOP_USE and G.GAME.STOP_USE > 0) then
           return false
         end
 
