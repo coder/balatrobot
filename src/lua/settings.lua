@@ -39,6 +39,7 @@ end
 --- Apply settings profile by name
 ---@param name string Profile name (e.g. "default", "fast", "headless")
 local function apply_profile(name)
+  assert(name:match("^[a-zA-Z0-9][a-zA-Z0-9_-]*$"), "Invalid profile name: " .. name)
   local NFS = require("nativefs")
 
   local profile_dir = SMODS.current_mod.path .. "src/lua/profiles/" .. name .. "/"
@@ -158,6 +159,7 @@ BB_SETTINGS.setup = function()
 
   -- Hardcoded overrides for bot operation
   G.F_SKIP_TUTORIAL = true
+  G.F_VERBOSE = BB_SETTINGS.debug
   G.PROFILES[profile_num].all_unlocked = true
 
   -- Apply settings profile (default if none specified)
