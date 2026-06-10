@@ -277,7 +277,7 @@
 ---@field port integer Port number for the HTTP server (default: 12346)
 ---@field render string Render mode: headfull|headless|ondemand (default: "headfull")
 ---@field debug boolean Whether debug mode is enabled (requires DebugPlus mod)
----@field settings_path string? Path to balatrosettings profile directory (nil if not provided)
+---@field settings string? Path to balatrosettings profile directory (nil if not provided)
 ---@field setup fun(): boolean Initialize BalatroBot settings. Returns false if "BalatroBot" profile not selected.
 
 ---@class Debug

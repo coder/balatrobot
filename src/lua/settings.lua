@@ -1,18 +1,12 @@
 --[[
 BalatroBot v2 settings — profile-based configuration.
 
-Environment variables:
+Environment variables read by the Lua mod:
   BALATROBOT_HOST          - Server hostname (default: 127.0.0.1)
   BALATROBOT_PORT          - Server port (default: 12346)
   BALATROBOT_RENDER        - Render mode: headfull|headless|ondemand (default: headfull)
   BALATROBOT_DEBUG         - Enable debug endpoints (1/0, default: 0)
   BALATROBOT_SETTINGS      - Path to balatrosettings profile directory
-  BALATROBOT_PATH_BALATRO  - Path to Balatro directory
-  BALATROBOT_PATH_LOVELY   - Path to lovely library
-  BALATROBOT_PATH_LOVE     - Path to LOVE executable
-  BALATROBOT_PLATFORM      - Platform override
-  BALATROBOT_PATH_LOGS     - Log directory
-  BALATROBOT_NUM           - Number of instances
 ]]
 
 ---@diagnostic disable: duplicate-set-field
@@ -23,7 +17,7 @@ BB_SETTINGS = {
   port = tonumber(os.getenv("BALATROBOT_PORT")) or 12346,
   render = os.getenv("BALATROBOT_RENDER") or "headfull",
   debug = os.getenv("BALATROBOT_DEBUG") == "1" or false,
-  settings_path = os.getenv("BALATROBOT_SETTINGS"),
+  settings = os.getenv("BALATROBOT_SETTINGS"),
 }
 
 ---@type boolean?
@@ -54,7 +48,8 @@ local function apply_profile(path)
   assert(type(profile_settings) == "table", "settings.lua must return a table")
   deep_merge(G.SETTINGS, profile_settings)
 
-  -- Deep merge 1/profile.lua into G.PROFILES[n]
+  -- Deep merge balatrosettings profile data into G.PROFILES[n]
+  -- "1/" is a balatrosettings directory convention, not the in-game profile slot
   local profile_src = NFS.read(path .. "/1/profile.lua")
   assert(profile_src, "Profile not found: " .. path .. "/1/profile.lua")
   local profile_data = assert(load(profile_src))()
@@ -152,8 +147,8 @@ BB_SETTINGS.setup = function()
   G.PROFILES[profile_num].all_unlocked = true
 
   -- Apply settings profile if --settings provided
-  if BB_SETTINGS.settings_path then
-    apply_profile(BB_SETTINGS.settings_path)
+  if BB_SETTINGS.settings then
+    apply_profile(BB_SETTINGS.settings)
   end
 
   -- Render mode
