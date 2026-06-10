@@ -64,14 +64,11 @@ BalatroBot bundles settings profiles that configure Balatro's game settings (spe
 # Use the "fast" profile (max speed, no audio, minimal graphics)
 uvx balatrobot serve --settings fast
 
-# Use the "headless" profile (silent, no graphics)
-uvx balatrobot serve --settings headless --render headless
-
 # Default profile is applied when --settings is omitted
 uvx balatrobot serve
 ```
 
-Available profiles: `default`, `fast`, `headless`.
+Available profiles: `default`, `fast`, `turbo`, `light`.
 
 The profile contains `settings.lua` (merged into `G.SETTINGS`) and optionally `profile.lua` (merged into `G.PROFILES`). Profiles live in `src/lua/profiles/<name>/`. Custom profiles can be added by creating a new directory with a `settings.lua` file.
 
@@ -152,7 +149,7 @@ uvx balatrobot serve --port 8080
 uvx balatrobot serve --path-balatro /path/to/Balatro
 
 # On-demand rendering for screenshot capture
-uvx balatrobot serve --settings headless --render ondemand
+uvx balatrobot serve --render ondemand
 ```
 
 ## Examples with Environment Variables
@@ -163,7 +160,7 @@ uvx balatrobot serve --settings headless --render ondemand
 # Configure via environment variables
 export BALATROBOT_PORT=8080
 export BALATROBOT_RENDER=headless
-export BALATROBOT_SETTINGS=headless
+export BALATROBOT_SETTINGS=fast
 
 # Launch with defaults from env vars
 uvx balatrobot serve
@@ -209,7 +206,7 @@ The `windows` platform launches Balatro via Steam on Windows. The CLI auto-detec
 
 ```powershell
 # Auto-detects paths
-uvx balatrobot serve --settings headless --render headless
+uvx balatrobot serve --render headless
 
 # Or specify custom paths
 uvx balatrobot serve --path-love "C:\Custom\Path\Balatro.exe" --path-lovely "C:\Custom\Path\version.dll"
@@ -236,7 +233,7 @@ The `darwin` platform launches Balatro via Steam on macOS. The CLI auto-detects 
 
 ```bash
 # Auto-detects paths
-uvx balatrobot serve --settings headless --render headless
+uvx balatrobot serve --render headless
 
 # Or specify custom paths
 uvx balatrobot serve --path-love "/path/to/love" --path-lovely "/path/to/liblovely.dylib"
@@ -263,7 +260,7 @@ The `linux` platform launches Balatro via Steam Proton. The CLI auto-detects Ste
 
 ```bash
 # Auto-detects paths
-uvx balatrobot serve --settings headless --render headless
+uvx balatrobot serve --render headless
 
 # Or specify custom paths
 uvx balatrobot serve --path-love /path/to/proton --path-balatro /path/to/Balatro
@@ -327,4 +324,4 @@ uvx balatrobot serve --platform native --path-balatro /path/to/balatro/source
 
 **Port in use**: Change the port with `--port` or set `BALATROBOT_PORT` to a different value.
 
-**Game crashes**: Try running in headless mode with `--render headless` and a minimal settings profile.
+**Game crashes**: Try running in headless mode with `--render headless` and the `fast` profile (`--settings fast`).

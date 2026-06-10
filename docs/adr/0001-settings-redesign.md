@@ -21,10 +21,13 @@ src/lua/profiles/
 ├── default/
 │   ├── settings.lua      # required — merged into G.SETTINGS
 │   └── profile.lua       # optional — merged into G.PROFILES[n]
-├── fast/
+└── fast/
+    ├── settings.lua
+    └── profile.lua
+├── turbo/
 │   ├── settings.lua
-│   └── profile.lua
-└── headless/
+    └── profile.lua
+└── light/
     ├── settings.lua
     └── profile.lua
 ```
