@@ -4,7 +4,6 @@ from typer.testing import CliRunner
 
 from balatrobot.cli import app
 from balatrobot.cli.serve import PLATFORM_CHOICES
-from balatrobot.config import Config
 
 runner = CliRunner()
 
@@ -46,15 +45,6 @@ class TestServeCommand:
         result = runner.invoke(app, ["serve", "--render", "invalid"])
         assert result.exit_code == 1
         assert "Invalid render mode 'invalid'" in result.output
-
-    def test_serve_render_validation_uses_config(self, clean_env):
-        """Render modes are validated against RENDER_CHOICES constant."""
-        from balatrobot.config import RENDER_CHOICES
-
-        # All render modes should be valid config values
-        for mode in RENDER_CHOICES:
-            config = Config(render=mode)
-            assert config.render == mode
 
     # --- Help text tests ---
 

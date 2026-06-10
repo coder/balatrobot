@@ -57,24 +57,19 @@ class TestConfigDefaults:
         assert config.platform is None
 
 
-class TestRenderChoices:
-    """Tests for RENDER_CHOICES constant."""
+class TestConfigRenderValidation:
+    """Tests for render mode validation in Config."""
 
-    def test_render_choices(self):
-        """RENDER_CHOICES contains the three valid modes."""
-        assert RENDER_CHOICES == frozenset({"headfull", "headless", "ondemand"})
+    def test_valid_render_modes_accepted(self):
+        """All RENDER_CHOICES produce valid configs."""
+        for mode in RENDER_CHOICES:
+            config = Config(render=mode)
+            assert config.render == mode
 
-    def test_headfull_in_choices(self):
-        """headfull is a valid render mode."""
-        assert "headfull" in RENDER_CHOICES
-
-    def test_headless_in_choices(self):
-        """headless is a valid render mode."""
-        assert "headless" in RENDER_CHOICES
-
-    def test_ondemand_in_choices(self):
-        """ondemand is a valid render mode."""
-        assert "ondemand" in RENDER_CHOICES
+    def test_invalid_render_mode_rejected(self):
+        """Invalid render mode raises ValueError."""
+        with pytest.raises(ValueError, match="Invalid render mode"):
+            Config(render="invalid")
 
 
 class TestConfigFromArgs:
