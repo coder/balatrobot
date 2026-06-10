@@ -159,6 +159,8 @@ BB_SETTINGS.setup = function()
 
   -- Hardcoded overrides for bot operation
   G.F_SKIP_TUTORIAL = true
+  G.F_ENGLISH_ONLY = true
+  G.F_NO_ACHIEVEMENTS = true
   G.F_VERBOSE = BB_SETTINGS.debug
   G.PROFILES[profile_num].all_unlocked = true
 
