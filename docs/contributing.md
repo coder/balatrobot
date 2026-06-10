@@ -32,13 +32,11 @@ export PYTHONPATH="${PWD}/src:${PYTHONPATH}"
 export PYTHONPATH="${PWD}/tests:${PYTHONPATH}"
 
 # BALATROBOT env vars
-export BALATROBOT_FAST=1
+export BALATROBOT_SETTINGS=fast
+export BALATROBOT_RENDER=headless
 export BALATROBOT_DEBUG=1
-export BALATROBOT_LOVE_PATH='/path/to/Balatro/love'
-export BALATROBOT_LOVELY_PATH='/path/to/liblovely.dylib'
-export BALATROBOT_RENDER_ON_API=0
-export BALATROBOT_HEADLESS=1
-export BALATROBOT_AUDIO=0
+export BALATROBOT_PATH_LOVE='/path/to/Balatro/love'
+export BALATROBOT_PATH_LOVELY='/path/to/liblovely.dylib'
 ```
 
 **Setup:** Install [direnv](https://direnv.net/), then create `.envrc` in the project root with the above configuration, updating paths for your system.
