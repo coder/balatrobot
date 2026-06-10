@@ -132,7 +132,7 @@ end
 
 ---@param request Request.Server
 function BB_DISPATCHER.dispatch(request)
-  -- Trigger render for this frame if render_on_api mode is enabled
+  -- Trigger render for this frame if ondemand mode is enabled
   if BB_RENDER ~= nil then
     BB_RENDER = true
   end
