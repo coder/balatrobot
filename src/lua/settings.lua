@@ -6,7 +6,7 @@ Environment variables read by the Lua mod:
   BALATROBOT_PORT          - Server port (default: 12346)
   BALATROBOT_RENDER        - Render mode: headfull|headless|ondemand (default: headfull)
   BALATROBOT_DEBUG         - Enable debug endpoints (1/0, default: 0)
-  BALATROBOT_SETTINGS      - Path to balatrosettings profile directory
+  BALATROBOT_SETTINGS      - Settings profile name (bare name, e.g. "fast")
 ]]
 
 ---@diagnostic disable: duplicate-set-field
@@ -36,29 +36,43 @@ local function deep_merge(target, source)
   end
 end
 
---- Apply balatrosettings profile from directory
----@param path string Absolute path to profile directory
-local function apply_profile(path)
+--- Apply settings profile by name
+---@param name string Profile name (e.g. "default", "fast", "headless")
+local function apply_profile(name)
   local NFS = require("nativefs")
 
-  -- Deep merge settings.lua into G.SETTINGS
-  local settings_src = NFS.read(path .. "/settings.lua")
-  assert(settings_src, "Profile not found: " .. path .. "/settings.lua")
+  local profile_dir = SMODS.current_mod.path .. "src/lua/profiles/" .. name .. "/"
+
+  -- Deep merge settings.lua into G.SETTINGS (required)
+  local settings_src = NFS.read(profile_dir .. "settings.lua")
+  if not settings_src then
+    -- List available profiles for error message
+    local items = NFS.getDirectoryItems(SMODS.current_mod.path .. "src/lua/profiles/")
+    local available = {}
+    for _, item in ipairs(items) do
+      table.insert(available, item)
+    end
+    sendErrorMessage(
+      "Settings profile not found: '" .. name .. "'. Available: " .. table.concat(available, ", "),
+      "BB.SETTINGS"
+    )
+    error("Settings profile not found: '" .. name .. "'")
+  end
   local profile_settings = assert(load(settings_src))()
   assert(type(profile_settings) == "table", "settings.lua must return a table")
   deep_merge(G.SETTINGS, profile_settings)
 
-  -- Deep merge balatrosettings profile data into G.PROFILES[n]
-  -- "1/" is a balatrosettings directory convention, not the in-game profile slot
-  local profile_src = NFS.read(path .. "/1/profile.lua")
-  assert(profile_src, "Profile not found: " .. path .. "/1/profile.lua")
-  local profile_data = assert(load(profile_src))()
-  assert(type(profile_data) == "table", "1/profile.lua must return a table")
-  local n = G.SETTINGS.profile or 1
-  G.PROFILES[n] = G.PROFILES[n] or {}
-  deep_merge(G.PROFILES[n], profile_data)
+  -- Deep merge profile.lua into G.PROFILES[n] (optional)
+  local profile_src = NFS.read(profile_dir .. "profile.lua")
+  if profile_src then
+    local profile_data = assert(load(profile_src))()
+    assert(type(profile_data) == "table", "profile.lua must return a table")
+    local n = G.SETTINGS.profile or 1
+    G.PROFILES[n] = G.PROFILES[n] or {}
+    deep_merge(G.PROFILES[n], profile_data)
+  end
 
-  sendInfoMessage("Applied profile: " .. path, "BB.SETTINGS")
+  sendInfoMessage("Applied profile: " .. name, "BB.SETTINGS")
 end
 
 --- Headless mode: disable all rendering and window operations
@@ -146,10 +160,9 @@ BB_SETTINGS.setup = function()
   G.F_SKIP_TUTORIAL = true
   G.PROFILES[profile_num].all_unlocked = true
 
-  -- Apply settings profile if --settings provided
-  if BB_SETTINGS.settings then
-    apply_profile(BB_SETTINGS.settings)
-  end
+  -- Apply settings profile (default if none specified)
+  BB_SETTINGS.settings = BB_SETTINGS.settings or "default"
+  apply_profile(BB_SETTINGS.settings)
 
   -- Render mode
   if BB_SETTINGS.render == "headless" then
