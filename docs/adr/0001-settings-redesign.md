@@ -19,14 +19,14 @@ BalatroBot uses bundled **settings profiles** to configure Balatro's game settin
 ```
 src/lua/profiles/
 ├── default/
-│   ├── settings.lua      # required — merged into G.SETTINGS
-│   └── profile.lua       # optional — merged into G.PROFILES[n]
-└── fast/
-    ├── settings.lua
-    └── profile.lua
+│   ├── settings.lua
+│   └── profile.lua
+├── fast/
+│   ├── settings.lua
+│   └── profile.lua
 ├── turbo/
 │   ├── settings.lua
-    └── profile.lua
+│   └── profile.lua
 └── light/
     ├── settings.lua
     └── profile.lua
