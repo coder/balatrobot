@@ -16,14 +16,12 @@ ENV_MAP: dict[str, str] = {
     "path_logs": "BALATROBOT_PATH_LOGS",
 }
 
-BOOL_FIELDS = frozenset({"debug"})
-
 RENDER_CHOICES = frozenset({"headfull", "headless", "ondemand"})
 
 
 def _parse_env_value(field: str, value: str) -> str | bool:
-    """Convert env var string to proper type."""
-    if field in BOOL_FIELDS:
+    """Coerce env var string to the right Python type."""
+    if field == "debug":
         return value in ("1", "true")
     return value
 
@@ -90,7 +88,7 @@ class Config:
             value = getattr(self, field)
             if value is None:
                 continue
-            if field in BOOL_FIELDS:
+            if field == "debug":
                 if value:
                     env[env_var] = "1"
             else:

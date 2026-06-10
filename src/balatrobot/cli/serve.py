@@ -23,7 +23,11 @@ _SETTINGS_RE = re.compile(r"^[a-zA-Z0-9][a-zA-Z0-9_-]*$")
 
 
 def settings_callback(value: str | None) -> str | None:
-    """Validate --settings as a bare profile name."""
+    """Validate --settings as a bare profile name.
+
+    This is a courtesy guard for CLI users. The same regex is enforced
+    on the Lua side in apply_profile() — that validation is authoritative.
+    """
     if value is None:
         return None
     if not _SETTINGS_RE.match(value):
