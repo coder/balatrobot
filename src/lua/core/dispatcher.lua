@@ -13,7 +13,7 @@ local socket = require("socket")
 ---@type table<integer, string>?
 local STATE_NAME_CACHE = nil
 
----@param state_value integer
+---@param state_value integer|string
 ---@return string
 local function get_state_name(state_value)
   if not STATE_NAME_CACHE then

@@ -292,6 +292,8 @@
 ---@field current_request_id integer|string|nil Current JSON-RPC 2.0 request ID being processed (nil if no active request)
 ---@field client_state table? HTTP request parsing state for current client (buffer, headers, etc.) (nil if no client connected)
 ---@field openrpc_spec string? OpenRPC specification JSON string (loaded at init, nil before init)
+---@field req_file file*? File handle for recording JSON-RPC request bodies (nil if logging disabled)
+---@field res_file file*? File handle for recording JSON-RPC response bodies (nil if logging disabled)
 ---@field init? fun(): boolean Initialize HTTP server socket and load OpenRPC spec
 ---@field accept? fun(): boolean Accept new HTTP client connection
 ---@field send_response? fun(response: Response.Endpoint): boolean Send JSON-RPC 2.0 response over HTTP to client

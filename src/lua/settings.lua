@@ -1,5 +1,5 @@
 --[[
-BalatroBot v2 settings — profile-based configuration.
+BalatroBot settings — profile-based configuration.
 
 Environment variables read by the Lua mod:
   BALATROBOT_HOST          - Server hostname (default: 127.0.0.1)
@@ -10,18 +10,6 @@ Environment variables read by the Lua mod:
 ]]
 
 ---@diagnostic disable: duplicate-set-field
-
----@type Settings
-BB_SETTINGS = {
-  host = os.getenv("BALATROBOT_HOST") or "127.0.0.1",
-  port = tonumber(os.getenv("BALATROBOT_PORT")) or 12346,
-  render = os.getenv("BALATROBOT_RENDER") or "headfull",
-  debug = os.getenv("BALATROBOT_DEBUG") == "1" or false,
-  settings = os.getenv("BALATROBOT_SETTINGS"),
-}
-
----@type boolean?
-BB_RENDER = nil
 
 --- Deep merge source into target table (recursive)
 ---@param target table
@@ -145,7 +133,7 @@ end
 
 --- Initialize BalatroBot settings. Returns false if "BalatroBot" profile not selected.
 ---@return boolean
-BB_SETTINGS.setup = function()
+local function setup()
   -- Gate: only activate when in-game profile is named "BalatroBot"
   local profile_num = G.SETTINGS.profile or 1
   local profile = G.PROFILES[profile_num]
@@ -185,3 +173,16 @@ BB_SETTINGS.setup = function()
 
   return true
 end
+
+---@type Settings
+BB_SETTINGS = {
+  host = os.getenv("BALATROBOT_HOST") or "127.0.0.1",
+  port = tonumber(os.getenv("BALATROBOT_PORT")) or 12346,
+  render = os.getenv("BALATROBOT_RENDER") or "headfull",
+  debug = os.getenv("BALATROBOT_DEBUG") == "1" or false,
+  settings = os.getenv("BALATROBOT_SETTINGS"),
+  setup = setup,
+}
+
+---@type boolean?
+BB_RENDER = nil

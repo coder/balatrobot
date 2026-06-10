@@ -524,7 +524,8 @@ local function strip_color_codes(text)
     return ""
   end
   -- Remove color codes: {C:color_name}, {X:mult}, etc. and closing {}
-  return text:gsub("%b{}", ""):gsub("%s+", " "):gsub("^%s+", ""):gsub("%s+$", "")
+  local result = text:gsub("%b{}", ""):gsub("%s+", " "):gsub("^%s+", ""):gsub("%s+$", "")
+  return result
 end
 
 ---Gets voucher effect description using the game's localize function
