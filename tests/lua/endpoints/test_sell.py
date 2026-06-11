@@ -139,6 +139,20 @@ class TestSellEndpoint:
         assert after["consumables"]["count"] == 0
         assert before["money"] < after["money"]
 
+    def test_sell_invisible_joker(self, client: httpx.Client) -> None:
+        """Selling Invisible Joker should not hang (issue #195)."""
+        before = load_fixture(
+            client,
+            "sell",
+            "state-SHOP--jokers.count-2--jokers.cards[0].key-j_invisible",
+        )
+        assert before["state"] == "SHOP"
+        assert before["jokers"]["count"] == 2
+
+        response = api(client, "sell", {"joker": 0}, timeout=10.0)
+        after = assert_gamestate_response(response)
+        assert after["jokers"]["count"] >= 1
+
 
 class TestSellEndpointValidation:
     """Test sell endpoint parameter validation."""

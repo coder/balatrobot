@@ -2208,6 +2208,80 @@
         "method": "select",
         "params": {}
       }
+    ],
+    "state-SHOP--jokers.count-2--jokers.cards[0].key-j_invisible": [
+      {
+        "method": "menu",
+        "params": {}
+      },
+      {
+        "method": "start",
+        "params": {
+          "deck": "RED",
+          "stake": "WHITE",
+          "seed": "INVIS3"
+        }
+      },
+      {
+        "method": "select",
+        "params": {}
+      },
+      {
+        "method": "add",
+        "params": {
+          "key": "j_invisible"
+        }
+      },
+      {
+        "method": "set",
+        "params": {
+          "chips": 1000
+        }
+      },
+      {
+        "method": "play",
+        "params": {
+          "cards": [
+            0
+          ]
+        }
+      },
+      {
+        "method": "cash_out",
+        "params": {}
+      },
+      {
+        "method": "next_round",
+        "params": {}
+      },
+      {
+        "method": "select",
+        "params": {}
+      },
+      {
+        "method": "set",
+        "params": {
+          "chips": 1000
+        }
+      },
+      {
+        "method": "play",
+        "params": {
+          "cards": [
+            0
+          ]
+        }
+      },
+      {
+        "method": "cash_out",
+        "params": {}
+      },
+      {
+        "method": "add",
+        "params": {
+          "key": "j_greedy_joker"
+        }
+      }
     ]
   },
   "add": {
