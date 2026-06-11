@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.5.2](https://github.com/coder/balatrobot/compare/v1.5.1...v1.5.2) (2026-06-11)
+
+
+### Bug Fixes
+
+* **server:** reject concurrent connections while client is active ([2942f19](https://github.com/coder/balatrobot/commit/2942f1943e41495976e5a38f81ac3962fc9f37c5))
+
 ## [1.5.1](https://github.com/coder/balatrobot/compare/v1.5.0...v1.5.1) (2026-06-09)
 
 
