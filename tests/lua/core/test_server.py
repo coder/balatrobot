@@ -506,7 +506,7 @@ class TestHTTPServerConcurrency:
     """Tests for concurrent request handling."""
 
     def test_concurrent_requests_do_not_crash(
-        self, instance, balatro_server, client: httpx.Client
+        self, instance: InstanceInfo, balatro_server, client: httpx.Client
     ) -> None:
         """Two concurrent requests must not crash the server (#193)."""
         barrier = threading.Barrier(2)
