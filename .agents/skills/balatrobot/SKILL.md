@@ -16,20 +16,16 @@ balatrobot serve --help
 Typical invocation:
 
 ```bash
-balatrobot serve --render headless --settings fast --debug
+balatrobot serve --render headless --settings turbo --debug
 ```
 
 Key flags:
 
 - `--render [headfull|headless|ondemand]` — rendering mode (default: headfull)
 - `--settings NAME` — settings profile name (default: "default")
-- `--debug` — enable debug endpoints
+- `--debug` — enable debug endpoints (during divergence we need to turn this on)
 - `--num` — number of instances
-- `--path-*` — path overrides (`--path-balatro`, `--path-lovely`, `--path-love`, `--path-logs`)
-
-All flags have `BALATROBOT_*` env var equivalents (e.g. `BALATROBOT_RENDER=headless`). See `src/balatrobot/config.py` for the full mapping.
-
-**Requirement:** The mod only activates when the selected Balatro in-game profile is named exactly `BalatroBot`. Create this profile in Balatro's profile selector and select it before launching via `serve`.
+- `--path-*` — path overrides (don't need to use these)
 
 `serve` auto-allocates ports, prints instance URLs and the session logs directory, then blocks until Ctrl+C. It writes a state file so other commands can discover the running instances.
 
@@ -57,7 +53,7 @@ balatrobot api <method> [JSON_PARAMS]
 balatrobot api <method> --help
 ```
 
-Auto-discovers the running instance from the state file — no `--host`/`--port` needed for single-instance sessions. For multi-instance pools, use `-i`/`--index` (0-based, default 0).
+**Important**: to use the right `<method>` and `[JSON_PARAMS]` you must read  `docs/api.md` which contains the full API reference (methods, errors, states).
 
 Params are a JSON string (default `{}`). Examples:
 
@@ -78,8 +74,8 @@ balatrobot api gamestate | jq '.state'
 balatrobot api gamestate | jq '{state, money, hand: .hand.count}'
 ```
 
-API errors surface as `<NAME> - <message>` on stderr (e.g. `INVALID_STATE`, `BAD_REQUEST`).
-Full API reference (methods, errors, states): `docs/api.md`.
+`balatrobot api` auto-discovers the running instance from the state file — no `--host`/`--port` needed for single-instance sessions.
+For multi-instance pools, use `-i`/`--index` (0-based, default 0).
 
 ## Logs
 
@@ -88,8 +84,8 @@ Each session directory (`logs/<timestamp>/`) contains per-instance files: `<port
 ## `api --requests` — replay & verify
 
 ```bash
-balatrobot api --requests logs/<ts>/<port>.req.jsonl
-balatrobot api --requests logs/<ts>/<port>.req.jsonl --responses logs/<ts>/<port>.res.jsonl
+balatrobot api --requests "logs/<ts>/<port>.req.jsonl"
+balatrobot api --requests "logs/<ts>/<port>.req.jsonl" --responses "logs/<ts>/<port>.res.jsonl"
 ```
 
 Replays a JSONL request trace against a running instance. `--responses` compares each live response against the recorded one (exits on first divergence). Mutually exclusive with positional `METHOD`.
