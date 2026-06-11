@@ -1,0 +1,4142 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="API for developing Balatro bots">
+      
+      
+        <meta name="author" content="S1M0N38">
+      
+      
+        <link rel="canonical" href="https://coder.github.io/balatrobot/api/">
+      
+      
+        <link rel="prev" href="../cli/">
+      
+      
+        <link rel="next" href="../contributing/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../assets/balatrobot.svg">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.1">
+    
+    
+      
+        <title>API Reference - BalatroBot</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="red" data-md-color-accent="orange">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#balatrobot-api-reference" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href=".." title="BalatroBot" class="md-header__button md-logo" aria-label="BalatroBot" data-md-component="logo">
+      
+  <img src="../assets/balatrobot-white.svg" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            BalatroBot
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              API Reference
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="red" data-md-color-accent="orange"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="red" data-md-color-accent="deep-orange"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/coder/balatrobot" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+  </div>
+  <div class="md-source__repository">
+    coder/balatrobot
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="BalatroBot" class="md-nav__button md-logo" aria-label="BalatroBot" data-md-component="logo">
+      
+  <img src="../assets/balatrobot-white.svg" alt="logo">
+
+    </a>
+    BalatroBot
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/coder/balatrobot" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+  </div>
+  <div class="md-source__repository">
+    coder/balatrobot
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    BalatroBot
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../installation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Installation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../example-bot/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Example Bot
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cli/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    CLI Reference
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    API Reference
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    API Reference
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#overview" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Overview
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Overview">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#request-format" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Request Format
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#response-format" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Response Format
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#quickstart" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Quickstart
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#game-states" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Game States
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#methods" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Methods
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Methods">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#health" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        health
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#gamestate" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        gamestate
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#rpcdiscover" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        rpc.discover
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#start" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        start
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#menu" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        menu
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#save" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        save
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#load" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        load
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#select" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        select
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#skip" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        skip
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#buy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        buy
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pack" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        pack
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sell" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        sell
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#reroll" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        reroll
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cash_out" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        cash_out
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#next_round" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        next_round
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#play" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        play
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#discard" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        discard
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#rearrange" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        rearrange
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#use" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        use
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#add" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        add
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#screenshot" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        screenshot
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#set" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        set
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#schemas" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Schemas
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Schemas">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#gamestate-schema" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        GameState Schema
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#area" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Area
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#card" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Card
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#round" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Round
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#blind" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Blind
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#hand-poker-hand-info" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Hand (Poker Hand Info)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#enums" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Enums
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Enums">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#deck" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Deck
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#stake" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Stake
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#card-value-suit" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Card Value Suit
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#card-value-rank" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Card Value Rank
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#card-set" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Card Set
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#card-modifier-seal" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Card Modifier Seal
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#card-modifier-edition" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Card Modifier Edition
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#card-modifier-enhancement" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Card Modifier Enhancement
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#blind-type" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Blind Type
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#blind-status" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Blind Status
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#card-keys" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Card Keys
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#error-codes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Error Codes
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#openrpc-specification" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        OpenRPC Specification
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../contributing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Contributing
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#overview" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Overview
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Overview">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#request-format" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Request Format
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#response-format" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Response Format
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#quickstart" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Quickstart
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#game-states" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Game States
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#methods" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Methods
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Methods">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#health" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        health
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#gamestate" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        gamestate
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#rpcdiscover" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        rpc.discover
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#start" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        start
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#menu" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        menu
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#save" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        save
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#load" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        load
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#select" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        select
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#skip" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        skip
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#buy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        buy
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pack" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        pack
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sell" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        sell
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#reroll" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        reroll
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cash_out" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        cash_out
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#next_round" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        next_round
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#play" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        play
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#discard" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        discard
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#rearrange" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        rearrange
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#use" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        use
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#add" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        add
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#screenshot" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        screenshot
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#set" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        set
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#schemas" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Schemas
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Schemas">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#gamestate-schema" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        GameState Schema
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#area" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Area
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#card" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Card
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#round" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Round
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#blind" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Blind
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#hand-poker-hand-info" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Hand (Poker Hand Info)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#enums" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Enums
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Enums">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#deck" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Deck
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#stake" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Stake
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#card-value-suit" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Card Value Suit
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#card-value-rank" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Card Value Rank
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#card-set" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Card Set
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#card-modifier-seal" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Card Modifier Seal
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#card-modifier-edition" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Card Modifier Edition
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#card-modifier-enhancement" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Card Modifier Enhancement
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#blind-type" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Blind Type
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#blind-status" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Blind Status
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#card-keys" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Card Keys
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#error-codes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Error Codes
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#openrpc-specification" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        OpenRPC Specification
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="balatrobot-api-reference">BalatroBot API Reference</h1>
+<p>JSON-RPC 2.0 API for controlling Balatro programmatically.</p>
+<h2 id="overview">Overview</h2>
+<ul>
+<li><strong>Protocol</strong>: JSON-RPC 2.0 over HTTP/1.1</li>
+<li><strong>Endpoint</strong>: <code>http://127.0.0.1:12346</code> (default)</li>
+<li><strong>Content-Type</strong>: <code>application/json</code></li>
+</ul>
+<h3 id="request-format">Request Format</h3>
+<div class="language-json highlight"><pre><span></span><code><span id="__span-0-1"><span class="p">{</span>
+</span><span id="__span-0-2"><span class="w">  </span><span class="nt">&quot;jsonrpc&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2.0&quot;</span><span class="p">,</span>
+</span><span id="__span-0-3"><span class="w">  </span><span class="nt">&quot;method&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;method_name&quot;</span><span class="p">,</span>
+</span><span id="__span-0-4"><span class="w">  </span><span class="nt">&quot;params&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="err">...</span><span class="w"> </span><span class="p">},</span>
+</span><span id="__span-0-5"><span class="w">  </span><span class="nt">&quot;id&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span>
+</span><span id="__span-0-6"><span class="p">}</span>
+</span></code></pre></div>
+<h3 id="response-format">Response Format</h3>
+<p><strong>Success:</strong></p>
+<div class="language-json highlight"><pre><span></span><code><span id="__span-1-1"><span class="p">{</span>
+</span><span id="__span-1-2"><span class="w">  </span><span class="nt">&quot;jsonrpc&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2.0&quot;</span><span class="p">,</span>
+</span><span id="__span-1-3"><span class="w">  </span><span class="nt">&quot;result&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="err">...</span><span class="w"> </span><span class="p">},</span>
+</span><span id="__span-1-4"><span class="w">  </span><span class="nt">&quot;id&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span>
+</span><span id="__span-1-5"><span class="p">}</span>
+</span></code></pre></div>
+<p><strong>Error:</strong></p>
+<div class="language-json highlight"><pre><span></span><code><span id="__span-2-1"><span class="p">{</span>
+</span><span id="__span-2-2"><span class="w">  </span><span class="nt">&quot;jsonrpc&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2.0&quot;</span><span class="p">,</span>
+</span><span id="__span-2-3"><span class="w">  </span><span class="nt">&quot;error&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-2-4"><span class="w">    </span><span class="nt">&quot;code&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">-32001</span><span class="p">,</span>
+</span><span id="__span-2-5"><span class="w">    </span><span class="nt">&quot;message&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Error description&quot;</span><span class="p">,</span>
+</span><span id="__span-2-6"><span class="w">    </span><span class="nt">&quot;data&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;BAD_REQUEST&quot;</span><span class="w"> </span><span class="p">}</span>
+</span><span id="__span-2-7"><span class="w">  </span><span class="p">},</span>
+</span><span id="__span-2-8"><span class="w">  </span><span class="nt">&quot;id&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span>
+</span><span id="__span-2-9"><span class="p">}</span>
+</span></code></pre></div>
+<h2 id="quickstart">Quickstart</h2>
+<h4 id="1-health-check">1. Health Check</h4>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1">curl<span class="w"> </span>-X<span class="w"> </span>POST<span class="w"> </span>http://127.0.0.1:12346<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-3-2"><span class="w">  </span>-H<span class="w"> </span><span class="s2">&quot;Content-Type: application/json&quot;</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-3-3"><span class="w">  </span>-d<span class="w"> </span><span class="s1">&#39;{&quot;jsonrpc&quot;: &quot;2.0&quot;, &quot;method&quot;: &quot;health&quot;, &quot;id&quot;: 1}&#39;</span>
+</span></code></pre></div>
+<h4 id="2-get-game-state">2. Get Game State</h4>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1">curl<span class="w"> </span>-X<span class="w"> </span>POST<span class="w"> </span>http://127.0.0.1:12346<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-4-2"><span class="w">  </span>-H<span class="w"> </span><span class="s2">&quot;Content-Type: application/json&quot;</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-4-3"><span class="w">  </span>-d<span class="w"> </span><span class="s1">&#39;{&quot;jsonrpc&quot;: &quot;2.0&quot;, &quot;method&quot;: &quot;gamestate&quot;, &quot;id&quot;: 1}&#39;</span>
+</span></code></pre></div>
+<h4 id="3-start-a-new-run">3. Start a New Run</h4>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-5-1">curl<span class="w"> </span>-X<span class="w"> </span>POST<span class="w"> </span>http://127.0.0.1:12346<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-5-2"><span class="w">  </span>-H<span class="w"> </span><span class="s2">&quot;Content-Type: application/json&quot;</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-5-3"><span class="w">  </span>-d<span class="w"> </span><span class="s1">&#39;{&quot;jsonrpc&quot;: &quot;2.0&quot;, &quot;method&quot;: &quot;start&quot;, &quot;params&quot;: {&quot;deck&quot;: &quot;RED&quot;, &quot;stake&quot;: &quot;WHITE&quot;}, &quot;id&quot;: 1}&#39;</span>
+</span></code></pre></div>
+<h4 id="4-select-blind-and-play-cards">4. Select Blind and Play Cards</h4>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-6-1"><span class="c1"># Select the blind</span>
+</span><span id="__span-6-2">curl<span class="w"> </span>-X<span class="w"> </span>POST<span class="w"> </span>http://127.0.0.1:12346<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-6-3"><span class="w">  </span>-H<span class="w"> </span><span class="s2">&quot;Content-Type: application/json&quot;</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-6-4"><span class="w">  </span>-d<span class="w"> </span><span class="s1">&#39;{&quot;jsonrpc&quot;: &quot;2.0&quot;, &quot;method&quot;: &quot;select&quot;, &quot;id&quot;: 1}&#39;</span>
+</span><span id="__span-6-5">
+</span><span id="__span-6-6"><span class="c1"># Play cards at indices 0, 1, 2</span>
+</span><span id="__span-6-7">curl<span class="w"> </span>-X<span class="w"> </span>POST<span class="w"> </span>http://127.0.0.1:12346<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-6-8"><span class="w">  </span>-H<span class="w"> </span><span class="s2">&quot;Content-Type: application/json&quot;</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-6-9"><span class="w">  </span>-d<span class="w"> </span><span class="s1">&#39;{&quot;jsonrpc&quot;: &quot;2.0&quot;, &quot;method&quot;: &quot;play&quot;, &quot;params&quot;: {&quot;cards&quot;: [0, 1, 2]}, &quot;id&quot;: 1}&#39;</span>
+</span></code></pre></div>
+<h2 id="game-states">Game States</h2>
+<p>The game progresses through these states:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-7-1">MENU ──► BLIND_SELECT ──► SELECTING_HAND ──► ROUND_EVAL ──► SHOP ─┐
+</span><span id="__span-7-2">                ▲                │                                │
+</span><span id="__span-7-3">                │                ▼                                │
+</span><span id="__span-7-4">                │            GAME_OVER                            │
+</span><span id="__span-7-5">                │                                                 │
+</span><span id="__span-7-6">                └─────────────────────────────────────────────────┘
+</span></code></pre></div>
+<table>
+<thead>
+<tr>
+<th>State</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>MENU</code></td>
+<td>Main menu</td>
+</tr>
+<tr>
+<td><code>BLIND_SELECT</code></td>
+<td>Choosing which blind to play or skip</td>
+</tr>
+<tr>
+<td><code>SELECTING_HAND</code></td>
+<td>Selecting cards to play or discard</td>
+</tr>
+<tr>
+<td><code>ROUND_EVAL</code></td>
+<td>Round complete, ready to cash out</td>
+</tr>
+<tr>
+<td><code>SHOP</code></td>
+<td>Shopping phase</td>
+</tr>
+<tr>
+<td><code>SMODS_BOOSTER_OPENED</code></td>
+<td>Booster pack opened, selecting or skipping pack</td>
+</tr>
+<tr>
+<td><code>GAME_OVER</code></td>
+<td>Game ended</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="methods">Methods</h2>
+<ul>
+<li><a href="#health"><code>health</code></a> - Health check endpoint</li>
+<li><a href="#gamestate"><code>gamestate</code></a> - Get the complete current game state</li>
+<li><a href="#rpcdiscover"><code>rpc.discover</code></a> - Returns the OpenRPC specification</li>
+<li><a href="#start"><code>start</code></a> - Start a new game run</li>
+<li><a href="#menu"><code>menu</code></a> - Return to the main menu</li>
+<li><a href="#save"><code>save</code></a> - Save the current run to a file</li>
+<li><a href="#load"><code>load</code></a> - Load a saved run from a file</li>
+<li><a href="#select"><code>select</code></a> - Select the current blind to begin the round</li>
+<li><a href="#skip"><code>skip</code></a> - Skip the current blind (Small or Big only)</li>
+<li><a href="#buy"><code>buy</code></a> - Buy a card, voucher, or pack from the shop</li>
+<li><a href="#pack"><code>pack</code></a> - Select a card or skip a pack from an opened booster pack, requires to you select targets for Tarot/Spectral consumables when applicable</li>
+<li><a href="#sell"><code>sell</code></a> - Sell a joker or consumable</li>
+<li><a href="#reroll"><code>reroll</code></a> - Reroll the shop items</li>
+<li><a href="#cash_out"><code>cash_out</code></a> - Cash out round rewards and transition to shop</li>
+<li><a href="#next_round"><code>next_round</code></a> - Leave the shop and advance to blind selection</li>
+<li><a href="#play"><code>play</code></a> - Play cards from hand</li>
+<li><a href="#discard"><code>discard</code></a> - Discard cards from hand</li>
+<li><a href="#rearrange"><code>rearrange</code></a> - Rearrange cards in hand, jokers, or consumables</li>
+<li><a href="#use"><code>use</code></a> - Use a consumable card</li>
+<li><a href="#add"><code>add</code></a> - Add a card to the game (debug/testing)</li>
+<li><a href="#screenshot"><code>screenshot</code></a> - Take a screenshot of the game</li>
+<li><a href="#set"><code>set</code></a> - Set in-game values (debug/testing)</li>
+</ul>
+<hr />
+<h3 id="health"><code>health</code></h3>
+<p>Health check endpoint.</p>
+<p><strong>Returns:</strong> <code>{ "status": "ok" }</code></p>
+<p><strong>Example:</strong></p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-8-1">curl<span class="w"> </span>-X<span class="w"> </span>POST<span class="w"> </span>http://127.0.0.1:12346<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-8-2"><span class="w">  </span>-H<span class="w"> </span><span class="s2">&quot;Content-Type: application/json&quot;</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-8-3"><span class="w">  </span>-d<span class="w"> </span><span class="s1">&#39;{&quot;jsonrpc&quot;: &quot;2.0&quot;, &quot;method&quot;: &quot;health&quot;, &quot;id&quot;: 1}&#39;</span>
+</span></code></pre></div>
+<hr />
+<h3 id="gamestate"><code>gamestate</code></h3>
+<p>Get the complete current game state.</p>
+<p><strong>Returns:</strong> <a href="#gamestate-schema">GameState</a> object</p>
+<p><strong>Example:</strong></p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-9-1">curl<span class="w"> </span>-X<span class="w"> </span>POST<span class="w"> </span>http://127.0.0.1:12346<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-9-2"><span class="w">  </span>-H<span class="w"> </span><span class="s2">&quot;Content-Type: application/json&quot;</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-9-3"><span class="w">  </span>-d<span class="w"> </span><span class="s1">&#39;{&quot;jsonrpc&quot;: &quot;2.0&quot;, &quot;method&quot;: &quot;gamestate&quot;, &quot;id&quot;: 1}&#39;</span>
+</span></code></pre></div>
+<hr />
+<h3 id="rpcdiscover"><code>rpc.discover</code></h3>
+<p>Returns the OpenRPC specification for this API.</p>
+<p><strong>Returns:</strong> OpenRPC schema document</p>
+<p><strong>Example:</strong></p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-10-1">curl<span class="w"> </span>-X<span class="w"> </span>POST<span class="w"> </span>http://127.0.0.1:12346<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-10-2"><span class="w">  </span>-H<span class="w"> </span><span class="s2">&quot;Content-Type: application/json&quot;</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-10-3"><span class="w">  </span>-d<span class="w"> </span><span class="s1">&#39;{&quot;jsonrpc&quot;: &quot;2.0&quot;, &quot;method&quot;: &quot;rpc.discover&quot;, &quot;id&quot;: 1}&#39;</span>
+</span></code></pre></div>
+<hr />
+<h3 id="start"><code>start</code></h3>
+<p>Start a new game run.</p>
+<p><strong>Parameters:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Required</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>deck</code></td>
+<td>string</td>
+<td>Yes</td>
+<td><a href="#deck">Deck</a> to use</td>
+</tr>
+<tr>
+<td><code>stake</code></td>
+<td>string</td>
+<td>Yes</td>
+<td><a href="#stake">Stake</a> level</td>
+</tr>
+<tr>
+<td><code>seed</code></td>
+<td>string</td>
+<td>No</td>
+<td>Seed for the run</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Returns:</strong> <a href="#gamestate-schema">GameState</a> (state will be <code>BLIND_SELECT</code>)</p>
+<p><strong>Errors:</strong> <code>BAD_REQUEST</code>, <code>INVALID_STATE</code>, <code>INTERNAL_ERROR</code></p>
+<p><strong>Required State:</strong> <code>MENU</code></p>
+<p><strong>Example:</strong></p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-11-1">curl<span class="w"> </span>-X<span class="w"> </span>POST<span class="w"> </span>http://127.0.0.1:12346<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-11-2"><span class="w">  </span>-H<span class="w"> </span><span class="s2">&quot;Content-Type: application/json&quot;</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-11-3"><span class="w">  </span>-d<span class="w"> </span><span class="s1">&#39;{&quot;jsonrpc&quot;: &quot;2.0&quot;, &quot;method&quot;: &quot;start&quot;, &quot;params&quot;: {&quot;deck&quot;: &quot;BLUE&quot;, &quot;stake&quot;: &quot;WHITE&quot;, &quot;seed&quot;: &quot;TEST123&quot;}, &quot;id&quot;: 1}&#39;</span>
+</span></code></pre></div>
+<hr />
+<h3 id="menu"><code>menu</code></h3>
+<p>Return to the main menu from any state.</p>
+<p><strong>Returns:</strong> <a href="#gamestate-schema">GameState</a> (state will be <code>MENU</code>)</p>
+<p><strong>Example:</strong></p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-12-1">curl<span class="w"> </span>-X<span class="w"> </span>POST<span class="w"> </span>http://127.0.0.1:12346<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-12-2"><span class="w">  </span>-H<span class="w"> </span><span class="s2">&quot;Content-Type: application/json&quot;</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-12-3"><span class="w">  </span>-d<span class="w"> </span><span class="s1">&#39;{&quot;jsonrpc&quot;: &quot;2.0&quot;, &quot;method&quot;: &quot;menu&quot;, &quot;id&quot;: 1}&#39;</span>
+</span></code></pre></div>
+<hr />
+<h3 id="save"><code>save</code></h3>
+<p>Save the current run to a file.</p>
+<p><strong>Parameters:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Required</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>path</code></td>
+<td>string</td>
+<td>Yes</td>
+<td>File path for the save</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Returns:</strong> <code>{ "success": true, "path": "..." }</code></p>
+<p><strong>Errors:</strong> <code>INVALID_STATE</code>, <code>INTERNAL_ERROR</code></p>
+<p><strong>Example:</strong></p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-13-1">curl<span class="w"> </span>-X<span class="w"> </span>POST<span class="w"> </span>http://127.0.0.1:12346<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-13-2"><span class="w">  </span>-H<span class="w"> </span><span class="s2">&quot;Content-Type: application/json&quot;</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-13-3"><span class="w">  </span>-d<span class="w"> </span><span class="s1">&#39;{&quot;jsonrpc&quot;: &quot;2.0&quot;, &quot;method&quot;: &quot;save&quot;, &quot;params&quot;: {&quot;path&quot;: &quot;/tmp/save.jkr&quot;}, &quot;id&quot;: 1}&#39;</span>
+</span></code></pre></div>
+<hr />
+<h3 id="load"><code>load</code></h3>
+<p>Load a saved run from a file.</p>
+<p><strong>Parameters:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Required</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>path</code></td>
+<td>string</td>
+<td>Yes</td>
+<td>Path to the save file</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Returns:</strong> <code>{ "success": true, "path": "..." }</code></p>
+<p><strong>Errors:</strong> <code>INTERNAL_ERROR</code></p>
+<p><strong>Example:</strong></p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-14-1">curl<span class="w"> </span>-X<span class="w"> </span>POST<span class="w"> </span>http://127.0.0.1:12346<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-14-2"><span class="w">  </span>-H<span class="w"> </span><span class="s2">&quot;Content-Type: application/json&quot;</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-14-3"><span class="w">  </span>-d<span class="w"> </span><span class="s1">&#39;{&quot;jsonrpc&quot;: &quot;2.0&quot;, &quot;method&quot;: &quot;load&quot;, &quot;params&quot;: {&quot;path&quot;: &quot;/tmp/save.jkr&quot;}, &quot;id&quot;: 1}&#39;</span>
+</span></code></pre></div>
+<hr />
+<h3 id="select"><code>select</code></h3>
+<p>Select the current blind to begin the round.</p>
+<p><strong>Returns:</strong> <a href="#gamestate-schema">GameState</a> (state will be <code>SELECTING_HAND</code>)</p>
+<p><strong>Errors:</strong> <code>INVALID_STATE</code></p>
+<p><strong>Required State:</strong> <code>BLIND_SELECT</code></p>
+<p><strong>Example:</strong></p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-15-1">curl<span class="w"> </span>-X<span class="w"> </span>POST<span class="w"> </span>http://127.0.0.1:12346<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-15-2"><span class="w">  </span>-H<span class="w"> </span><span class="s2">&quot;Content-Type: application/json&quot;</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-15-3"><span class="w">  </span>-d<span class="w"> </span><span class="s1">&#39;{&quot;jsonrpc&quot;: &quot;2.0&quot;, &quot;method&quot;: &quot;select&quot;, &quot;id&quot;: 1}&#39;</span>
+</span></code></pre></div>
+<hr />
+<h3 id="skip"><code>skip</code></h3>
+<p>Skip the current blind (Small or Big only).</p>
+<p><strong>Returns:</strong> <a href="#gamestate-schema">GameState</a></p>
+<p><strong>Errors:</strong> <code>INVALID_STATE</code>, <code>NOT_ALLOWED</code></p>
+<p><strong>Required State:</strong> <code>BLIND_SELECT</code></p>
+<p><strong>Example:</strong></p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-16-1">curl<span class="w"> </span>-X<span class="w"> </span>POST<span class="w"> </span>http://127.0.0.1:12346<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-16-2"><span class="w">  </span>-H<span class="w"> </span><span class="s2">&quot;Content-Type: application/json&quot;</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-16-3"><span class="w">  </span>-d<span class="w"> </span><span class="s1">&#39;{&quot;jsonrpc&quot;: &quot;2.0&quot;, &quot;method&quot;: &quot;skip&quot;, &quot;id&quot;: 1}&#39;</span>
+</span></code></pre></div>
+<hr />
+<h3 id="buy"><code>buy</code></h3>
+<p>Buy a card, voucher, or pack from the shop.</p>
+<p><strong>Parameters:</strong> (exactly one required)</p>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Required</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>card</code></td>
+<td>integer</td>
+<td>No</td>
+<td>0-based index of card to buy</td>
+</tr>
+<tr>
+<td><code>voucher</code></td>
+<td>integer</td>
+<td>No</td>
+<td>0-based index of voucher to buy</td>
+</tr>
+<tr>
+<td><code>pack</code></td>
+<td>integer</td>
+<td>No</td>
+<td>0-based index of pack to buy</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Returns:</strong> <a href="#gamestate-schema">GameState</a></p>
+<p><strong>Errors:</strong> <code>BAD_REQUEST</code>, <code>NOT_ALLOWED</code></p>
+<p><strong>Required State:</strong> <code>SHOP</code></p>
+<p><strong>Example:</strong></p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-17-1"><span class="c1"># Buy first card in shop</span>
+</span><span id="__span-17-2">curl<span class="w"> </span>-X<span class="w"> </span>POST<span class="w"> </span>http://127.0.0.1:12346<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-17-3"><span class="w">  </span>-H<span class="w"> </span><span class="s2">&quot;Content-Type: application/json&quot;</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-17-4"><span class="w">  </span>-d<span class="w"> </span><span class="s1">&#39;{&quot;jsonrpc&quot;: &quot;2.0&quot;, &quot;method&quot;: &quot;buy&quot;, &quot;params&quot;: {&quot;card&quot;: 0}, &quot;id&quot;: 1}&#39;</span>
+</span></code></pre></div>
+<hr />
+<h3 id="pack"><code>pack</code></h3>
+<p>Select a card or skip a pack from an opened booster pack.</p>
+<p>After buying a pack with <a href="#buy"><code>buy</code></a>, this method allows you to select a card from the pack or skip the selection. Different pack types behave differently:</p>
+<ul>
+<li><strong>Buffoon packs</strong>: Selected jokers are added to your joker slots</li>
+<li><strong>Standard packs</strong>: Selected playing cards are added to your deck</li>
+<li><strong>Arcana/Celestial/Spectral packs</strong>: Selected consumables are <strong>used immediately</strong></li>
+</ul>
+<p>Some Tarot and Spectral cards require you to select target cards from your hand (e.g., The Magician enhances 1-2 cards to Lucky).</p>
+<p><strong>Parameters:</strong> (exactly one required)</p>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Required</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>card</code></td>
+<td>integer</td>
+<td>No</td>
+<td>0-based index of card to select from pack</td>
+</tr>
+<tr>
+<td><code>targets</code></td>
+<td>integer[]</td>
+<td>No</td>
+<td>0-based indices of hand cards to target (for consumables that need them)</td>
+</tr>
+<tr>
+<td><code>skip</code></td>
+<td>boolean</td>
+<td>No</td>
+<td>Skip pack selection without choosing a card</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Returns:</strong> <a href="#gamestate-schema">GameState</a></p>
+<p><strong>Errors:</strong> <code>BAD_REQUEST</code>, <code>INVALID_STATE</code>, <code>NOT_ALLOWED</code></p>
+<p><strong>Required State:</strong> <code>SMODS_BOOSTER_OPENED</code></p>
+<p><strong>Examples:</strong></p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-18-1"><span class="c1"># Select first card from a Buffoon pack (adds joker to slots)</span>
+</span><span id="__span-18-2">curl<span class="w"> </span>-X<span class="w"> </span>POST<span class="w"> </span>http://127.0.0.1:12346<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-18-3"><span class="w">  </span>-H<span class="w"> </span><span class="s2">&quot;Content-Type: application/json&quot;</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-18-4"><span class="w">  </span>-d<span class="w"> </span><span class="s1">&#39;{&quot;jsonrpc&quot;: &quot;2.0&quot;, &quot;method&quot;: &quot;pack&quot;, &quot;params&quot;: {&quot;card&quot;: 0}, &quot;id&quot;: 1}&#39;</span>
+</span><span id="__span-18-5">
+</span><span id="__span-18-6"><span class="c1"># Select a Tarot card requiring targets (e.g., The Magician on 2 hand cards)</span>
+</span><span id="__span-18-7">curl<span class="w"> </span>-X<span class="w"> </span>POST<span class="w"> </span>http://127.0.0.1:12346<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-18-8"><span class="w">  </span>-H<span class="w"> </span><span class="s2">&quot;Content-Type: application/json&quot;</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-18-9"><span class="w">  </span>-d<span class="w"> </span><span class="s1">&#39;{&quot;jsonrpc&quot;: &quot;2.0&quot;, &quot;method&quot;: &quot;pack&quot;, &quot;params&quot;: {&quot;card&quot;: 0, &quot;targets&quot;: [0, 1]}, &quot;id&quot;: 1}&#39;</span>
+</span><span id="__span-18-10">
+</span><span id="__span-18-11"><span class="c1"># Skip pack selection</span>
+</span><span id="__span-18-12">curl<span class="w"> </span>-X<span class="w"> </span>POST<span class="w"> </span>http://127.0.0.1:12346<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-18-13"><span class="w">  </span>-H<span class="w"> </span><span class="s2">&quot;Content-Type: application/json&quot;</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-18-14"><span class="w">  </span>-d<span class="w"> </span><span class="s1">&#39;{&quot;jsonrpc&quot;: &quot;2.0&quot;, &quot;method&quot;: &quot;pack&quot;, &quot;params&quot;: {&quot;skip&quot;: true}, &quot;id&quot;: 1}&#39;</span>
+</span></code></pre></div>
+<hr />
+<h3 id="sell"><code>sell</code></h3>
+<p>Sell a joker or consumable.</p>
+<p><strong>Parameters:</strong> (exactly one required)</p>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Required</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>joker</code></td>
+<td>integer</td>
+<td>No</td>
+<td>0-based index of joker to sell</td>
+</tr>
+<tr>
+<td><code>consumable</code></td>
+<td>integer</td>
+<td>No</td>
+<td>0-based index of consumable to sell</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Returns:</strong> <a href="#gamestate-schema">GameState</a></p>
+<p><strong>Errors:</strong> <code>BAD_REQUEST</code>, <code>NOT_ALLOWED</code></p>
+<p><strong>Example:</strong></p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-19-1"><span class="c1"># Sell first joker</span>
+</span><span id="__span-19-2">curl<span class="w"> </span>-X<span class="w"> </span>POST<span class="w"> </span>http://127.0.0.1:12346<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-19-3"><span class="w">  </span>-H<span class="w"> </span><span class="s2">&quot;Content-Type: application/json&quot;</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-19-4"><span class="w">  </span>-d<span class="w"> </span><span class="s1">&#39;{&quot;jsonrpc&quot;: &quot;2.0&quot;, &quot;method&quot;: &quot;sell&quot;, &quot;params&quot;: {&quot;joker&quot;: 0}, &quot;id&quot;: 1}&#39;</span>
+</span></code></pre></div>
+<hr />
+<h3 id="reroll"><code>reroll</code></h3>
+<p>Reroll the shop items (costs money).</p>
+<p><strong>Returns:</strong> <a href="#gamestate-schema">GameState</a></p>
+<p><strong>Errors:</strong> <code>INVALID_STATE</code>, <code>NOT_ALLOWED</code></p>
+<p><strong>Required State:</strong> <code>SHOP</code></p>
+<p><strong>Example:</strong></p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-20-1">curl<span class="w"> </span>-X<span class="w"> </span>POST<span class="w"> </span>http://127.0.0.1:12346<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-20-2"><span class="w">  </span>-H<span class="w"> </span><span class="s2">&quot;Content-Type: application/json&quot;</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-20-3"><span class="w">  </span>-d<span class="w"> </span><span class="s1">&#39;{&quot;jsonrpc&quot;: &quot;2.0&quot;, &quot;method&quot;: &quot;reroll&quot;, &quot;id&quot;: 1}&#39;</span>
+</span></code></pre></div>
+<hr />
+<h3 id="cash_out"><code>cash_out</code></h3>
+<p>Cash out round rewards and transition to shop.</p>
+<p><strong>Returns:</strong> <a href="#gamestate-schema">GameState</a> (state will be <code>SHOP</code>)</p>
+<p><strong>Errors:</strong> <code>INVALID_STATE</code></p>
+<p><strong>Required State:</strong> <code>ROUND_EVAL</code></p>
+<p><strong>Example:</strong></p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-21-1">curl<span class="w"> </span>-X<span class="w"> </span>POST<span class="w"> </span>http://127.0.0.1:12346<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-21-2"><span class="w">  </span>-H<span class="w"> </span><span class="s2">&quot;Content-Type: application/json&quot;</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-21-3"><span class="w">  </span>-d<span class="w"> </span><span class="s1">&#39;{&quot;jsonrpc&quot;: &quot;2.0&quot;, &quot;method&quot;: &quot;cash_out&quot;, &quot;id&quot;: 1}&#39;</span>
+</span></code></pre></div>
+<hr />
+<h3 id="next_round"><code>next_round</code></h3>
+<p>Leave the shop and advance to blind selection.</p>
+<p><strong>Returns:</strong> <a href="#gamestate-schema">GameState</a> (state will be <code>BLIND_SELECT</code>)</p>
+<p><strong>Errors:</strong> <code>INVALID_STATE</code></p>
+<p><strong>Required State:</strong> <code>SHOP</code></p>
+<p><strong>Example:</strong></p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-22-1">curl<span class="w"> </span>-X<span class="w"> </span>POST<span class="w"> </span>http://127.0.0.1:12346<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-22-2"><span class="w">  </span>-H<span class="w"> </span><span class="s2">&quot;Content-Type: application/json&quot;</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-22-3"><span class="w">  </span>-d<span class="w"> </span><span class="s1">&#39;{&quot;jsonrpc&quot;: &quot;2.0&quot;, &quot;method&quot;: &quot;next_round&quot;, &quot;id&quot;: 1}&#39;</span>
+</span></code></pre></div>
+<hr />
+<h3 id="play"><code>play</code></h3>
+<p>Play cards from hand.</p>
+<p><strong>Parameters:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Required</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>cards</code></td>
+<td>integer[]</td>
+<td>Yes</td>
+<td>0-based indices of cards to play (1-5 cards)</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Returns:</strong> <a href="#gamestate-schema">GameState</a></p>
+<p><strong>Errors:</strong> <code>BAD_REQUEST</code></p>
+<p><strong>Required State:</strong> <code>SELECTING_HAND</code></p>
+<p><strong>Example:</strong></p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-23-1"><span class="c1"># Play cards at positions 0, 2, 4</span>
+</span><span id="__span-23-2">curl<span class="w"> </span>-X<span class="w"> </span>POST<span class="w"> </span>http://127.0.0.1:12346<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-23-3"><span class="w">  </span>-H<span class="w"> </span><span class="s2">&quot;Content-Type: application/json&quot;</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-23-4"><span class="w">  </span>-d<span class="w"> </span><span class="s1">&#39;{&quot;jsonrpc&quot;: &quot;2.0&quot;, &quot;method&quot;: &quot;play&quot;, &quot;params&quot;: {&quot;cards&quot;: [0, 2, 4]}, &quot;id&quot;: 1}&#39;</span>
+</span></code></pre></div>
+<hr />
+<h3 id="discard"><code>discard</code></h3>
+<p>Discard cards from hand.</p>
+<p><strong>Parameters:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Required</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>cards</code></td>
+<td>integer[]</td>
+<td>Yes</td>
+<td>0-based indices of cards to discard</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Returns:</strong> <a href="#gamestate-schema">GameState</a></p>
+<p><strong>Errors:</strong> <code>BAD_REQUEST</code></p>
+<p><strong>Required State:</strong> <code>SELECTING_HAND</code></p>
+<p><strong>Example:</strong></p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-24-1"><span class="c1"># Discard cards at positions 0 and 1</span>
+</span><span id="__span-24-2">curl<span class="w"> </span>-X<span class="w"> </span>POST<span class="w"> </span>http://127.0.0.1:12346<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-24-3"><span class="w">  </span>-H<span class="w"> </span><span class="s2">&quot;Content-Type: application/json&quot;</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-24-4"><span class="w">  </span>-d<span class="w"> </span><span class="s1">&#39;{&quot;jsonrpc&quot;: &quot;2.0&quot;, &quot;method&quot;: &quot;discard&quot;, &quot;params&quot;: {&quot;cards&quot;: [0, 1]}, &quot;id&quot;: 1}&#39;</span>
+</span></code></pre></div>
+<hr />
+<h3 id="rearrange"><code>rearrange</code></h3>
+<p>Rearrange cards in hand, jokers, or consumables.</p>
+<p><strong>Parameters:</strong> (exactly one required)</p>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Required</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>hand</code></td>
+<td>integer[]</td>
+<td>No</td>
+<td>New order of hand cards (permutation of current indices)</td>
+</tr>
+<tr>
+<td><code>jokers</code></td>
+<td>integer[]</td>
+<td>No</td>
+<td>New order of jokers</td>
+</tr>
+<tr>
+<td><code>consumables</code></td>
+<td>integer[]</td>
+<td>No</td>
+<td>New order of consumables</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Returns:</strong> <a href="#gamestate-schema">GameState</a></p>
+<p><strong>Errors:</strong> <code>BAD_REQUEST</code>, <code>INVALID_STATE</code>, <code>NOT_ALLOWED</code></p>
+<p><strong>Required State:</strong> Hand cards can be rearranged in <code>SELECTING_HAND</code> or <code>SMODS_BOOSTER_OPENED</code>. Jokers and consumables can be rearranged in <code>SHOP</code>, <code>SELECTING_HAND</code>, or <code>SMODS_BOOSTER_OPENED</code>.</p>
+<p><strong>Example:</strong></p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-25-1"><span class="c1"># Reverse a 5-card hand</span>
+</span><span id="__span-25-2">curl<span class="w"> </span>-X<span class="w"> </span>POST<span class="w"> </span>http://127.0.0.1:12346<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-25-3"><span class="w">  </span>-H<span class="w"> </span><span class="s2">&quot;Content-Type: application/json&quot;</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-25-4"><span class="w">  </span>-d<span class="w"> </span><span class="s1">&#39;{&quot;jsonrpc&quot;: &quot;2.0&quot;, &quot;method&quot;: &quot;rearrange&quot;, &quot;params&quot;: {&quot;hand&quot;: [4, 3, 2, 1, 0]}, &quot;id&quot;: 1}&#39;</span>
+</span></code></pre></div>
+<hr />
+<h3 id="use"><code>use</code></h3>
+<p>Use a consumable card.</p>
+<p><strong>Parameters:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Required</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>consumable</code></td>
+<td>integer</td>
+<td>Yes</td>
+<td>0-based index of consumable to use</td>
+</tr>
+<tr>
+<td><code>cards</code></td>
+<td>integer[]</td>
+<td>No</td>
+<td>0-based indices of target cards (for consumables that require selection)</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Returns:</strong> <a href="#gamestate-schema">GameState</a></p>
+<p><strong>Errors:</strong> <code>BAD_REQUEST</code>, <code>INVALID_STATE</code>, <code>NOT_ALLOWED</code></p>
+<p><strong>Example:</strong></p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-26-1"><span class="c1"># Use The Magician on cards 0 and 1</span>
+</span><span id="__span-26-2">curl<span class="w"> </span>-X<span class="w"> </span>POST<span class="w"> </span>http://127.0.0.1:12346<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-26-3"><span class="w">  </span>-H<span class="w"> </span><span class="s2">&quot;Content-Type: application/json&quot;</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-26-4"><span class="w">  </span>-d<span class="w"> </span><span class="s1">&#39;{&quot;jsonrpc&quot;: &quot;2.0&quot;, &quot;method&quot;: &quot;use&quot;, &quot;params&quot;: {&quot;consumable&quot;: 0, &quot;cards&quot;: [0, 1]}, &quot;id&quot;: 1}&#39;</span>
+</span></code></pre></div>
+<hr />
+<h3 id="add"><code>add</code></h3>
+<p>Add a card to the game (debug/testing). Supports jokers, consumables, vouchers, packs, and playing cards.</p>
+<p><strong>Parameters:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Required</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>key</code></td>
+<td>string</td>
+<td>Yes</td>
+<td><a href="#card-keys">Card key</a> (e.g., <code>j_joker</code>, <code>c_fool</code>, <code>p_arcana_normal_1</code>, <code>H_A</code>)</td>
+</tr>
+<tr>
+<td><code>seal</code></td>
+<td>string</td>
+<td>No</td>
+<td><a href="#card-modifier-seal">Seal</a> type (playing cards only)</td>
+</tr>
+<tr>
+<td><code>edition</code></td>
+<td>string</td>
+<td>No</td>
+<td><a href="#card-modifier-edition">Edition</a> type (not vouchers or packs)</td>
+</tr>
+<tr>
+<td><code>enhancement</code></td>
+<td>string</td>
+<td>No</td>
+<td><a href="#card-modifier-enhancement">Enhancement</a> type (playing cards only)</td>
+</tr>
+<tr>
+<td><code>eternal</code></td>
+<td>boolean</td>
+<td>No</td>
+<td>Cannot be sold/destroyed (jokers only)</td>
+</tr>
+<tr>
+<td><code>perishable</code></td>
+<td>integer</td>
+<td>No</td>
+<td>Rounds until perish (jokers only)</td>
+</tr>
+<tr>
+<td><code>rental</code></td>
+<td>boolean</td>
+<td>No</td>
+<td>Costs $1/round (jokers only)</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Returns:</strong> <a href="#gamestate-schema">GameState</a></p>
+<p><strong>Errors:</strong> <code>BAD_REQUEST</code>, <code>INVALID_STATE</code>, <code>NOT_ALLOWED</code></p>
+<p><strong>Required State:</strong> Vouchers and packs require <code>SHOP</code> state. Packs also require available booster slots.</p>
+<p><strong>Examples:</strong></p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-27-1"><span class="c1"># Add a Polychrome Joker</span>
+</span><span id="__span-27-2">curl<span class="w"> </span>-X<span class="w"> </span>POST<span class="w"> </span>http://127.0.0.1:12346<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-27-3"><span class="w">  </span>-H<span class="w"> </span><span class="s2">&quot;Content-Type: application/json&quot;</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-27-4"><span class="w">  </span>-d<span class="w"> </span><span class="s1">&#39;{&quot;jsonrpc&quot;: &quot;2.0&quot;, &quot;method&quot;: &quot;add&quot;, &quot;params&quot;: {&quot;key&quot;: &quot;j_joker&quot;, &quot;edition&quot;: &quot;POLYCHROME&quot;}, &quot;id&quot;: 1}&#39;</span>
+</span><span id="__span-27-5">
+</span><span id="__span-27-6"><span class="c1"># Add an Arcana Pack to the shop (requires SHOP state)</span>
+</span><span id="__span-27-7">curl<span class="w"> </span>-X<span class="w"> </span>POST<span class="w"> </span>http://127.0.0.1:12346<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-27-8"><span class="w">  </span>-H<span class="w"> </span><span class="s2">&quot;Content-Type: application/json&quot;</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-27-9"><span class="w">  </span>-d<span class="w"> </span><span class="s1">&#39;{&quot;jsonrpc&quot;: &quot;2.0&quot;, &quot;method&quot;: &quot;add&quot;, &quot;params&quot;: {&quot;key&quot;: &quot;p_arcana_normal_1&quot;}, &quot;id&quot;: 1}&#39;</span>
+</span></code></pre></div>
+<hr />
+<h3 id="screenshot"><code>screenshot</code></h3>
+<p>Take a screenshot of the game.</p>
+<p><strong>Parameters:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Required</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>path</code></td>
+<td>string</td>
+<td>Yes</td>
+<td>File path for PNG screenshot</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Returns:</strong> <code>{ "success": true, "path": "..." }</code></p>
+<p><strong>Errors:</strong> <code>INTERNAL_ERROR</code></p>
+<p><strong>Example:</strong></p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-28-1">curl<span class="w"> </span>-X<span class="w"> </span>POST<span class="w"> </span>http://127.0.0.1:12346<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-28-2"><span class="w">  </span>-H<span class="w"> </span><span class="s2">&quot;Content-Type: application/json&quot;</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-28-3"><span class="w">  </span>-d<span class="w"> </span><span class="s1">&#39;{&quot;jsonrpc&quot;: &quot;2.0&quot;, &quot;method&quot;: &quot;screenshot&quot;, &quot;params&quot;: {&quot;path&quot;: &quot;/tmp/screenshot.png&quot;}, &quot;id&quot;: 1}&#39;</span>
+</span></code></pre></div>
+<hr />
+<h3 id="set"><code>set</code></h3>
+<p>Set in-game values (debug/testing).</p>
+<p><strong>Parameters:</strong> (at least one required)</p>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Required</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>money</code></td>
+<td>integer</td>
+<td>No</td>
+<td>Set money amount</td>
+</tr>
+<tr>
+<td><code>chips</code></td>
+<td>integer</td>
+<td>No</td>
+<td>Set chips scored</td>
+</tr>
+<tr>
+<td><code>ante</code></td>
+<td>integer</td>
+<td>No</td>
+<td>Set ante number</td>
+</tr>
+<tr>
+<td><code>round</code></td>
+<td>integer</td>
+<td>No</td>
+<td>Set round number</td>
+</tr>
+<tr>
+<td><code>hands</code></td>
+<td>integer</td>
+<td>No</td>
+<td>Set hands remaining</td>
+</tr>
+<tr>
+<td><code>discards</code></td>
+<td>integer</td>
+<td>No</td>
+<td>Set discards remaining</td>
+</tr>
+<tr>
+<td><code>shop</code></td>
+<td>boolean</td>
+<td>No</td>
+<td>Re-stock shop (SHOP state only)</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Returns:</strong> <a href="#gamestate-schema">GameState</a></p>
+<p><strong>Errors:</strong> <code>BAD_REQUEST</code>, <code>INVALID_STATE</code>, <code>NOT_ALLOWED</code></p>
+<p><strong>Example:</strong></p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-29-1"><span class="c1"># Set money to 100 and hands to 5</span>
+</span><span id="__span-29-2">curl<span class="w"> </span>-X<span class="w"> </span>POST<span class="w"> </span>http://127.0.0.1:12346<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-29-3"><span class="w">  </span>-H<span class="w"> </span><span class="s2">&quot;Content-Type: application/json&quot;</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-29-4"><span class="w">  </span>-d<span class="w"> </span><span class="s1">&#39;{&quot;jsonrpc&quot;: &quot;2.0&quot;, &quot;method&quot;: &quot;set&quot;, &quot;params&quot;: {&quot;money&quot;: 100, &quot;hands&quot;: 5}, &quot;id&quot;: 1}&#39;</span>
+</span></code></pre></div>
+<hr />
+<h2 id="schemas">Schemas</h2>
+<h3 id="gamestate-schema">GameState Schema</h3>
+<p>The complete game state returned by most methods.</p>
+<div class="language-json highlight"><pre><span></span><code><span id="__span-30-1"><span class="p">{</span>
+</span><span id="__span-30-2"><span class="w">  </span><span class="nt">&quot;state&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;SELECTING_HAND&quot;</span><span class="p">,</span>
+</span><span id="__span-30-3"><span class="w">  </span><span class="nt">&quot;round_num&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span>
+</span><span id="__span-30-4"><span class="w">  </span><span class="nt">&quot;ante_num&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span>
+</span><span id="__span-30-5"><span class="w">  </span><span class="nt">&quot;money&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">4</span><span class="p">,</span>
+</span><span id="__span-30-6"><span class="w">  </span><span class="nt">&quot;deck&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;RED&quot;</span><span class="p">,</span>
+</span><span id="__span-30-7"><span class="w">  </span><span class="nt">&quot;stake&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;WHITE&quot;</span><span class="p">,</span>
+</span><span id="__span-30-8"><span class="w">  </span><span class="nt">&quot;seed&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;ABC123&quot;</span><span class="p">,</span>
+</span><span id="__span-30-9"><span class="w">  </span><span class="nt">&quot;won&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
+</span><span id="__span-30-10"><span class="w">  </span><span class="nt">&quot;used_vouchers&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{},</span>
+</span><span id="__span-30-11"><span class="w">  </span><span class="nt">&quot;hands&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="err">...</span><span class="w"> </span><span class="p">},</span>
+</span><span id="__span-30-12"><span class="w">  </span><span class="nt">&quot;round&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="err">...</span><span class="w"> </span><span class="p">},</span>
+</span><span id="__span-30-13"><span class="w">  </span><span class="nt">&quot;blinds&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="err">...</span><span class="w"> </span><span class="p">},</span>
+</span><span id="__span-30-14"><span class="w">  </span><span class="nt">&quot;jokers&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="err">...</span><span class="w"> </span><span class="p">},</span>
+</span><span id="__span-30-15"><span class="w">  </span><span class="nt">&quot;consumables&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="err">...</span><span class="w"> </span><span class="p">},</span>
+</span><span id="__span-30-16"><span class="w">  </span><span class="nt">&quot;cards&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="err">...</span><span class="w"> </span><span class="p">},</span>
+</span><span id="__span-30-17"><span class="w">  </span><span class="nt">&quot;hand&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="err">...</span><span class="w"> </span><span class="p">},</span>
+</span><span id="__span-30-18"><span class="w">  </span><span class="nt">&quot;shop&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="err">...</span><span class="w"> </span><span class="p">},</span>
+</span><span id="__span-30-19"><span class="w">  </span><span class="nt">&quot;vouchers&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="err">...</span><span class="w"> </span><span class="p">},</span>
+</span><span id="__span-30-20"><span class="w">  </span><span class="nt">&quot;packs&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="err">...</span><span class="w"> </span><span class="p">},</span>
+</span><span id="__span-30-21"><span class="w">  </span><span class="nt">&quot;pack&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="err">...</span><span class="w"> </span><span class="p">}</span>
+</span><span id="__span-30-22"><span class="p">}</span>
+</span></code></pre></div>
+<h3 id="area">Area</h3>
+<p>Represents a card area (hand, jokers, consumables, shop, etc.).</p>
+<div class="language-json highlight"><pre><span></span><code><span id="__span-31-1"><span class="p">{</span>
+</span><span id="__span-31-2"><span class="w">  </span><span class="nt">&quot;count&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">8</span><span class="p">,</span>
+</span><span id="__span-31-3"><span class="w">  </span><span class="nt">&quot;limit&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">8</span><span class="p">,</span>
+</span><span id="__span-31-4"><span class="w">  </span><span class="nt">&quot;highlighted_limit&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">5</span><span class="p">,</span>
+</span><span id="__span-31-5"><span class="w">  </span><span class="nt">&quot;cards&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w"> </span><span class="err">...</span><span class="w"> </span><span class="p">]</span>
+</span><span id="__span-31-6"><span class="p">}</span>
+</span></code></pre></div>
+<h3 id="card">Card</h3>
+<div class="language-json highlight"><pre><span></span><code><span id="__span-32-1"><span class="p">{</span>
+</span><span id="__span-32-2"><span class="w">  </span><span class="nt">&quot;id&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span>
+</span><span id="__span-32-3"><span class="w">  </span><span class="nt">&quot;key&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;H_A&quot;</span><span class="p">,</span>
+</span><span id="__span-32-4"><span class="w">  </span><span class="nt">&quot;set&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;DEFAULT&quot;</span><span class="p">,</span>
+</span><span id="__span-32-5"><span class="w">  </span><span class="nt">&quot;label&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Ace of Hearts&quot;</span><span class="p">,</span>
+</span><span id="__span-32-6"><span class="w">  </span><span class="nt">&quot;value&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-32-7"><span class="w">    </span><span class="nt">&quot;suit&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;H&quot;</span><span class="p">,</span>
+</span><span id="__span-32-8"><span class="w">    </span><span class="nt">&quot;rank&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;A&quot;</span><span class="p">,</span>
+</span><span id="__span-32-9"><span class="w">    </span><span class="nt">&quot;effect&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;...&quot;</span>
+</span><span id="__span-32-10"><span class="w">  </span><span class="p">},</span>
+</span><span id="__span-32-11"><span class="w">  </span><span class="nt">&quot;modifier&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-32-12"><span class="w">    </span><span class="nt">&quot;seal&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
+</span><span id="__span-32-13"><span class="w">    </span><span class="nt">&quot;edition&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
+</span><span id="__span-32-14"><span class="w">    </span><span class="nt">&quot;enhancement&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
+</span><span id="__span-32-15"><span class="w">    </span><span class="nt">&quot;eternal&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
+</span><span id="__span-32-16"><span class="w">    </span><span class="nt">&quot;perishable&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
+</span><span id="__span-32-17"><span class="w">    </span><span class="nt">&quot;rental&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span>
+</span><span id="__span-32-18"><span class="w">  </span><span class="p">},</span>
+</span><span id="__span-32-19"><span class="w">  </span><span class="nt">&quot;state&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-32-20"><span class="w">    </span><span class="nt">&quot;debuff&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
+</span><span id="__span-32-21"><span class="w">    </span><span class="nt">&quot;hidden&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
+</span><span id="__span-32-22"><span class="w">    </span><span class="nt">&quot;highlight&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span>
+</span><span id="__span-32-23"><span class="w">  </span><span class="p">},</span>
+</span><span id="__span-32-24"><span class="w">  </span><span class="nt">&quot;cost&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-32-25"><span class="w">    </span><span class="nt">&quot;sell&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span>
+</span><span id="__span-32-26"><span class="w">    </span><span class="nt">&quot;buy&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span>
+</span><span id="__span-32-27"><span class="w">  </span><span class="p">}</span>
+</span><span id="__span-32-28"><span class="p">}</span>
+</span></code></pre></div>
+<h3 id="round">Round</h3>
+<div class="language-json highlight"><pre><span></span><code><span id="__span-33-1"><span class="p">{</span>
+</span><span id="__span-33-2"><span class="w">  </span><span class="nt">&quot;hands_left&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">4</span><span class="p">,</span>
+</span><span id="__span-33-3"><span class="w">  </span><span class="nt">&quot;hands_played&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span>
+</span><span id="__span-33-4"><span class="w">  </span><span class="nt">&quot;discards_left&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">3</span><span class="p">,</span>
+</span><span id="__span-33-5"><span class="w">  </span><span class="nt">&quot;discards_used&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span>
+</span><span id="__span-33-6"><span class="w">  </span><span class="nt">&quot;reroll_cost&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">5</span><span class="p">,</span>
+</span><span id="__span-33-7"><span class="w">  </span><span class="nt">&quot;chips&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span>
+</span><span id="__span-33-8"><span class="p">}</span>
+</span></code></pre></div>
+<h3 id="blind">Blind</h3>
+<div class="language-json highlight"><pre><span></span><code><span id="__span-34-1"><span class="p">{</span>
+</span><span id="__span-34-2"><span class="w">  </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;SMALL&quot;</span><span class="p">,</span>
+</span><span id="__span-34-3"><span class="w">  </span><span class="nt">&quot;status&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;SELECT&quot;</span><span class="p">,</span>
+</span><span id="__span-34-4"><span class="w">  </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Small Blind&quot;</span><span class="p">,</span>
+</span><span id="__span-34-5"><span class="w">  </span><span class="nt">&quot;effect&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;No special effect&quot;</span><span class="p">,</span>
+</span><span id="__span-34-6"><span class="w">  </span><span class="nt">&quot;score&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">300</span><span class="p">,</span>
+</span><span id="__span-34-7"><span class="w">  </span><span class="nt">&quot;tag_name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Uncommon Tag&quot;</span><span class="p">,</span>
+</span><span id="__span-34-8"><span class="w">  </span><span class="nt">&quot;tag_effect&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Shop has a free Uncommon Joker&quot;</span>
+</span><span id="__span-34-9"><span class="p">}</span>
+</span></code></pre></div>
+<h3 id="hand-poker-hand-info">Hand (Poker Hand Info)</h3>
+<div class="language-json highlight"><pre><span></span><code><span id="__span-35-1"><span class="p">{</span>
+</span><span id="__span-35-2"><span class="w">  </span><span class="nt">&quot;order&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span>
+</span><span id="__span-35-3"><span class="w">  </span><span class="nt">&quot;level&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span>
+</span><span id="__span-35-4"><span class="w">  </span><span class="nt">&quot;chips&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">10</span><span class="p">,</span>
+</span><span id="__span-35-5"><span class="w">  </span><span class="nt">&quot;mult&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span>
+</span><span id="__span-35-6"><span class="w">  </span><span class="nt">&quot;played&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span>
+</span><span id="__span-35-7"><span class="w">  </span><span class="nt">&quot;played_this_round&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span>
+</span><span id="__span-35-8"><span class="w">  </span><span class="nt">&quot;example&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[[</span><span class="s2">&quot;H_A&quot;</span><span class="p">,</span><span class="w"> </span><span class="kc">true</span><span class="p">],</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;H_K&quot;</span><span class="p">,</span><span class="w"> </span><span class="kc">true</span><span class="p">]]</span>
+</span><span id="__span-35-9"><span class="p">}</span>
+</span></code></pre></div>
+<hr />
+<h2 id="enums">Enums</h2>
+<h3 id="deck">Deck</h3>
+<table>
+<thead>
+<tr>
+<th>Value</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>RED</code></td>
+<td>+1 discard every round</td>
+</tr>
+<tr>
+<td><code>BLUE</code></td>
+<td>+1 hand every round</td>
+</tr>
+<tr>
+<td><code>YELLOW</code></td>
+<td>Start with extra $10</td>
+</tr>
+<tr>
+<td><code>GREEN</code></td>
+<td>$2 per remaining Hand, $1 per remaining Discard (no interest)</td>
+</tr>
+<tr>
+<td><code>BLACK</code></td>
+<td>+1 Joker slot, -1 hand every round</td>
+</tr>
+<tr>
+<td><code>MAGIC</code></td>
+<td>Start with Crystal Ball voucher and 2 copies of The Fool</td>
+</tr>
+<tr>
+<td><code>NEBULA</code></td>
+<td>Start with Telescope voucher, -1 consumable slot</td>
+</tr>
+<tr>
+<td><code>GHOST</code></td>
+<td>Spectral cards may appear in shop, start with Hex card</td>
+</tr>
+<tr>
+<td><code>ABANDONED</code></td>
+<td>Start with no Face Cards</td>
+</tr>
+<tr>
+<td><code>CHECKERED</code></td>
+<td>Start with 26 Spades and 26 Hearts</td>
+</tr>
+<tr>
+<td><code>ZODIAC</code></td>
+<td>Start with Tarot Merchant, Planet Merchant, and Overstock</td>
+</tr>
+<tr>
+<td><code>PAINTED</code></td>
+<td>+2 hand size, -1 Joker slot</td>
+</tr>
+<tr>
+<td><code>ANAGLYPH</code></td>
+<td>Gain Double Tag after each Boss Blind</td>
+</tr>
+<tr>
+<td><code>PLASMA</code></td>
+<td>Balanced Chips/Mult, 2X base Blind size</td>
+</tr>
+<tr>
+<td><code>ERRATIC</code></td>
+<td>Randomized Ranks and Suits</td>
+</tr>
+</tbody>
+</table>
+<h3 id="stake">Stake</h3>
+<table>
+<thead>
+<tr>
+<th>Value</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>WHITE</code></td>
+<td>Base difficulty</td>
+</tr>
+<tr>
+<td><code>RED</code></td>
+<td>Small Blind gives no reward</td>
+</tr>
+<tr>
+<td><code>GREEN</code></td>
+<td>Required score scales faster</td>
+</tr>
+<tr>
+<td><code>BLACK</code></td>
+<td>Shop can have Eternal Jokers</td>
+</tr>
+<tr>
+<td><code>BLUE</code></td>
+<td>-1 Discard</td>
+</tr>
+<tr>
+<td><code>PURPLE</code></td>
+<td>Required score scales faster</td>
+</tr>
+<tr>
+<td><code>ORANGE</code></td>
+<td>Shop can have Perishable Jokers</td>
+</tr>
+<tr>
+<td><code>GOLD</code></td>
+<td>Shop can have Rental Jokers</td>
+</tr>
+</tbody>
+</table>
+<h3 id="card-value-suit">Card Value Suit</h3>
+<table>
+<thead>
+<tr>
+<th>Value</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>H</code></td>
+<td>Hearts</td>
+</tr>
+<tr>
+<td><code>D</code></td>
+<td>Diamonds</td>
+</tr>
+<tr>
+<td><code>C</code></td>
+<td>Clubs</td>
+</tr>
+<tr>
+<td><code>S</code></td>
+<td>Spades</td>
+</tr>
+</tbody>
+</table>
+<h3 id="card-value-rank">Card Value Rank</h3>
+<table>
+<thead>
+<tr>
+<th>Value</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>2</code></td>
+<td>Two</td>
+</tr>
+<tr>
+<td><code>3</code></td>
+<td>Three</td>
+</tr>
+<tr>
+<td><code>4</code></td>
+<td>Four</td>
+</tr>
+<tr>
+<td><code>5</code></td>
+<td>Five</td>
+</tr>
+<tr>
+<td><code>6</code></td>
+<td>Six</td>
+</tr>
+<tr>
+<td><code>7</code></td>
+<td>Seven</td>
+</tr>
+<tr>
+<td><code>8</code></td>
+<td>Eight</td>
+</tr>
+<tr>
+<td><code>9</code></td>
+<td>Nine</td>
+</tr>
+<tr>
+<td><code>T</code></td>
+<td>Ten</td>
+</tr>
+<tr>
+<td><code>J</code></td>
+<td>Jack</td>
+</tr>
+<tr>
+<td><code>Q</code></td>
+<td>Queen</td>
+</tr>
+<tr>
+<td><code>K</code></td>
+<td>King</td>
+</tr>
+<tr>
+<td><code>A</code></td>
+<td>Ace</td>
+</tr>
+</tbody>
+</table>
+<h3 id="card-set">Card Set</h3>
+<table>
+<thead>
+<tr>
+<th>Value</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>DEFAULT</code></td>
+<td>Playing card</td>
+</tr>
+<tr>
+<td><code>ENHANCED</code></td>
+<td>Playing card with enhancement</td>
+</tr>
+<tr>
+<td><code>JOKER</code></td>
+<td>Joker card</td>
+</tr>
+<tr>
+<td><code>TAROT</code></td>
+<td>Tarot consumable</td>
+</tr>
+<tr>
+<td><code>PLANET</code></td>
+<td>Planet consumable</td>
+</tr>
+<tr>
+<td><code>SPECTRAL</code></td>
+<td>Spectral consumable</td>
+</tr>
+<tr>
+<td><code>VOUCHER</code></td>
+<td>Voucher</td>
+</tr>
+<tr>
+<td><code>BOOSTER</code></td>
+<td>Booster pack</td>
+</tr>
+</tbody>
+</table>
+<h3 id="card-modifier-seal">Card Modifier Seal</h3>
+<table>
+<thead>
+<tr>
+<th>Value</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>RED</code></td>
+<td>Retrigger card 1 time</td>
+</tr>
+<tr>
+<td><code>BLUE</code></td>
+<td>Creates Planet card for final hand if held</td>
+</tr>
+<tr>
+<td><code>GOLD</code></td>
+<td>Earn $3 when scored</td>
+</tr>
+<tr>
+<td><code>PURPLE</code></td>
+<td>Creates Tarot when discarded</td>
+</tr>
+</tbody>
+</table>
+<h3 id="card-modifier-edition">Card Modifier Edition</h3>
+<table>
+<thead>
+<tr>
+<th>Value</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>FOIL</code></td>
+<td>+50 Chips</td>
+</tr>
+<tr>
+<td><code>HOLO</code></td>
+<td>+10 Mult</td>
+</tr>
+<tr>
+<td><code>POLYCHROME</code></td>
+<td>X1.5 Mult</td>
+</tr>
+<tr>
+<td><code>NEGATIVE</code></td>
+<td>+1 slot (jokers/consumables only)</td>
+</tr>
+</tbody>
+</table>
+<h3 id="card-modifier-enhancement">Card Modifier Enhancement</h3>
+<table>
+<thead>
+<tr>
+<th>Value</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>BONUS</code></td>
+<td>+30 Chips when scored</td>
+</tr>
+<tr>
+<td><code>MULT</code></td>
+<td>+4 Mult when scored</td>
+</tr>
+<tr>
+<td><code>WILD</code></td>
+<td>Counts as every suit</td>
+</tr>
+<tr>
+<td><code>GLASS</code></td>
+<td>X2 Mult when scored</td>
+</tr>
+<tr>
+<td><code>STEEL</code></td>
+<td>X1.5 Mult while held</td>
+</tr>
+<tr>
+<td><code>STONE</code></td>
+<td>+50 Chips (no rank/suit)</td>
+</tr>
+<tr>
+<td><code>GOLD</code></td>
+<td>$3 if held at end of round</td>
+</tr>
+<tr>
+<td><code>LUCKY</code></td>
+<td>1/5 chance +20 Mult, 1/15 chance $20</td>
+</tr>
+</tbody>
+</table>
+<h3 id="blind-type">Blind Type</h3>
+<table>
+<thead>
+<tr>
+<th>Value</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>SMALL</code></td>
+<td>Can be skipped for a Tag</td>
+</tr>
+<tr>
+<td><code>BIG</code></td>
+<td>Can be skipped for a Tag</td>
+</tr>
+<tr>
+<td><code>BOSS</code></td>
+<td>Cannot be skipped, has special effect</td>
+</tr>
+</tbody>
+</table>
+<h3 id="blind-status">Blind Status</h3>
+<table>
+<thead>
+<tr>
+<th>Value</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>SELECT</code></td>
+<td>Can be selected</td>
+</tr>
+<tr>
+<td><code>CURRENT</code></td>
+<td>Currently active</td>
+</tr>
+<tr>
+<td><code>UPCOMING</code></td>
+<td>Future blind</td>
+</tr>
+<tr>
+<td><code>DEFEATED</code></td>
+<td>Previously beaten</td>
+</tr>
+<tr>
+<td><code>SKIPPED</code></td>
+<td>Previously skipped</td>
+</tr>
+</tbody>
+</table>
+<h3 id="card-keys">Card Keys</h3>
+<p>Card keys are used with the <code>add</code> method and appear in the <code>key</code> field of Card objects.</p>
+<h4 id="tarot-cards">Tarot Cards</h4>
+<p>Consumables that enhance playing cards, change suits, generate other cards, or provide money. Keys use prefix <code>c_</code> followed by the card name (e.g., <code>c_fool</code>, <code>c_magician</code>). 22 cards total.</p>
+<table>
+<thead>
+<tr>
+<th>Key</th>
+<th>Effect</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>c_fool</code></td>
+<td>Creates the last Tarot or Planet card used during this run (The Fool excluded)</td>
+</tr>
+<tr>
+<td><code>c_magician</code></td>
+<td>Enhances 2 selected cards to Lucky Cards</td>
+</tr>
+<tr>
+<td><code>c_high_priestess</code></td>
+<td>Creates up to 2 random Planet cards (Must have room)</td>
+</tr>
+<tr>
+<td><code>c_empress</code></td>
+<td>Enhances 2 selected cards to Mult Cards</td>
+</tr>
+<tr>
+<td><code>c_emperor</code></td>
+<td>Creates up to 2 random Tarot cards (Must have room)</td>
+</tr>
+<tr>
+<td><code>c_heirophant</code></td>
+<td>Enhances 2 selected cards to Bonus Cards</td>
+</tr>
+<tr>
+<td><code>c_lovers</code></td>
+<td>Enhances 1 selected card into a Wild Card</td>
+</tr>
+<tr>
+<td><code>c_chariot</code></td>
+<td>Enhances 1 selected card into a Steel Card</td>
+</tr>
+<tr>
+<td><code>c_justice</code></td>
+<td>Enhances 1 selected card into a Glass Card</td>
+</tr>
+<tr>
+<td><code>c_hermit</code></td>
+<td>Doubles money (Max of $20)</td>
+</tr>
+<tr>
+<td><code>c_wheel_of_fortune</code></td>
+<td>1 in 4 chance to add Foil, Holographic, or Polychrome edition to a random Joker</td>
+</tr>
+<tr>
+<td><code>c_strength</code></td>
+<td>Increases rank of up to 2 selected cards by 1</td>
+</tr>
+<tr>
+<td><code>c_hanged_man</code></td>
+<td>Destroys up to 2 selected cards</td>
+</tr>
+<tr>
+<td><code>c_death</code></td>
+<td>Select 2 cards, convert the left card into the right card</td>
+</tr>
+<tr>
+<td><code>c_temperance</code></td>
+<td>Gives the total sell value of all current Jokers (Max of $50)</td>
+</tr>
+<tr>
+<td><code>c_devil</code></td>
+<td>Enhances 1 selected card into a Gold Card</td>
+</tr>
+<tr>
+<td><code>c_tower</code></td>
+<td>Enhances 1 selected card into a Stone Card</td>
+</tr>
+<tr>
+<td><code>c_star</code></td>
+<td>Converts up to 3 selected cards to Diamonds</td>
+</tr>
+<tr>
+<td><code>c_moon</code></td>
+<td>Converts up to 3 selected cards to Clubs</td>
+</tr>
+<tr>
+<td><code>c_sun</code></td>
+<td>Converts up to 3 selected cards to Hearts</td>
+</tr>
+<tr>
+<td><code>c_judgement</code></td>
+<td>Creates a random Joker card (Must have room)</td>
+</tr>
+<tr>
+<td><code>c_world</code></td>
+<td>Converts up to 3 selected cards to Spades</td>
+</tr>
+</tbody>
+</table>
+<h4 id="planet-cards">Planet Cards</h4>
+<p>Consumables that upgrade poker hand levels, increasing their base Chips and Mult. Keys use prefix <code>c_</code> followed by planet names (e.g., <code>c_mercury</code>, <code>c_pluto</code>). 12 cards total.</p>
+<table>
+<thead>
+<tr>
+<th>Key</th>
+<th>Effect</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>c_mercury</code></td>
+<td>Increases Pair hand value by +1 Mult and +15 Chips</td>
+</tr>
+<tr>
+<td><code>c_venus</code></td>
+<td>Increases Three of a Kind hand value by +2 Mult and +20 Chips</td>
+</tr>
+<tr>
+<td><code>c_earth</code></td>
+<td>Increases Full House hand value by +2 Mult and +25 Chips</td>
+</tr>
+<tr>
+<td><code>c_mars</code></td>
+<td>Increases Four of a Kind hand value by +3 Mult and +30 Chips</td>
+</tr>
+<tr>
+<td><code>c_jupiter</code></td>
+<td>Increases Flush hand value by +2 Mult and +15 Chips</td>
+</tr>
+<tr>
+<td><code>c_saturn</code></td>
+<td>Increases Straight hand value by +3 Mult and +30 Chips</td>
+</tr>
+<tr>
+<td><code>c_uranus</code></td>
+<td>Increases Two Pair hand value by +1 Mult and +20 Chips</td>
+</tr>
+<tr>
+<td><code>c_neptune</code></td>
+<td>Increases Straight Flush hand value by +4 Mult and +40 Chips</td>
+</tr>
+<tr>
+<td><code>c_pluto</code></td>
+<td>Increases High Card hand value by +1 Mult and +10 Chips</td>
+</tr>
+<tr>
+<td><code>c_planet_x</code></td>
+<td>Increases Five of a Kind hand value by +3 Mult and +35 Chips</td>
+</tr>
+<tr>
+<td><code>c_ceres</code></td>
+<td>Increases Flush House hand value by +4 Mult and +40 Chips</td>
+</tr>
+<tr>
+<td><code>c_eris</code></td>
+<td>Increases Flush Five hand value by +3 Mult and +50 Chips</td>
+</tr>
+</tbody>
+</table>
+<h4 id="spectral-cards">Spectral Cards</h4>
+<p>Rare consumables with powerful effects that often come with drawbacks. Can add seals, editions, copy cards, or destroy cards. Keys use prefix <code>c_</code> (e.g., <code>c_familiar</code>, <code>c_hex</code>). 18 cards total.</p>
+<table>
+<thead>
+<tr>
+<th>Key</th>
+<th>Effect</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>c_familiar</code></td>
+<td>Destroy 1 random card in hand, add 3 random Enhanced face cards</td>
+</tr>
+<tr>
+<td><code>c_grim</code></td>
+<td>Destroy 1 random card in hand, add 2 random Enhanced Aces</td>
+</tr>
+<tr>
+<td><code>c_incantation</code></td>
+<td>Destroy 1 random card in hand, add 4 random Enhanced numbered cards</td>
+</tr>
+<tr>
+<td><code>c_talisman</code></td>
+<td>Add a Gold Seal to 1 selected card</td>
+</tr>
+<tr>
+<td><code>c_aura</code></td>
+<td>Add Foil, Holographic, or Polychrome effect to 1 selected card</td>
+</tr>
+<tr>
+<td><code>c_wraith</code></td>
+<td>Creates a random Rare Joker, sets money to $0</td>
+</tr>
+<tr>
+<td><code>c_sigil</code></td>
+<td>Converts all cards in hand to a single random suit</td>
+</tr>
+<tr>
+<td><code>c_ouija</code></td>
+<td>Converts all cards in hand to a single random rank (-1 hand size)</td>
+</tr>
+<tr>
+<td><code>c_ectoplasm</code></td>
+<td>Add Negative to a random Joker, -1 hand size</td>
+</tr>
+<tr>
+<td><code>c_immolate</code></td>
+<td>Destroys 5 random cards in hand, gain $20</td>
+</tr>
+<tr>
+<td><code>c_ankh</code></td>
+<td>Create a copy of a random Joker, destroy all other Jokers</td>
+</tr>
+<tr>
+<td><code>c_deja_vu</code></td>
+<td>Add a Red Seal to 1 selected card</td>
+</tr>
+<tr>
+<td><code>c_hex</code></td>
+<td>Add Polychrome to a random Joker, destroy all other Jokers</td>
+</tr>
+<tr>
+<td><code>c_trance</code></td>
+<td>Add a Blue Seal to 1 selected card</td>
+</tr>
+<tr>
+<td><code>c_medium</code></td>
+<td>Add a Purple Seal to 1 selected card</td>
+</tr>
+<tr>
+<td><code>c_cryptid</code></td>
+<td>Create 2 copies of 1 selected card</td>
+</tr>
+<tr>
+<td><code>c_soul</code></td>
+<td>Creates a Legendary Joker (Must have room)</td>
+</tr>
+<tr>
+<td><code>c_black_hole</code></td>
+<td>Upgrade every poker hand by 1 level</td>
+</tr>
+</tbody>
+</table>
+<h4 id="joker-cards">Joker Cards</h4>
+<p>Persistent cards that provide scoring bonuses, triggered abilities, or passive effects throughout a run. Keys use prefix <code>j_</code> followed by the joker name (e.g., <code>j_joker</code>, <code>j_blueprint</code>). 150 cards total.</p>
+<table>
+<thead>
+<tr>
+<th>Key</th>
+<th>Effect</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>j_joker</code></td>
+<td>+4 Mult</td>
+</tr>
+<tr>
+<td><code>j_greedy_joker</code></td>
+<td>Played Diamond cards give +3 Mult when scored</td>
+</tr>
+<tr>
+<td><code>j_lusty_joker</code></td>
+<td>Played Heart cards give +3 Mult when scored</td>
+</tr>
+<tr>
+<td><code>j_wrathful_joker</code></td>
+<td>Played Spade cards give +3 Mult when scored</td>
+</tr>
+<tr>
+<td><code>j_gluttenous_joker</code></td>
+<td>Played Club cards give +3 Mult when scored</td>
+</tr>
+<tr>
+<td><code>j_jolly</code></td>
+<td>+8 Mult if played hand contains a Pair</td>
+</tr>
+<tr>
+<td><code>j_zany</code></td>
+<td>+12 Mult if played hand contains a Three of a Kind</td>
+</tr>
+<tr>
+<td><code>j_mad</code></td>
+<td>+10 Mult if played hand contains a Two Pair</td>
+</tr>
+<tr>
+<td><code>j_crazy</code></td>
+<td>+12 Mult if played hand contains a Straight</td>
+</tr>
+<tr>
+<td><code>j_droll</code></td>
+<td>+10 Mult if played hand contains a Flush</td>
+</tr>
+<tr>
+<td><code>j_sly</code></td>
+<td>+50 Chips if played hand contains a Pair</td>
+</tr>
+<tr>
+<td><code>j_wily</code></td>
+<td>+100 Chips if played hand contains a Three of a Kind</td>
+</tr>
+<tr>
+<td><code>j_clever</code></td>
+<td>+80 Chips if played hand contains a Two Pair</td>
+</tr>
+<tr>
+<td><code>j_devious</code></td>
+<td>+100 Chips if played hand contains a Straight</td>
+</tr>
+<tr>
+<td><code>j_crafty</code></td>
+<td>+80 Chips if played hand contains a Flush</td>
+</tr>
+<tr>
+<td><code>j_half</code></td>
+<td>+20 Mult if played hand contains 3 or fewer cards</td>
+</tr>
+<tr>
+<td><code>j_stencil</code></td>
+<td>X1 Mult for each empty Joker slot</td>
+</tr>
+<tr>
+<td><code>j_four_fingers</code></td>
+<td>All Flushes and Straights can be made with 4 cards</td>
+</tr>
+<tr>
+<td><code>j_mime</code></td>
+<td>Retrigger all cards held in hand abilities</td>
+</tr>
+<tr>
+<td><code>j_credit_card</code></td>
+<td>Go up to -$20 in debt</td>
+</tr>
+<tr>
+<td><code>j_ceremonial</code></td>
+<td>When Blind is selected, destroy Joker to the right and add double its sell value to Mult</td>
+</tr>
+<tr>
+<td><code>j_banner</code></td>
+<td>+30 Chips for each remaining discard</td>
+</tr>
+<tr>
+<td><code>j_mystic_summit</code></td>
+<td>+15 Mult when 0 discards remaining</td>
+</tr>
+<tr>
+<td><code>j_marble</code></td>
+<td>Adds one Stone card to the deck when Blind is selected</td>
+</tr>
+<tr>
+<td><code>j_loyalty_card</code></td>
+<td>X4 Mult every 6 hands played</td>
+</tr>
+<tr>
+<td><code>j_8_ball</code></td>
+<td>1 in 4 chance for each played 8 to create a Tarot card when scored</td>
+</tr>
+<tr>
+<td><code>j_misprint</code></td>
+<td>+0-23 Mult</td>
+</tr>
+<tr>
+<td><code>j_dusk</code></td>
+<td>Retrigger all played cards in final hand of the round</td>
+</tr>
+<tr>
+<td><code>j_raised_fist</code></td>
+<td>Adds double the rank of lowest ranked card held in hand to Mult</td>
+</tr>
+<tr>
+<td><code>j_chaos</code></td>
+<td>1 free Reroll per shop</td>
+</tr>
+<tr>
+<td><code>j_fibonacci</code></td>
+<td>Each played Ace, 2, 3, 5, or 8 gives +8 Mult when scored</td>
+</tr>
+<tr>
+<td><code>j_steel_joker</code></td>
+<td>Gives X0.2 Mult for each Steel Card in your full deck</td>
+</tr>
+<tr>
+<td><code>j_scary_face</code></td>
+<td>Played face cards give +30 Chips when scored</td>
+</tr>
+<tr>
+<td><code>j_abstract</code></td>
+<td>+3 Mult for each Joker card</td>
+</tr>
+<tr>
+<td><code>j_delayed_grat</code></td>
+<td>Earn $2 per discard if no discards are used by end of the round</td>
+</tr>
+<tr>
+<td><code>j_hack</code></td>
+<td>Retrigger each played 2, 3, 4, or 5</td>
+</tr>
+<tr>
+<td><code>j_pareidolia</code></td>
+<td>All cards are considered face cards</td>
+</tr>
+<tr>
+<td><code>j_gros_michel</code></td>
+<td>+15 Mult, 1 in 6 chance this is destroyed at end of round</td>
+</tr>
+<tr>
+<td><code>j_even_steven</code></td>
+<td>Played cards with even rank give +4 Mult when scored</td>
+</tr>
+<tr>
+<td><code>j_odd_todd</code></td>
+<td>Played cards with odd rank give +31 Chips when scored</td>
+</tr>
+<tr>
+<td><code>j_scholar</code></td>
+<td>Played Aces give +20 Chips and +4 Mult when scored</td>
+</tr>
+<tr>
+<td><code>j_business</code></td>
+<td>Played face cards have a 1 in 2 chance to give $2 when scored</td>
+</tr>
+<tr>
+<td><code>j_supernova</code></td>
+<td>Adds the number of times poker hand has been played this run to Mult</td>
+</tr>
+<tr>
+<td><code>j_ride_the_bus</code></td>
+<td>Gains +1 Mult per consecutive hand played without a scoring face card</td>
+</tr>
+<tr>
+<td><code>j_space</code></td>
+<td>1 in 4 chance to upgrade level of played poker hand</td>
+</tr>
+<tr>
+<td><code>j_egg</code></td>
+<td>Gains $3 of sell value at end of round</td>
+</tr>
+<tr>
+<td><code>j_burglar</code></td>
+<td>When Blind is selected, gain +3 Hands and lose all discards</td>
+</tr>
+<tr>
+<td><code>j_blackboard</code></td>
+<td>X3 Mult if all cards held in hand are Spades or Clubs</td>
+</tr>
+<tr>
+<td><code>j_runner</code></td>
+<td>Gains +15 Chips if played hand contains a Straight</td>
+</tr>
+<tr>
+<td><code>j_ice_cream</code></td>
+<td>+100 Chips, -5 Chips for every hand played</td>
+</tr>
+<tr>
+<td><code>j_dna</code></td>
+<td>If first hand of round has only 1 card, add a permanent copy to deck</td>
+</tr>
+<tr>
+<td><code>j_splash</code></td>
+<td>Every played card counts in scoring</td>
+</tr>
+<tr>
+<td><code>j_blue_joker</code></td>
+<td>+2 Chips for each remaining card in deck</td>
+</tr>
+<tr>
+<td><code>j_sixth_sense</code></td>
+<td>If first hand of round is a single 6, destroy it and create a Spectral card</td>
+</tr>
+<tr>
+<td><code>j_constellation</code></td>
+<td>Gains X0.1 Mult every time a Planet card is used</td>
+</tr>
+<tr>
+<td><code>j_hiker</code></td>
+<td>Every played card permanently gains +5 Chips when scored</td>
+</tr>
+<tr>
+<td><code>j_faceless</code></td>
+<td>Earn $5 if 3 or more face cards are discarded at the same time</td>
+</tr>
+<tr>
+<td><code>j_green_joker</code></td>
+<td>+1 Mult per hand played, -1 Mult per discard</td>
+</tr>
+<tr>
+<td><code>j_superposition</code></td>
+<td>Create a Tarot card if poker hand contains an Ace and a Straight</td>
+</tr>
+<tr>
+<td><code>j_todo_list</code></td>
+<td>Earn $4 if poker hand is a specific hand, changes at end of round</td>
+</tr>
+<tr>
+<td><code>j_cavendish</code></td>
+<td>X3 Mult, 1 in 1000 chance this card is destroyed at end of round</td>
+</tr>
+<tr>
+<td><code>j_card_sharp</code></td>
+<td>X3 Mult if played poker hand has already been played this round</td>
+</tr>
+<tr>
+<td><code>j_red_card</code></td>
+<td>Gains +3 Mult when any Booster Pack is skipped</td>
+</tr>
+<tr>
+<td><code>j_madness</code></td>
+<td>When Small/Big Blind is selected, gain X0.5 Mult and destroy a random Joker</td>
+</tr>
+<tr>
+<td><code>j_square</code></td>
+<td>Gains +4 Chips if played hand has exactly 4 cards</td>
+</tr>
+<tr>
+<td><code>j_seance</code></td>
+<td>If poker hand is a Straight Flush, create a random Spectral card</td>
+</tr>
+<tr>
+<td><code>j_riff_raff</code></td>
+<td>When Blind is selected, create 2 Common Jokers</td>
+</tr>
+<tr>
+<td><code>j_vampire</code></td>
+<td>Gains X0.1 Mult per scoring Enhanced card played, removes Enhancement</td>
+</tr>
+<tr>
+<td><code>j_shortcut</code></td>
+<td>Allows Straights to be made with gaps of 1 rank</td>
+</tr>
+<tr>
+<td><code>j_hologram</code></td>
+<td>Gains X0.25 Mult every time a playing card is added to your deck</td>
+</tr>
+<tr>
+<td><code>j_vagabond</code></td>
+<td>Create a Tarot card if hand is played with $4 or less</td>
+</tr>
+<tr>
+<td><code>j_baron</code></td>
+<td>Each King held in hand gives X1.5 Mult</td>
+</tr>
+<tr>
+<td><code>j_cloud_9</code></td>
+<td>Earn $1 for each 9 in your full deck at end of round</td>
+</tr>
+<tr>
+<td><code>j_rocket</code></td>
+<td>Earn $1 at end of round, payout increases by $2 when Boss Blind is defeated</td>
+</tr>
+<tr>
+<td><code>j_obelisk</code></td>
+<td>Gains X0.2 Mult per consecutive hand without playing most played hand</td>
+</tr>
+<tr>
+<td><code>j_midas_mask</code></td>
+<td>All played face cards become Gold cards when scored</td>
+</tr>
+<tr>
+<td><code>j_luchador</code></td>
+<td>Sell this card to disable the current Boss Blind</td>
+</tr>
+<tr>
+<td><code>j_photograph</code></td>
+<td>First played face card gives X2 Mult when scored</td>
+</tr>
+<tr>
+<td><code>j_gift</code></td>
+<td>Add $1 of sell value to every Joker and Consumable at end of round</td>
+</tr>
+<tr>
+<td><code>j_turtle_bean</code></td>
+<td>+5 hand size, reduces by 1 each round</td>
+</tr>
+<tr>
+<td><code>j_erosion</code></td>
+<td>+4 Mult for each card below deck's starting size</td>
+</tr>
+<tr>
+<td><code>j_reserved_parking</code></td>
+<td>Each face card held in hand has a 1 in 2 chance to give $1</td>
+</tr>
+<tr>
+<td><code>j_mail</code></td>
+<td>Earn $5 for each discarded card of a specific rank, changes every round</td>
+</tr>
+<tr>
+<td><code>j_to_the_moon</code></td>
+<td>Earn an extra $1 of interest for every $5 at end of round</td>
+</tr>
+<tr>
+<td><code>j_hallucination</code></td>
+<td>1 in 2 chance to create a Tarot card when any Booster Pack is opened</td>
+</tr>
+<tr>
+<td><code>j_fortune_teller</code></td>
+<td>+1 Mult per Tarot card used this run</td>
+</tr>
+<tr>
+<td><code>j_juggler</code></td>
+<td>+1 hand size</td>
+</tr>
+<tr>
+<td><code>j_drunkard</code></td>
+<td>+1 discard each round</td>
+</tr>
+<tr>
+<td><code>j_stone</code></td>
+<td>Gives +25 Chips for each Stone Card in your full deck</td>
+</tr>
+<tr>
+<td><code>j_golden</code></td>
+<td>Earn $4 at end of round</td>
+</tr>
+<tr>
+<td><code>j_lucky_cat</code></td>
+<td>Gains X0.25 Mult every time a Lucky card successfully triggers</td>
+</tr>
+<tr>
+<td><code>j_baseball</code></td>
+<td>Uncommon Jokers each give X1.5 Mult</td>
+</tr>
+<tr>
+<td><code>j_bull</code></td>
+<td>+2 Chips for each $1 you have</td>
+</tr>
+<tr>
+<td><code>j_diet_cola</code></td>
+<td>Sell this card to create a free Double Tag</td>
+</tr>
+<tr>
+<td><code>j_trading</code></td>
+<td>If first discard of round has only 1 card, destroy it and earn $3</td>
+</tr>
+<tr>
+<td><code>j_flash</code></td>
+<td>Gains +2 Mult per reroll in the shop</td>
+</tr>
+<tr>
+<td><code>j_popcorn</code></td>
+<td>+20 Mult, -4 Mult per round played</td>
+</tr>
+<tr>
+<td><code>j_trousers</code></td>
+<td>Gains +2 Mult if played hand contains a Two Pair</td>
+</tr>
+<tr>
+<td><code>j_ancient</code></td>
+<td>Each played card with specific suit gives X1.5 Mult, suit changes at end of round</td>
+</tr>
+<tr>
+<td><code>j_ramen</code></td>
+<td>X2 Mult, loses X0.01 Mult per card discarded</td>
+</tr>
+<tr>
+<td><code>j_walkie_talkie</code></td>
+<td>Each played 10 or 4 gives +10 Chips and +4 Mult when scored</td>
+</tr>
+<tr>
+<td><code>j_selzer</code></td>
+<td>Retrigger all cards played for the next 10 hands</td>
+</tr>
+<tr>
+<td><code>j_castle</code></td>
+<td>Gains +3 Chips per discarded card of specific suit, changes every round</td>
+</tr>
+<tr>
+<td><code>j_smiley</code></td>
+<td>Played face cards give +5 Mult when scored</td>
+</tr>
+<tr>
+<td><code>j_campfire</code></td>
+<td>Gains X0.25 Mult for each card sold, resets when Boss Blind is defeated</td>
+</tr>
+<tr>
+<td><code>j_ticket</code></td>
+<td>Played Gold cards earn $4 when scored</td>
+</tr>
+<tr>
+<td><code>j_mr_bones</code></td>
+<td>Prevents Death if chips scored are at least 25% of required, self destructs</td>
+</tr>
+<tr>
+<td><code>j_acrobat</code></td>
+<td>X3 Mult on final hand of round</td>
+</tr>
+<tr>
+<td><code>j_sock_and_buskin</code></td>
+<td>Retrigger all played face cards</td>
+</tr>
+<tr>
+<td><code>j_swashbuckler</code></td>
+<td>Adds the sell value of all other owned Jokers to Mult</td>
+</tr>
+<tr>
+<td><code>j_troubadour</code></td>
+<td>+2 hand size, -1 hand each round</td>
+</tr>
+<tr>
+<td><code>j_certificate</code></td>
+<td>When round begins, add a random playing card with a random seal to hand</td>
+</tr>
+<tr>
+<td><code>j_smeared</code></td>
+<td>Hearts/Diamonds count as same suit, Spades/Clubs count as same suit</td>
+</tr>
+<tr>
+<td><code>j_throwback</code></td>
+<td>X0.25 Mult for each Blind skipped this run</td>
+</tr>
+<tr>
+<td><code>j_hanging_chad</code></td>
+<td>Retrigger first played card used in scoring 2 additional times</td>
+</tr>
+<tr>
+<td><code>j_rough_gem</code></td>
+<td>Played Diamond cards earn $1 when scored</td>
+</tr>
+<tr>
+<td><code>j_bloodstone</code></td>
+<td>1 in 2 chance for played Heart cards to give X1.5 Mult when scored</td>
+</tr>
+<tr>
+<td><code>j_arrowhead</code></td>
+<td>Played Spade cards give +50 Chips when scored</td>
+</tr>
+<tr>
+<td><code>j_onyx_agate</code></td>
+<td>Played Club cards give +7 Mult when scored</td>
+</tr>
+<tr>
+<td><code>j_glass</code></td>
+<td>Gains X0.75 Mult for every Glass Card that is destroyed</td>
+</tr>
+<tr>
+<td><code>j_ring_master</code></td>
+<td>Joker, Tarot, Planet, and Spectral cards may appear multiple times</td>
+</tr>
+<tr>
+<td><code>j_flower_pot</code></td>
+<td>X3 Mult if poker hand contains a Diamond, Club, Heart, and Spade card</td>
+</tr>
+<tr>
+<td><code>j_blueprint</code></td>
+<td>Copies ability of Joker to the right</td>
+</tr>
+<tr>
+<td><code>j_wee</code></td>
+<td>Gains +8 Chips when each played 2 is scored</td>
+</tr>
+<tr>
+<td><code>j_merry_andy</code></td>
+<td>+3 discards each round, -1 hand size</td>
+</tr>
+<tr>
+<td><code>j_oops</code></td>
+<td>Doubles all listed probabilities</td>
+</tr>
+<tr>
+<td><code>j_idol</code></td>
+<td>Each played card of specific rank and suit gives X2 Mult, changes every round</td>
+</tr>
+<tr>
+<td><code>j_seeing_double</code></td>
+<td>X2 Mult if played hand has a scoring Club and a card of any other suit</td>
+</tr>
+<tr>
+<td><code>j_matador</code></td>
+<td>Earn $8 if played hand triggers the Boss Blind ability</td>
+</tr>
+<tr>
+<td><code>j_hit_the_road</code></td>
+<td>Gains X0.5 Mult for every Jack discarded this round</td>
+</tr>
+<tr>
+<td><code>j_duo</code></td>
+<td>X2 Mult if played hand contains a Pair</td>
+</tr>
+<tr>
+<td><code>j_trio</code></td>
+<td>X3 Mult if played hand contains a Three of a Kind</td>
+</tr>
+<tr>
+<td><code>j_family</code></td>
+<td>X4 Mult if played hand contains a Four of a Kind</td>
+</tr>
+<tr>
+<td><code>j_order</code></td>
+<td>X3 Mult if played hand contains a Straight</td>
+</tr>
+<tr>
+<td><code>j_tribe</code></td>
+<td>X2 Mult if played hand contains a Flush</td>
+</tr>
+<tr>
+<td><code>j_stuntman</code></td>
+<td>+250 Chips, -2 hand size</td>
+</tr>
+<tr>
+<td><code>j_invisible</code></td>
+<td>After 2 rounds, sell this card to Duplicate a random Joker</td>
+</tr>
+<tr>
+<td><code>j_brainstorm</code></td>
+<td>Copies the ability of leftmost Joker</td>
+</tr>
+<tr>
+<td><code>j_satellite</code></td>
+<td>Earn $1 at end of round per unique Planet card used this run</td>
+</tr>
+<tr>
+<td><code>j_shoot_the_moon</code></td>
+<td>Each Queen held in hand gives +13 Mult</td>
+</tr>
+<tr>
+<td><code>j_drivers_license</code></td>
+<td>X3 Mult if you have at least 16 Enhanced cards in your full deck</td>
+</tr>
+<tr>
+<td><code>j_cartomancer</code></td>
+<td>Create a Tarot card when Blind is selected</td>
+</tr>
+<tr>
+<td><code>j_astronomer</code></td>
+<td>All Planet cards and Celestial Packs in the shop are free</td>
+</tr>
+<tr>
+<td><code>j_burnt</code></td>
+<td>Upgrade the level of the first discarded poker hand each round</td>
+</tr>
+<tr>
+<td><code>j_bootstraps</code></td>
+<td>+2 Mult for every $5 you have</td>
+</tr>
+<tr>
+<td><code>j_caino</code></td>
+<td>Gains X1 Mult when a face card is destroyed</td>
+</tr>
+<tr>
+<td><code>j_triboulet</code></td>
+<td>Played Kings and Queens each give X2 Mult when scored</td>
+</tr>
+<tr>
+<td><code>j_yorick</code></td>
+<td>Gains X1 Mult every 23 cards discarded</td>
+</tr>
+<tr>
+<td><code>j_chicot</code></td>
+<td>Disables effect of every Boss Blind</td>
+</tr>
+<tr>
+<td><code>j_perkeo</code></td>
+<td>Creates a Negative copy of 1 random consumable at the end of the shop</td>
+</tr>
+</tbody>
+</table>
+<h4 id="voucher-cards">Voucher Cards</h4>
+<p>Permanent upgrades purchased from the shop that provide lasting benefits like extra slots, discounts, or improved odds. Keys use prefix <code>v_</code> followed by the voucher name (e.g., <code>v_grabber</code>, <code>v_antimatter</code>). 32 cards total.</p>
+<table>
+<thead>
+<tr>
+<th>Key</th>
+<th>Effect</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>v_overstock_norm</code></td>
+<td>+1 card slot available in shop (to 3 slots)</td>
+</tr>
+<tr>
+<td><code>v_clearance_sale</code></td>
+<td>All cards and packs in shop are 25% off</td>
+</tr>
+<tr>
+<td><code>v_hone</code></td>
+<td>Foil, Holographic, and Polychrome cards appear 2X more often</td>
+</tr>
+<tr>
+<td><code>v_reroll_surplus</code></td>
+<td>Rerolls cost $2 less</td>
+</tr>
+<tr>
+<td><code>v_crystal_ball</code></td>
+<td>+1 consumable slot</td>
+</tr>
+<tr>
+<td><code>v_telescope</code></td>
+<td>Celestial Packs always contain the Planet card for your most played poker hand</td>
+</tr>
+<tr>
+<td><code>v_grabber</code></td>
+<td>Permanently gain +1 hand per round</td>
+</tr>
+<tr>
+<td><code>v_wasteful</code></td>
+<td>Permanently gain +1 discard each round</td>
+</tr>
+<tr>
+<td><code>v_tarot_merchant</code></td>
+<td>Tarot cards appear 2X more frequently in the shop</td>
+</tr>
+<tr>
+<td><code>v_planet_merchant</code></td>
+<td>Planet cards appear 2X more frequently in the shop</td>
+</tr>
+<tr>
+<td><code>v_seed_money</code></td>
+<td>Raise the cap on interest earned in each round to $10</td>
+</tr>
+<tr>
+<td><code>v_blank</code></td>
+<td>Does nothing?</td>
+</tr>
+<tr>
+<td><code>v_magic_trick</code></td>
+<td>Playing cards can be purchased from the shop</td>
+</tr>
+<tr>
+<td><code>v_hieroglyph</code></td>
+<td>-1 Ante, -1 hand each round</td>
+</tr>
+<tr>
+<td><code>v_directors_cut</code></td>
+<td>Reroll Boss Blind 1 time per Ante, $10 per roll</td>
+</tr>
+<tr>
+<td><code>v_paint_brush</code></td>
+<td>+1 hand size</td>
+</tr>
+<tr>
+<td><code>v_overstock_plus</code></td>
+<td>+1 card slot available in shop (to 4 slots)</td>
+</tr>
+<tr>
+<td><code>v_liquidation</code></td>
+<td>All cards and packs in shop are 50% off</td>
+</tr>
+<tr>
+<td><code>v_glow_up</code></td>
+<td>Foil, Holographic, and Polychrome cards appear 4X more often</td>
+</tr>
+<tr>
+<td><code>v_reroll_glut</code></td>
+<td>Rerolls cost an additional $2 less</td>
+</tr>
+<tr>
+<td><code>v_omen_globe</code></td>
+<td>Spectral cards may appear in any of the Arcana Packs</td>
+</tr>
+<tr>
+<td><code>v_observatory</code></td>
+<td>Planet cards in consumable area give X1.5 Mult for their poker hand</td>
+</tr>
+<tr>
+<td><code>v_nacho_tong</code></td>
+<td>Permanently gain an additional +1 hand per round</td>
+</tr>
+<tr>
+<td><code>v_recyclomancy</code></td>
+<td>Permanently gain an additional +1 discard each round</td>
+</tr>
+<tr>
+<td><code>v_tarot_tycoon</code></td>
+<td>Tarot cards appear 4X more frequently in the shop</td>
+</tr>
+<tr>
+<td><code>v_planet_tycoon</code></td>
+<td>Planet cards appear 4X more frequently in the shop</td>
+</tr>
+<tr>
+<td><code>v_money_tree</code></td>
+<td>Raise the cap on interest earned in each round to $20</td>
+</tr>
+<tr>
+<td><code>v_antimatter</code></td>
+<td>+1 Joker slot</td>
+</tr>
+<tr>
+<td><code>v_illusion</code></td>
+<td>Playing cards in shop may have an Enhancement, Edition, and/or a Seal</td>
+</tr>
+<tr>
+<td><code>v_petroglyph</code></td>
+<td>-1 Ante again, -1 discard each round</td>
+</tr>
+<tr>
+<td><code>v_retcon</code></td>
+<td>Reroll Boss Blind unlimited times, $10 per roll</td>
+</tr>
+<tr>
+<td><code>v_palette</code></td>
+<td>+1 hand size again</td>
+</tr>
+</tbody>
+</table>
+<h4 id="pack-cards">Pack Cards</h4>
+<p>Booster packs that can be purchased in the shop. When opened, you select cards to add to your collection. Keys use prefix <code>p_</code> followed by pack type, size, and variant number. 32 packs total.</p>
+<table>
+<thead>
+<tr>
+<th>Key</th>
+<th>Effect</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>p_arcana_normal_1</code></td>
+<td>Arcana Pack: Choose 1 of 3 Tarot Cards to be used immediately</td>
+</tr>
+<tr>
+<td><code>p_arcana_normal_2</code></td>
+<td>Arcana Pack: Choose 1 of 3 Tarot Cards to be used immediately</td>
+</tr>
+<tr>
+<td><code>p_arcana_normal_3</code></td>
+<td>Arcana Pack: Choose 1 of 3 Tarot Cards to be used immediately</td>
+</tr>
+<tr>
+<td><code>p_arcana_normal_4</code></td>
+<td>Arcana Pack: Choose 1 of 3 Tarot Cards to be used immediately</td>
+</tr>
+<tr>
+<td><code>p_arcana_jumbo_1</code></td>
+<td>Jumbo Arcana Pack: Choose 1 of 5 Tarot Cards to be used immediately</td>
+</tr>
+<tr>
+<td><code>p_arcana_jumbo_2</code></td>
+<td>Jumbo Arcana Pack: Choose 1 of 5 Tarot Cards to be used immediately</td>
+</tr>
+<tr>
+<td><code>p_arcana_mega_1</code></td>
+<td>Mega Arcana Pack: Choose up to 2 of 5 Tarot Cards to be used immediately</td>
+</tr>
+<tr>
+<td><code>p_arcana_mega_2</code></td>
+<td>Mega Arcana Pack: Choose up to 2 of 5 Tarot Cards to be used immediately</td>
+</tr>
+<tr>
+<td><code>p_celestial_normal_1</code></td>
+<td>Celestial Pack: Choose 1 of 3 Planet Cards to be used immediately</td>
+</tr>
+<tr>
+<td><code>p_celestial_normal_2</code></td>
+<td>Celestial Pack: Choose 1 of 3 Planet Cards to be used immediately</td>
+</tr>
+<tr>
+<td><code>p_celestial_normal_3</code></td>
+<td>Celestial Pack: Choose 1 of 3 Planet Cards to be used immediately</td>
+</tr>
+<tr>
+<td><code>p_celestial_normal_4</code></td>
+<td>Celestial Pack: Choose 1 of 3 Planet Cards to be used immediately</td>
+</tr>
+<tr>
+<td><code>p_celestial_jumbo_1</code></td>
+<td>Jumbo Celestial Pack: Choose 1 of 5 Planet Cards to be used immediately</td>
+</tr>
+<tr>
+<td><code>p_celestial_jumbo_2</code></td>
+<td>Jumbo Celestial Pack: Choose 1 of 5 Planet Cards to be used immediately</td>
+</tr>
+<tr>
+<td><code>p_celestial_mega_1</code></td>
+<td>Mega Celestial Pack: Choose up to 2 of 5 Planet Cards to be used immediately</td>
+</tr>
+<tr>
+<td><code>p_celestial_mega_2</code></td>
+<td>Mega Celestial Pack: Choose up to 2 of 5 Planet Cards to be used immediately</td>
+</tr>
+<tr>
+<td><code>p_spectral_normal_1</code></td>
+<td>Spectral Pack: Choose 1 of 2 Spectral Cards to be used immediately</td>
+</tr>
+<tr>
+<td><code>p_spectral_normal_2</code></td>
+<td>Spectral Pack: Choose 1 of 2 Spectral Cards to be used immediately</td>
+</tr>
+<tr>
+<td><code>p_spectral_jumbo_1</code></td>
+<td>Jumbo Spectral Pack: Choose 1 of 4 Spectral Cards to be used immediately</td>
+</tr>
+<tr>
+<td><code>p_spectral_mega_1</code></td>
+<td>Mega Spectral Pack: Choose up to 2 of 4 Spectral Cards to be used immediately</td>
+</tr>
+<tr>
+<td><code>p_standard_normal_1</code></td>
+<td>Standard Pack: Choose 1 of 3 Playing Cards to add to your Deck</td>
+</tr>
+<tr>
+<td><code>p_standard_normal_2</code></td>
+<td>Standard Pack: Choose 1 of 3 Playing Cards to add to your Deck</td>
+</tr>
+<tr>
+<td><code>p_standard_normal_3</code></td>
+<td>Standard Pack: Choose 1 of 3 Playing Cards to add to your Deck</td>
+</tr>
+<tr>
+<td><code>p_standard_normal_4</code></td>
+<td>Standard Pack: Choose 1 of 3 Playing Cards to add to your Deck</td>
+</tr>
+<tr>
+<td><code>p_standard_jumbo_1</code></td>
+<td>Jumbo Standard Pack: Choose 1 of 5 Playing Cards to add to your Deck</td>
+</tr>
+<tr>
+<td><code>p_standard_jumbo_2</code></td>
+<td>Jumbo Standard Pack: Choose 1 of 5 Playing Cards to add to your Deck</td>
+</tr>
+<tr>
+<td><code>p_standard_mega_1</code></td>
+<td>Mega Standard Pack: Choose up to 2 of 5 Playing Cards to add to your Deck</td>
+</tr>
+<tr>
+<td><code>p_standard_mega_2</code></td>
+<td>Mega Standard Pack: Choose up to 2 of 5 Playing Cards to add to your Deck</td>
+</tr>
+<tr>
+<td><code>p_buffoon_normal_1</code></td>
+<td>Buffoon Pack: Choose 1 of 2 Joker Cards</td>
+</tr>
+<tr>
+<td><code>p_buffoon_normal_2</code></td>
+<td>Buffoon Pack: Choose 1 of 2 Joker Cards</td>
+</tr>
+<tr>
+<td><code>p_buffoon_jumbo_1</code></td>
+<td>Jumbo Buffoon Pack: Choose 1 of 4 Joker Cards</td>
+</tr>
+<tr>
+<td><code>p_buffoon_mega_1</code></td>
+<td>Mega Buffoon Pack: Choose up to 2 of 4 Joker Cards</td>
+</tr>
+</tbody>
+</table>
+<h4 id="playing-cards">Playing Cards</h4>
+<p>Playing cards use the format <code>{Suit}_{Rank}</code> where:</p>
+<ul>
+<li><strong>Suit</strong>: <code>H</code> (Hearts), <code>D</code> (Diamonds), <code>C</code> (Clubs), <code>S</code> (Spades)</li>
+<li><strong>Rank</strong>: <code>2</code>-<code>9</code>, <code>T</code> (Ten), <code>J</code> (Jack), <code>Q</code> (Queen), <code>K</code> (King), <code>A</code> (Ace)</li>
+</ul>
+<p>Examples: <code>H_A</code> (Ace of Hearts), <code>S_K</code> (King of Spades), <code>D_T</code> (Ten of Diamonds), <code>C_7</code> (Seven of Clubs)</p>
+<hr />
+<h2 id="error-codes">Error Codes</h2>
+<table>
+<thead>
+<tr>
+<th>Code</th>
+<th>Name</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>-32000</td>
+<td><code>INTERNAL_ERROR</code></td>
+<td>Server-side failure</td>
+</tr>
+<tr>
+<td>-32001</td>
+<td><code>BAD_REQUEST</code></td>
+<td>Invalid parameters or protocol error</td>
+</tr>
+<tr>
+<td>-32002</td>
+<td><code>INVALID_STATE</code></td>
+<td>Action not allowed in current game state</td>
+</tr>
+<tr>
+<td>-32003</td>
+<td><code>NOT_ALLOWED</code></td>
+<td>Game rules prevent this action</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="openrpc-specification">OpenRPC Specification</h2>
+<p>For machine-readable API documentation, use the <code>rpc.discover</code> method to retrieve the full OpenRPC specification.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+  <script>var tabs=__md_get("__tabs");if(Array.isArray(tabs))e:for(var set of document.querySelectorAll(".tabbed-set")){var labels=set.querySelector(".tabbed-labels");for(var tab of tabs)for(var label of labels.getElementsByTagName("label"))if(label.innerText.trim()===tab){var input=document.getElementById(label.htmlFor);input.checked=!0;continue e}}</script>
+
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["content.code.copy", "content.tabs.link"], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+    
+  </body>
+</html>

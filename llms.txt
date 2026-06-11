@@ -1,0 +1,14 @@
+# BalatroBot
+
+> API for developing Balatro bots
+
+BalatroBot is a mod for Balatro that serves a JSON-RPC 2.0 HTTP API, exposing game state and controls for external program interaction. The API provides endpoints for complete game control, including card selection, shop transactions, blind selection, and state management. External clients connect via HTTP POST to execute game actions programmatically.
+
+
+## Documentation
+
+- [Installation](https://coder.github.io/balatrobot/installation/index.md)
+- [CLI Reference](https://coder.github.io/balatrobot/cli/index.md)
+- [API Reference](https://coder.github.io/balatrobot/api/index.md)
+- [Contributing](https://coder.github.io/balatrobot/contributing/index.md)
+
