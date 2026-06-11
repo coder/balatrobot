@@ -53,7 +53,7 @@ balatrobot api <method> [JSON_PARAMS]
 balatrobot api <method> --help
 ```
 
-**Important**: to use the right `<method>` and `[JSON_PARAMS]` you must read  `docs/api.md` which contains the full API reference (methods, errors, states).
+**Important**: to use the right `<method>` and `[JSON_PARAMS]` you must read `docs/api.md` which contains the full API reference (methods, errors, states).
 
 Params are a JSON string (default `{}`). Examples:
 
