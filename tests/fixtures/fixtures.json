@@ -10,14 +10,14 @@
         "method": "start",
         "params": {
           "deck": "b_red",
-          "stake": "WHITE",
+          "stake": "stake_white",
           "seed": "TEST123"
         }
       }
     ]
   },
   "gamestate": {
-    "state-BLIND_SELECT--round_num-0--deck-b_red--stake-WHITE": [
+    "state-BLIND_SELECT--round_num-0--deck-b_red--stake-stake_white": [
       {
         "method": "menu",
         "params": {}
@@ -26,12 +26,12 @@
         "method": "start",
         "params": {
           "deck": "b_red",
-          "stake": "WHITE",
+          "stake": "stake_white",
           "seed": "TEST123"
         }
       }
     ],
-    "state-BLIND_SELECT--deck-b_blue--stake-RED": [
+    "state-BLIND_SELECT--deck-b_blue--stake-stake_red": [
       {
         "method": "menu",
         "params": {}
@@ -40,7 +40,7 @@
         "method": "start",
         "params": {
           "deck": "b_blue",
-          "stake": "RED",
+          "stake": "stake_red",
           "seed": "TEST123"
         }
       }
@@ -54,7 +54,7 @@
         "method": "start",
         "params": {
           "deck": "b_red",
-          "stake": "WHITE",
+          "stake": "stake_white",
           "seed": "TEST123"
         }
       },
@@ -87,7 +87,7 @@
         "method": "start",
         "params": {
           "deck": "b_red",
-          "stake": "WHITE",
+          "stake": "stake_white",
           "seed": "TEST123"
         }
       },
@@ -121,7 +121,7 @@
         "method": "start",
         "params": {
           "deck": "b_red",
-          "stake": "WHITE",
+          "stake": "stake_white",
           "seed": "TEST123"
         }
       },
@@ -157,7 +157,7 @@
         "method": "start",
         "params": {
           "deck": "b_red",
-          "stake": "WHITE",
+          "stake": "stake_white",
           "seed": "QKNXF682"
         }
       },
@@ -200,7 +200,7 @@
         "method": "start",
         "params": {
           "deck": "b_red",
-          "stake": "WHITE",
+          "stake": "stake_white",
           "seed": "TEST123"
         }
       },
@@ -220,7 +220,7 @@
         "method": "start",
         "params": {
           "deck": "b_red",
-          "stake": "WHITE",
+          "stake": "stake_white",
           "seed": "TEST123"
         }
       }
@@ -236,7 +236,7 @@
         "method": "start",
         "params": {
           "deck": "b_red",
-          "stake": "WHITE",
+          "stake": "stake_white",
           "seed": "TEST123"
         }
       }
@@ -252,7 +252,7 @@
         "method": "start",
         "params": {
           "deck": "b_red",
-          "stake": "WHITE",
+          "stake": "stake_white",
           "seed": "TEST123"
         }
       }
@@ -266,7 +266,7 @@
         "method": "start",
         "params": {
           "deck": "b_red",
-          "stake": "WHITE",
+          "stake": "stake_white",
           "seed": "TEST123"
         }
       },
@@ -284,7 +284,7 @@
         "method": "start",
         "params": {
           "deck": "b_red",
-          "stake": "WHITE",
+          "stake": "stake_white",
           "seed": "TEST123"
         }
       },
@@ -322,7 +322,7 @@
         "method": "start",
         "params": {
           "deck": "b_red",
-          "stake": "WHITE",
+          "stake": "stake_white",
           "seed": "TEST123"
         }
       }
@@ -338,7 +338,7 @@
         "method": "start",
         "params": {
           "deck": "b_red",
-          "stake": "WHITE",
+          "stake": "stake_white",
           "seed": "TEST123"
         }
       }
@@ -354,7 +354,7 @@
         "method": "start",
         "params": {
           "deck": "b_red",
-          "stake": "WHITE",
+          "stake": "stake_white",
           "seed": "TEST123"
         }
       }
@@ -368,7 +368,7 @@
         "method": "start",
         "params": {
           "deck": "b_red",
-          "stake": "WHITE",
+          "stake": "stake_white",
           "seed": "TEST123"
         }
       },
@@ -386,7 +386,7 @@
         "method": "start",
         "params": {
           "deck": "b_red",
-          "stake": "WHITE",
+          "stake": "stake_white",
           "seed": "TEST123"
         }
       },
@@ -410,7 +410,7 @@
         "method": "start",
         "params": {
           "deck": "b_red",
-          "stake": "WHITE",
+          "stake": "stake_white",
           "seed": "TEST123"
         }
       }
@@ -424,7 +424,7 @@
         "method": "start",
         "params": {
           "deck": "b_red",
-          "stake": "WHITE",
+          "stake": "stake_white",
           "seed": "TEST123"
         }
       },
@@ -442,7 +442,7 @@
         "method": "start",
         "params": {
           "deck": "b_red",
-          "stake": "WHITE",
+          "stake": "stake_white",
           "seed": "TEST123"
         }
       },
@@ -466,7 +466,7 @@
         "method": "start",
         "params": {
           "deck": "b_red",
-          "stake": "WHITE",
+          "stake": "stake_white",
           "seed": "TEST123"
         }
       }
@@ -480,7 +480,7 @@
         "method": "start",
         "params": {
           "deck": "b_red",
-          "stake": "WHITE",
+          "stake": "stake_white",
           "seed": "TEST123"
         }
       },
@@ -498,7 +498,7 @@
         "method": "start",
         "params": {
           "deck": "b_red",
-          "stake": "WHITE",
+          "stake": "stake_white",
           "seed": "TEST123"
         }
       },
@@ -524,7 +524,7 @@
         "method": "start",
         "params": {
           "deck": "b_red",
-          "stake": "WHITE",
+          "stake": "stake_white",
           "seed": "TEST123"
         }
       },
@@ -548,7 +548,7 @@
         "method": "start",
         "params": {
           "deck": "b_red",
-          "stake": "WHITE",
+          "stake": "stake_white",
           "seed": "TEST123"
         }
       },
@@ -581,7 +581,7 @@
         "method": "start",
         "params": {
           "deck": "b_red",
-          "stake": "WHITE",
+          "stake": "stake_white",
           "seed": "TEST123"
         }
       },
@@ -615,7 +615,7 @@
         "method": "start",
         "params": {
           "deck": "b_red",
-          "stake": "WHITE",
+          "stake": "stake_white",
           "seed": "TEST123"
         }
       }
@@ -629,7 +629,7 @@
         "method": "start",
         "params": {
           "deck": "b_red",
-          "stake": "WHITE",
+          "stake": "stake_white",
           "seed": "TEST123"
         }
       },
@@ -647,7 +647,7 @@
         "method": "start",
         "params": {
           "deck": "b_red",
-          "stake": "WHITE",
+          "stake": "stake_white",
           "seed": "TEST123"
         }
       },
@@ -671,7 +671,7 @@
         "method": "start",
         "params": {
           "deck": "b_red",
-          "stake": "WHITE",
+          "stake": "stake_white",
           "seed": "TEST123"
         }
       },
@@ -705,7 +705,7 @@
         "method": "start",
         "params": {
           "deck": "b_red",
-          "stake": "WHITE",
+          "stake": "stake_white",
           "seed": "TEST123"
         }
       }
@@ -719,7 +719,7 @@
         "method": "start",
         "params": {
           "deck": "b_red",
-          "stake": "WHITE",
+          "stake": "stake_white",
           "seed": "TEST123"
         }
       },
@@ -753,7 +753,7 @@
         "method": "start",
         "params": {
           "deck": "b_red",
-          "stake": "WHITE",
+          "stake": "stake_white",
           "seed": "TEST123"
         }
       }
@@ -767,7 +767,7 @@
         "method": "start",
         "params": {
           "deck": "b_red",
-          "stake": "WHITE",
+          "stake": "stake_white",
           "seed": "TEST123"
         }
       },
@@ -805,7 +805,7 @@
         "method": "start",
         "params": {
           "deck": "b_red",
-          "stake": "WHITE",
+          "stake": "stake_white",
           "seed": "TEST123"
         }
       }
@@ -819,7 +819,7 @@
         "method": "start",
         "params": {
           "deck": "b_red",
-          "stake": "WHITE",
+          "stake": "stake_white",
           "seed": "TEST123"
         }
       },
@@ -855,7 +855,7 @@
         "method": "start",
         "params": {
           "deck": "b_red",
-          "stake": "WHITE",
+          "stake": "stake_white",
           "seed": "TEST123"
         }
       },
@@ -899,7 +899,7 @@
         "method": "start",
         "params": {
           "deck": "b_red",
-          "stake": "WHITE",
+          "stake": "stake_white",
           "seed": "TEST123"
         }
       }
@@ -913,7 +913,7 @@
         "method": "start",
         "params": {
           "deck": "b_red",
-          "stake": "WHITE",
+          "stake": "stake_white",
           "seed": "TEST123"
         }
       },
@@ -949,7 +949,7 @@
         "method": "start",
         "params": {
           "deck": "b_red",
-          "stake": "WHITE",
+          "stake": "stake_white",
           "seed": "TEST123"
         }
       },
@@ -985,7 +985,7 @@
         "method": "start",
         "params": {
           "deck": "b_red",
-          "stake": "WHITE",
+          "stake": "stake_white",
           "seed": "TEST123"
         }
       },
@@ -1021,7 +1021,7 @@
         "method": "start",
         "params": {
           "deck": "b_red",
-          "stake": "WHITE",
+          "stake": "stake_white",
           "seed": "TEST123"
         }
       },
@@ -1057,7 +1057,7 @@
         "method": "start",
         "params": {
           "deck": "b_red",
-          "stake": "WHITE",
+          "stake": "stake_white",
           "seed": "TEST123"
         }
       },
@@ -1099,7 +1099,7 @@
         "method": "start",
         "params": {
           "deck": "b_red",
-          "stake": "WHITE",
+          "stake": "stake_white",
           "seed": "TEST123"
         }
       },
@@ -1139,7 +1139,7 @@
         "method": "start",
         "params": {
           "deck": "b_red",
-          "stake": "WHITE",
+          "stake": "stake_white",
           "seed": "TEST123"
         }
       },
@@ -1187,7 +1187,7 @@
         "method": "start",
         "params": {
           "deck": "b_red",
-          "stake": "WHITE",
+          "stake": "stake_white",
           "seed": "TEST123"
         }
       },
@@ -1266,7 +1266,7 @@
         "method": "start",
         "params": {
           "deck": "b_red",
-          "stake": "WHITE",
+          "stake": "stake_white",
           "seed": "TEST123"
         }
       },
@@ -1331,7 +1331,7 @@
         "method": "start",
         "params": {
           "deck": "b_red",
-          "stake": "WHITE",
+          "stake": "stake_white",
           "seed": "TEST123"
         }
       },
@@ -1373,7 +1373,7 @@
         "method": "start",
         "params": {
           "deck": "b_red",
-          "stake": "WHITE",
+          "stake": "stake_white",
           "seed": "TEST123"
         }
       },
@@ -1436,7 +1436,7 @@
         "method": "start",
         "params": {
           "deck": "b_red",
-          "stake": "WHITE",
+          "stake": "stake_white",
           "seed": "TEST123"
         }
       },
@@ -1473,7 +1473,7 @@
         "method": "start",
         "params": {
           "deck": "b_red",
-          "stake": "WHITE",
+          "stake": "stake_white",
           "seed": "TEST123"
         }
       },
@@ -1534,7 +1534,7 @@
         "method": "start",
         "params": {
           "deck": "b_red",
-          "stake": "WHITE",
+          "stake": "stake_white",
           "seed": "TEST123"
         }
       },
@@ -1619,7 +1619,7 @@
         "method": "start",
         "params": {
           "deck": "b_red",
-          "stake": "WHITE",
+          "stake": "stake_white",
           "seed": "TEST123"
         }
       },
@@ -1694,7 +1694,7 @@
         "method": "start",
         "params": {
           "deck": "b_red",
-          "stake": "WHITE",
+          "stake": "stake_white",
           "seed": "QKNXF682"
         }
       },
@@ -1737,7 +1737,7 @@
         "method": "start",
         "params": {
           "deck": "b_red",
-          "stake": "WHITE",
+          "stake": "stake_white",
           "seed": "3Q1KBVT3"
         }
       },
@@ -1780,7 +1780,7 @@
         "method": "start",
         "params": {
           "deck": "b_red",
-          "stake": "WHITE",
+          "stake": "stake_white",
           "seed": "3Q1KBVT3"
         }
       },
@@ -1835,7 +1835,7 @@
         "method": "start",
         "params": {
           "deck": "b_red",
-          "stake": "WHITE",
+          "stake": "stake_white",
           "seed": "VPV32ZTY"
         }
       },
@@ -1878,7 +1878,7 @@
         "method": "start",
         "params": {
           "deck": "b_red",
-          "stake": "WHITE",
+          "stake": "stake_white",
           "seed": "VEBROR8"
         }
       },
@@ -1951,7 +1951,7 @@
         "method": "start",
         "params": {
           "deck": "b_red",
-          "stake": "WHITE",
+          "stake": "stake_white",
           "seed": "7IDNRIV"
         }
       },
@@ -2024,7 +2024,7 @@
         "method": "start",
         "params": {
           "deck": "b_red",
-          "stake": "WHITE",
+          "stake": "stake_white",
           "seed": "TAGTEST2"
         }
       },
@@ -2048,7 +2048,7 @@
         "method": "start",
         "params": {
           "deck": "b_red",
-          "stake": "WHITE",
+          "stake": "stake_white",
           "seed": "TEST123"
         }
       }
@@ -2062,7 +2062,7 @@
         "method": "start",
         "params": {
           "deck": "b_red",
-          "stake": "WHITE",
+          "stake": "stake_white",
           "seed": "TEST123"
         }
       },
@@ -2094,7 +2094,7 @@
         "method": "start",
         "params": {
           "deck": "b_red",
-          "stake": "WHITE",
+          "stake": "stake_white",
           "seed": "TEST123"
         }
       },
@@ -2112,7 +2112,7 @@
         "method": "start",
         "params": {
           "deck": "b_red",
-          "stake": "WHITE",
+          "stake": "stake_white",
           "seed": "TEST123"
         }
       },
@@ -2161,7 +2161,7 @@
         "method": "start",
         "params": {
           "deck": "b_red",
-          "stake": "WHITE",
+          "stake": "stake_white",
           "seed": "TEST123"
         }
       },
@@ -2218,7 +2218,7 @@
         "method": "start",
         "params": {
           "deck": "b_red",
-          "stake": "WHITE",
+          "stake": "stake_white",
           "seed": "INVIS3"
         }
       },
@@ -2294,7 +2294,7 @@
         "method": "start",
         "params": {
           "deck": "b_red",
-          "stake": "WHITE",
+          "stake": "stake_white",
           "seed": "TEST123"
         }
       }
@@ -2308,7 +2308,7 @@
         "method": "start",
         "params": {
           "deck": "b_red",
-          "stake": "WHITE",
+          "stake": "stake_white",
           "seed": "TEST123"
         }
       },
@@ -2326,7 +2326,7 @@
         "method": "start",
         "params": {
           "deck": "b_red",
-          "stake": "WHITE",
+          "stake": "stake_white",
           "seed": "TEST123"
         }
       },
@@ -2362,7 +2362,7 @@
         "method": "start",
         "params": {
           "deck": "b_red",
-          "stake": "WHITE",
+          "stake": "stake_white",
           "seed": "TEST123"
         }
       },
@@ -2431,7 +2431,7 @@
         "method": "start",
         "params": {
           "deck": "b_red",
-          "stake": "WHITE",
+          "stake": "stake_white",
           "seed": "TEST123"
         }
       }
@@ -2445,7 +2445,7 @@
         "method": "start",
         "params": {
           "deck": "b_red",
-          "stake": "WHITE",
+          "stake": "stake_white",
           "seed": "TEST123"
         }
       },
@@ -2478,7 +2478,7 @@
         "method": "start",
         "params": {
           "deck": "b_red",
-          "stake": "WHITE",
+          "stake": "stake_white",
           "seed": "TEST123"
         }
       },
@@ -2508,7 +2508,7 @@
         "method": "start",
         "params": {
           "deck": "b_red",
-          "stake": "WHITE",
+          "stake": "stake_white",
           "seed": "TEST123"
         }
       },
@@ -2532,7 +2532,7 @@
         "method": "start",
         "params": {
           "deck": "b_red",
-          "stake": "WHITE",
+          "stake": "stake_white",
           "seed": "TEST123"
         }
       },
@@ -2574,7 +2574,7 @@
         "method": "start",
         "params": {
           "deck": "b_red",
-          "stake": "WHITE",
+          "stake": "stake_white",
           "seed": "TEST123"
         }
       },
@@ -2598,7 +2598,7 @@
         "method": "start",
         "params": {
           "deck": "b_red",
-          "stake": "WHITE",
+          "stake": "stake_white",
           "seed": "TEST123"
         }
       },
@@ -2646,7 +2646,7 @@
         "method": "start",
         "params": {
           "deck": "b_red",
-          "stake": "WHITE",
+          "stake": "stake_white",
           "seed": "TEST123"
         }
       },
@@ -2707,7 +2707,7 @@
         "method": "start",
         "params": {
           "deck": "b_red",
-          "stake": "WHITE",
+          "stake": "stake_white",
           "seed": "TEST123"
         }
       },
@@ -2731,7 +2731,7 @@
         "method": "start",
         "params": {
           "deck": "b_red",
-          "stake": "WHITE",
+          "stake": "stake_white",
           "seed": "TEST123"
         }
       },
@@ -2774,7 +2774,7 @@
         "method": "start",
         "params": {
           "deck": "b_red",
-          "stake": "WHITE",
+          "stake": "stake_white",
           "seed": "TEST123"
         }
       },
@@ -2819,7 +2819,7 @@
         "method": "start",
         "params": {
           "deck": "b_red",
-          "stake": "WHITE",
+          "stake": "stake_white",
           "seed": "TEST123"
         }
       }
@@ -2833,7 +2833,7 @@
         "method": "start",
         "params": {
           "deck": "b_red",
-          "stake": "WHITE",
+          "stake": "stake_white",
           "seed": "TEST123"
         }
       },
@@ -2851,7 +2851,7 @@
         "method": "start",
         "params": {
           "deck": "b_red",
-          "stake": "WHITE",
+          "stake": "stake_white",
           "seed": "TEST123"
         }
       },
@@ -2932,7 +2932,7 @@
         "method": "start",
         "params": {
           "deck": "b_red",
-          "stake": "WHITE",
+          "stake": "stake_white",
           "seed": "TEST123"
         }
       },
@@ -2995,7 +2995,7 @@
         "method": "start",
         "params": {
           "deck": "b_red",
-          "stake": "WHITE",
+          "stake": "stake_white",
           "seed": "TEST123"
         }
       }

@@ -617,7 +617,7 @@ class TestPackEndpointStateRequirements:
     def test_pack_from_SELECTING_HAND(self, client: httpx.Client) -> None:
         """Test that pack fails from SELECTING_HAND state."""
         api(client, "menu", {})
-        api(client, "start", {"deck": "b_red", "stake": "WHITE", "seed": "TEST123"})
+        api(client, "start", {"deck": "b_red", "stake": "stake_white", "seed": "TEST123"})
         api(client, "select", {})
 
         assert_error_response(

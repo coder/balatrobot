@@ -19,46 +19,46 @@ class TestStartEndpoint:
     @pytest.mark.parametrize(
         "arguments,expected",
         [
-            # Test basic start with b_red deck and WHITE stake
+            # Test basic start with b_red deck and stake_white stake
             (
-                {"deck": "b_red", "stake": "WHITE"},
+                {"deck": "b_red", "stake": "stake_white"},
                 {
                     "state": "BLIND_SELECT",
                     "deck": "b_red",
-                    "stake": "WHITE",
+                    "stake": "stake_white",
                     "ante_num": 1,
                     "round_num": 0,
                 },
             ),
             # Test with b_blue deck
             (
-                {"deck": "b_blue", "stake": "WHITE"},
+                {"deck": "b_blue", "stake": "stake_white"},
                 {
                     "state": "BLIND_SELECT",
                     "deck": "b_blue",
-                    "stake": "WHITE",
+                    "stake": "stake_white",
                     "ante_num": 1,
                     "round_num": 0,
                 },
             ),
-            # Test with higher stake (BLACK)
+            # Test with higher stake (stake_black)
             (
-                {"deck": "b_red", "stake": "BLACK"},
+                {"deck": "b_red", "stake": "stake_black"},
                 {
                     "state": "BLIND_SELECT",
                     "deck": "b_red",
-                    "stake": "BLACK",
+                    "stake": "stake_black",
                     "ante_num": 1,
                     "round_num": 0,
                 },
             ),
             # Test with seed
             (
-                {"deck": "b_red", "stake": "WHITE", "seed": "TEST123"},
+                {"deck": "b_red", "stake": "stake_white", "seed": "TEST123"},
                 {
                     "state": "BLIND_SELECT",
                     "deck": "b_red",
-                    "stake": "WHITE",
+                    "stake": "stake_white",
                     "ante_num": 1,
                     "round_num": 0,
                     "seed": "TEST123",
@@ -86,7 +86,7 @@ class TestStartEndpointValidation:
         """Test that start fails when deck parameter is missing."""
         response = api(client, "menu", {})
         assert_gamestate_response(response, state="MENU")
-        response = api(client, "start", {"stake": "WHITE"})
+        response = api(client, "start", {"stake": "stake_white"})
         assert_error_response(
             response,
             "BAD_REQUEST",
@@ -108,7 +108,9 @@ class TestStartEndpointValidation:
         """Test that start fails with invalid deck key."""
         response = api(client, "menu", {})
         assert_gamestate_response(response, state="MENU")
-        response = api(client, "start", {"deck": "INVALID_DECK", "stake": "WHITE"})
+        response = api(
+            client, "start", {"deck": "INVALID_DECK", "stake": "stake_white"}
+        )
         assert_error_response(
             response,
             "BAD_REQUEST",
@@ -123,14 +125,14 @@ class TestStartEndpointValidation:
         assert_error_response(
             response,
             "BAD_REQUEST",
-            "Invalid stake enum. Must be one of:",
+            "Expected a stake_* key from G.P_STAKES",
         )
 
     def test_invalid_deck_type(self, client: httpx.Client):
         """Test that start fails when deck is not a string."""
         response = api(client, "menu", {})
         assert_gamestate_response(response, state="MENU")
-        response = api(client, "start", {"deck": 123, "stake": "WHITE"})
+        response = api(client, "start", {"deck": 123, "stake": "stake_white"})
         assert_error_response(
             response,
             "BAD_REQUEST",
@@ -156,7 +158,7 @@ class TestStartEndpointStateRequirements:
         """Test that start fails when not in MENU state."""
         gamestate = load_fixture(client, "start", "state-BLIND_SELECT")
         assert gamestate["state"] == "BLIND_SELECT"
-        response = api(client, "start", {"deck": "b_red", "stake": "WHITE"})
+        response = api(client, "start", {"deck": "b_red", "stake": "stake_white"})
         assert_error_response(
             response,
             "INVALID_STATE",
