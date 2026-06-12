@@ -75,7 +75,7 @@ class TestUseEndpoint:
         assert gamestate["state"] == "SELECTING_HAND"
         response = api(client, "use", {"consumable": 1, "cards": [0]})
         after = assert_gamestate_response(response)
-        assert after["hand"]["cards"][0]["modifier"]["enhancement"] == "LUCKY"
+        assert after["hand"]["cards"][0]["modifier"]["enhancement"] == "m_lucky"
 
     def test_use_magician_with_two_cards(self, client: httpx.Client) -> None:
         """Test using The Magician with 2 cards."""
@@ -87,8 +87,8 @@ class TestUseEndpoint:
         assert gamestate["state"] == "SELECTING_HAND"
         response = api(client, "use", {"consumable": 1, "cards": [7, 5]})
         after = assert_gamestate_response(response)
-        assert after["hand"]["cards"][5]["modifier"]["enhancement"] == "LUCKY"
-        assert after["hand"]["cards"][7]["modifier"]["enhancement"] == "LUCKY"
+        assert after["hand"]["cards"][5]["modifier"]["enhancement"] == "m_lucky"
+        assert after["hand"]["cards"][7]["modifier"]["enhancement"] == "m_lucky"
 
     def test_use_familiar_all_hand(self, client: httpx.Client) -> None:
         """Test using Familiar (destroys cards, #G.hand.cards > 1)."""

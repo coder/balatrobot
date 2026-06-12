@@ -579,7 +579,7 @@ class TestGamestateCards:
             """Test enhanced playing cards have ENHANCED set."""
             fixture_name = "state-SELECTING_HAND"
             load_fixture(client, "gamestate", fixture_name)
-            response = api(client, "add", {"key": "H_A", "enhancement": "BONUS"})
+            response = api(client, "add", {"key": "H_A", "enhancement": "m_bonus"})
             # Find the enhanced card (last card in hand)
             cards = response["result"]["hand"]["cards"]
             card = cards[-1]

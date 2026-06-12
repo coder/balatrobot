@@ -1603,35 +1603,35 @@
         "description": "Card enhancement type",
         "oneOf": [
           {
-            "const": "BONUS",
+            "const": "m_bonus",
             "description": "+30 Chips when scored"
           },
           {
-            "const": "MULT",
+            "const": "m_mult",
             "description": "+4 Mult when scored"
           },
           {
-            "const": "WILD",
+            "const": "m_wild",
             "description": "Counts as every suit simultaneously"
           },
           {
-            "const": "GLASS",
+            "const": "m_glass",
             "description": "X2 Mult when scored"
           },
           {
-            "const": "STEEL",
+            "const": "m_steel",
             "description": "X1.5 Mult while held in hand"
           },
           {
-            "const": "STONE",
+            "const": "m_stone",
             "description": "+50 Chips, no rank or suit"
           },
           {
-            "const": "GOLD",
+            "const": "m_gold",
             "description": "$3 if held in hand at end of round"
           },
           {
-            "const": "LUCKY",
+            "const": "m_lucky",
             "description": "1 in 5 chance +20 Mult, 1 in 15 chance $20"
           }
         ]

@@ -58,18 +58,6 @@ local EDITION_MAP = {
   NEGATIVE = "e_negative",
 }
 
--- Enhancement conversion table
-local ENHANCEMENT_MAP = {
-  BONUS = "m_bonus",
-  MULT = "m_mult",
-  WILD = "m_wild",
-  GLASS = "m_glass",
-  STEEL = "m_steel",
-  STONE = "m_stone",
-  GOLD = "m_gold",
-  LUCKY = "m_lucky",
-}
-
 ---Detect card type based on key prefix or pattern
 ---@param key string The card key
 ---@return string|nil card_type The detected card type or nil if invalid
@@ -142,7 +130,7 @@ return {
     enhancement = {
       type = "string",
       required = false,
-      description = "Enhancement type (BONUS, MULT, WILD, GLASS, STEEL, STONE, GOLD, LUCKY) - only valid for playing cards",
+      description = "Enhancement key (m_bonus, m_mult, m_wild, m_glass, m_steel, m_stone, m_gold, m_lucky) - only valid for playing cards",
     },
     eternal = {
       type = "boolean",
@@ -301,17 +289,21 @@ return {
       return
     end
 
-    -- Validate and convert enhancement value
+    -- Validate enhancement value
     local enhancement_value = nil
     if args.enhancement then
-      enhancement_value = ENHANCEMENT_MAP[args.enhancement]
-      if not enhancement_value then
+      if
+        type(args.enhancement) ~= "string"
+        or args.enhancement:sub(1, 2) ~= "m_"
+        or not G.P_CENTERS[args.enhancement]
+      then
         send_response({
-          message = "Invalid enhancement value. Expected: BONUS, MULT, WILD, GLASS, STEEL, STONE, GOLD, or LUCKY",
+          message = "Expected an m_* enhancement key (e.g. m_bonus, m_mult)",
           name = BB_ERROR_NAMES.BAD_REQUEST,
         })
         return
       end
+      enhancement_value = args.enhancement
     end
 
     -- Validate eternal parameter is only for jokers

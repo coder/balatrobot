@@ -391,14 +391,14 @@
 ---| "NEGATIVE" # N/A (Playing cards). +1 Joker slot (Jokers). +1 Consumable slot (Consumables)
 
 ---@alias Card.Modifier.Enhancement
----| "BONUS" # Enhanced card gives an additional +30 Chips when scored
----| "MULT" # Enhanced card gives +4 Mult when scored
----| "WILD" # Enhanced card is considered to be every suit simultaneously
----| "GLASS" # Enhanced card gives X2 Mult when scored
----| "STEEL" # Enhanced card gives X1.5 Mult while held in hand
----| "STONE" # Enhanced card's value is set to +50 Chips
----| "GOLD" # Enhanced card gives $3 if held in hand at end of round
----| "LUCKY" # Enhanced card has a 1 in 5 chance to give +20 Mult. Enhanced card has a 1 in 15 chance to give $20
+---| "m_bonus" # Enhanced card gives an additional +30 Chips when scored
+---| "m_mult" # Enhanced card gives +4 Mult when scored
+---| "m_wild" # Enhanced card is considered to be every suit simultaneously
+---| "m_glass" # Enhanced card gives X2 Mult when scored
+---| "m_steel" # Enhanced card gives X1.5 Mult while held in hand
+---| "m_stone" # Enhanced card's value is set to +50 Chips
+---| "m_gold" # Enhanced card gives $3 if held in hand at end of round
+---| "m_lucky" # Enhanced card has a 1 in 5 chance to give +20 Mult. Enhanced card has a 1 in 15 chance to give $20
 
 ---@alias Blind.Type
 ---| "SMALL" # No special effects - can be skipped to receive a Tag

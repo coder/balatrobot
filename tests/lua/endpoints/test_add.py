@@ -438,7 +438,16 @@ class TestAddEndpointEnhancement:
 
     @pytest.mark.parametrize(
         "enhancement",
-        ["BONUS", "MULT", "WILD", "GLASS", "STEEL", "STONE", "GOLD", "LUCKY"],
+        [
+            "m_bonus",
+            "m_mult",
+            "m_wild",
+            "m_glass",
+            "m_steel",
+            "m_stone",
+            "m_gold",
+            "m_lucky",
+        ],
     )
     def test_add_playing_card_with_enhancement(
         self, client: httpx.Client, enhancement: str
@@ -470,7 +479,7 @@ class TestAddEndpointEnhancement:
         assert_error_response(
             response,
             "BAD_REQUEST",
-            "Invalid enhancement value. Expected: BONUS, MULT, WILD, GLASS, STEEL, STONE, GOLD, or LUCKY",
+            "Expected an m_* enhancement key (e.g. m_bonus, m_mult)",
         )
 
     @pytest.mark.parametrize(
@@ -486,7 +495,7 @@ class TestAddEndpointEnhancement:
             "state-SHOP--jokers.count-0--consumables.count-0--vouchers.count-0--packs.count-0",
         )
         assert gamestate["state"] == "SHOP"
-        response = api(client, "add", {"key": key, "enhancement": "BONUS"})
+        response = api(client, "add", {"key": key, "enhancement": "m_bonus"})
         assert_error_response(
             response,
             "BAD_REQUEST",

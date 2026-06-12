@@ -237,9 +237,9 @@ local function extract_card_modifier(card)
     modifier.edition = string.upper(card.edition.type)
   end
 
-  -- Enhancement (from ability.name for enhanced cards)
-  if card.ability and card.ability.effect and card.ability.effect ~= "Base" then
-    modifier.enhancement = string.upper(card.ability.effect:gsub(" Card", ""))
+  -- Enhancement (from center_key for enhanced cards)
+  if card.config and card.config.center_key and card.config.center_key:sub(1, 2) == "m_" then
+    modifier.enhancement = card.config.center_key
   end
 
   -- Eternal (boolean from ability)

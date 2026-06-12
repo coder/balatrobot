@@ -919,16 +919,16 @@ Represents a Balatro tag that provides bonuses when triggered.
 
 ### Card Modifier Enhancement
 
-| Value   | Description                          |
-| ------- | ------------------------------------ |
-| `BONUS` | +30 Chips when scored                |
-| `MULT`  | +4 Mult when scored                  |
-| `WILD`  | Counts as every suit                 |
-| `GLASS` | X2 Mult when scored                  |
-| `STEEL` | X1.5 Mult while held                 |
-| `STONE` | +50 Chips (no rank/suit)             |
-| `GOLD`  | $3 if held at end of round           |
-| `LUCKY` | 1/5 chance +20 Mult, 1/15 chance $20 |
+| Value     | Description                          |
+| --------- | ------------------------------------ |
+| `m_bonus` | +30 Chips when scored                |
+| `m_mult`  | +4 Mult when scored                  |
+| `m_wild`  | Counts as every suit                 |
+| `m_glass` | X2 Mult when scored                  |
+| `m_steel` | X1.5 Mult while held                 |
+| `m_stone` | +50 Chips (no rank/suit)             |
+| `m_gold`  | $3 if held at end of round           |
+| `m_lucky` | 1/5 chance +20 Mult, 1/15 chance $20 |
 
 ### Blind Type
 
