@@ -18,14 +18,14 @@
 ---| "b_erratic" # Erratic Deck: Random Ranks and Suits
 
 ---@alias Stake
----| "WHITE" # 1. Base Difficulty
----| "RED" # 2. Small Blind gives no reward money. Applies all previous Stakes
----| "GREEN" # 3. Required scores scales faster for each Ante. Applies all previous Stakes
----| "BLACK" # 4. Shop can have Eternal Jokers. Applies all previous Stakes
----| "BLUE" # 5. -1 Discard. Applies all previous Stakes
----| "PURPLE" # 6. Required score scales faster for each Ante. Applies all previous Stakes
----| "ORANGE" # 7. Shop can have Perishable Jokers. Applies all previous Stakes
----| "GOLD" # 8. Shop can have Rental Jokers. Applies all previous Stakes
+---| "stake_white" # 1. Base Difficulty
+---| "stake_red" # 2. Small Blind gives no reward money. Applies all previous Stakes
+---| "stake_green" # 3. Required scores scales faster for each Ante. Applies all previous Stakes
+---| "stake_black" # 4. Shop can have Eternal Jokers. Applies all previous Stakes
+---| "stake_blue" # 5. -1 Discard. Applies all previous Stakes
+---| "stake_purple" # 6. Required score scales faster for each Ante. Applies all previous Stakes
+---| "stake_orange" # 7. Shop can have Perishable Jokers. Applies all previous Stakes
+---| "stake_gold" # 8. Shop can have Rental Jokers. Applies all previous Stakes
 
 ---@alias State
 ---| "SELECTING_HAND" # 1 When you can select cards to play or discard

@@ -6,24 +6,11 @@
 
 ---@class Request.Endpoint.Start.Params
 ---@field deck Deck Deck key from G.P_CENTERS (e.g., "b_red", "b_blue")
----@field stake Stake stake enum value (e.g., "WHITE", "RED", "GREEN", "BLACK", "BLUE", "PURPLE", "ORANGE", "GOLD")
+---@field stake Stake key from G.P_STAKES (e.g., "stake_white", "stake_red", "stake_black")
 ---@field seed string? optional seed for the run
 
 -- ==========================================================================
--- Start Endpoint Utils
--- ==========================================================================
-
-local STAKE_ENUM_TO_NUMBER = {
-  WHITE = 1,
-  RED = 2,
-  GREEN = 3,
-  BLACK = 4,
-  BLUE = 5,
-  PURPLE = 6,
-  ORANGE = 7,
-  GOLD = 8,
-}
-
+-- Start Endpoint
 -- ==========================================================================
 -- Start Endpoint
 -- ==========================================================================
@@ -44,7 +31,7 @@ return {
     stake = {
       type = "string",
       required = true,
-      description = "Stake enum value (e.g., 'WHITE', 'RED', 'GREEN', 'BLACK', 'BLUE', 'PURPLE', 'ORANGE', 'GOLD')",
+      description = "Stake key from G.P_STAKES (e.g., 'stake_white', 'stake_red', 'stake_black')",
     },
     seed = {
       type = "string",
@@ -60,17 +47,17 @@ return {
   execute = function(args, send_response)
     sendDebugMessage("start()", "BB.ENDPOINTS")
 
-    -- Validate and map stake enum
-    local stake_number = STAKE_ENUM_TO_NUMBER[args.stake]
-    if not stake_number then
-      sendWarnMessage("Invalid stake enum: " .. tostring(args.stake), "BB.ENDPOINTS")
+    -- Validate and map stake key
+    local stake_data = G.P_STAKES[args.stake]
+    if not stake_data then
+      sendWarnMessage("Invalid stake key: " .. tostring(args.stake), "BB.ENDPOINTS")
       send_response({
-        message = "Invalid stake enum. Must be one of: WHITE, RED, GREEN, BLACK, BLUE, PURPLE, ORANGE, GOLD. Got: "
-          .. tostring(args.stake),
+        message = "Expected a stake_* key from G.P_STAKES (e.g. stake_white, stake_red). Got: " .. tostring(args.stake),
         name = BB_ERROR_NAMES.BAD_REQUEST,
       })
       return
     end
+    local stake_number = stake_data.order or stake_data.stake_level
 
     -- Validate deck key against G.P_CENTERS
     local deck_center = G.P_CENTERS and G.P_CENTERS[args.deck]

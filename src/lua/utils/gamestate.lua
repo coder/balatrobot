@@ -31,28 +31,6 @@ local function get_state_name(state_num)
 end
 
 -- ==========================================================================
--- Stake Name Mapping
--- ==========================================================================
-
-local STAKE_LEVEL_TO_NAME = {
-  [1] = "WHITE",
-  [2] = "RED",
-  [3] = "GREEN",
-  [4] = "BLACK",
-  [5] = "BLUE",
-  [6] = "PURPLE",
-  [7] = "ORANGE",
-  [8] = "GOLD",
-}
-
----Converts numeric stake level to string stake name
----@param stake_num number The numeric stake value from G.GAME.stake (1-8)
----@return string? stake_name The string name of the stake (e.g., "WHITE"), or nil if not found
-local function get_stake_name(stake_num)
-  return STAKE_LEVEL_TO_NAME[stake_num]
-end
-
--- ==========================================================================
 -- Card UI Description
 -- ==========================================================================
 
@@ -831,7 +809,13 @@ function gamestate.get_gamestate()
 
     -- Stake (optional)
     if G.GAME.stake then
-      state_data.stake = get_stake_name(G.GAME.stake)
+      local stake_level = G.GAME.stake
+      for key, stake_data in pairs(G.P_STAKES) do
+        if stake_data.order == stake_level or stake_data.stake_level == stake_level then
+          state_data.stake = key
+          break
+        end
+      end
     end
 
     -- Seed (optional)

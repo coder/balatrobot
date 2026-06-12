@@ -68,7 +68,7 @@ curl -X POST http://127.0.0.1:12346 \
 ```bash
 curl -X POST http://127.0.0.1:12346 \
   -H "Content-Type: application/json" \
-  -d '{"jsonrpc": "2.0", "method": "start", "params": {"deck": "b_red", "stake": "WHITE"}, "id": 1}'
+  -d '{"jsonrpc": "2.0", "method": "start", "params": {"deck": "b_red", "stake": "stake_white"}, "id": 1}'
 ```
 
 #### 4. Select Blind and Play Cards
@@ -208,7 +208,7 @@ Start a new game run.
 ```bash
 curl -X POST http://127.0.0.1:12346 \
   -H "Content-Type: application/json" \
-  -d '{"jsonrpc": "2.0", "method": "start", "params": {"deck": "b_blue", "stake": "WHITE", "seed": "TEST123"}, "id": 1}'
+  -d '{"jsonrpc": "2.0", "method": "start", "params": {"deck": "b_blue", "stake": "stake_white", "seed": "TEST123"}, "id": 1}'
 ```
 
 ---
@@ -700,7 +700,7 @@ The complete game state returned by most methods.
   "ante_num": 1,
   "money": 4,
   "deck": "b_red",
-  "stake": "WHITE",
+  "stake": "stake_white",
   "seed": "ABC123",
   "won": false,
   "used_vouchers": {},
@@ -848,16 +848,16 @@ Represents a Balatro tag that provides bonuses when triggered.
 
 ### Stake
 
-| Value    | Description                     |
-| -------- | ------------------------------- |
-| `WHITE`  | Base difficulty                 |
-| `RED`    | Small Blind gives no reward     |
-| `GREEN`  | Required score scales faster    |
-| `BLACK`  | Shop can have Eternal Jokers    |
-| `BLUE`   | -1 Discard                      |
-| `PURPLE` | Required score scales faster    |
-| `ORANGE` | Shop can have Perishable Jokers |
-| `GOLD`   | Shop can have Rental Jokers     |
+| Value          | Description                     |
+| -------------- | ------------------------------- |
+| `stake_white`  | Base difficulty                 |
+| `stake_red`    | Small Blind gives no reward     |
+| `stake_green`  | Required score scales faster    |
+| `stake_black`  | Shop can have Eternal Jokers    |
+| `stake_blue`   | -1 Discard                      |
+| `stake_purple` | Required score scales faster    |
+| `stake_orange` | Shop can have Perishable Jokers |
+| `stake_gold`   | Shop can have Rental Jokers     |
 
 ### Card Value Suit
 
