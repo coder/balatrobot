@@ -62,7 +62,7 @@
         },
         {
           "name": "edition",
-          "description": "Edition type. NEGATIVE only valid for consumables; jokers and playing cards accept all editions. Not valid for vouchers.",
+          "description": "Edition key (e_foil, e_holo, e_polychrome, e_negative). e_negative only valid for consumables; jokers and playing cards accept all editions. Not valid for vouchers.",
           "required": false,
           "schema": {
             "$ref": "#/components/schemas/Edition"
@@ -1582,19 +1582,19 @@
         "description": "Card edition type",
         "oneOf": [
           {
-            "const": "FOIL",
+            "const": "e_foil",
             "description": "+50 Chips when scored"
           },
           {
-            "const": "HOLO",
+            "const": "e_holo",
             "description": "+10 Mult when scored"
           },
           {
-            "const": "POLYCHROME",
+            "const": "e_polychrome",
             "description": "X1.5 Mult when scored"
           },
           {
-            "const": "NEGATIVE",
+            "const": "e_negative",
             "description": "+1 Joker slot (Jokers) or +1 Consumable slot (Consumables)"
           }
         ]

@@ -598,7 +598,7 @@ Add a card to the game (debug/testing). Supports jokers, consumables, vouchers, 
 | ------------- | ------- | -------- | ------------------------------------------------------------------------------ |
 | `key`         | string  | Yes      | [Card key](#card-keys) (e.g., `j_joker`, `c_fool`, `p_arcana_normal_1`, `H_A`) |
 | `seal`        | string  | No       | [Seal](#card-modifier-seal) type (playing cards only)                          |
-| `edition`     | string  | No       | [Edition](#card-modifier-edition) type (not vouchers or packs)                 |
+| `edition`     | string  | No       | [Edition](#card-modifier-edition) key (e.g. `e_foil`, not vouchers or packs)   |
 | `enhancement` | string  | No       | [Enhancement](#card-modifier-enhancement) type (playing cards only)            |
 | `eternal`     | boolean | No       | Cannot be sold/destroyed (jokers only)                                         |
 | `perishable`  | integer | No       | Rounds until perish (jokers only)                                              |
@@ -616,7 +616,7 @@ Add a card to the game (debug/testing). Supports jokers, consumables, vouchers, 
 # Add a Polychrome Joker
 curl -X POST http://127.0.0.1:12346 \
   -H "Content-Type: application/json" \
-  -d '{"jsonrpc": "2.0", "method": "add", "params": {"key": "j_joker", "edition": "POLYCHROME"}, "id": 1}'
+  -d '{"jsonrpc": "2.0", "method": "add", "params": {"key": "j_joker", "edition": "e_polychrome"}, "id": 1}'
 
 # Add an Arcana Pack to the shop (requires SHOP state)
 curl -X POST http://127.0.0.1:12346 \
@@ -910,12 +910,12 @@ Represents a Balatro tag that provides bonuses when triggered.
 
 ### Card Modifier Edition
 
-| Value        | Description                       |
-| ------------ | --------------------------------- |
-| `FOIL`       | +50 Chips                         |
-| `HOLO`       | +10 Mult                          |
-| `POLYCHROME` | X1.5 Mult                         |
-| `NEGATIVE`   | +1 slot (jokers/consumables only) |
+| Value          | Description                       |
+| -------------- | --------------------------------- |
+| `e_foil`       | +50 Chips                         |
+| `e_holo`       | +10 Mult                          |
+| `e_polychrome` | X1.5 Mult                         |
+| `e_negative`   | +1 slot (jokers/consumables only) |
 
 ### Card Modifier Enhancement
 

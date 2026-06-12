@@ -85,7 +85,7 @@
 
 ---@class Card.Modifier
 ---@field seal Card.Modifier.Seal? Seal type (playing cards)
----@field edition Card.Modifier.Edition? Edition type (jokers, playing cards and NEGATIVE consumables)
+---@field edition Card.Modifier.Edition? Edition type (jokers, playing cards and e_negative consumables)
 ---@field enhancement Card.Modifier.Enhancement? Enhancement type (playing cards)
 ---@field eternal boolean? If true, card cannot be sold or destroyed (jokers only)
 ---@field perishable integer? Number of rounds remaining (only if > 0) (jokers only)

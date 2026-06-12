@@ -7,7 +7,7 @@
 ---@class Request.Endpoint.Add.Params
 ---@field key Card.Key The card key to add (j_* for jokers, c_* for consumables, v_* for vouchers, SUIT_RANK for playing cards)
 ---@field seal Card.Modifier.Seal? The card seal to apply (only for playing cards)
----@field edition Card.Modifier.Edition? The card edition to apply (jokers, playing cards and NEGATIVE consumables)
+---@field edition Card.Modifier.Edition? The card edition to apply (jokers, playing cards and e_negative consumables)
 ---@field enhancement Card.Modifier.Enhancement? The card enhancement to apply (playing cards)
 ---@field eternal boolean? If true, the card will be eternal (jokers only)
 ---@field perishable integer? The card will be perishable for this many rounds (jokers only, must be >= 1)
@@ -48,14 +48,6 @@ local SEAL_MAP = {
   BLUE = "Blue",
   GOLD = "Gold",
   PURPLE = "Purple",
-}
-
--- Edition conversion table
-local EDITION_MAP = {
-  HOLO = "e_holo",
-  FOIL = "e_foil",
-  POLYCHROME = "e_polychrome",
-  NEGATIVE = "e_negative",
 }
 
 ---Detect card type based on key prefix or pattern
@@ -125,7 +117,7 @@ return {
     edition = {
       type = "string",
       required = false,
-      description = "Edition type (HOLO, FOIL, POLYCHROME, NEGATIVE) - valid for jokers, playing cards, and consumables (consumables: NEGATIVE only)",
+      description = "Edition key (e_foil, e_holo, e_polychrome, e_negative) - valid for jokers, playing cards, and consumables (consumables: e_negative only)",
     },
     enhancement = {
       type = "string",
@@ -258,10 +250,10 @@ return {
       return
     end
 
-    -- Special validation: consumables can only have NEGATIVE edition
-    if args.edition and card_type == "consumable" and args.edition ~= "NEGATIVE" then
+    -- Special validation: consumables can only have e_negative edition
+    if args.edition and card_type == "consumable" and args.edition ~= "e_negative" then
       send_response({
-        message = "Consumables can only have NEGATIVE edition",
+        message = "Consumables can only have e_negative edition",
         name = BB_ERROR_NAMES.BAD_REQUEST,
       })
       return
@@ -270,14 +262,14 @@ return {
     -- Validate and convert edition value
     local edition_value = nil
     if args.edition then
-      edition_value = EDITION_MAP[args.edition]
-      if not edition_value then
+      if args.edition:sub(1, 2) ~= "e_" then
         send_response({
-          message = "Invalid edition value. Expected: HOLO, FOIL, POLYCHROME, or NEGATIVE",
+          message = "Expected an e_* edition key (e.g. e_foil, e_holo)",
           name = BB_ERROR_NAMES.BAD_REQUEST,
         })
         return
       end
+      edition_value = args.edition
     end
 
     -- Validate enhancement parameter is only for playing cards

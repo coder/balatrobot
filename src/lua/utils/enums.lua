@@ -385,10 +385,10 @@
 ---| "PURPLE" # Creates a Tarot card when discarded (Must have room)
 
 ---@alias Card.Modifier.Edition
----| "HOLO" # +10 Mult when scored (Playing cards). +10 Mult directly before the Joker is reached during scoring (Jokers)
----| "FOIL" # +50 Chips when scored (Playing cards). +50 Chips directly before the Joker is reached during scoring (Jokers)
----| "POLYCHROME" # X1.5 Mult when scored (Playing cards). X1.5 Mult directly after the Joker is reached during scoring (Jokers)
----| "NEGATIVE" # N/A (Playing cards). +1 Joker slot (Jokers). +1 Consumable slot (Consumables)
+---| "e_holo" # +10 Mult when scored (Playing cards). +10 Mult directly before the Joker is reached during scoring (Jokers)
+---| "e_foil" # +50 Chips when scored (Playing cards). +50 Chips directly before the Joker is reached during scoring (Jokers)
+---| "e_polychrome" # X1.5 Mult when scored (Playing cards). X1.5 Mult directly after the Joker is reached during scoring (Jokers)
+---| "e_negative" # N/A (Playing cards). +1 Joker slot (Jokers). +1 Consumable slot (Consumables)
 
 ---@alias Card.Modifier.Enhancement
 ---| "m_bonus" # Enhanced card gives an additional +30 Chips when scored

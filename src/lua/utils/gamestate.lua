@@ -232,9 +232,9 @@ local function extract_card_modifier(card)
     modifier.seal = string.upper(card.seal)
   end
 
-  -- Edition (table with type/key)
-  if card.edition and card.edition.type then
-    modifier.edition = string.upper(card.edition.type)
+  -- Edition (table with key)
+  if card.edition and card.edition.key then
+    modifier.edition = card.edition.key
   end
 
   -- Enhancement (from center_key for enhanced cards)
