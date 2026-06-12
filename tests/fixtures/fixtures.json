@@ -1424,6 +1424,354 @@
           "skip": true
         }
       }
+    ],
+    "state-SHOP--cards.count-2--packs[1].label-Arcana+Pack": [
+      {
+        "method": "menu",
+        "params": {}
+      },
+      {
+        "method": "start",
+        "params": {
+          "deck": "b_abandoned",
+          "stake": "stake_white",
+          "seed": "ISSUE197"
+        }
+      },
+      {
+        "method": "select",
+        "params": {}
+      },
+      {
+        "method": "add",
+        "params": {
+          "key": "c_hanged_man"
+        }
+      },
+      {
+        "method": "use",
+        "params": {
+          "consumable": 0,
+          "cards": [
+            0,
+            1
+          ]
+        }
+      },
+      {
+        "method": "add",
+        "params": {
+          "key": "c_hanged_man"
+        }
+      },
+      {
+        "method": "use",
+        "params": {
+          "consumable": 0,
+          "cards": [
+            0,
+            1
+          ]
+        }
+      },
+      {
+        "method": "add",
+        "params": {
+          "key": "c_hanged_man"
+        }
+      },
+      {
+        "method": "use",
+        "params": {
+          "consumable": 0,
+          "cards": [
+            0,
+            1
+          ]
+        }
+      },
+      {
+        "method": "add",
+        "params": {
+          "key": "c_hanged_man"
+        }
+      },
+      {
+        "method": "use",
+        "params": {
+          "consumable": 0,
+          "cards": [
+            0,
+            1
+          ]
+        }
+      },
+      {
+        "method": "add",
+        "params": {
+          "key": "c_hanged_man"
+        }
+      },
+      {
+        "method": "use",
+        "params": {
+          "consumable": 0,
+          "cards": [
+            0,
+            1
+          ]
+        }
+      },
+      {
+        "method": "add",
+        "params": {
+          "key": "c_hanged_man"
+        }
+      },
+      {
+        "method": "use",
+        "params": {
+          "consumable": 0,
+          "cards": [
+            0,
+            1
+          ]
+        }
+      },
+      {
+        "method": "add",
+        "params": {
+          "key": "c_hanged_man"
+        }
+      },
+      {
+        "method": "use",
+        "params": {
+          "consumable": 0,
+          "cards": [
+            0,
+            1
+          ]
+        }
+      },
+      {
+        "method": "add",
+        "params": {
+          "key": "c_hanged_man"
+        }
+      },
+      {
+        "method": "use",
+        "params": {
+          "consumable": 0,
+          "cards": [
+            0,
+            1
+          ]
+        }
+      },
+      {
+        "method": "add",
+        "params": {
+          "key": "c_hanged_man"
+        }
+      },
+      {
+        "method": "use",
+        "params": {
+          "consumable": 0,
+          "cards": [
+            0,
+            1
+          ]
+        }
+      },
+      {
+        "method": "add",
+        "params": {
+          "key": "c_hanged_man"
+        }
+      },
+      {
+        "method": "use",
+        "params": {
+          "consumable": 0,
+          "cards": [
+            0,
+            1
+          ]
+        }
+      },
+      {
+        "method": "add",
+        "params": {
+          "key": "c_hanged_man"
+        }
+      },
+      {
+        "method": "use",
+        "params": {
+          "consumable": 0,
+          "cards": [
+            0,
+            1
+          ]
+        }
+      },
+      {
+        "method": "add",
+        "params": {
+          "key": "c_hanged_man"
+        }
+      },
+      {
+        "method": "use",
+        "params": {
+          "consumable": 0,
+          "cards": [
+            0,
+            1
+          ]
+        }
+      },
+      {
+        "method": "add",
+        "params": {
+          "key": "c_hanged_man"
+        }
+      },
+      {
+        "method": "use",
+        "params": {
+          "consumable": 0,
+          "cards": [
+            0,
+            1
+          ]
+        }
+      },
+      {
+        "method": "add",
+        "params": {
+          "key": "c_hanged_man"
+        }
+      },
+      {
+        "method": "use",
+        "params": {
+          "consumable": 0,
+          "cards": [
+            0,
+            1
+          ]
+        }
+      },
+      {
+        "method": "add",
+        "params": {
+          "key": "c_hanged_man"
+        }
+      },
+      {
+        "method": "use",
+        "params": {
+          "consumable": 0,
+          "cards": [
+            0,
+            1
+          ]
+        }
+      },
+      {
+        "method": "add",
+        "params": {
+          "key": "c_hanged_man"
+        }
+      },
+      {
+        "method": "use",
+        "params": {
+          "consumable": 0,
+          "cards": [
+            0,
+            1
+          ]
+        }
+      },
+      {
+        "method": "add",
+        "params": {
+          "key": "c_hanged_man"
+        }
+      },
+      {
+        "method": "use",
+        "params": {
+          "consumable": 0,
+          "cards": [
+            0,
+            1
+          ]
+        }
+      },
+      {
+        "method": "add",
+        "params": {
+          "key": "c_hanged_man"
+        }
+      },
+      {
+        "method": "use",
+        "params": {
+          "consumable": 0,
+          "cards": [
+            0,
+            1
+          ]
+        }
+      },
+      {
+        "method": "set",
+        "params": {
+          "chips": 100000
+        }
+      },
+      {
+        "method": "play",
+        "params": {
+          "cards": [
+            0
+          ]
+        }
+      },
+      {
+        "method": "cash_out",
+        "params": {}
+      },
+      {
+        "method": "set",
+        "params": {
+          "money": 100
+        }
+      },
+      {
+        "method": "buy",
+        "params": {
+          "pack": 0
+        }
+      },
+      {
+        "method": "pack",
+        "params": {
+          "skip": true
+        }
+      },
+      {
+        "method": "add",
+        "params": {
+          "key": "p_arcana_normal_1"
+        }
+      }
     ]
   },
   "pack": {

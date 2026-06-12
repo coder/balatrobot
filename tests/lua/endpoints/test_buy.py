@@ -196,6 +196,19 @@ class TestBuyEndpoint:
         assert gamestate["pack"] is not None
         assert len(gamestate["pack"]["cards"]) > 0
 
+    def test_buy_pack_thin_deck(self, client: httpx.Client) -> None:
+        """Regression test for #198: buying an Arcana/Spectral pack with
+        a thin deck (< hand_limit) must not hang.
+        """
+        gamestate = load_fixture(
+            client, "buy", "state-SHOP--cards.count-2--packs[1].label-Arcana+Pack"
+        )
+        assert gamestate["state"] == "SHOP"
+        assert gamestate["cards"]["count"] < 8
+
+        response = api(client, "buy", {"pack": 1}, timeout=10.0)
+        assert_gamestate_response(response)
+
     def test_buy_with_credit_card_joker(self, client: httpx.Client) -> None:
         """Test buying when player has Credit Card joker (can go negative)."""
         # Get to shop state with $0
