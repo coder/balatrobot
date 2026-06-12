@@ -265,7 +265,7 @@ class TestAddEndpointPack:
 class TestAddEndpointSeal:
     """Test seal parameter for add endpoint."""
 
-    @pytest.mark.parametrize("seal", ["RED", "BLUE", "GOLD", "PURPLE"])
+    @pytest.mark.parametrize("seal", ["Red", "Blue", "Gold", "Purple"])
     def test_add_playing_card_with_seal(self, client: httpx.Client, seal: str) -> None:
         """Test adding a playing card with various seals."""
         gamestate = load_fixture(
@@ -294,7 +294,7 @@ class TestAddEndpointSeal:
         assert_error_response(
             response,
             "BAD_REQUEST",
-            "Invalid seal value. Expected: RED, BLUE, GOLD, or PURPLE",
+            "Invalid seal value. Expected a Seal key from G.P_SEALS (e.g. Red, Blue)",
         )
 
     @pytest.mark.parametrize(
@@ -310,7 +310,7 @@ class TestAddEndpointSeal:
             "state-SHOP--jokers.count-0--consumables.count-0--vouchers.count-0--packs.count-0",
         )
         assert gamestate["state"] == "SHOP"
-        response = api(client, "add", {"key": key, "seal": "RED"})
+        response = api(client, "add", {"key": key, "seal": "Red"})
         assert_error_response(
             response,
             "BAD_REQUEST",

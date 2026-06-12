@@ -903,10 +903,10 @@ Represents a Balatro tag that provides bonuses when triggered.
 
 | Value    | Description                                |
 | -------- | ------------------------------------------ |
-| `RED`    | Retrigger card 1 time                      |
-| `BLUE`   | Creates Planet card for final hand if held |
-| `GOLD`   | Earn $3 when scored                        |
-| `PURPLE` | Creates Tarot when discarded               |
+| `Red`    | Retrigger card 1 time                      |
+| `Blue`   | Creates Planet card for final hand if held |
+| `Gold`   | Earn $3 when scored                        |
+| `Purple` | Creates Tarot when discarded               |
 
 ### Card Modifier Edition
 

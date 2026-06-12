@@ -229,7 +229,7 @@ local function extract_card_modifier(card)
 
   -- Seal (direct property)
   if card.seal then
-    modifier.seal = string.upper(card.seal)
+    modifier.seal = card.seal
   end
 
   -- Edition (table with key)

@@ -6,7 +6,7 @@
 
 ---@class Request.Endpoint.Add.Params
 ---@field key Card.Key The card key to add (j_* for jokers, c_* for consumables, v_* for vouchers, SUIT_RANK for playing cards)
----@field seal Card.Modifier.Seal? The card seal to apply (only for playing cards)
+---@field seal Card.Modifier.Seal? Seal type from G.P_SEALS (e.g. Red, Blue, Gold, Purple) - only valid for playing cards
 ---@field edition Card.Modifier.Edition? The card edition to apply (jokers, playing cards and e_negative consumables)
 ---@field enhancement Card.Modifier.Enhancement? The card enhancement to apply (playing cards)
 ---@field eternal boolean? If true, the card will be eternal (jokers only)
@@ -42,13 +42,6 @@ local RANK_MAP = {
   A = "Ace",
 }
 
--- Seal conversion table
-local SEAL_MAP = {
-  RED = "Red",
-  BLUE = "Blue",
-  GOLD = "Gold",
-  PURPLE = "Purple",
-}
 
 ---Detect card type based on key prefix or pattern
 ---@param key string The card key
@@ -112,7 +105,7 @@ return {
     seal = {
       type = "string",
       required = false,
-      description = "Seal type (RED, BLUE, GOLD, PURPLE) - only valid for playing cards",
+      description = "Seal type from G.P_SEALS (e.g. Red, Blue, Gold, Purple) - only valid for playing cards",
     },
     edition = {
       type = "string",
@@ -228,17 +221,17 @@ return {
       return
     end
 
-    -- Validate and convert seal value
+    -- Validate seal value
     local seal_value = nil
     if args.seal then
-      seal_value = SEAL_MAP[args.seal]
-      if not seal_value then
+      if args.seal ~= "Red" and args.seal ~= "Blue" and args.seal ~= "Gold" and args.seal ~= "Purple" then
         send_response({
-          message = "Invalid seal value. Expected: RED, BLUE, GOLD, or PURPLE",
+          message = "Invalid seal value. Expected a Seal key from G.P_SEALS (e.g. Red, Blue)",
           name = BB_ERROR_NAMES.BAD_REQUEST,
         })
         return
       end
+      seal_value = args.seal
     end
 
     -- Validate edition parameter is only for jokers, playing cards, or consumables

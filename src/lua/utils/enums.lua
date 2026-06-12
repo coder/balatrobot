@@ -379,10 +379,10 @@
 ---| Card.Key.Pack
 
 ---@alias Card.Modifier.Seal
----| "RED" # Retrigger this card 1 time
----| "BLUE" # Creates the Planet card for final played poker hand of round if held in hand (Must have room)
----| "GOLD" # Earn $3 when this card is played and scores
----| "PURPLE" # Creates a Tarot card when discarded (Must have room)
+---| "Red" # Retrigger this card 1 time
+---| "Blue" # Creates the Planet card for final played poker hand of round if held in hand (Must have room)
+---| "Gold" # Earn $3 when this card is played and scores
+---| "Purple" # Creates a Tarot card when discarded (Must have room)
 
 ---@alias Card.Modifier.Edition
 ---| "e_holo" # +10 Mult when scored (Playing cards). +10 Mult directly before the Joker is reached during scoring (Jokers)

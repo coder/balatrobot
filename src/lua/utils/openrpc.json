@@ -1561,19 +1561,19 @@
         "description": "Card seal type",
         "oneOf": [
           {
-            "const": "RED",
+            "const": "Red",
             "description": "Retrigger this card 1 time"
           },
           {
-            "const": "BLUE",
+            "const": "Blue",
             "description": "Creates Planet card for final played poker hand if held in hand"
           },
           {
-            "const": "GOLD",
+            "const": "Gold",
             "description": "Earn $3 when this card is played and scores"
           },
           {
-            "const": "PURPLE",
+            "const": "Purple",
             "description": "Creates a Tarot card when discarded"
           }
         ]
