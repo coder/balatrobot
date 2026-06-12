@@ -31,35 +31,6 @@ local function get_state_name(state_num)
 end
 
 -- ==========================================================================
--- Deck Name Mapping
--- ==========================================================================
-
-local DECK_KEY_TO_NAME = {
-  b_red = "RED",
-  b_blue = "BLUE",
-  b_yellow = "YELLOW",
-  b_green = "GREEN",
-  b_black = "BLACK",
-  b_magic = "MAGIC",
-  b_nebula = "NEBULA",
-  b_ghost = "GHOST",
-  b_abandoned = "ABANDONED",
-  b_checkered = "CHECKERED",
-  b_zodiac = "ZODIAC",
-  b_painted = "PAINTED",
-  b_anaglyph = "ANAGLYPH",
-  b_plasma = "PLASMA",
-  b_erratic = "ERRATIC",
-}
-
----Converts deck key to string deck name
----@param deck_key string The key from G.P_CENTERS (e.g., "b_red")
----@return string? deck_name The string name of the deck (e.g., "RED"), or nil if not found
-local function get_deck_name(deck_key)
-  return DECK_KEY_TO_NAME[deck_key]
-end
-
--- ==========================================================================
 -- Stake Name Mapping
 -- ==========================================================================
 
@@ -855,7 +826,7 @@ function gamestate.get_gamestate()
     -- Deck (optional)
     if G.GAME.selected_back and G.GAME.selected_back.effect and G.GAME.selected_back.effect.center then
       local deck_key = G.GAME.selected_back.effect.center.key
-      state_data.deck = get_deck_name(deck_key)
+      state_data.deck = deck_key
     end
 
     -- Stake (optional)

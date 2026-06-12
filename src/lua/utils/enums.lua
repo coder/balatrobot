@@ -1,21 +1,21 @@
 ---@meta enums
 
 ---@alias Deck
----| "RED" # +1 discard every round
----| "BLUE" # +1 hand every round
----| "YELLOW" # Start with extra $10
----| "GREEN" # At end of each Round, $2 per remaining Hand $1 per remaining Discard Earn no Interest
----| "BLACK" # +1 Joker slot -1 hand every round
----| "MAGIC" # Start run with the Cristal Ball voucher and 2 copies of The Fool
----| "NEBULA" # Start run with the Telescope voucher and -1 consumable slot
----| "GHOST" # Spectral cards  may appear in the shop. Start with a Hex card
----| "ABANDONED" # Start run with no Face Cards in your deck
----| "CHECKERED" # Start run with 26 Spaces and 26 Hearts in deck
----| "ZODIAC" # Start run with Tarot Merchant, Planet Merchant, and Overstock
----| "PAINTED" # +2 hand size, -1 Joker slot
----| "ANAGLYPH" # After defeating each Boss Blind, gain a Double Tag
----| "PLASMA" # Balanced Chips and Mult when calculating score for played hand X2 base Blind size
----| "ERRATIC" # All Ranks and Suits in deck are randomized
+---| "b_red" # Red Deck: +1 discard every round
+---| "b_blue" # Blue Deck: +1 hand every round
+---| "b_yellow" # Yellow Deck: Start with extra $10
+---| "b_green" # Green Deck: $2 per remaining Hand, $1 per remaining Discard, no interest
+---| "b_black" # Black Deck: +1 Joker slot, -1 hand every round
+---| "b_magic" # Magic Deck: Start with Crystal Ball and 2 copies of The Fool
+---| "b_nebula" # Nebula Deck: Start with Telescope, -1 consumable slot
+---| "b_ghost" # Ghost Deck: Spectral cards may appear in shop, start with Hex
+---| "b_abandoned" # Abandoned Deck: No Face Cards in starting deck
+---| "b_checkered" # Checkered Deck: 26 Spades and 26 Hearts in deck
+---| "b_zodiac" # Zodiac Deck: Start with Tarot Merchant, Planet Merchant, and Overstock
+---| "b_painted" # Painted Deck: +2 hand size, -1 Joker slot
+---| "b_anaglyph" # Anaglyph Deck: Double Tag after each Boss Blind
+---| "b_plasma" # Plasma Deck: Balanced Chips/Mult, 2X base Blind size
+---| "b_erratic" # Erratic Deck: Random Ranks and Suits
 
 ---@alias Stake
 ---| "WHITE" # 1. Base Difficulty

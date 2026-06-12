@@ -1381,64 +1381,64 @@
         "description": "Deck type",
         "oneOf": [
           {
-            "const": "RED",
-            "description": "+1 discard every round"
+            "const": "b_red",
+            "description": "Red Deck: +1 discard every round"
           },
           {
-            "const": "BLUE",
-            "description": "+1 hand every round"
+            "const": "b_blue",
+            "description": "Blue Deck: +1 hand every round"
           },
           {
-            "const": "YELLOW",
-            "description": "Start with extra $10"
+            "const": "b_yellow",
+            "description": "Yellow Deck: Start with extra $10"
           },
           {
-            "const": "GREEN",
-            "description": "$2 per remaining Hand, $1 per remaining Discard, no interest"
+            "const": "b_green",
+            "description": "Green Deck: $2 per remaining Hand, $1 per remaining Discard, no interest"
           },
           {
-            "const": "BLACK",
-            "description": "+1 Joker slot, -1 hand every round"
+            "const": "b_black",
+            "description": "Black Deck: +1 Joker slot, -1 hand every round"
           },
           {
-            "const": "MAGIC",
-            "description": "Start with Crystal Ball voucher and 2 copies of The Fool"
+            "const": "b_magic",
+            "description": "Magic Deck: Start with Crystal Ball and 2 copies of The Fool"
           },
           {
-            "const": "NEBULA",
-            "description": "Start with Telescope voucher, -1 consumable slot"
+            "const": "b_nebula",
+            "description": "Nebula Deck: Start with Telescope, -1 consumable slot"
           },
           {
-            "const": "GHOST",
-            "description": "Spectral cards may appear in shop, start with Hex card"
+            "const": "b_ghost",
+            "description": "Ghost Deck: Spectral cards may appear in shop, start with Hex"
           },
           {
-            "const": "ABANDONED",
-            "description": "Start with no Face Cards in deck"
+            "const": "b_abandoned",
+            "description": "Abandoned Deck: No Face Cards in starting deck"
           },
           {
-            "const": "CHECKERED",
-            "description": "Start with 26 Spades and 26 Hearts in deck"
+            "const": "b_checkered",
+            "description": "Checkered Deck: 26 Spades and 26 Hearts in deck"
           },
           {
-            "const": "ZODIAC",
-            "description": "Start with Tarot Merchant, Planet Merchant, and Overstock"
+            "const": "b_zodiac",
+            "description": "Zodiac Deck: Start with Tarot Merchant, Planet Merchant, and Overstock"
           },
           {
-            "const": "PAINTED",
-            "description": "+2 hand size, -1 Joker slot"
+            "const": "b_painted",
+            "description": "Painted Deck: +2 hand size, -1 Joker slot"
           },
           {
-            "const": "ANAGLYPH",
-            "description": "Gain Double Tag after each Boss Blind"
+            "const": "b_anaglyph",
+            "description": "Anaglyph Deck: Double Tag after each Boss Blind"
           },
           {
-            "const": "PLASMA",
-            "description": "Balanced Chips and Mult, 2X base Blind size"
+            "const": "b_plasma",
+            "description": "Plasma Deck: Balanced Chips/Mult, 2X base Blind size"
           },
           {
-            "const": "ERRATIC",
-            "description": "All Ranks and Suits in deck are randomized"
+            "const": "b_erratic",
+            "description": "Erratic Deck: Random Ranks and Suits"
           }
         ]
       },

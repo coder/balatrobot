@@ -19,23 +19,23 @@ class TestStartEndpoint:
     @pytest.mark.parametrize(
         "arguments,expected",
         [
-            # Test basic start with RED deck and WHITE stake
+            # Test basic start with b_red deck and WHITE stake
             (
-                {"deck": "RED", "stake": "WHITE"},
+                {"deck": "b_red", "stake": "WHITE"},
                 {
                     "state": "BLIND_SELECT",
-                    "deck": "RED",
+                    "deck": "b_red",
                     "stake": "WHITE",
                     "ante_num": 1,
                     "round_num": 0,
                 },
             ),
-            # Test with BLUE deck
+            # Test with b_blue deck
             (
-                {"deck": "BLUE", "stake": "WHITE"},
+                {"deck": "b_blue", "stake": "WHITE"},
                 {
                     "state": "BLIND_SELECT",
-                    "deck": "BLUE",
+                    "deck": "b_blue",
                     "stake": "WHITE",
                     "ante_num": 1,
                     "round_num": 0,
@@ -43,10 +43,10 @@ class TestStartEndpoint:
             ),
             # Test with higher stake (BLACK)
             (
-                {"deck": "RED", "stake": "BLACK"},
+                {"deck": "b_red", "stake": "BLACK"},
                 {
                     "state": "BLIND_SELECT",
-                    "deck": "RED",
+                    "deck": "b_red",
                     "stake": "BLACK",
                     "ante_num": 1,
                     "round_num": 0,
@@ -54,10 +54,10 @@ class TestStartEndpoint:
             ),
             # Test with seed
             (
-                {"deck": "RED", "stake": "WHITE", "seed": "TEST123"},
+                {"deck": "b_red", "stake": "WHITE", "seed": "TEST123"},
                 {
                     "state": "BLIND_SELECT",
-                    "deck": "RED",
+                    "deck": "b_red",
                     "stake": "WHITE",
                     "ante_num": 1,
                     "round_num": 0,
@@ -97,7 +97,7 @@ class TestStartEndpointValidation:
         """Test that start fails when stake parameter is missing."""
         response = api(client, "menu", {})
         assert_gamestate_response(response, state="MENU")
-        response = api(client, "start", {"deck": "RED"})
+        response = api(client, "start", {"deck": "b_red"})
         assert_error_response(
             response,
             "BAD_REQUEST",
@@ -105,21 +105,21 @@ class TestStartEndpointValidation:
         )
 
     def test_invalid_deck_value(self, client: httpx.Client):
-        """Test that start fails with invalid deck enum."""
+        """Test that start fails with invalid deck key."""
         response = api(client, "menu", {})
         assert_gamestate_response(response, state="MENU")
         response = api(client, "start", {"deck": "INVALID_DECK", "stake": "WHITE"})
         assert_error_response(
             response,
             "BAD_REQUEST",
-            "Invalid deck enum. Must be one of:",
+            "Expected a b_* deck key from G.P_CENTERS",
         )
 
     def test_invalid_stake_value(self, client: httpx.Client):
         """Test that start fails when invalid stake enum is provided."""
         response = api(client, "menu", {})
         assert_gamestate_response(response, state="MENU")
-        response = api(client, "start", {"deck": "RED", "stake": "INVALID_STAKE"})
+        response = api(client, "start", {"deck": "b_red", "stake": "INVALID_STAKE"})
         assert_error_response(
             response,
             "BAD_REQUEST",
@@ -141,7 +141,7 @@ class TestStartEndpointValidation:
         """Test that start fails when stake is not a string."""
         response = api(client, "menu", {})
         assert_gamestate_response(response, state="MENU")
-        response = api(client, "start", {"deck": "RED", "stake": 1})
+        response = api(client, "start", {"deck": "b_red", "stake": 1})
         assert_error_response(
             response,
             "BAD_REQUEST",
@@ -156,7 +156,7 @@ class TestStartEndpointStateRequirements:
         """Test that start fails when not in MENU state."""
         gamestate = load_fixture(client, "start", "state-BLIND_SELECT")
         assert gamestate["state"] == "BLIND_SELECT"
-        response = api(client, "start", {"deck": "RED", "stake": "WHITE"})
+        response = api(client, "start", {"deck": "b_red", "stake": "WHITE"})
         assert_error_response(
             response,
             "INVALID_STATE",

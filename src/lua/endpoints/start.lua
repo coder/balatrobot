@@ -5,31 +5,13 @@
 -- ==========================================================================
 
 ---@class Request.Endpoint.Start.Params
----@field deck Deck deck enum value (e.g., "RED", "BLUE", "YELLOW")
+---@field deck Deck Deck key from G.P_CENTERS (e.g., "b_red", "b_blue")
 ---@field stake Stake stake enum value (e.g., "WHITE", "RED", "GREEN", "BLACK", "BLUE", "PURPLE", "ORANGE", "GOLD")
 ---@field seed string? optional seed for the run
 
 -- ==========================================================================
 -- Start Endpoint Utils
 -- ==========================================================================
-
-local DECK_ENUM_TO_NAME = {
-  RED = "Red Deck",
-  BLUE = "Blue Deck",
-  YELLOW = "Yellow Deck",
-  GREEN = "Green Deck",
-  BLACK = "Black Deck",
-  MAGIC = "Magic Deck",
-  NEBULA = "Nebula Deck",
-  GHOST = "Ghost Deck",
-  ABANDONED = "Abandoned Deck",
-  CHECKERED = "Checkered Deck",
-  ZODIAC = "Zodiac Deck",
-  PAINTED = "Painted Deck",
-  ANAGLYPH = "Anaglyph Deck",
-  PLASMA = "Plasma Deck",
-  ERRATIC = "Erratic Deck",
-}
 
 local STAKE_ENUM_TO_NUMBER = {
   WHITE = 1,
@@ -57,7 +39,7 @@ return {
     deck = {
       type = "string",
       required = true,
-      description = "Deck enum value (e.g., 'RED', 'BLUE', 'YELLOW')",
+      description = "Deck key from G.P_CENTERS (e.g., 'b_red', 'b_blue')",
     },
     stake = {
       type = "string",
@@ -90,13 +72,12 @@ return {
       return
     end
 
-    -- Validate and map deck enum
-    local deck_name = DECK_ENUM_TO_NAME[args.deck]
-    if not deck_name then
-      sendWarnMessage("Invalid deck enum: " .. tostring(args.deck), "BB.ENDPOINTS")
+    -- Validate deck key against G.P_CENTERS
+    local deck_center = G.P_CENTERS and G.P_CENTERS[args.deck]
+    if not deck_center or deck_center.set ~= "Back" then
+      sendWarnMessage("Invalid deck key: " .. tostring(args.deck), "BB.ENDPOINTS")
       send_response({
-        message = "Invalid deck enum. Must be one of: RED, BLUE, YELLOW, GREEN, BLACK, MAGIC, NEBULA, GHOST, ABANDONED, CHECKERED, ZODIAC, PAINTED, ANAGLYPH, PLASMA, ERRATIC. Got: "
-          .. tostring(args.deck),
+        message = "Expected a b_* deck key from G.P_CENTERS (e.g. b_red, b_blue). Got: " .. tostring(args.deck),
         name = BB_ERROR_NAMES.BAD_REQUEST,
       })
       return
@@ -106,11 +87,11 @@ return {
     G.FUNCS.setup_run({ config = {} })
     G.FUNCS.exit_overlay_menu()
 
-    -- Find and set the deck using the mapped deck name
+    -- Find and set the deck using the deck key
     local deck_found = false
     if G.P_CENTER_POOLS and G.P_CENTER_POOLS.Back then
       for _, deck_data in pairs(G.P_CENTER_POOLS.Back) do
-        if deck_data.name == deck_name then
+        if deck_data.key == args.deck then
           G.GAME.selected_back:change_to(deck_data)
           G.GAME.viewed_back:change_to(deck_data)
           deck_found = true
@@ -120,9 +101,9 @@ return {
     end
 
     if not deck_found then
-      sendWarnMessage("Deck not found: " .. deck_name, "BB.ENDPOINTS")
+      sendWarnMessage("Deck not found in G.P_CENTER_POOLS.Back: " .. args.deck, "BB.ENDPOINTS")
       send_response({
-        message = "Deck not found in game data: " .. deck_name,
+        message = "Deck not found in game data: " .. args.deck,
         name = BB_ERROR_NAMES.INTERNAL_ERROR,
       })
       return
@@ -136,7 +117,7 @@ return {
 
     sendInfoMessage(
       "Starting run: "
-        .. deck_name
+        .. args.deck
         .. ", stake="
         .. tostring(stake_number)
         .. " ("

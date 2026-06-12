@@ -38,7 +38,7 @@ class TestApiCommand:
     def test_api_with_params(self, cli_port: int, balatro_client: BalatroClient):
         """api command passes JSON params correctly."""
         balatro_client.call("menu")
-        params = json.dumps({"deck": "RED", "stake": "WHITE"})
+        params = json.dumps({"deck": "b_red", "stake": "WHITE"})
         result = runner.invoke(
             app,
             ["api", "start", params, "--port", str(cli_port), "--host", "127.0.0.1"],

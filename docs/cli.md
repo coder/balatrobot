@@ -109,7 +109,7 @@ uvx balatrobot api health
 uvx balatrobot api gamestate
 
 # Start a new game with Red Deck
-uvx balatrobot api start '{"deck": "RED", "stake": "WHITE"}'
+uvx balatrobot api start '{"deck": "b_red", "stake": "WHITE"}'
 
 # Play cards at indices 0 and 2
 uvx balatrobot api play '{"cards": [0, 2]}'

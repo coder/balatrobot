@@ -36,7 +36,7 @@ def play_game():
     """Play a complete game of Balatro."""
     # Return to menu and start a new game
     rpc("menu")
-    state = rpc("start", {"deck": "RED", "stake": "WHITE"})
+    state = rpc("start", {"deck": "b_red", "stake": "WHITE"})
     print(f"Started game with seed: {state['seed']}")
 
     # Main game loop

@@ -42,7 +42,6 @@ local RANK_MAP = {
   A = "Ace",
 }
 
-
 ---Detect card type based on key prefix or pattern
 ---@param key string The card key
 ---@return string|nil card_type The detected card type or nil if invalid

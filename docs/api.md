@@ -68,7 +68,7 @@ curl -X POST http://127.0.0.1:12346 \
 ```bash
 curl -X POST http://127.0.0.1:12346 \
   -H "Content-Type: application/json" \
-  -d '{"jsonrpc": "2.0", "method": "start", "params": {"deck": "RED", "stake": "WHITE"}, "id": 1}'
+  -d '{"jsonrpc": "2.0", "method": "start", "params": {"deck": "b_red", "stake": "WHITE"}, "id": 1}'
 ```
 
 #### 4. Select Blind and Play Cards
@@ -208,7 +208,7 @@ Start a new game run.
 ```bash
 curl -X POST http://127.0.0.1:12346 \
   -H "Content-Type: application/json" \
-  -d '{"jsonrpc": "2.0", "method": "start", "params": {"deck": "BLUE", "stake": "WHITE", "seed": "TEST123"}, "id": 1}'
+  -d '{"jsonrpc": "2.0", "method": "start", "params": {"deck": "b_blue", "stake": "WHITE", "seed": "TEST123"}, "id": 1}'
 ```
 
 ---
@@ -699,7 +699,7 @@ The complete game state returned by most methods.
   "round_num": 1,
   "ante_num": 1,
   "money": 4,
-  "deck": "RED",
+  "deck": "b_red",
   "stake": "WHITE",
   "seed": "ABC123",
   "won": false,
@@ -828,23 +828,23 @@ Represents a Balatro tag that provides bonuses when triggered.
 
 ### Deck
 
-| Value       | Description                                                   |
-| ----------- | ------------------------------------------------------------- |
-| `RED`       | +1 discard every round                                        |
-| `BLUE`      | +1 hand every round                                           |
-| `YELLOW`    | Start with extra $10                                          |
-| `GREEN`     | $2 per remaining Hand, $1 per remaining Discard (no interest) |
-| `BLACK`     | +1 Joker slot, -1 hand every round                            |
-| `MAGIC`     | Start with Crystal Ball voucher and 2 copies of The Fool      |
-| `NEBULA`    | Start with Telescope voucher, -1 consumable slot              |
-| `GHOST`     | Spectral cards may appear in shop, start with Hex card        |
-| `ABANDONED` | Start with no Face Cards                                      |
-| `CHECKERED` | Start with 26 Spades and 26 Hearts                            |
-| `ZODIAC`    | Start with Tarot Merchant, Planet Merchant, and Overstock     |
-| `PAINTED`   | +2 hand size, -1 Joker slot                                   |
-| `ANAGLYPH`  | Gain Double Tag after each Boss Blind                         |
-| `PLASMA`    | Balanced Chips/Mult, 2X base Blind size                       |
-| `ERRATIC`   | Randomized Ranks and Suits                                    |
+| Value         | Description                                                   |
+| ------------- | ------------------------------------------------------------- |
+| `b_red`       | +1 discard every round                                        |
+| `b_blue`      | +1 hand every round                                           |
+| `b_yellow`    | Start with extra $10                                          |
+| `b_green`     | $2 per remaining Hand, $1 per remaining Discard (no interest) |
+| `b_black`     | +1 Joker slot, -1 hand every round                            |
+| `b_magic`     | Start with Crystal Ball voucher and 2 copies of The Fool      |
+| `b_nebula`    | Start with Telescope voucher, -1 consumable slot              |
+| `b_ghost`     | Spectral cards may appear in shop, start with Hex card        |
+| `b_abandoned` | Start with no Face Cards                                      |
+| `b_checkered` | Start with 26 Spades and 26 Hearts                            |
+| `b_zodiac`    | Start with Tarot Merchant, Planet Merchant, and Overstock     |
+| `b_painted`   | +2 hand size, -1 Joker slot                                   |
+| `b_anaglyph`  | Gain Double Tag after each Boss Blind                         |
+| `b_plasma`    | Balanced Chips/Mult, 2X base Blind size                       |
+| `b_erratic`   | Randomized Ranks and Suits                                    |
 
 ### Stake
 
