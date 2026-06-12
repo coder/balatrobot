@@ -7,85 +7,62 @@ description: Launch Balatro with the BalatroBot mod and interact via the CLI. Us
 
 Four commands: `serve`, `api`, `list`, `stop`. Explore any with `--help`.
 
-## `serve` — start Balatro
+## Workflow
 
 ```bash
-balatrobot serve --help
+# Start server in background (ports are ephemeral, auto-allocated)
+nohup balatrobot serve --render headless --settings turbo --debug > /tmp/bb.log 2>&1 &
+sleep 10
+balatrobot api health           # auto-discovers port via state file — no --host/--port
+
+# Call endpoints or replay a trace
+balatrobot api gamestate
+balatrobot api --requests path/to/trace.req.jsonl      # --requests also auto-discovers
+
+balatrobot stop                                     # always use stop, never kill/pkill
 ```
 
-Typical invocation:
+## `serve`
 
 ```bash
 balatrobot serve --render headless --settings turbo --debug
 ```
 
-Key flags:
+Key flags: `--render [headfull|headless|ondemand]` (default headfull), `--settings` (default "default"), `--debug`, `--num`. Blocks until Ctrl+C — background it with `&`/`nohup` before running other commands.
 
-- `--render [headfull|headless|ondemand]` — rendering mode (default: headfull)
-- `--settings NAME` — settings profile name (default: "default")
-- `--debug` — enable debug endpoints (during divergence we need to turn this on)
-- `--num` — number of instances
-- `--path-*` — path overrides (don't need to use these)
-
-`serve` auto-allocates ports, prints instance URLs and the session logs directory, then blocks until Ctrl+C. It writes a state file so other commands can discover the running instances.
-
-## `stop` — stop a running server
+## `api`
 
 ```bash
-balatrobot stop
+balatrobot api <method> [JSON_PARAMS]       # params default {}
+balatrobot api --requests PATH              # replay JSONL trace
+balatrobot api --requests PATH --responses PATH  # verify against recorded
 ```
 
-Reads the session state file, sends SIGTERM to the server PID, then polls up to 5 s for it to exit. Cleans up the state file on success. Safe to call when nothing is running (prints "No running instances.").
-
-## `list` — show running instances
-
-```bash
-balatrobot list            # human-readable
-balatrobot list --json     # machine-readable (pipe to jq)
-```
-
-Shows instances from the current session's state file, including per-instance log paths. Use `--json` and pipe to `jq` to extract specific fields.
-
-## `api` — call endpoints
-
-```bash
-balatrobot api <method> [JSON_PARAMS]
-balatrobot api <method> --help
-```
-
-**Important**: to use the right `<method>` and `[JSON_PARAMS]` you must read `docs/api.md` which contains the full API reference (methods, errors, states).
-
-Params are a JSON string (default `{}`). Examples:
+Reads the running instance from the state file — **never pass `--host`/`--port` manually** (ports are ephemeral). For multi-instance, use `-i`/`--index`.
 
 ```bash
 balatrobot api health
-balatrobot api gamestate
 balatrobot api start '{"deck":"RED","stake":"WHITE"}'
-balatrobot api select
 balatrobot api play '{"cards":[0,1,2,3,4]}'
-balatrobot api discard '{"cards":[0,1]}'
-...
+balatrobot api buy '{"pack": 0}'
+balatrobot api gamestate | jq '.state'
 ```
 
-Output is pretty-printed JSON. Pipe to `jq` for filtering:
+See `docs/api.md` for methods, params, and state machine.
+
+## `list`
 
 ```bash
-balatrobot api gamestate | jq '.state'
-balatrobot api gamestate | jq '{state, money, hand: .hand.count}'
+balatrobot list                                     # human-readable
+balatrobot list --json | jq '.instances[0].port'    # extract port/log_path
 ```
 
-`balatrobot api` auto-discovers the running instance from the state file — no `--host`/`--port` needed for single-instance sessions.
-For multi-instance pools, use `-i`/`--index` (0-based, default 0).
+## `stop`
+
+```bash
+balatrobot stop              # SIGTERM + 5s poll, cleans state file
+```
 
 ## Logs
 
-Each session directory (`logs/<timestamp>/`) contains per-instance files: `<port>.log` (Balatro/Love2D output, traces, errors), `<port>.req.jsonl` (JSON-RPC requests), `<port>.res.jsonl` (JSON-RPC responses). JSONL traces are written automatically by the Lua server. Find paths via `balatrobot list` or `balatrobot list --json | jq '.instances[].log_path'`.
-
-## `api --requests` — replay & verify
-
-```bash
-balatrobot api --requests "logs/<ts>/<port>.req.jsonl"
-balatrobot api --requests "logs/<ts>/<port>.req.jsonl" --responses "logs/<ts>/<port>.res.jsonl"
-```
-
-Replays a JSONL request trace against a running instance. `--responses` compares each live response against the recorded one (exits on first divergence). Mutually exclusive with positional `METHOD`.
+Session directory `logs/<timestamp>/` contains `<port>.log`, `<port>.req.jsonl`, `<port>.res.jsonl`. Find paths via `balatrobot list --json`.
