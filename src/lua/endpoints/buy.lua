@@ -255,10 +255,12 @@ return {
             if needs_hand then
               -- Wait for hand to be fully loaded and positioned
               local hand_limit = G.hand and G.hand.config and G.hand.config.card_limit or 8
+              local deck_size = G.deck and G.deck.config and G.deck.config.card_count or 52
+              local expected_hand_size = math.min(deck_size, hand_limit)
               local hand_ready = G.hand
                 and not G.hand.REMOVED
                 and G.hand.cards
-                and #G.hand.cards == hand_limit
+                and #G.hand.cards >= expected_hand_size
                 and G.hand.T
                 and G.hand.T.x
               local cards_positioned = hand_ready and G.hand.cards[1] and G.hand.cards[1].T and G.hand.cards[1].T.x
