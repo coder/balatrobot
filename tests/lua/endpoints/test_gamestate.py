@@ -90,6 +90,25 @@ class TestGamestateTopLevel:
         response = api(client, "play", {"cards": [0]})
         assert response["result"]["won"] is True
 
+    def test_won_persists_through_endless_cycle(self, client: httpx.Client) -> None:
+        """won=true persists across the endless-mode round-transition cycle."""
+        # Drive live to a win, then continue; won must stay true at every step.
+        api(client, "menu")
+        api(
+            client,
+            "start",
+            {"deck": "b_red", "stake": "stake_white", "seed": "TEST123"},
+        )
+        api(client, "skip")
+        api(client, "skip")
+        api(client, "select")
+        api(client, "set", {"ante": 8, "chips": 1000000})
+        win = api(client, "play", {"cards": [0, 3, 4, 5, 6]})
+        assert win["result"]["won"] is True
+        assert api(client, "cash_out")["result"]["won"] is True
+        assert api(client, "next_round")["result"]["won"] is True
+        assert api(client, "select")["result"]["won"] is True
+
 
 class TestGamestateRound:
     """Test gamestate round extraction."""
