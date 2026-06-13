@@ -12,7 +12,7 @@ Four commands: `serve`, `api`, `list`, `stop`. Explore any with `--help`.
 ```bash
 # Start server in background (ports are ephemeral, auto-allocated)
 nohup balatrobot serve --render headless --settings turbo --debug > /tmp/bb.log 2>&1 &
-sleep 10
+sleep 5
 balatrobot api health           # auto-discovers port via state file — no --host/--port
 
 # Call endpoints or replay a trace
