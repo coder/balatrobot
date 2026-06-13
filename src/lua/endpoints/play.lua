@@ -121,7 +121,7 @@ return {
       trigger = "condition",
       blocking = false,
       blockable = false,
-      created_on_pause = true,
+      pause_force = true,
       func = function()
         -- State progression:
         -- Loss: HAND_PLAYED -> NEW_ROUND -> (game paused) -> GAME_OVER
@@ -149,12 +149,14 @@ return {
             return false
           end
 
-          -- Game is won
-          if G.GAME.won then
-            sendDebugMessage("play() → won", "BB.ENDPOINTS")
-            local state_data = BB_GAMESTATE.get_gamestate()
-            send_response(state_data)
-            return true
+          -- Game is won: win_game() raises the win overlay and pauses the game.
+          -- Dismiss it now so the round-eval rows finish building (they are
+          -- pause-skipped while paused) and endless-mode play stays responsive.
+          -- The overlay only appears after ROUND_EVAL is entered, so G.round_eval
+          -- already exists here, and the delayed win events (Jimbo, endless text)
+          -- guard against a nil G.OVERLAY_MENU.
+          if G.GAME.won and G.OVERLAY_MENU then
+            G.FUNCS.exit_overlay_menu()
           end
 
           -- Wait for first scoring row (blind1) to be added to the UI
@@ -172,8 +174,8 @@ return {
 
           -- Both first and last scoring rows must be present
           if has_blind1 and has_cash_out_button then
+            sendDebugMessage(G.GAME.won and "play() → won" or "play() → cash_out", "BB.ENDPOINTS")
             local state_data = BB_GAMESTATE.get_gamestate()
-            sendDebugMessage("play() → cash_out", "BB.ENDPOINTS")
             send_response(state_data)
             return true
           end
