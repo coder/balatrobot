@@ -432,6 +432,40 @@ class TestPackEndpointSelection:
         # Pack should be closed after second selection
         assert "pack" not in after_second
 
+    def test_pack_celestial_black_hole_at_index_zero(
+        self, client: httpx.Client
+    ) -> None:
+        """Regression test for #199: selecting Black Hole from a Celestial pack
+        where it is the first card must not hang.
+
+        Black Hole appears in Celestial packs via the soul mechanism (0.3% chance).
+        The bug: pack.lua checks first card's ability.set to decide if hand cards
+        are needed. Black Hole has set=Spectral -> needs_hand=true. But Celestial
+        packs don't deal hand cards -> endpoint hangs forever.
+        """
+        gamestate = load_fixture(
+            client,
+            "pack",
+            "seed-S001250--state-SMODS_BOOSTER_OPENED--pack.cards[0].key-c_black_hole",
+        )
+        assert gamestate["state"] == "SMODS_BOOSTER_OPENED"
+        assert gamestate["pack"]["cards"][0]["key"] == "c_black_hole"
+
+        # Select Black Hole (index 0) — must not hang
+        result = api(client, "pack", {"card": 0}, timeout=10.0)
+        after = assert_gamestate_response(result, state="SHOP")
+
+        # Pack should be closed after selection
+        assert "pack" not in after
+
+        # Black Hole levels up ALL hands by 1
+        before = gamestate
+        for hand_name in before["hands"]:
+            assert (
+                after["hands"][hand_name]["level"]
+                == before["hands"][hand_name]["level"] + 1
+            )
+
 
 # =============================================================================
 # Mega Pack Multi-Selection Tests

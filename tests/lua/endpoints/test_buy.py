@@ -209,6 +209,33 @@ class TestBuyEndpoint:
         response = api(client, "buy", {"pack": 1}, timeout=10.0)
         assert_gamestate_response(response)
 
+    def test_buy_celestial_pack_with_black_hole(self, client: httpx.Client) -> None:
+        """Regression test for #199: buying a Celestial pack containing Black Hole
+        (Spectral card) as the first card must not hang.
+
+        Black Hole appears in Celestial packs via the soul mechanism (0.3% chance).
+        The bug: buy.lua checks first card's ability.set to decide if hand cards
+        are needed. Black Hole has set=Spectral -> needs_hand=true. But Celestial
+        packs don't deal hand cards -> endpoint hangs forever.
+        """
+        gamestate = load_fixture(
+            client, "buy", "seed-S001250--state-SHOP--pack.cards[0].set-SPECTRAL"
+        )
+        assert gamestate["state"] == "SHOP"
+
+        # Find the Celestial pack
+        celestial_idx = None
+        for i, pack in enumerate(gamestate["packs"]["cards"]):
+            if "celestial" in pack["key"].lower():
+                celestial_idx = i
+                break
+        assert celestial_idx is not None, "No Celestial pack found in shop"
+
+        response = api(client, "buy", {"pack": celestial_idx}, timeout=10.0)
+        gamestate = assert_gamestate_response(response)
+        assert gamestate["pack"] is not None
+        assert len(gamestate["pack"]["cards"]) > 0
+
     def test_buy_with_credit_card_joker(self, client: httpx.Client) -> None:
         """Test buying when player has Credit Card joker (can go negative)."""
         # Get to shop state with $0

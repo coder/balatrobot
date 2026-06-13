@@ -248,9 +248,14 @@ return {
             and G.STATE == G.STATES.SMODS_BOOSTER_OPENED
           )
           if money_deducted and pack_ready then
-            -- Check if this pack type needs hand (Arcana/Spectral packs)
-            local pack_key = G.pack_cards.cards[1].ability and G.pack_cards.cards[1].ability.set
-            local needs_hand = pack_key == "Tarot" or pack_key == "Spectral"
+            -- Check if this pack type needs hand cards (Arcana/Spectral packs)
+            -- Use the booster's own draw_hand flag — the authoritative source.
+            -- Don't infer from card set: Black Hole (set=Spectral) can appear
+            -- in Celestial packs via soul roll, causing false positives.
+            local needs_hand = SMODS.OPENED_BOOSTER
+              and SMODS.OPENED_BOOSTER.config
+              and SMODS.OPENED_BOOSTER.config.center
+              and SMODS.OPENED_BOOSTER.config.center.draw_hand == true
 
             if needs_hand then
               -- Wait for hand to be fully loaded and positioned

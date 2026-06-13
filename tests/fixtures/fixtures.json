@@ -1772,6 +1772,281 @@
           "key": "p_arcana_normal_1"
         }
       }
+    ],
+    "seed-S001250--state-SHOP--pack.cards[0].set-SPECTRAL": [
+      {
+        "method": "menu",
+        "params": {}
+      },
+      {
+        "method": "start",
+        "params": {
+          "deck": "b_red",
+          "stake": "stake_white",
+          "seed": "S001250"
+        }
+      },
+      {
+        "method": "select",
+        "params": {}
+      },
+      {
+        "method": "set",
+        "params": {
+          "chips": 100000,
+          "money": 999
+        }
+      },
+      {
+        "method": "play",
+        "params": {
+          "cards": [
+            0,
+            1,
+            2,
+            3,
+            4
+          ]
+        }
+      },
+      {
+        "method": "cash_out",
+        "params": {}
+      },
+      {
+        "method": "buy",
+        "params": {
+          "pack": 0
+        }
+      },
+      {
+        "method": "pack",
+        "params": {
+          "skip": true
+        }
+      },
+      {
+        "method": "add",
+        "params": {
+          "key": "p_celestial_normal_1"
+        }
+      },
+      {
+        "method": "buy",
+        "params": {
+          "pack": 1
+        }
+      },
+      {
+        "method": "pack",
+        "params": {
+          "skip": true
+        }
+      },
+      {
+        "method": "add",
+        "params": {
+          "key": "p_celestial_normal_1"
+        }
+      },
+      {
+        "method": "buy",
+        "params": {
+          "pack": 1
+        }
+      },
+      {
+        "method": "pack",
+        "params": {
+          "skip": true
+        }
+      },
+      {
+        "method": "add",
+        "params": {
+          "key": "p_celestial_normal_1"
+        }
+      },
+      {
+        "method": "buy",
+        "params": {
+          "pack": 1
+        }
+      },
+      {
+        "method": "pack",
+        "params": {
+          "skip": true
+        }
+      },
+      {
+        "method": "add",
+        "params": {
+          "key": "p_celestial_normal_1"
+        }
+      },
+      {
+        "method": "buy",
+        "params": {
+          "pack": 1
+        }
+      },
+      {
+        "method": "pack",
+        "params": {
+          "skip": true
+        }
+      },
+      {
+        "method": "add",
+        "params": {
+          "key": "p_celestial_normal_1"
+        }
+      },
+      {
+        "method": "buy",
+        "params": {
+          "pack": 1
+        }
+      },
+      {
+        "method": "pack",
+        "params": {
+          "skip": true
+        }
+      },
+      {
+        "method": "add",
+        "params": {
+          "key": "p_celestial_normal_1"
+        }
+      },
+      {
+        "method": "buy",
+        "params": {
+          "pack": 1
+        }
+      },
+      {
+        "method": "pack",
+        "params": {
+          "skip": true
+        }
+      },
+      {
+        "method": "add",
+        "params": {
+          "key": "p_celestial_normal_1"
+        }
+      },
+      {
+        "method": "buy",
+        "params": {
+          "pack": 1
+        }
+      },
+      {
+        "method": "pack",
+        "params": {
+          "skip": true
+        }
+      },
+      {
+        "method": "add",
+        "params": {
+          "key": "p_celestial_normal_1"
+        }
+      },
+      {
+        "method": "buy",
+        "params": {
+          "pack": 1
+        }
+      },
+      {
+        "method": "pack",
+        "params": {
+          "skip": true
+        }
+      },
+      {
+        "method": "add",
+        "params": {
+          "key": "p_celestial_normal_1"
+        }
+      },
+      {
+        "method": "buy",
+        "params": {
+          "pack": 1
+        }
+      },
+      {
+        "method": "pack",
+        "params": {
+          "skip": true
+        }
+      },
+      {
+        "method": "add",
+        "params": {
+          "key": "p_celestial_normal_1"
+        }
+      },
+      {
+        "method": "buy",
+        "params": {
+          "pack": 1
+        }
+      },
+      {
+        "method": "pack",
+        "params": {
+          "skip": true
+        }
+      },
+      {
+        "method": "add",
+        "params": {
+          "key": "p_celestial_normal_1"
+        }
+      },
+      {
+        "method": "buy",
+        "params": {
+          "pack": 1
+        }
+      },
+      {
+        "method": "pack",
+        "params": {
+          "skip": true
+        }
+      },
+      {
+        "method": "add",
+        "params": {
+          "key": "p_celestial_normal_1"
+        }
+      },
+      {
+        "method": "buy",
+        "params": {
+          "pack": 1
+        }
+      },
+      {
+        "method": "pack",
+        "params": {
+          "skip": true
+        }
+      },
+      {
+        "method": "add",
+        "params": {
+          "key": "p_celestial_normal_1"
+        }
+      }
     ]
   },
   "pack": {
@@ -2383,6 +2658,287 @@
       {
         "method": "gamestate",
         "params": {}
+      }
+    ],
+    "seed-S001250--state-SMODS_BOOSTER_OPENED--pack.cards[0].key-c_black_hole": [
+      {
+        "method": "menu",
+        "params": {}
+      },
+      {
+        "method": "start",
+        "params": {
+          "deck": "b_red",
+          "stake": "stake_white",
+          "seed": "S001250"
+        }
+      },
+      {
+        "method": "select",
+        "params": {}
+      },
+      {
+        "method": "set",
+        "params": {
+          "chips": 100000,
+          "money": 999
+        }
+      },
+      {
+        "method": "play",
+        "params": {
+          "cards": [
+            0,
+            1,
+            2,
+            3,
+            4
+          ]
+        }
+      },
+      {
+        "method": "cash_out",
+        "params": {}
+      },
+      {
+        "method": "buy",
+        "params": {
+          "pack": 0
+        }
+      },
+      {
+        "method": "pack",
+        "params": {
+          "skip": true
+        }
+      },
+      {
+        "method": "add",
+        "params": {
+          "key": "p_celestial_normal_1"
+        }
+      },
+      {
+        "method": "buy",
+        "params": {
+          "pack": 1
+        }
+      },
+      {
+        "method": "pack",
+        "params": {
+          "skip": true
+        }
+      },
+      {
+        "method": "add",
+        "params": {
+          "key": "p_celestial_normal_1"
+        }
+      },
+      {
+        "method": "buy",
+        "params": {
+          "pack": 1
+        }
+      },
+      {
+        "method": "pack",
+        "params": {
+          "skip": true
+        }
+      },
+      {
+        "method": "add",
+        "params": {
+          "key": "p_celestial_normal_1"
+        }
+      },
+      {
+        "method": "buy",
+        "params": {
+          "pack": 1
+        }
+      },
+      {
+        "method": "pack",
+        "params": {
+          "skip": true
+        }
+      },
+      {
+        "method": "add",
+        "params": {
+          "key": "p_celestial_normal_1"
+        }
+      },
+      {
+        "method": "buy",
+        "params": {
+          "pack": 1
+        }
+      },
+      {
+        "method": "pack",
+        "params": {
+          "skip": true
+        }
+      },
+      {
+        "method": "add",
+        "params": {
+          "key": "p_celestial_normal_1"
+        }
+      },
+      {
+        "method": "buy",
+        "params": {
+          "pack": 1
+        }
+      },
+      {
+        "method": "pack",
+        "params": {
+          "skip": true
+        }
+      },
+      {
+        "method": "add",
+        "params": {
+          "key": "p_celestial_normal_1"
+        }
+      },
+      {
+        "method": "buy",
+        "params": {
+          "pack": 1
+        }
+      },
+      {
+        "method": "pack",
+        "params": {
+          "skip": true
+        }
+      },
+      {
+        "method": "add",
+        "params": {
+          "key": "p_celestial_normal_1"
+        }
+      },
+      {
+        "method": "buy",
+        "params": {
+          "pack": 1
+        }
+      },
+      {
+        "method": "pack",
+        "params": {
+          "skip": true
+        }
+      },
+      {
+        "method": "add",
+        "params": {
+          "key": "p_celestial_normal_1"
+        }
+      },
+      {
+        "method": "buy",
+        "params": {
+          "pack": 1
+        }
+      },
+      {
+        "method": "pack",
+        "params": {
+          "skip": true
+        }
+      },
+      {
+        "method": "add",
+        "params": {
+          "key": "p_celestial_normal_1"
+        }
+      },
+      {
+        "method": "buy",
+        "params": {
+          "pack": 1
+        }
+      },
+      {
+        "method": "pack",
+        "params": {
+          "skip": true
+        }
+      },
+      {
+        "method": "add",
+        "params": {
+          "key": "p_celestial_normal_1"
+        }
+      },
+      {
+        "method": "buy",
+        "params": {
+          "pack": 1
+        }
+      },
+      {
+        "method": "pack",
+        "params": {
+          "skip": true
+        }
+      },
+      {
+        "method": "add",
+        "params": {
+          "key": "p_celestial_normal_1"
+        }
+      },
+      {
+        "method": "buy",
+        "params": {
+          "pack": 1
+        }
+      },
+      {
+        "method": "pack",
+        "params": {
+          "skip": true
+        }
+      },
+      {
+        "method": "add",
+        "params": {
+          "key": "p_celestial_normal_1"
+        }
+      },
+      {
+        "method": "buy",
+        "params": {
+          "pack": 1
+        }
+      },
+      {
+        "method": "pack",
+        "params": {
+          "skip": true
+        }
+      },
+      {
+        "method": "add",
+        "params": {
+          "key": "p_celestial_normal_1"
+        }
+      },
+      {
+        "method": "buy",
+        "params": {
+          "pack": 1
+        }
       }
     ]
   },
