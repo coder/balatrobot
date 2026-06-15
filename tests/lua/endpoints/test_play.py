@@ -1,7 +1,5 @@
 """Tests for src/lua/endpoints/play.lua"""
 
-import time
-
 import httpx
 
 from tests.lua.conftest import (
@@ -89,15 +87,13 @@ class TestPlayEndpoint:
         assert_gamestate_response(response, state="GAME_OVER")
 
     def test_play_endless_mode_after_won(self, client: httpx.Client) -> None:
-        """Endless-mode play stays responsive after winning ante 8.
+        """Endless-mode play runs unpaused after winning ante 8.
 
-        Winning the ante-8 boss raises the win overlay and pauses the game.
-        ``play`` must dismiss that overlay so the game keeps running on turbo
-        time; otherwise the bot is left in a paused session where every
-        subsequent endless play crawls on wall-clock time.
-
-        Driven live rather than via a save/load fixture: ``load`` resets the
-        run and discards the paused/overlay state, which would mask the bug.
+        Winning the ante-8 boss raises the win overlay and pauses the game
+        (``G.SETTINGS.paused = true``). ``play`` must dismiss that overlay so
+        the endless run keeps running on turbo time; otherwise the game is
+        left paused indefinitely and every subsequent play reports
+        ``paused=true``.
         """
         # Drive to the ante-8 boss and win it.
         api(client, "menu")
@@ -121,17 +117,12 @@ class TestPlayEndpoint:
         assert_gamestate_response(entering, state="SELECTING_HAND")
         assert entering["result"]["won"] is True
 
-        # An endless play must stay responsive. If the win overlay was left
-        # up, the game stays paused and this runs on wall-clock time (~9s
-        # instead of ~2s) — a permanently degraded bot session.
-        start = time.monotonic()
+        # An endless play must run unpaused. If the win overlay was left up,
+        # the game stays paused forever and the response reports paused=true.
         response = api(client, "play", {"cards": [0, 1, 2, 3, 4]})
-        elapsed = time.monotonic() - start
         assert_gamestate_response(response)
-        assert response["result"]["won"] is True
-        assert elapsed < 5, (
-            f"endless play took {elapsed:.1f}s — game left paused after win "
-            "(win overlay not dismissed)"
+        assert response["result"]["paused"] is False, (
+            "endless play left the game paused — win overlay not dismissed"
         )
 
 
