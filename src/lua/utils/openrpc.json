@@ -889,6 +889,10 @@
           "state": {
             "$ref": "#/components/schemas/State"
           },
+          "paused": {
+            "type": "boolean",
+            "description": "Whether the game is paused by a blocking overlay (win screen, pause menu, game over)"
+          },
           "round_num": {
             "type": "integer",
             "description": "Current round number"
