@@ -696,6 +696,7 @@ The complete game state returned by most methods.
 ```json
 {
   "state": "SELECTING_HAND",
+  "paused": false,
   "round_num": 1,
   "ante_num": 1,
   "money": 4,

@@ -794,6 +794,11 @@ function gamestate.get_gamestate()
     state = get_state_name(G.STATE),
   }
 
+  -- Pause flag: true while a blocking overlay is up (win screen, pause
+  -- menu, game over). Exposed so callers can detect a session stuck in a
+  -- paused state — e.g. endless mode after a win if the overlay is left up.
+  state_data.paused = G.SETTINGS and G.SETTINGS.paused or false
+
   -- Basic game info
   if G.GAME then
     state_data.round_num = G.GAME.round or 0
