@@ -1,0 +1,18 @@
+# BalatroBot
+
+> A bot framework for Balatro
+
+BalatroBot is a Python framework for developing automated bots to play the card game Balatro.
+The architecture consists of three main layers: a communication layer using TCP protocol with Lua API,
+a Python framework layer for bot development, and comprehensive testing and documentation systems.
+The project enables real-time bidirectional communication between the game and bot through TCP sockets.
+
+
+## Documentation
+
+- [Installation](https://coder.github.io/balatrobot/0.6.0/installation/index.md)
+- [Developing Bots](https://coder.github.io/balatrobot/0.6.0/developing-bots/index.md)
+- [BalatroBot API](https://coder.github.io/balatrobot/0.6.0/balatrobot-api/index.md)
+- [Protocol API](https://coder.github.io/balatrobot/0.6.0/protocol-api/index.md)
+- [Contributing](https://coder.github.io/balatrobot/0.6.0/contributing/index.md)
+
