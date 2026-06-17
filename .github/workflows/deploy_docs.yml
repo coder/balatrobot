@@ -1,11 +1,10 @@
 name: Deploy Documentation
 on:
   push:
-    branches: [main]
+    branches: [main, dev]
+    tags: ['v*']
 permissions:
   contents: write
-  pages: write
-  id-token: write
 concurrency:
   group: "pages"
   cancel-in-progress: false
@@ -14,15 +13,15 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - name: Configure Git Credentials
         run: |
           git config user.name github-actions[bot]
           git config user.email 41898282+github-actions[bot]@users.noreply.github.com
-      - name: Set up Python
-        uses: actions/setup-python@v5
+      - uses: actions/setup-python@v5
         with:
           python-version-file: ".python-version"
-      - run: echo "cache_id=$(date --utc '+%V')" >> $GITHUB_ENV
       - name: Install uv
         uses: astral-sh/setup-uv@v5
         with:
@@ -32,6 +31,7 @@ jobs:
         run: |
           uv venv
           uv sync --dev
+      - run: echo "cache_id=$(date --utc '+%V')" >> $GITHUB_ENV
       - name: Initialize cache
         uses: actions/cache@v4
         with:
@@ -39,7 +39,15 @@ jobs:
           path: .cache
           restore-keys: |
             mkdocs-material-
-      - name: Deploy documentation
+      - name: Deploy
         run: |
           source .venv/bin/activate
-          mkdocs gh-deploy --force
+          if [[ "$GITHUB_REF" == refs/tags/* ]]; then
+            VER="${GITHUB_REF#refs/tags/v}"
+            mike deploy --push "$VER"
+          elif [[ "$GITHUB_REF" == refs/heads/main ]]; then
+            mike deploy --push --update-aliases latest
+            mike set-default --push latest
+          else
+            mike deploy --push dev
+          fi
