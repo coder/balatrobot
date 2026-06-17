@@ -1,0 +1,1303 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="A bot framework for Balatro">
+      
+      
+        <meta name="author" content="S1M0N38">
+      
+      
+        <link rel="canonical" href="https://coder.github.io/balatrobot/0.7.2/contributing/">
+      
+      
+        <link rel="prev" href="../logging-systems/">
+      
+      
+      
+        
+      
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.1">
+    
+    
+      
+        <title>Contributing - BalatroBot</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/_mkdocstrings.css">
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="red" data-md-color-accent="black">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#contributing-to-balatrobot" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+      <div data-md-color-scheme="default" data-md-component="outdated" hidden>
+        
+      </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href=".." title="BalatroBot" class="md-header__button md-logo" aria-label="BalatroBot" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            BalatroBot
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Contributing
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="red" data-md-color-accent="black"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="red" data-md-color-accent="white"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/coder/balatrobot" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+  </div>
+  <div class="md-source__repository">
+    coder/balatrobot
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="BalatroBot" class="md-nav__button md-logo" aria-label="BalatroBot" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    BalatroBot
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/coder/balatrobot" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+  </div>
+  <div class="md-source__repository">
+    coder/balatrobot
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../installation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Installation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../developing-bots/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Developing Bots
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../balatrobot-api/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    BalatroBot API
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../protocol-api/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Protocol API
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../logging-systems/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Logging Systems
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Contributing
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Contributing
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#project-status-priorities" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Project Status &amp; Priorities
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#getting-started" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Getting Started
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Getting Started">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#prerequisites" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Prerequisites
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#development-environment-setup" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Development Environment Setup
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#how-to-contribute" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How to Contribute
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="How to Contribute">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#types-of-contributions-welcome" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Types of Contributions Welcome
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#contribution-workflow" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Contribution Workflow
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#commit-messages" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Commit Messages
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#development-testing" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Development &amp; Testing
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Development &amp; Testing">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#makefile-commands" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Makefile Commands
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#testing-requirements" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Testing Requirements
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#documentation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Documentation
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#build-maintenance" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Build &amp; Maintenance
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#technical-guidelines" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Technical Guidelines
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Technical Guidelines">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#python-development" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Python Development
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#lua-development" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Lua Development
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#environment-variables" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Environment Variables
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#communication-community" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Communication &amp; Community
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Communication &amp; Community">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#preferred-channels" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Preferred Channels
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#project-status-priorities" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Project Status &amp; Priorities
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#getting-started" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Getting Started
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Getting Started">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#prerequisites" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Prerequisites
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#development-environment-setup" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Development Environment Setup
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#how-to-contribute" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How to Contribute
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="How to Contribute">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#types-of-contributions-welcome" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Types of Contributions Welcome
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#contribution-workflow" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Contribution Workflow
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#commit-messages" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Commit Messages
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#development-testing" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Development &amp; Testing
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Development &amp; Testing">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#makefile-commands" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Makefile Commands
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#testing-requirements" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Testing Requirements
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#documentation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Documentation
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#build-maintenance" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Build &amp; Maintenance
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#technical-guidelines" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Technical Guidelines
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Technical Guidelines">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#python-development" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Python Development
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#lua-development" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Lua Development
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#environment-variables" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Environment Variables
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#communication-community" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Communication &amp; Community
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Communication &amp; Community">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#preferred-channels" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Preferred Channels
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="contributing-to-balatrobot">Contributing to BalatroBot</h1>
+<p>Welcome to BalatroBot! We're excited that you're interested in contributing to this Python framework and Lua mod for creating automated bots to play Balatro.</p>
+<p>BalatroBot uses a dual-architecture approach with a Python framework that communicates with a Lua mod running inside Balatro via TCP sockets. This allows for real-time bot automation and game state analysis.</p>
+<h2 id="project-status-priorities">Project Status &amp; Priorities</h2>
+<p>We track all development work using the <a href="https://github.com/orgs/coder/projects">BalatroBot GitHub Project</a>. This is the best place to see current priorities, ongoing work, and opportunities for contribution.</p>
+<h2 id="getting-started">Getting Started</h2>
+<h3 id="prerequisites">Prerequisites</h3>
+<p>Before contributing, ensure you have:</p>
+<ul>
+<li><strong>Balatro</strong>: Version 1.0.1o-FULL</li>
+<li><strong>SMODS (Steamodded)</strong>: Version 1.0.0-beta-0711a or newer</li>
+<li><strong>Python</strong>: 3.13+ (managed via uv)</li>
+<li><strong>uv</strong>: Python package manager (<a href="https://docs.astral.sh/uv/">Installation Guide</a>)</li>
+<li><strong>OS</strong>: macOS, Linux. Windows is not currently supported</li>
+<li><strong><a href="https://github.com/WilsontheWolf/DebugPlus">DebugPlus</a> (optional)</strong>: useful for Lua API development and debugging</li>
+</ul>
+<h3 id="development-environment-setup">Development Environment Setup</h3>
+<ol>
+<li>
+<p><strong>Fork and Clone</strong></p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1">git<span class="w"> </span>clone<span class="w"> </span>https://github.com/YOUR_USERNAME/balatrobot.git
+</span><span id="__span-0-2"><span class="nb">cd</span><span class="w"> </span>balatrobot
+</span></code></pre></div>
+</li>
+<li>
+<p><strong>Install Dependencies</strong></p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1">make<span class="w"> </span>install-dev
+</span></code></pre></div>
+</li>
+<li>
+<p><strong>Start Balatro with Mods</strong></p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1">./balatro.sh<span class="w"> </span>-p<span class="w"> </span><span class="m">12346</span>
+</span></code></pre></div>
+</li>
+<li>
+<p><strong>Verify Balatro is Running</strong></p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><span class="c1"># Check if Balatro is running</span>
+</span><span id="__span-3-2">./balatro.sh<span class="w"> </span>--status
+</span><span id="__span-3-3">
+</span><span id="__span-3-4"><span class="c1"># Monitor startup logs</span>
+</span><span id="__span-3-5">tail<span class="w"> </span>-n<span class="w"> </span><span class="m">100</span><span class="w"> </span>logs/balatro_12346.log
+</span></code></pre></div>
+<p>Look for these success indicators:</p>
+<ul>
+<li>"BalatrobotAPI initialized"</li>
+<li>"BalatroBot loaded - version X.X.X"</li>
+<li>"TCP socket created on port 12346"</li>
+</ul>
+</li>
+</ol>
+<h2 id="how-to-contribute">How to Contribute</h2>
+<h3 id="types-of-contributions-welcome">Types of Contributions Welcome</h3>
+<ul>
+<li><strong>Bug Fixes</strong>: Issues tracked in our GitHub project</li>
+<li><strong>Feature Development</strong>: New bot strategies, API enhancements</li>
+<li><strong>Performance Improvements</strong>: Optimization of TCP communication or game interaction</li>
+<li><strong>Documentation</strong>: Improvements to guides, API documentation, or examples</li>
+<li><strong>Testing</strong>: Additional test coverage, edge case handling</li>
+</ul>
+<h3 id="contribution-workflow">Contribution Workflow</h3>
+<ol>
+<li>
+<p><strong>Check Issues First</strong> (Highly Encouraged)</p>
+<ul>
+<li>Browse the <a href="https://github.com/orgs/coder/projects">BalatroBot GitHub Project</a></li>
+<li>Comment on issues you'd like to work on</li>
+<li>Create new issues for bugs or feature requests</li>
+</ul>
+</li>
+<li>
+<p><strong>Fork &amp; Branch</strong></p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1">git<span class="w"> </span>checkout<span class="w"> </span>-b<span class="w"> </span>feature/your-feature-name
+</span></code></pre></div>
+</li>
+<li>
+<p><strong>Make Changes</strong></p>
+<ul>
+<li>Follow our code style guidelines (see below)</li>
+<li>Add tests for new functionality</li>
+<li>Update documentation as needed</li>
+</ul>
+</li>
+<li>
+<p><strong>Create Pull Request</strong></p>
+<ul>
+<li><strong>Important</strong>: Enable "Allow edits from maintainers" when creating your PR</li>
+<li>Link to related issues</li>
+<li>Provide clear description of changes</li>
+<li>Include tests for new functionality</li>
+</ul>
+</li>
+</ol>
+<h3 id="commit-messages">Commit Messages</h3>
+<p>We highly encourage following <a href="https://www.conventionalcommits.org/">Conventional Commits</a> format:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-5-1">feat(api): add new game state detection
+</span><span id="__span-5-2">fix(tcp): resolve connection timeout issues
+</span><span id="__span-5-3">docs(readme): update setup instructions
+</span><span id="__span-5-4">test(api): add shop booster validation tests
+</span></code></pre></div>
+<h2 id="development-testing">Development &amp; Testing</h2>
+<h3 id="makefile-commands">Makefile Commands</h3>
+<p>BalatroBot includes a comprehensive Makefile that provides a convenient interface for all development tasks. Use <code>make help</code> to see all available commands:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-6-1"><span class="c1"># Show all available commands with descriptions</span>
+</span><span id="__span-6-2">make<span class="w"> </span><span class="nb">help</span>
+</span></code></pre></div>
+<h4 id="installation-setup">Installation &amp; Setup</h4>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-7-1">make<span class="w"> </span>install<span class="w">        </span><span class="c1"># Install package dependencies</span>
+</span><span id="__span-7-2">make<span class="w"> </span>install-dev<span class="w">    </span><span class="c1"># Install with development dependencies</span>
+</span></code></pre></div>
+<h4 id="code-quality-formatting">Code Quality &amp; Formatting</h4>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-8-1">make<span class="w"> </span>lint<span class="w">           </span><span class="c1"># Run ruff linter (check only)</span>
+</span><span id="__span-8-2">make<span class="w"> </span>lint-fix<span class="w">       </span><span class="c1"># Run ruff linter with auto-fixes</span>
+</span><span id="__span-8-3">make<span class="w"> </span>format<span class="w">         </span><span class="c1"># Run ruff formatter and stylua</span>
+</span><span id="__span-8-4">make<span class="w"> </span>format-md<span class="w">      </span><span class="c1"># Run markdown formatter</span>
+</span><span id="__span-8-5">make<span class="w"> </span>typecheck<span class="w">      </span><span class="c1"># Run type checker</span>
+</span><span id="__span-8-6">make<span class="w"> </span>quality<span class="w">        </span><span class="c1"># Run all code quality checks</span>
+</span><span id="__span-8-7">make<span class="w"> </span>dev<span class="w">            </span><span class="c1"># Quick development check (format + lint + typecheck, no tests)</span>
+</span></code></pre></div>
+<h3 id="testing-requirements">Testing Requirements</h3>
+<h4 id="testing-with-makefile">Testing with Makefile</h4>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-9-1">make<span class="w"> </span><span class="nb">test</span><span class="w">           </span><span class="c1"># Run tests with single instance (auto-starts if needed)</span>
+</span><span id="__span-9-2">make<span class="w"> </span>test-parallel<span class="w">  </span><span class="c1"># Run tests on 4 instances (auto-starts if needed)</span>
+</span><span id="__span-9-3">make<span class="w"> </span>test-teardown<span class="w">  </span><span class="c1"># Kill all Balatro instances</span>
+</span><span id="__span-9-4">
+</span><span id="__span-9-5"><span class="c1"># Complete workflow including tests</span>
+</span><span id="__span-9-6">make<span class="w"> </span>all<span class="w">            </span><span class="c1"># Run format + lint + typecheck + test</span>
+</span></code></pre></div>
+<p>The testing system automatically handles Balatro instance management:</p>
+<ul>
+<li><strong><code>make test</code></strong>: Runs tests with a single instance, auto-starting if needed</li>
+<li><strong><code>make test-parallel</code></strong>: Runs tests on 4 instances for ~4x speedup, auto-starting if needed</li>
+<li><strong><code>make test-teardown</code></strong>: Cleans up all instances when done</li>
+</ul>
+<p>Both test commands keep instances running after completion for faster subsequent runs.</p>
+<h4 id="using-checkpoints-for-test-setup">Using Checkpoints for Test Setup</h4>
+<p>The checkpointing system allows you to save and load specific game states, significantly speeding up test setup:</p>
+<p><strong>Creating Test Checkpoints:</strong></p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-10-1"><span class="c1"># Create a checkpoint at a specific game state</span>
+</span><span id="__span-10-2">python<span class="w"> </span>scripts/create_test_checkpoint.py<span class="w"> </span>shop<span class="w"> </span>tests/lua/endpoints/checkpoints/shop_state.jkr
+</span><span id="__span-10-3">python<span class="w"> </span>scripts/create_test_checkpoint.py<span class="w"> </span>blind_select<span class="w"> </span>tests/lua/endpoints/checkpoints/blind_select.jkr
+</span><span id="__span-10-4">python<span class="w"> </span>scripts/create_test_checkpoint.py<span class="w"> </span>in_game<span class="w"> </span>tests/lua/endpoints/checkpoints/in_game.jkr
+</span></code></pre></div>
+<p><strong>Using Checkpoints in Tests:</strong></p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-11-1"><span class="c1"># In conftest.py or test files</span>
+</span><span id="__span-11-2"><span class="kn">from</span><span class="w"> </span><span class="nn">..conftest</span><span class="w"> </span><span class="kn">import</span> <span class="n">prepare_checkpoint</span>
+</span><span id="__span-11-3">
+</span><span id="__span-11-4"><span class="k">def</span><span class="w"> </span><span class="nf">setup_and_teardown</span><span class="p">(</span><span class="n">tcp_client</span><span class="p">):</span>
+</span><span id="__span-11-5">    <span class="c1"># Load a checkpoint directly (no restart needed!)</span>
+</span><span id="__span-11-6">    <span class="n">checkpoint_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span><span class="o">.</span><span class="n">parent</span> <span class="o">/</span> <span class="s2">&quot;checkpoints&quot;</span> <span class="o">/</span> <span class="s2">&quot;shop_state.jkr&quot;</span>
+</span><span id="__span-11-7">    <span class="n">game_state</span> <span class="o">=</span> <span class="n">prepare_checkpoint</span><span class="p">(</span><span class="n">tcp_client</span><span class="p">,</span> <span class="n">checkpoint_path</span><span class="p">)</span>
+</span><span id="__span-11-8">    <span class="k">assert</span> <span class="n">game_state</span><span class="p">[</span><span class="s2">&quot;state&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">State</span><span class="o">.</span><span class="n">SHOP</span><span class="o">.</span><span class="n">value</span>
+</span></code></pre></div>
+<p><strong>Benefits of Checkpoints:</strong></p>
+<ul>
+<li><strong>Faster Tests</strong>: Skip manual game setup steps (particularly helpful for edge cases)</li>
+<li><strong>Consistency</strong>: Always start from exact same state</li>
+<li><strong>Reusability</strong>: Share checkpoints across multiple tests</li>
+<li><strong>No Restarts</strong>: Uses <code>load_save</code> API to load directly from any game state</li>
+</ul>
+<p><strong>Python Client Methods:</strong></p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-12-1"><span class="kn">from</span><span class="w"> </span><span class="nn">balatrobot</span><span class="w"> </span><span class="kn">import</span> <span class="n">BalatroClient</span>
+</span><span id="__span-12-2">
+</span><span id="__span-12-3"><span class="k">with</span> <span class="n">BalatroClient</span><span class="p">()</span> <span class="k">as</span> <span class="n">client</span><span class="p">:</span>
+</span><span id="__span-12-4">    <span class="c1"># Save current game state as checkpoint</span>
+</span><span id="__span-12-5">    <span class="n">client</span><span class="o">.</span><span class="n">save_checkpoint</span><span class="p">(</span><span class="s2">&quot;tests/fixtures/my_state.jkr&quot;</span><span class="p">)</span>
+</span><span id="__span-12-6">
+</span><span id="__span-12-7">    <span class="c1"># Load a checkpoint for testing</span>
+</span><span id="__span-12-8">    <span class="n">save_path</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">prepare_save</span><span class="p">(</span><span class="s2">&quot;tests/fixtures/my_state.jkr&quot;</span><span class="p">)</span>
+</span><span id="__span-12-9">    <span class="n">game_state</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">load_save</span><span class="p">(</span><span class="n">save_path</span><span class="p">)</span>
+</span></code></pre></div>
+<p><strong>Manual Setup for Advanced Testing:</strong></p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-13-1"><span class="c1"># Check/manage Balatro instances</span>
+</span><span id="__span-13-2">./balatro.sh<span class="w"> </span>--status<span class="w">                   </span><span class="c1"># Show running instances</span>
+</span><span id="__span-13-3">./balatro.sh<span class="w"> </span>--kill<span class="w">                     </span><span class="c1"># Kill all instances</span>
+</span><span id="__span-13-4">
+</span><span id="__span-13-5"><span class="c1"># Start instances manually</span>
+</span><span id="__span-13-6">./balatro.sh<span class="w"> </span>-p<span class="w"> </span><span class="m">12346</span><span class="w"> </span>-p<span class="w"> </span><span class="m">12347</span><span class="w">          </span><span class="c1"># Two instances</span>
+</span><span id="__span-13-7">./balatro.sh<span class="w"> </span>--headless<span class="w"> </span>--fast<span class="w"> </span>-p<span class="w"> </span><span class="m">12346</span><span class="w"> </span>-p<span class="w"> </span><span class="m">12347</span><span class="w"> </span>-p<span class="w"> </span><span class="m">12348</span><span class="w"> </span>-p<span class="w"> </span><span class="m">12349</span><span class="w">  </span><span class="c1"># Full setup</span>
+</span><span id="__span-13-8">./balatro.sh<span class="w"> </span>--audio<span class="w"> </span>-p<span class="w"> </span><span class="m">12346</span><span class="w">                                    </span><span class="c1"># With audio enabled</span>
+</span><span id="__span-13-9">
+</span><span id="__span-13-10"><span class="c1"># Manual parallel testing</span>
+</span><span id="__span-13-11">pytest<span class="w"> </span>-n<span class="w"> </span><span class="m">4</span><span class="w"> </span>--port<span class="w"> </span><span class="m">12346</span><span class="w"> </span>--port<span class="w"> </span><span class="m">12347</span><span class="w"> </span>--port<span class="w"> </span><span class="m">12348</span><span class="w"> </span>--port<span class="w"> </span><span class="m">12349</span><span class="w"> </span>tests/lua/
+</span></code></pre></div>
+<p><strong>Performance Modes:</strong></p>
+<ul>
+<li><strong><code>--headless</code></strong>: No graphics, ideal for servers</li>
+<li><strong><code>--fast</code></strong>: 10x speed, disabled effects, optimal for testing</li>
+<li><strong><code>--audio</code></strong>: Enable audio (disabled by default for performance)</li>
+</ul>
+<h3 id="documentation">Documentation</h3>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-14-1">make<span class="w"> </span>docs-serve<span class="w">     </span><span class="c1"># Serve documentation locally</span>
+</span><span id="__span-14-2">make<span class="w"> </span>docs-build<span class="w">     </span><span class="c1"># Build documentation</span>
+</span><span id="__span-14-3">make<span class="w"> </span>docs-clean<span class="w">     </span><span class="c1"># Clean built documentation</span>
+</span></code></pre></div>
+<h3 id="build-maintenance">Build &amp; Maintenance</h3>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-15-1">make<span class="w"> </span>build<span class="w">          </span><span class="c1"># Build package for distribution</span>
+</span><span id="__span-15-2">make<span class="w"> </span>clean<span class="w">          </span><span class="c1"># Clean build artifacts and caches</span>
+</span></code></pre></div>
+<h2 id="technical-guidelines">Technical Guidelines</h2>
+<h3 id="python-development">Python Development</h3>
+<ul>
+<li><strong>Style</strong>: Follow modern Python 3.13+ patterns</li>
+<li><strong>Type Hints</strong>: Use pipe operator for unions (<code>str | int | None</code>)</li>
+<li><strong>Type Aliases</strong>: Use <code>type</code> statement</li>
+<li><strong>Docstrings</strong>: Google-style without type information (types in annotations)</li>
+<li><strong>Generics</strong>: Modern syntax (<code>class Container[T]:</code>)</li>
+</ul>
+<h3 id="lua-development">Lua Development</h3>
+<ul>
+<li><strong>Focus Area</strong>: Primary development is on <code>src/lua/api.lua</code></li>
+<li><strong>Communication</strong>: TCP protocol on port 12346</li>
+<li><strong>Debugging</strong>: Use DebugPlus mod for enhanced debugging capabilities</li>
+</ul>
+<h3 id="environment-variables">Environment Variables</h3>
+<p>Configure BalatroBot behavior with these environment variables:</p>
+<ul>
+<li><strong><code>BALATROBOT_HEADLESS=1</code></strong>: Disable graphics for server environments</li>
+<li><strong><code>BALATROBOT_FAST=1</code></strong>: Enable 10x speed with disabled effects for testing</li>
+<li><strong><code>BALATROBOT_AUDIO=1</code></strong>: Enable audio (disabled by default for performance)</li>
+<li><strong><code>BALATROBOT_PORT</code></strong>: TCP communication port (default: "12346")</li>
+</ul>
+<h2 id="communication-community">Communication &amp; Community</h2>
+<h3 id="preferred-channels">Preferred Channels</h3>
+<ul>
+<li><strong>GitHub Issues</strong>: Primary communication for bugs, features, and project coordination</li>
+<li><strong>Discord</strong>: Join us at the <a href="https://discord.com/channels/1116389027176787968/1391371948629426316">Balatro Discord</a> for real-time discussions</li>
+</ul>
+<p>Happy contributing!</p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+  <script>var tabs=__md_get("__tabs");if(Array.isArray(tabs))e:for(var set of document.querySelectorAll(".tabbed-set")){var labels=set.querySelector(".tabbed-labels");for(var tab of tabs)for(var label of labels.getElementsByTagName("label"))if(label.innerText.trim()===tab){var input=document.getElementById(label.htmlFor);input.checked=!0;continue e}}</script>
+
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["content.code.copy", "content.tabs.link"], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"alias": true, "default": "latest", "provider": "mike"}}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+    
+  </body>
+</html>

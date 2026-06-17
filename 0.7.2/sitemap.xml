@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+    <url>
+         <loc>https://coder.github.io/balatrobot/0.7.2/</loc>
+         <lastmod>2026-06-17</lastmod>
+    </url>
+    <url>
+         <loc>https://coder.github.io/balatrobot/0.7.2/balatrobot-api/</loc>
+         <lastmod>2026-06-17</lastmod>
+    </url>
+    <url>
+         <loc>https://coder.github.io/balatrobot/0.7.2/contributing/</loc>
+         <lastmod>2026-06-17</lastmod>
+    </url>
+    <url>
+         <loc>https://coder.github.io/balatrobot/0.7.2/developing-bots/</loc>
+         <lastmod>2026-06-17</lastmod>
+    </url>
+    <url>
+         <loc>https://coder.github.io/balatrobot/0.7.2/installation/</loc>
+         <lastmod>2026-06-17</lastmod>
+    </url>
+    <url>
+         <loc>https://coder.github.io/balatrobot/0.7.2/logging-systems/</loc>
+         <lastmod>2026-06-17</lastmod>
+    </url>
+    <url>
+         <loc>https://coder.github.io/balatrobot/0.7.2/protocol-api/</loc>
+         <lastmod>2026-06-17</lastmod>
+    </url>
+</urlset>
