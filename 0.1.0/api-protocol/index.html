@@ -1,0 +1,1049 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="A bot framework for Balatro">
+      
+      
+        <meta name="author" content="S1M0N38">
+      
+      
+        <link rel="canonical" href="https://s1m0n38.github.io/balatrobot/0.1.0/api-protocol/">
+      
+      
+        <link rel="prev" href="../bot-development/">
+      
+      
+        <link rel="next" href="../troubleshooting/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.1">
+    
+    
+      
+        <title>API Protocol - BalatroBot</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="red" data-md-color-accent="black">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#balatro-bot-api-protocol" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+      <div data-md-color-scheme="default" data-md-component="outdated" hidden>
+        
+      </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href=".." title="BalatroBot" class="md-header__button md-logo" aria-label="BalatroBot" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            BalatroBot
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              API Protocol
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="red" data-md-color-accent="black"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="red" data-md-color-accent="white"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/S1M0N38/balatrobot" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+  </div>
+  <div class="md-source__repository">
+    S1M0N38/balatrobot
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="BalatroBot" class="md-nav__button md-logo" aria-label="BalatroBot" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    BalatroBot
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/S1M0N38/balatrobot" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+  </div>
+  <div class="md-source__repository">
+    S1M0N38/balatrobot
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../installation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Installation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../bot-development/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Bot Development
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    API Protocol
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    API Protocol
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#udp-communication" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        UDP Communication
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#communication-sequence" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Communication Sequence
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#message-formats" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Message Formats
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#game-state-json" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Game State JSON
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#available-actions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Available Actions
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#game-states" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Game States
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#error-handling" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Error Handling
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#example-bot-communication" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Example Bot Communication
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#implementation-notes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Implementation Notes
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../troubleshooting/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Troubleshooting
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#udp-communication" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        UDP Communication
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#communication-sequence" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Communication Sequence
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#message-formats" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Message Formats
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#game-state-json" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Game State JSON
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#available-actions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Available Actions
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#game-states" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Game States
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#error-handling" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Error Handling
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#example-bot-communication" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Example Bot Communication
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#implementation-notes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Implementation Notes
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="balatro-bot-api-protocol">Balatro Bot API Protocol</h1>
+<p>This document provides the UDP protocol reference for developing bots that interface with Balatro via raw UDP sockets.</p>
+<h2 id="udp-communication">UDP Communication</h2>
+<p>The Balatro Bot API uses UDP sockets for real-time communication between the game and external bot clients.</p>
+<p><strong>Connection Details:</strong></p>
+<ul>
+<li><strong>Host:</strong> <code>127.0.0.1</code> (localhost)</li>
+<li><strong>Port:</strong> <code>12346</code> (default)</li>
+<li><strong>Protocol:</strong> UDP</li>
+</ul>
+<h2 id="communication-sequence">Communication Sequence</h2>
+<pre class="mermaid"><code>sequenceDiagram
+    participant Bot
+    participant Game
+
+    Bot-&gt;&gt;Game: "HELLO" (UDP)
+    Game-&gt;&gt;Bot: JSON Game State
+
+    loop Game Loop
+        Game-&gt;&gt;Bot: Updated JSON Game State (when waitingForAction changes)
+
+        Note over Bot: Bot analyzes game state and decides action
+
+        Bot-&gt;&gt;Game: "ACTION_NAME|param1,param2|param3"
+
+        alt Valid Action
+            Game-&gt;&gt;Bot: {"response": "Action executed successfully"}
+        else Invalid Action  
+            Game-&gt;&gt;Bot: {"response": "Error: [description]"}
+        end
+    end</code></pre>
+<h2 id="message-formats">Message Formats</h2>
+<p><strong>Handshake</strong>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>Bot -&gt; Game: &quot;HELLO&quot;
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>Game -&gt; Bot: {JSON game state with waitingFor field}
+</span></code></pre></div></p>
+<p><strong>Action Request</strong>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>Bot -&gt; Game: &quot;ACTION_NAME|param1,param2|param3,param4&quot;
+</span></code></pre></div></p>
+<p><strong>Responses</strong>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>Success: {&quot;response&quot;: &quot;Action executed successfully&quot;}
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>Error:   {&quot;response&quot;: &quot;Error: [description]&quot;}
+</span></code></pre></div></p>
+<h2 id="game-state-json">Game State JSON</h2>
+<p>The game sends JSON containing:</p>
+<ul>
+<li><strong>waitingFor</strong>: What action type the game expects</li>
+<li><strong>waitingForAction</strong>: Boolean indicating if bot input is needed</li>
+<li><strong>gamestate</strong>: Current game phase and data</li>
+<li><strong>hand</strong>: Player's current hand cards</li>
+<li><strong>jokers</strong>: Active joker cards</li>
+<li><strong>consumables</strong>: Available consumable cards  </li>
+<li><strong>shop</strong>: Shop items and costs</li>
+<li><strong>blinds</strong>: Current blind information</li>
+<li><strong>round</strong>: Round data (hands/discards remaining, etc.)</li>
+</ul>
+<p>Key field for bots: <strong>waitingForAction</strong> - only send actions when this is <code>true</code>.</p>
+<h2 id="available-actions">Available Actions</h2>
+<p>Actions use pipe-separated format: <code>ACTION_NAME|param1,param2|param3,param4</code></p>
+<table>
+<thead>
+<tr>
+<th>Action</th>
+<th>Parameters</th>
+<th>Description</th>
+<th>Valid When waitingFor</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>SELECT_BLIND</code></td>
+<td><code>1</code></td>
+<td>Select the current blind</td>
+<td><code>skip_or_select_blind</code></td>
+</tr>
+<tr>
+<td><code>SKIP_BLIND</code></td>
+<td><code>2</code></td>
+<td>Skip the current blind</td>
+<td><code>skip_or_select_blind</code></td>
+</tr>
+<tr>
+<td><code>PLAY_HAND</code></td>
+<td><code>3|card_indices</code></td>
+<td>Play selected cards</td>
+<td><code>select_cards_from_hand</code></td>
+</tr>
+<tr>
+<td><code>DISCARD_HAND</code></td>
+<td><code>4|card_indices</code></td>
+<td>Discard selected cards</td>
+<td><code>select_cards_from_hand</code></td>
+</tr>
+<tr>
+<td><code>END_SHOP</code></td>
+<td><code>5</code></td>
+<td>Leave the shop</td>
+<td><code>select_shop_action</code></td>
+</tr>
+<tr>
+<td><code>REROLL_SHOP</code></td>
+<td><code>6</code></td>
+<td>Reroll shop items</td>
+<td><code>select_shop_action</code></td>
+</tr>
+<tr>
+<td><code>BUY_CARD</code></td>
+<td><code>7|shop_index</code></td>
+<td>Buy joker from shop</td>
+<td><code>select_shop_action</code></td>
+</tr>
+<tr>
+<td><code>BUY_VOUCHER</code></td>
+<td><code>8|voucher_index</code></td>
+<td>Buy voucher from shop</td>
+<td><code>select_shop_action</code></td>
+</tr>
+<tr>
+<td><code>BUY_BOOSTER</code></td>
+<td><code>9|booster_index</code></td>
+<td>Buy booster pack</td>
+<td><code>select_shop_action</code></td>
+</tr>
+<tr>
+<td><code>SELECT_BOOSTER_CARD</code></td>
+<td><code>10|pack_index|hand_indices</code></td>
+<td>Use consumable on cards</td>
+<td><code>select_booster_action</code></td>
+</tr>
+<tr>
+<td><code>SKIP_BOOSTER_PACK</code></td>
+<td><code>11</code></td>
+<td>Skip booster pack</td>
+<td><code>select_booster_action</code></td>
+</tr>
+<tr>
+<td><code>SELL_JOKER</code></td>
+<td><code>12|joker_indices</code></td>
+<td>Sell joker cards</td>
+<td><code>sell_jokers</code></td>
+</tr>
+<tr>
+<td><code>USE_CONSUMABLE</code></td>
+<td><code>13|consumable_indices</code></td>
+<td>Use consumable cards</td>
+<td><code>use_or_sell_consumables</code></td>
+</tr>
+<tr>
+<td><code>SELL_CONSUMABLE</code></td>
+<td><code>14|consumable_indices</code></td>
+<td>Sell consumable cards</td>
+<td><code>use_or_sell_consumables</code></td>
+</tr>
+<tr>
+<td><code>REARRANGE_JOKERS</code></td>
+<td><code>15|new_order</code></td>
+<td>Reorder joker positions</td>
+<td><code>rearrange_jokers</code></td>
+</tr>
+<tr>
+<td><code>REARRANGE_CONSUMABLES</code></td>
+<td><code>16|new_order</code></td>
+<td>Reorder consumable positions</td>
+<td><code>rearrange_consumables</code></td>
+</tr>
+<tr>
+<td><code>REARRANGE_HAND</code></td>
+<td><code>17|new_order</code></td>
+<td>Reorder hand cards</td>
+<td><code>rearrange_hand</code></td>
+</tr>
+<tr>
+<td><code>PASS</code></td>
+<td><code>18</code></td>
+<td>Do nothing (always valid)</td>
+<td>Any state</td>
+</tr>
+<tr>
+<td><code>START_RUN</code></td>
+<td><code>19|stake|deck|seed|challenge</code></td>
+<td>Start new run</td>
+<td><code>start_run</code></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Card Indices:</strong> 1-based array of card positions</p>
+<ul>
+<li>Example: <code>PLAY_HAND|3|1,3,5</code> (play cards at positions 1, 3, and 5)</li>
+</ul>
+<p><strong>Shop Indices:</strong> 1-based position in shop</p>
+<ul>
+<li>Example: <code>BUY_CARD|7|2</code> (buy second joker in shop)</li>
+</ul>
+<p><strong>Reorder Arrays:</strong> Complete new ordering (all positions)</p>
+<ul>
+<li>Example: <code>REARRANGE_JOKERS|15|3,1,2,4</code> (move 3rd joker to 1st position, etc.)</li>
+</ul>
+<p><strong>Run Parameters:</strong></p>
+<ul>
+<li>stake: 1-8 (difficulty)</li>
+<li>deck: deck name string</li>
+<li>seed: seed string or empty</li>
+<li>challenge: challenge name or empty</li>
+</ul>
+<h2 id="game-states">Game States</h2>
+<table>
+<thead>
+<tr>
+<th>waitingFor State</th>
+<th>Description</th>
+<th>Valid Actions</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>start_run</code></td>
+<td>Main menu</td>
+<td><code>START_RUN</code></td>
+</tr>
+<tr>
+<td><code>skip_or_select_blind</code></td>
+<td>Blind selection screen</td>
+<td><code>SELECT_BLIND</code>, <code>SKIP_BLIND</code></td>
+</tr>
+<tr>
+<td><code>select_cards_from_hand</code></td>
+<td>Playing/discarding phase</td>
+<td><code>PLAY_HAND</code>, <code>DISCARD_HAND</code></td>
+</tr>
+<tr>
+<td><code>select_shop_action</code></td>
+<td>In shop</td>
+<td><code>END_SHOP</code>, <code>REROLL_SHOP</code>, <code>BUY_CARD</code>, <code>BUY_VOUCHER</code>, <code>BUY_BOOSTER</code></td>
+</tr>
+<tr>
+<td><code>select_booster_action</code></td>
+<td>Opening booster packs</td>
+<td><code>SELECT_BOOSTER_CARD</code>, <code>SKIP_BOOSTER_PACK</code></td>
+</tr>
+<tr>
+<td><code>sell_jokers</code></td>
+<td>Joker management</td>
+<td><code>SELL_JOKER</code></td>
+</tr>
+<tr>
+<td><code>use_or_sell_consumables</code></td>
+<td>Consumable management</td>
+<td><code>USE_CONSUMABLE</code>, <code>SELL_CONSUMABLE</code></td>
+</tr>
+<tr>
+<td><code>rearrange_jokers</code></td>
+<td>Joker positioning</td>
+<td><code>REARRANGE_JOKERS</code></td>
+</tr>
+<tr>
+<td><code>rearrange_consumables</code></td>
+<td>Consumable positioning</td>
+<td><code>REARRANGE_CONSUMABLES</code></td>
+</tr>
+<tr>
+<td><code>rearrange_hand</code></td>
+<td>Hand card positioning</td>
+<td><code>REARRANGE_HAND</code></td>
+</tr>
+</tbody>
+</table>
+<h2 id="error-handling">Error Handling</h2>
+<p>The game validates all actions and returns errors for:</p>
+<ul>
+<li><strong>Invalid format:</strong> Incorrect action syntax</li>
+<li><strong>Invalid parameters:</strong> Wrong number or type of parameters  </li>
+<li><strong>Invalid state:</strong> Action not allowed in current game state</li>
+<li><strong>Invalid indices:</strong> References to non-existent cards/items</li>
+<li><strong>Insufficient resources:</strong> Not enough money, hands, discards, etc.</li>
+</ul>
+<h2 id="example-bot-communication">Example Bot Communication</h2>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>1. Bot connects and sends handshake:
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>   Bot -&gt; Game: &quot;HELLO&quot;
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>2. Game responds with initial state:
+</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>   Game -&gt; Bot: {&quot;waitingFor&quot;: &quot;start_run&quot;, &quot;waitingForAction&quot;: true, ...}
+</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a>
+</span><span id="__span-3-7"><a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a>3. Bot starts a run:
+</span><span id="__span-3-8"><a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a>   Bot -&gt; Game: &quot;START_RUN|19|1|Red Deck||&quot;
+</span><span id="__span-3-9"><a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a>   Game -&gt; Bot: {&quot;response&quot;: &quot;Action executed successfully&quot;}
+</span><span id="__span-3-10"><a id="__codelineno-3-10" name="__codelineno-3-10" href="#__codelineno-3-10"></a>
+</span><span id="__span-3-11"><a id="__codelineno-3-11" name="__codelineno-3-11" href="#__codelineno-3-11"></a>4. Game state updates automatically:
+</span><span id="__span-3-12"><a id="__codelineno-3-12" name="__codelineno-3-12" href="#__codelineno-3-12"></a>   Game -&gt; Bot: {&quot;waitingFor&quot;: &quot;skip_or_select_blind&quot;, &quot;waitingForAction&quot;: true, ...}
+</span><span id="__span-3-13"><a id="__codelineno-3-13" name="__codelineno-3-13" href="#__codelineno-3-13"></a>
+</span><span id="__span-3-14"><a id="__codelineno-3-14" name="__codelineno-3-14" href="#__codelineno-3-14"></a>5. Bot selects blind:
+</span><span id="__span-3-15"><a id="__codelineno-3-15" name="__codelineno-3-15" href="#__codelineno-3-15"></a>   Bot -&gt; Game: &quot;SELECT_BLIND|1&quot;
+</span><span id="__span-3-16"><a id="__codelineno-3-16" name="__codelineno-3-16" href="#__codelineno-3-16"></a>   Game -&gt; Bot: {&quot;response&quot;: &quot;Action executed successfully&quot;}
+</span><span id="__span-3-17"><a id="__codelineno-3-17" name="__codelineno-3-17" href="#__codelineno-3-17"></a>
+</span><span id="__span-3-18"><a id="__codelineno-3-18" name="__codelineno-3-18" href="#__codelineno-3-18"></a>6. Continue until run ends...
+</span></code></pre></div>
+<h2 id="implementation-notes">Implementation Notes</h2>
+<ul>
+<li><strong>Wait for waitingForAction:</strong> Only send actions when <code>waitingForAction</code> is <code>true</code></li>
+<li><strong>One action per request:</strong> Send one action string per UDP message</li>
+<li><strong>Monitor responses:</strong> Check for error messages and handle appropriately</li>
+<li><strong>State changes:</strong> Game automatically sends updated state when ready for next action</li>
+<li><strong>Index validation:</strong> All card/item indices are 1-based and must refer to existing items </li>
+</ul>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+  <script>var tabs=__md_get("__tabs");if(Array.isArray(tabs))e:for(var set of document.querySelectorAll(".tabbed-set")){var labels=set.querySelector(".tabbed-labels");for(var tab of tabs)for(var label of labels.getElementsByTagName("label"))if(label.innerText.trim()===tab){var input=document.getElementById(label.htmlFor);input.checked=!0;continue e}}</script>
+
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["content.code.copy", "content.tabs.link"], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"alias": true, "default": "latest", "provider": "mike"}}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+    
+  </body>
+</html>
