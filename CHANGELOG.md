@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.5.3](https://github.com/coder/balatrobot/compare/v1.5.2...v1.5.3) (2026-06-17)
+
+
+### Documentation
+
+* **ci:** version docs with mike for main, tags, and dev ([e7c6db8](https://github.com/coder/balatrobot/commit/e7c6db8a9ad88318f6e4128eefd6e61aafc94885))
+
 ## [1.5.2](https://github.com/coder/balatrobot/compare/v1.5.1...v1.5.2) (2026-06-11)
 
 
