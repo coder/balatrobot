@@ -26,10 +26,9 @@ allowed-tools: Bash
 5. **Commit:** Execute using heredoc:
 
    ```bash
-   git commit -m "$(cat <<'EOF'
+   git commit -F - <<'EOF'
    <message here>
    EOF
-   )"
    ```
 
 6. **Iterate:** Repeat steps 3-5 until all logical groups are committed.
