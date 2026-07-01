@@ -486,6 +486,10 @@ function BB_SERVER.update(dispatcher)
     return
   end
 
+  -- Clear hover state for the frame being captured (runs after
+  -- G.CONTROLLER:update re-applies hover from the OS cursor, before love.draw).
+  BB_SCREENSHOT.clear_hover_for_capture()
+
   -- Try to accept new connections (only when no active client)
   if not BB_SERVER.client_socket then
     BB_SERVER.accept()

@@ -284,6 +284,7 @@
 
 ---@class Screenshot
 ---@field capture_when_settled fun(id: integer|string|nil, after: fun()) Wait until the screen is quiescent, capture <id>.png, then call `after`. Write failures are swallowed.
+---@field clear_hover_for_capture fun() Clear hover state on all Moveables for the frame being captured (stale-cursor suppression). See ADR 0003.
 
 ---@class Debug
 ---@field log table? DebugPlus logger instance with debug/info/error methods (nil if DebugPlus not available)

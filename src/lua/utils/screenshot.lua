@@ -13,6 +13,11 @@
 
 local nativefs = require("nativefs")
 
+--- While true, clear hover state every frame so the captured frame has no
+--- hover tint. Set when a capture is registered, reset in the screenshot
+--- callback (robust to captureScreenshot's frame timing). See ADR 0003.
+local suppress_hover = false
+
 --- Seconds to wait for the screen to settle before capturing anyway (deadman).
 --- Guards against a future perpetual motion hanging the API; should never fire.
 local TIMEOUT = 15
@@ -68,7 +73,11 @@ local function capture_now(id)
     BB_RENDER = true
   end
 
+  -- Suppress hover (stale-cursor artifact) until the frame is photographed.
+  suppress_hover = true
+
   love.graphics.captureScreenshot(function(imagedata)
+    suppress_hover = false
     local png = imagedata:encode("png"):getString()
     if not nativefs.write(path, png) then
       sendErrorMessage("Failed to write screenshot: " .. path, "BB.SCREENSHOT")
@@ -105,6 +114,27 @@ BB_SCREENSHOT = {
         return false
       end,
     }))
+  end,
+
+  --- Clear hover state on every drawable node for the frame about to be
+  --- captured. Called from BB_SERVER.update, which runs AFTER G.CONTROLLER:update (where
+  --- the stale OS cursor re-applies hover every frame) but BEFORE love.draw
+  --- (which renders the frame the screenshot captures). Without this, a cursor
+  --- frozen over an element while the window is in another workspace/minimized
+  --- paints that element's hover tint into the screenshot. See ADR 0003.
+  clear_hover_for_capture = function()
+    if not suppress_hover then
+      return
+    end
+    -- G.DRAW_HASH holds every drawable node (cards + UI buttons/boxes);
+    -- G.CONTROLLER:set_cursor_hover sets states.hover.is on the one under the
+    -- (possibly stale) OS cursor. Clearing here runs after the controller and
+    -- before love.draw, so the photographed frame has no hover tint.
+    for _, v in ipairs(G.DRAW_HASH) do
+      if v.states and v.states.hover and v.states.hover.is then
+        v.states.hover.is = false
+      end
+    end
   end,
 }
 

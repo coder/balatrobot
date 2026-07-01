@@ -52,6 +52,14 @@ This is checked via the same `G.E_MANAGER:add_event({ trigger = "condition" })` 
 
 This ADR adds the *wait*; ADR 0002 still handles the ondemand *render arming*. When quiescence is reached: in ondemand, set `BB_RENDER = true` (ADR 0002's second flip) so the next `love.draw` renders the settled frame, then call `captureScreenshot`. The PNG encode/write completes asynchronously on the next present; the HTTP response can be sent immediately after `captureScreenshot` is initiated, since the capture is already bound to the quiescent frame and N+1 cannot mutate the screen until the response is on the wire.
 
+## Stale-cursor hover suppression
+
+A second capture artifact is **hover tint**. `G.CONTROLLER:set_cursor_hover` (`engine/controller.lua:358`) sets `states.hover.is = true` on the node under `G.CURSOR.T`, whose position comes from `love.mouse.getPosition()` (`controller.lua:177`). When the game window is minimized, in another workspace, or unfocused, LÖVE keeps returning the **last known** mouse position, so the cursor freezes over whatever element it last touched and that element stays hovered every frame. `ui.lua` then paints it with `darken(colour, hover.is and 0.5 or 0.3)` and `G.C.UI.HOVER` — a visible tint baked into the screenshot.
+
+This cannot be cleared from the quiescence event itself: `G.E_MANAGER:update` (`game.lua:2509`, where the capture event fires) runs **before** `G.CONTROLLER:update` (`game.lua:2638`), so the controller would re-apply hover from the stale cursor on the same frame, undoing the clear.
+
+The fix uses the one slot that runs after the controller but before the draw: `BB_SERVER.update`, which the `balatrobot.lua` hook calls at the tail of `love.update`. A `suppress_hover` flag is set when capture is registered and cleared in the `captureScreenshot` callback (robust to its frame timing). While the flag is up, `BB_SCREENSHOT.clear_hover_for_capture()` iterates `G.DRAW_HASH` (every drawable node — cards **and** UI boxes/buttons; hover targets are Nodes, not Moveables, so `G.MOVEABLES` is the wrong collection) and sets `hover.is = false` on each hovered node. This persists into `love.draw` because nothing re-applies it before the capture.
+
 ## Why no correctness timeout is needed
 
 Every motion source surveyed is finite and self-draining:
