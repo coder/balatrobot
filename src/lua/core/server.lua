@@ -437,29 +437,46 @@ function BB_SERVER.send_response(response)
       result = response,
       id = BB_SERVER.current_request_id,
     }
-    BB_SCREENSHOT.capture(BB_SERVER.current_request_id)
   end
 
-  local success, json_str = pcall(json.encode, wrapped)
-  if not success then
-    sendErrorMessage("Failed to encode response: " .. tostring(json_str), "BB.SERVER")
-    return false
+  -- Encode, record, and send the response. Extracted so the screenshot wait
+  -- (when enabled) can defer this until the screen is quiescent (ADR 0003).
+  local function finalize()
+    local success, json_str = pcall(json.encode, wrapped)
+    if not success then
+      sendErrorMessage("Failed to encode response: " .. tostring(json_str), "BB.SERVER")
+      return false
+    end
+
+    -- Record response to JSONL
+    if BB_SERVER.res_file then
+      BB_SERVER.res_file:write(json_str .. "\n")
+      BB_SERVER.res_file:flush()
+    end
+
+    -- Send HTTP response
+    local http_response = format_http_response(200, "OK", json_str)
+    local sent = send_raw(http_response)
+
+    -- Close connection after response (Connection: close)
+    close_client()
+
+    return sent
   end
 
-  -- Record response to JSONL
-  if BB_SERVER.res_file then
-    BB_SERVER.res_file:write(json_str .. "\n")
-    BB_SERVER.res_file:flush()
+  if response.message then
+    -- Errors stay responsive: respond immediately, no screenshot.
+    return finalize()
   end
 
-  -- Send HTTP response
-  local http_response = format_http_response(200, "OK", json_str)
-  local sent = send_raw(http_response)
+  if BB_SETTINGS.screenshots then
+    -- Hold the response until the settled frame is captured; this also blocks
+    -- request N+1 at the accept gate until N's screen has settled.
+    BB_SCREENSHOT.capture_when_settled(BB_SERVER.current_request_id, finalize)
+    return true
+  end
 
-  -- Close connection after response (Connection: close)
-  close_client()
-
-  return sent
+  return finalize()
 end
 
 --- Main update loop - called each frame

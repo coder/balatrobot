@@ -1,0 +1,9 @@
+{"jsonrpc":"2.0","method":"menu","params":{}}
+{"jsonrpc":"2.0","method":"start","params":{"deck":"b_red","stake":"stake_white","seed":"TEST123"}}
+{"jsonrpc":"2.0","method":"select","params":{}}
+{"jsonrpc":"2.0","method":"set","params":{"chips":1000}}
+{"jsonrpc":"2.0","method":"play","params":{"cards":[0]}}
+{"jsonrpc":"2.0","method":"cash_out","params":{}}
+{"jsonrpc":"2.0","method":"buy","params":{"card":0}}
+{"jsonrpc":"2.0","method":"reroll","params":{}}
+{"jsonrpc":"2.0","method":"next_round","params":{}}

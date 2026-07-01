@@ -283,7 +283,7 @@
 ---@field setup fun(): boolean Initialize BalatroBot settings. Returns false if "BalatroBot" profile not selected.
 
 ---@class Screenshot
----@field capture fun(id: integer|string|nil) Capture the current frame as <id>.png under <BALATROBOT_PATH_LOGS>/<port>/. No-op when disabled; write failures are swallowed.
+---@field capture_when_settled fun(id: integer|string|nil, after: fun()) Wait until the screen is quiescent, capture <id>.png, then call `after`. Write failures are swallowed.
 
 ---@class Debug
 ---@field log table? DebugPlus logger instance with debug/info/error methods (nil if DebugPlus not available)
