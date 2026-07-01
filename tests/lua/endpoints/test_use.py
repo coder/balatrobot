@@ -79,6 +79,20 @@ class TestUseEndpoint:
         after = assert_gamestate_response(response)
         assert after["consumables"]["count"] == 0
 
+    def test_use_hermit_in_blind_select(self, client: httpx.Client) -> None:
+        """Test using The Hermit during BLIND_SELECT state."""
+        before = load_fixture(
+            client,
+            "use",
+            "state-BLIND_SELECT--consumables.cards[0]-key-c_hermit",
+        )
+        assert before["state"] == "BLIND_SELECT"
+        assert before["consumables"]["cards"][0]["key"] == "c_hermit"
+
+        response = api(client, "use", {"consumable": 0})
+        after = assert_gamestate_response(response)
+        assert after["consumables"]["count"] == 0
+
     def test_use_magician_in_arcana_pack(self, client: httpx.Client) -> None:
         """Test using The Magician (card selection) while an Arcana pack is open."""
         gamestate = load_fixture(
@@ -343,20 +357,6 @@ class TestUseEndpointValidation:
 
 class TestUseEndpointStateRequirements:
     """Test use endpoint state requirements."""
-
-    def test_use_from_BLIND_SELECT(self, client: httpx.Client) -> None:
-        """Test that use fails from BLIND_SELECT state."""
-        gamestate = load_fixture(
-            client,
-            "use",
-            "state-BLIND_SELECT",
-        )
-        assert gamestate["state"] == "BLIND_SELECT"
-        assert_error_response(
-            api(client, "use", {"consumable": 0, "cards": [0]}),
-            "INVALID_STATE",
-            "Method 'use' requires one of these states: SELECTING_HAND, SHOP",
-        )
 
     def test_use_magician_from_SHOP(self, client: httpx.Client) -> None:
         """Test that using The Magician fails from SHOP (needs a hand)."""

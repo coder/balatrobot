@@ -36,7 +36,13 @@ return {
     },
   },
 
-  requires_state = { G.STATES.SELECTING_HAND, G.STATES.SHOP, G.STATES.SMODS_BOOSTER_OPENED, G.STATES.ROUND_EVAL },
+  requires_state = {
+    G.STATES.SELECTING_HAND,
+    G.STATES.SHOP,
+    G.STATES.SMODS_BOOSTER_OPENED,
+    G.STATES.ROUND_EVAL,
+    G.STATES.BLIND_SELECT,
+  },
 
   ---@param args Request.Endpoint.Use.Params
   ---@param send_response fun(response: Response.Endpoint)
@@ -206,6 +212,7 @@ return {
           or G.STATE == G.STATES.SHOP
           or G.STATE == G.STATES.SMODS_BOOSTER_OPENED
           or G.STATE == G.STATES.ROUND_EVAL
+          or G.STATE == G.STATES.BLIND_SELECT
 
         -- Condition 2: Controller unlocked
         local controller_unlocked = not G.CONTROLLER.locks.use

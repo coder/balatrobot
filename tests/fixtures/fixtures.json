@@ -3536,6 +3536,52 @@
         }
       }
     ],
+    "state-BLIND_SELECT--consumables.cards[0]-key-c_hermit": [
+      {
+        "method": "menu",
+        "params": {}
+      },
+      {
+        "method": "start",
+        "params": {
+          "deck": "b_red",
+          "stake": "stake_white",
+          "seed": "TEST123"
+        }
+      },
+      {
+        "method": "select",
+        "params": {}
+      },
+      {
+        "method": "add",
+        "params": {
+          "key": "c_hermit"
+        }
+      },
+      {
+        "method": "set",
+        "params": {
+          "chips": 1000
+        }
+      },
+      {
+        "method": "play",
+        "params": {
+          "cards": [
+            0
+          ]
+        }
+      },
+      {
+        "method": "cash_out",
+        "params": {}
+      },
+      {
+        "method": "next_round",
+        "params": {}
+      }
+    ],
     "state-ROUND_EVAL": [
       {
         "method": "menu",
