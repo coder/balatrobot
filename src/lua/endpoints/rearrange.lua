@@ -41,7 +41,7 @@ return {
     },
   },
 
-  requires_state = { G.STATES.SELECTING_HAND, G.STATES.SHOP, G.STATES.SMODS_BOOSTER_OPENED },
+  requires_state = { G.STATES.SELECTING_HAND, G.STATES.SHOP, G.STATES.SMODS_BOOSTER_OPENED, G.STATES.ROUND_EVAL, G.STATES.BLIND_SELECT },
 
   ---@param args Request.Endpoint.Rearrange.Params
   ---@param send_response fun(response: Response.Endpoint)
@@ -213,12 +213,16 @@ return {
             G.STATE == G.STATES.SHOP
             or G.STATE == G.STATES.SELECTING_HAND
             or G.STATE == G.STATES.SMODS_BOOSTER_OPENED
+            or G.STATE == G.STATES.ROUND_EVAL
+            or G.STATE == G.STATES.BLIND_SELECT
           ) and G.jokers ~= nil
         else -- consumables
           done = (
             G.STATE == G.STATES.SHOP
             or G.STATE == G.STATES.SELECTING_HAND
             or G.STATE == G.STATES.SMODS_BOOSTER_OPENED
+            or G.STATE == G.STATES.ROUND_EVAL
+            or G.STATE == G.STATES.BLIND_SELECT
           ) and G.consumeables ~= nil
         end
 

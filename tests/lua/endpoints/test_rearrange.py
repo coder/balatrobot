@@ -52,6 +52,36 @@ class TestRearrangeInShopState:
         ids = [card["id"] for card in after["jokers"]["cards"]]
         assert ids == [prev_ids[i] for i in permutation]
 
+    def test_rearrange_jokers_in_round_eval(self, client: httpx.Client) -> None:
+        """Test rearranging jokers during ROUND_EVAL state."""
+        before = load_fixture(
+            client, "rearrange", "state-ROUND_EVAL--jokers.count-2"
+        )
+        assert before["state"] == "ROUND_EVAL"
+        assert before["jokers"]["count"] == 2
+        prev_ids = [card["id"] for card in before["jokers"]["cards"]]
+
+        permutation = [1, 0]
+        response = api(client, "rearrange", {"jokers": permutation})
+        after = assert_gamestate_response(response)
+        ids = [card["id"] for card in after["jokers"]["cards"]]
+        assert ids == [prev_ids[i] for i in permutation]
+
+    def test_rearrange_jokers_in_blind_select(self, client: httpx.Client) -> None:
+        """Test rearranging jokers during BLIND_SELECT state."""
+        before = load_fixture(
+            client, "rearrange", "state-BLIND_SELECT--jokers.count-2"
+        )
+        assert before["state"] == "BLIND_SELECT"
+        assert before["jokers"]["count"] == 2
+        prev_ids = [card["id"] for card in before["jokers"]["cards"]]
+
+        permutation = [1, 0]
+        response = api(client, "rearrange", {"jokers": permutation})
+        after = assert_gamestate_response(response)
+        ids = [card["id"] for card in after["jokers"]["cards"]]
+        assert ids == [prev_ids[i] for i in permutation]
+
     def test_rearrange_consumables(self, client: httpx.Client) -> None:
         """Test rearranging consumables in shop."""
         before = load_fixture(
@@ -303,25 +333,5 @@ class TestRearrangeEndpointStateRequirements:
         assert_error_response(
             api(client, "rearrange", {"hand": [0, 1, 2, 3, 4, 5, 6, 7]}),
             "INVALID_STATE",
-            "Method 'rearrange' requires one of these states: SELECTING_HAND, SHOP",
-        )
-
-    def test_rearrange_jokers_from_wrong_state(self, client: httpx.Client) -> None:
-        """Test that rearranging jokers fails from wrong state."""
-        gamestate = load_fixture(client, "rearrange", "state-BLIND_SELECT")
-        assert gamestate["state"] == "BLIND_SELECT"
-        assert_error_response(
-            api(client, "rearrange", {"jokers": [0, 1, 2, 3, 4]}),
-            "INVALID_STATE",
-            "Method 'rearrange' requires one of these states: SELECTING_HAND, SHOP",
-        )
-
-    def test_rearrange_consumables_from_wrong_state(self, client: httpx.Client) -> None:
-        """Test that rearranging consumables fails from wrong state."""
-        gamestate = load_fixture(client, "rearrange", "state-BLIND_SELECT")
-        assert gamestate["state"] == "BLIND_SELECT"
-        assert_error_response(
-            api(client, "rearrange", {"jokers": [0, 1]}),
-            "INVALID_STATE",
-            "Method 'rearrange' requires one of these states: SELECTING_HAND, SHOP",
+            "Can only rearrange hand during hand selection",
         )
