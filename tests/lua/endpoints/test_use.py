@@ -65,6 +65,20 @@ class TestUseEndpoint:
         response = api(client, "use", {"consumable": 0})
         assert_gamestate_response(response, money=1019)
 
+    def test_use_hermit_in_round_eval(self, client: httpx.Client) -> None:
+        """Test using The Hermit during ROUND_EVAL state."""
+        before = load_fixture(
+            client,
+            "use",
+            "state-ROUND_EVAL--consumables.cards[0]-key-c_hermit",
+        )
+        assert before["state"] == "ROUND_EVAL"
+        assert before["consumables"]["cards"][0]["key"] == "c_hermit"
+
+        response = api(client, "use", {"consumable": 0})
+        after = assert_gamestate_response(response)
+        assert after["consumables"]["count"] == 0
+
     def test_use_magician_in_arcana_pack(self, client: httpx.Client) -> None:
         """Test using The Magician (card selection) while an Arcana pack is open."""
         gamestate = load_fixture(
@@ -338,20 +352,6 @@ class TestUseEndpointStateRequirements:
             "state-BLIND_SELECT",
         )
         assert gamestate["state"] == "BLIND_SELECT"
-        assert_error_response(
-            api(client, "use", {"consumable": 0, "cards": [0]}),
-            "INVALID_STATE",
-            "Method 'use' requires one of these states: SELECTING_HAND, SHOP",
-        )
-
-    def test_use_from_ROUND_EVAL(self, client: httpx.Client) -> None:
-        """Test that use fails from ROUND_EVAL state."""
-        gamestate = load_fixture(
-            client,
-            "use",
-            "state-ROUND_EVAL",
-        )
-        assert gamestate["state"] == "ROUND_EVAL"
         assert_error_response(
             api(client, "use", {"consumable": 0, "cards": [0]}),
             "INVALID_STATE",
