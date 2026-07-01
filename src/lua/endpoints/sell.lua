@@ -55,22 +55,6 @@ return {
       return
     end
 
-    -- If in SMODS_BOOSTER_OPENED, verify it's a Buffoon pack (contains Jokers)
-    if G.STATE == G.STATES.SMODS_BOOSTER_OPENED then
-      local pack_set = G.pack_cards
-        and G.pack_cards.cards
-        and G.pack_cards.cards[1]
-        and G.pack_cards.cards[1].ability
-        and G.pack_cards.cards[1].ability.set
-      if pack_set ~= "Joker" then
-        send_response({
-          message = "Can only sell jokers when a Buffoon pack is open",
-          name = BB_ERROR_NAMES.NOT_ALLOWED,
-        })
-        return
-      end
-    end
-
     -- Determine which type to sell and validate existence
     local source_array, pos, sell_type
 

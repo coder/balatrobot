@@ -52,6 +52,36 @@ class TestUseEndpoint:
         response = api(client, "use", {"consumable": 0})
         assert_gamestate_response(response, money=before["money"])
 
+    def test_use_hermit_in_buffoon_pack(self, client: httpx.Client) -> None:
+        """Test using The Hermit while a Buffoon pack is open."""
+        gamestate = load_fixture(
+            client,
+            "use",
+            "state-SMODS_BOOSTER_OPENED--pack.type-buffoon--consumables.cards[0].key-c_hermit",
+        )
+        assert gamestate["state"] == "SMODS_BOOSTER_OPENED"
+        assert gamestate["consumables"]["cards"][0]["key"] == "c_hermit"
+        assert gamestate["pack"]["cards"][0]["set"] == "JOKER"
+        response = api(client, "use", {"consumable": 0})
+        assert_gamestate_response(response, money=1019)
+
+    def test_use_magician_in_arcana_pack(self, client: httpx.Client) -> None:
+        """Test using The Magician (card selection) while an Arcana pack is open."""
+        gamestate = load_fixture(
+            client,
+            "use",
+            "state-SMODS_BOOSTER_OPENED--pack.type-arcana--consumables.cards[0].key-c_magician",
+        )
+        assert gamestate["state"] == "SMODS_BOOSTER_OPENED"
+        assert gamestate["consumables"]["cards"][0]["key"] == "c_magician"
+        assert gamestate["pack"]["cards"][0]["set"] == "TAROT"
+        assert gamestate["hand"]["count"] > 0
+
+        response = api(client, "use", {"consumable": 0, "cards": [0, 1]})
+        after = assert_gamestate_response(response)
+        assert after["hand"]["cards"][0]["modifier"]["enhancement"] == "m_lucky"
+        assert after["hand"]["cards"][1]["modifier"]["enhancement"] == "m_lucky"
+
     def test_use_planet_no_cards(self, client: httpx.Client) -> None:
         """Test using a Planet card (no card selection)."""
         gamestate = load_fixture(
@@ -329,7 +359,7 @@ class TestUseEndpointStateRequirements:
         )
 
     def test_use_magician_from_SHOP(self, client: httpx.Client) -> None:
-        """Test that using The Magician fails from SHOP (needs SELECTING_HAND)."""
+        """Test that using The Magician fails from SHOP (needs a hand)."""
         gamestate = load_fixture(
             client,
             "use",
@@ -340,7 +370,7 @@ class TestUseEndpointStateRequirements:
         assert_error_response(
             api(client, "use", {"consumable": 0, "cards": [0]}),
             "INVALID_STATE",
-            "Consumable 'The Magician' requires card selection and can only be used in SELECTING_HAND state",
+            "Consumable 'The Magician' requires card selection and can only be used in SELECTING_HAND or SMODS_BOOSTER_OPENED state",
         )
 
     def test_use_familiar_from_SHOP(self, client: httpx.Client) -> None:

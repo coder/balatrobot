@@ -139,6 +139,38 @@ class TestSellEndpoint:
         assert after["consumables"]["count"] == 0
         assert before["money"] < after["money"]
 
+    def test_sell_joker_in_arcana_pack(self, client: httpx.Client) -> None:
+        """Test selling a joker while an Arcana pack is open."""
+        before = load_fixture(
+            client,
+            "sell",
+            "state-SMODS_BOOSTER_OPENED--pack.type-arcana--jokers.count-1",
+        )
+        assert before["state"] == "SMODS_BOOSTER_OPENED"
+        assert before["jokers"]["count"] == 1
+        assert before["pack"]["cards"][0]["set"] == "TAROT"
+
+        response = api(client, "sell", {"joker": 0})
+        after = assert_gamestate_response(response)
+        assert after["jokers"]["count"] == 0
+        assert before["money"] < after["money"]
+
+    def test_sell_consumable_in_arcana_pack(self, client: httpx.Client) -> None:
+        """Test selling a consumable while an Arcana pack is open."""
+        before = load_fixture(
+            client,
+            "sell",
+            "state-SMODS_BOOSTER_OPENED--pack.type-arcana--consumables.count-1",
+        )
+        assert before["state"] == "SMODS_BOOSTER_OPENED"
+        assert before["consumables"]["count"] == 1
+        assert before["pack"]["cards"][0]["set"] == "TAROT"
+
+        response = api(client, "sell", {"consumable": 0})
+        after = assert_gamestate_response(response)
+        assert after["consumables"]["count"] == 0
+        assert before["money"] < after["money"]
+
     def test_sell_invisible_joker(self, client: httpx.Client) -> None:
         """Selling Invisible Joker should not hang (issue #195)."""
         before = load_fixture(

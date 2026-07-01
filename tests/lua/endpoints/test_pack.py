@@ -176,17 +176,6 @@ class TestPackEndpointJokerSlots:
         after_jokers = set(j["key"] for j in gamestate["jokers"]["cards"])
         assert before_jokers != after_jokers
 
-    def test_pack_tarot_try_to_sell_joker(self, client: httpx.Client) -> None:
-        """Test that selling jokers is not allowed when a non-buffoon pack is open."""
-        load_fixture(
-            client, "pack", "state-SMODS_BOOSTER_OPENED--pack.cards[0].key-c_heirophant"
-        )
-        assert_error_response(
-            api(client, "sell", {"joker": 0}),
-            "NOT_ALLOWED",
-            "Can only sell jokers when a Buffoon pack is open",
-        )
-
     def test_pack_joker_slots_available(self, client: httpx.Client) -> None:
         """Test selecting joker when slots available succeeds."""
         load_fixture(

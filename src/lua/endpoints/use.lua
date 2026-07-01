@@ -36,7 +36,7 @@ return {
     },
   },
 
-  requires_state = { G.STATES.SELECTING_HAND, G.STATES.SHOP },
+  requires_state = { G.STATES.SELECTING_HAND, G.STATES.SHOP, G.STATES.SMODS_BOOSTER_OPENED },
 
   ---@param args Request.Endpoint.Use.Params
   ---@param send_response fun(response: Response.Endpoint)
@@ -58,11 +58,11 @@ return {
     local requires_cards = consumable_card.ability.consumeable.max_highlighted ~= nil
 
     -- Step 3: State Validation for Card-Selecting Consumables
-    if requires_cards and G.STATE ~= G.STATES.SELECTING_HAND then
+    if requires_cards and G.STATE ~= G.STATES.SELECTING_HAND and G.STATE ~= G.STATES.SMODS_BOOSTER_OPENED then
       send_response({
         message = "Consumable '"
           .. consumable_card.ability.name
-          .. "' requires card selection and can only be used in SELECTING_HAND state.",
+          .. "' requires card selection and can only be used in SELECTING_HAND or SMODS_BOOSTER_OPENED state.",
         name = BB_ERROR_NAMES.INVALID_STATE,
       })
       return
@@ -202,7 +202,9 @@ return {
       blocking = false,
       func = function()
         -- Condition 1: State restored
-        local state_restored = G.STATE == G.STATES.SELECTING_HAND or G.STATE == G.STATES.SHOP
+        local state_restored = G.STATE == G.STATES.SELECTING_HAND
+          or G.STATE == G.STATES.SHOP
+          or G.STATE == G.STATES.SMODS_BOOSTER_OPENED
 
         -- Condition 2: Controller unlocked
         local controller_unlocked = not G.CONTROLLER.locks.use
