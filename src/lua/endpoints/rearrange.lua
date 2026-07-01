@@ -41,7 +41,13 @@ return {
     },
   },
 
-  requires_state = { G.STATES.SELECTING_HAND, G.STATES.SHOP, G.STATES.SMODS_BOOSTER_OPENED, G.STATES.ROUND_EVAL, G.STATES.BLIND_SELECT },
+  requires_state = {
+    G.STATES.SELECTING_HAND,
+    G.STATES.SHOP,
+    G.STATES.SMODS_BOOSTER_OPENED,
+    G.STATES.ROUND_EVAL,
+    G.STATES.BLIND_SELECT,
+  },
 
   ---@param args Request.Endpoint.Rearrange.Params
   ---@param send_response fun(response: Response.Endpoint)

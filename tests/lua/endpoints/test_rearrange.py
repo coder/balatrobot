@@ -54,9 +54,7 @@ class TestRearrangeInShopState:
 
     def test_rearrange_jokers_in_round_eval(self, client: httpx.Client) -> None:
         """Test rearranging jokers during ROUND_EVAL state."""
-        before = load_fixture(
-            client, "rearrange", "state-ROUND_EVAL--jokers.count-2"
-        )
+        before = load_fixture(client, "rearrange", "state-ROUND_EVAL--jokers.count-2")
         assert before["state"] == "ROUND_EVAL"
         assert before["jokers"]["count"] == 2
         prev_ids = [card["id"] for card in before["jokers"]["cards"]]
@@ -69,9 +67,7 @@ class TestRearrangeInShopState:
 
     def test_rearrange_jokers_in_blind_select(self, client: httpx.Client) -> None:
         """Test rearranging jokers during BLIND_SELECT state."""
-        before = load_fixture(
-            client, "rearrange", "state-BLIND_SELECT--jokers.count-2"
-        )
+        before = load_fixture(client, "rearrange", "state-BLIND_SELECT--jokers.count-2")
         assert before["state"] == "BLIND_SELECT"
         assert before["jokers"]["count"] == 2
         prev_ids = [card["id"] for card in before["jokers"]["cards"]]
