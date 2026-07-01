@@ -139,6 +139,21 @@ class TestSellEndpoint:
         assert after["consumables"]["count"] == 0
         assert before["money"] < after["money"]
 
+    def test_sell_joker_in_round_eval(self, client: httpx.Client) -> None:
+        """Test selling a joker during ROUND_EVAL state."""
+        before = load_fixture(
+            client,
+            "sell",
+            "state-ROUND_EVAL--jokers.count-1",
+        )
+        assert before["state"] == "ROUND_EVAL"
+        assert before["jokers"]["count"] == 1
+
+        response = api(client, "sell", {"joker": 0})
+        after = assert_gamestate_response(response)
+        assert after["jokers"]["count"] == 0
+        assert before["money"] < after["money"]
+
     def test_sell_joker_in_arcana_pack(self, client: httpx.Client) -> None:
         """Test selling a joker while an Arcana pack is open."""
         before = load_fixture(
@@ -223,16 +238,6 @@ class TestSellEndpointStateRequirements:
         """Test that sell fails from BLIND_SELECT state."""
         gamestate = load_fixture(client, "sell", "state-BLIND_SELECT")
         assert gamestate["state"] == "BLIND_SELECT"
-        assert_error_response(
-            api(client, "sell", {}),
-            "INVALID_STATE",
-            "Method 'sell' requires one of these states: SELECTING_HAND, SHOP",
-        )
-
-    def test_sell_from_ROUND_EVAL(self, client: httpx.Client) -> None:
-        """Test that sell fails from ROUND_EVAL state."""
-        gamestate = load_fixture(client, "sell", "state-ROUND_EVAL")
-        assert gamestate["state"] == "ROUND_EVAL"
         assert_error_response(
             api(client, "sell", {}),
             "INVALID_STATE",
