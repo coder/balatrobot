@@ -8,6 +8,7 @@ ENV_MAP: dict[str, str] = {
     "host": "BALATROBOT_HOST",
     "render": "BALATROBOT_RENDER",
     "debug": "BALATROBOT_DEBUG",
+    "screenshots": "BALATROBOT_SCREENSHOTS",
     "settings": "BALATROBOT_SETTINGS",
     "path_balatro": "BALATROBOT_PATH_BALATRO",
     "path_lovely": "BALATROBOT_PATH_LOVELY",
@@ -21,7 +22,7 @@ RENDER_CHOICES = frozenset({"headfull", "headless", "ondemand"})
 
 def _parse_env_value(field: str, value: str) -> str | bool:
     """Coerce env var string to the right Python type."""
-    if field == "debug":
+    if field in ("debug", "screenshots"):
         return value in ("1", "true")
     return value
 
@@ -42,6 +43,9 @@ class Config:
 
     # Debug
     debug: bool = False
+
+    # Screenshot logging
+    screenshots: bool = False
 
     # Launcher
     path_balatro: str | None = None
@@ -88,7 +92,7 @@ class Config:
             value = getattr(self, field)
             if value is None:
                 continue
-            if field == "debug":
+            if field in ("debug", "screenshots"):
                 if value:
                     env[env_var] = "1"
             else:

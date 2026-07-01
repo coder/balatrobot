@@ -127,6 +127,9 @@ def serve(
     debug: Annotated[
         bool | None, typer.Option("--debug", help="Enable debug endpoints")
     ] = None,
+    screenshots: Annotated[
+        bool | None, typer.Option("--screenshots", help="Enable screenshot logging")
+    ] = None,
     host: Annotated[str | None, typer.Option("--host", help="Server hostname")] = None,
     path_balatro: Annotated[
         str | None, typer.Option("--path-balatro", help="Path to Balatro directory")
@@ -166,6 +169,7 @@ def serve(
             settings=settings,
             render=render,
             debug=debug,
+            screenshots=screenshots,
             host=host,
             path_balatro=path_balatro,
             path_lovely=path_lovely,

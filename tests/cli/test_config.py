@@ -26,6 +26,26 @@ class TestParseEnvValue:
         assert _parse_env_value("settings", "fast") == "fast"
 
 
+class TestConfigScreenshotsField:
+    """Tests for the screenshots field (mirrors debug)."""
+
+    def test_env_round_trip(self, clean_env, monkeypatch):
+        """BALATROBOT_SCREENSHOTS=1 loads as True and serializes back to env."""
+        monkeypatch.setenv("BALATROBOT_SCREENSHOTS", "1")
+
+        config = Config.from_env()
+
+        assert config.screenshots is True
+        assert config.to_env()["BALATROBOT_SCREENSHOTS"] == "1"
+
+    def test_default_false_omitted(self, clean_env):
+        """screenshots defaults to False and is omitted from to_env."""
+        config = Config()
+
+        assert config.screenshots is False
+        assert "BALATROBOT_SCREENSHOTS" not in config.to_env()
+
+
 class TestConfigDefaults:
     """Tests for Config default values."""
 
@@ -37,6 +57,7 @@ class TestConfigDefaults:
         assert config.port == 12346
         assert config.render == "headfull"
         assert config.debug is False
+        assert config.screenshots is False
         assert config.settings is None
         assert config.path_logs is None
         assert config.path_balatro is None

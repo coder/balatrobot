@@ -58,6 +58,7 @@ class TestServeCommand:
         assert "--platform" in result.output
         assert "--num" in result.output
         assert "--debug" in result.output
+        assert "--screenshots" in result.output
         assert "--path-balatro" in result.output
         assert "--path-lovely" in result.output
         assert "--path-love" in result.output
@@ -153,6 +154,15 @@ class TestServeCommand:
 
         config = Config.from_kwargs(debug=None)
         assert config.debug is True
+
+    def test_config_from_kwargs_screenshots_env_fallback(self, clean_env, monkeypatch):
+        """BALATROBOT_SCREENSHOTS env used when --screenshots not provided."""
+        from balatrobot.config import Config
+
+        monkeypatch.setenv("BALATROBOT_SCREENSHOTS", "1")
+
+        config = Config.from_kwargs(screenshots=None)
+        assert config.screenshots is True
 
 
 class TestMainApp:

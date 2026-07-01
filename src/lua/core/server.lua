@@ -437,6 +437,7 @@ function BB_SERVER.send_response(response)
       result = response,
       id = BB_SERVER.current_request_id,
     }
+    BB_SCREENSHOT.capture(BB_SERVER.current_request_id)
   end
 
   local success, json_str = pcall(json.encode, wrapped)

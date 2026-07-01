@@ -6,6 +6,7 @@ Environment variables read by the Lua mod:
   BALATROBOT_PORT          - Server port (set internally by launcher, default: 12346)
   BALATROBOT_RENDER        - Render mode: headfull|headless|ondemand (default: headfull)
   BALATROBOT_DEBUG         - Enable debug endpoints (1/0, default: 0)
+  BALATROBOT_SCREENSHOTS   - Enable screenshot logging after each API response (1/0, default: 0)
   BALATROBOT_SETTINGS      - Settings profile name (bare name, e.g. "fast", "turbo", "light")
 ]]
 
@@ -171,6 +172,12 @@ local function setup()
     return false
   end
 
+  -- Screenshots require rendering; warn and disable in headless mode
+  if BB_SETTINGS.screenshots and BB_SETTINGS.render == "headless" then
+    sendWarnMessage("Screenshots requested but render mode is headless; disabling screenshots", "BB.SETTINGS")
+    BB_SETTINGS.screenshots = false
+  end
+
   return true
 end
 
@@ -180,6 +187,7 @@ BB_SETTINGS = {
   port = tonumber(os.getenv("BALATROBOT_PORT")) or 12346,
   render = os.getenv("BALATROBOT_RENDER") or "headfull",
   debug = os.getenv("BALATROBOT_DEBUG") == "1" or false,
+  screenshots = os.getenv("BALATROBOT_SCREENSHOTS") == "1" or false,
   settings = os.getenv("BALATROBOT_SETTINGS"),
   setup = setup,
 }

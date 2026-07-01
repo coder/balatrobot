@@ -38,6 +38,7 @@ All options can be set via CLI flags or environment variables. CLI flags overrid
 | `--settings NAME`     | `BALATROBOT_SETTINGS`     | `default`     | Settings profile name                              |
 | `--render MODE`       | `BALATROBOT_RENDER`       | `headfull`    | Render mode: `headfull`, `headless`, or `ondemand` |
 | `--debug`             | `BALATROBOT_DEBUG`        | `0`           | Enable debug mode (requires DebugPlus mod)         |
+| `--screenshots`       | `BALATROBOT_SCREENSHOTS`  | `0`           | Save a PNG after each successful API response      |
 | `--host HOST`         | `BALATROBOT_HOST`         | `127.0.0.1`   | Server hostname                                    |
 | `--num N`             | -                         | `1`           | Number of instances to start (CLI only)            |
 | `--path-balatro PATH` | `BALATROBOT_PATH_BALATRO` | auto-detected | Path to Balatro game directory                     |

@@ -278,8 +278,12 @@
 ---@field port integer Port number for the HTTP server (default: 12346)
 ---@field render string Render mode: headfull|headless|ondemand (default: "headfull")
 ---@field debug boolean Whether debug mode is enabled (requires DebugPlus mod)
+---@field screenshots boolean Whether screenshot logging is enabled after each API response
 ---@field settings string? Settings profile name, e.g. "fast", "turbo", "light" (nil if not provided, defaults to "default" in Lua)
 ---@field setup fun(): boolean Initialize BalatroBot settings. Returns false if "BalatroBot" profile not selected.
+
+---@class Screenshot
+---@field capture fun(id: integer|string|nil) Capture the current frame as <id>.png under <BALATROBOT_PATH_LOGS>/<port>/. No-op when disabled; write failures are swallowed.
 
 ---@class Debug
 ---@field log table? DebugPlus logger instance with debug/info/error methods (nil if DebugPlus not available)
