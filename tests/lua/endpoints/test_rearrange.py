@@ -82,6 +82,36 @@ class TestRearrangeInShopState:
         ids = [card["id"] for card in after["jokers"]["cards"]]
         assert ids == [prev_ids[i] for i in permutation]
 
+    def test_rearrange_consumables_in_round_eval(self, client: httpx.Client) -> None:
+        """Test rearranging consumables during ROUND_EVAL state."""
+        before = load_fixture(
+            client, "rearrange", "state-ROUND_EVAL--consumables.count-2"
+        )
+        assert before["state"] == "ROUND_EVAL"
+        assert before["consumables"]["count"] == 2
+        prev_ids = [card["id"] for card in before["consumables"]["cards"]]
+
+        permutation = [1, 0]
+        response = api(client, "rearrange", {"consumables": permutation})
+        after = assert_gamestate_response(response)
+        ids = [card["id"] for card in after["consumables"]["cards"]]
+        assert ids == [prev_ids[i] for i in permutation]
+
+    def test_rearrange_consumables_in_blind_select(self, client: httpx.Client) -> None:
+        """Test rearranging consumables during BLIND_SELECT state."""
+        before = load_fixture(
+            client, "rearrange", "state-BLIND_SELECT--consumables.count-2"
+        )
+        assert before["state"] == "BLIND_SELECT"
+        assert before["consumables"]["count"] == 2
+        prev_ids = [card["id"] for card in before["consumables"]["cards"]]
+
+        permutation = [1, 0]
+        response = api(client, "rearrange", {"consumables": permutation})
+        after = assert_gamestate_response(response)
+        ids = [card["id"] for card in after["consumables"]["cards"]]
+        assert ids == [prev_ids[i] for i in permutation]
+
     def test_rearrange_consumables(self, client: httpx.Client) -> None:
         """Test rearranging consumables in shop."""
         before = load_fixture(

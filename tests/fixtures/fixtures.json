@@ -4309,6 +4309,102 @@
         "params": {}
       }
     ],
+    "state-ROUND_EVAL--consumables.count-2": [
+      {
+        "method": "menu",
+        "params": {}
+      },
+      {
+        "method": "start",
+        "params": {
+          "deck": "b_red",
+          "stake": "stake_white",
+          "seed": "TEST123"
+        }
+      },
+      {
+        "method": "select",
+        "params": {}
+      },
+      {
+        "method": "add",
+        "params": {
+          "key": "c_fool"
+        }
+      },
+      {
+        "method": "add",
+        "params": {
+          "key": "c_magician"
+        }
+      },
+      {
+        "method": "set",
+        "params": {
+          "chips": 1000
+        }
+      },
+      {
+        "method": "play",
+        "params": {
+          "cards": [
+            0
+          ]
+        }
+      }
+    ],
+    "state-BLIND_SELECT--consumables.count-2": [
+      {
+        "method": "menu",
+        "params": {}
+      },
+      {
+        "method": "start",
+        "params": {
+          "deck": "b_red",
+          "stake": "stake_white",
+          "seed": "TEST123"
+        }
+      },
+      {
+        "method": "select",
+        "params": {}
+      },
+      {
+        "method": "add",
+        "params": {
+          "key": "c_fool"
+        }
+      },
+      {
+        "method": "add",
+        "params": {
+          "key": "c_magician"
+        }
+      },
+      {
+        "method": "set",
+        "params": {
+          "chips": 1000
+        }
+      },
+      {
+        "method": "play",
+        "params": {
+          "cards": [
+            0
+          ]
+        }
+      },
+      {
+        "method": "cash_out",
+        "params": {}
+      },
+      {
+        "method": "next_round",
+        "params": {}
+      }
+    ],
     "state-SELECTING_HAND--hand.count-8": [
       {
         "method": "menu",
