@@ -32,7 +32,13 @@ return {
     },
   },
 
-  requires_state = { G.STATES.SELECTING_HAND, G.STATES.SHOP, G.STATES.SMODS_BOOSTER_OPENED, G.STATES.ROUND_EVAL },
+  requires_state = {
+    G.STATES.SELECTING_HAND,
+    G.STATES.SHOP,
+    G.STATES.SMODS_BOOSTER_OPENED,
+    G.STATES.ROUND_EVAL,
+    G.STATES.BLIND_SELECT,
+  },
 
   ---@param args Request.Endpoint.Sell.Params
   ---@param send_response fun(response: Response.Endpoint)
@@ -133,6 +139,7 @@ return {
           or G.STATE == G.STATES.SELECTING_HAND
           or G.STATE == G.STATES.SMODS_BOOSTER_OPENED
           or G.STATE == G.STATES.ROUND_EVAL
+          or G.STATE == G.STATES.BLIND_SELECT
         )
 
         if card_removed and money_increased and state_stable and valid_state then

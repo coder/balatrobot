@@ -2957,6 +2957,52 @@
         }
       }
     ],
+    "state-BLIND_SELECT--jokers.count-1": [
+      {
+        "method": "menu",
+        "params": {}
+      },
+      {
+        "method": "start",
+        "params": {
+          "deck": "b_red",
+          "stake": "stake_white",
+          "seed": "TEST123"
+        }
+      },
+      {
+        "method": "select",
+        "params": {}
+      },
+      {
+        "method": "add",
+        "params": {
+          "key": "j_joker"
+        }
+      },
+      {
+        "method": "set",
+        "params": {
+          "chips": 1000
+        }
+      },
+      {
+        "method": "play",
+        "params": {
+          "cards": [
+            0
+          ]
+        }
+      },
+      {
+        "method": "cash_out",
+        "params": {}
+      },
+      {
+        "method": "next_round",
+        "params": {}
+      }
+    ],
     "state-ROUND_EVAL": [
       {
         "method": "menu",
