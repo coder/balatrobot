@@ -54,11 +54,29 @@ This ADR adds the *wait*; ADR 0002 still handles the ondemand *render arming*. W
 
 ## Stale-cursor hover suppression
 
-A second capture artifact is **hover tint**. `G.CONTROLLER:set_cursor_hover` (`engine/controller.lua:358`) sets `states.hover.is = true` on the node under `G.CURSOR.T`, whose position comes from `love.mouse.getPosition()` (`controller.lua:177`). When the game window is minimized, in another workspace, or unfocused, LÖVE keeps returning the **last known** mouse position, so the cursor freezes over whatever element it last touched and that element stays hovered every frame. `ui.lua` then paints it with `darken(colour, hover.is and 0.5 or 0.3)` and `G.C.UI.HOVER` — a visible tint baked into the screenshot.
+A second capture artifact is **hover tint and hover popups**. `G.CONTROLLER:set_cursor_hover` (`engine/controller.lua:358`) sets `states.hover.is = true` on the node under `G.CURSOR.T`, whose position comes from `love.mouse.getPosition()` (`controller.lua:177`). When the game window is minimized, in another workspace, or unfocused, LÖVE keeps returning the **last known** mouse position, so the cursor freezes over whatever element it last touched and that element stays hovered every frame. Three distinct popup mechanisms exist:
 
-This cannot be cleared from the quiescence event itself: `G.E_MANAGER:update` (`game.lua:2509`, where the capture event fires) runs **before** `G.CONTROLLER:update` (`game.lua:2638`), so the controller would re-apply hover from the stale cursor on the same frame, undoing the clear.
+- **Tint** — `ui.lua` paints hovered nodes with `darken(colour, hover.is and 0.5 or 0.3)` and `G.C.UI.HOVER`.
+- **`children.h_popup`** — `Node:hover()` (`engine/node.lua:267`), invoked by the controller on hover-target change (`controller.lua:397`), creates this UIBox. For a card this is its description box (e.g. "6 of Spades / +6 chips"); for a joker, its effect text. Dismissed by `Node:stop_hover()`, which the controller only calls on target change/loss — so a frozen cursor leaves it on screen indefinitely.
+- **`children.alert`** — driven by per-frame callbacks like `hover_tag_proxy` (`button_callbacks.lua:2718`) for tags/blinds/vouchers (e.g. the "Investment Tag" popup). Creation keys off `hover.is`; removal keys off `collide.is`. Since the controller re-sets `collide.is = true` from the stale cursor every frame, the alert is never removed naturally.
 
-The fix uses the one slot that runs after the controller but before the draw: `BB_SERVER.update`, which the `balatrobot.lua` hook calls at the tail of `love.update`. A `suppress_hover` flag is set when capture is registered and cleared in the `captureScreenshot` callback (robust to its frame timing). While the flag is up, `BB_SCREENSHOT.clear_hover_for_capture()` iterates `G.DRAW_HASH` (every drawable node — cards **and** UI boxes/buttons; hover targets are Nodes, not Moveables, so `G.MOVEABLES` is the wrong collection) and sets `hover.is = false` on each hovered node. This persists into `love.draw` because nothing re-applies it before the capture.
+### Why a source-level cursor override does not work
+
+An earlier attempt monkeypatched `love.mouse.getPosition` to return off-screen coordinates while suppressing, expecting the game's own cleanup to dismiss all popups. This fails because of the per-frame ordering in `Game:update`:
+
+1. `E_MANAGER:update` (`game.lua:2509`) — capture event fires, sets `suppress_hover`.
+2. MOVEABLES loop (`game.lua:2631`) — `v:update(dt)` runs the hover callbacks (e.g. `hover_tag_proxy`) **using `collide.is` from the previous frame**, then resets `collide.is = false` (`game.lua:2633`).
+3. `CONTROLLER:update` (`game.lua:2638`) — reads the (off-screen) cursor; because `get_cursor_collision` returns early on out-of-bounds cursors it does **not** set `collide.is`.
+
+At step 2 the callback still sees last frame's `collide.is == true` and keeps the alert; it is not re-evaluated until the next frame's step 2 — one frame too late, after the capture. So the popup removal always lags by a frame.
+
+### The fix: clear after the controller, before the draw
+
+The one slot that runs after `CONTROLLER:update` has finalized hover/collide for the frame but before `love.draw` renders+captures is `BB_SERVER.update` (the `balatrobot.lua` hook calls it at the tail of `love.update`, after `love_update(dt)` which contains `Game:update`). Nothing re-applies hover between there and the capture, so a direct clear persists into the photographed frame.
+
+`clear_hover_for_capture()` runs there while `suppress_hover` is up. It iterates `G.DRAW_HASH` (every drawable node — cards and UI; the tag container is added via `add_to_drawhash` because it has a `button` config) and, for each node: clears `hover.is` (kills the tint), calls `stop_hover()` (removes `h_popup`), and directly removes `children.alert` / `children.info` (the tag/blind/voucher popups that the per-frame callbacks would otherwise keep). Empirically this clears `alert=1` on blind-select captures and `h_popup=1` on gameplay captures.
+
+**Note:** the orange border around the current blind on the blind-select screen is the blind's static `boss_colour` (`UI_definitions.lua:1448`, `get_blind_main_colour`), not a hover artifact. Defeated/upcoming blinds show black; only the current blind is orange by design.
 
 ## Why no correctness timeout is needed
 

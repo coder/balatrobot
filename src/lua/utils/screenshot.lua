@@ -1,31 +1,25 @@
 --[[
   Screenshot logging — writes a PNG of the post-action game state after a
   successful API response. Opt-in via BB_SETTINGS.screenshots.
-
-  When enabled, capture is deferred until the screen is quiescent (every
-  Moveable stationary) and the API response is held back until then, so a
-  rapid-fire client cannot start request N+1 before N's settled frame is
-  captured. See docs/adr/0003-screenshot-settling-quiescence.md.
-
-  In ondemand mode a BB_RENDER flip re-arms rendering for the settled frame;
-  the dispatch-start flip stays untouched. See docs/adr/0002.
 ]]
 
 local nativefs = require("nativefs")
 
---- While true, clear hover state every frame so the captured frame has no
---- hover tint. Set when a capture is registered, reset in the screenshot
---- callback (robust to captureScreenshot's frame timing). See ADR 0003.
+--- Set during capture to suppress hover (stale-cursor artifact).
 local suppress_hover = false
 
---- Seconds to wait for the screen to settle before capturing anyway (deadman).
---- Guards against a future perpetual motion hanging the API; should never fire.
+--- Deadman timeout; should never fire.
 local TIMEOUT = 15
 
---- True when no Moveable is meaningfully still animating. Position/rotation must
---- be at target; juice (active wiggle) must be done. The hover-scale term in
---- move_scale (states.hover.is and 0.05) is a *static* zoom the easing never
---- converges to STATIONARY against, so scale-only residual is tolerated.
+--- Previous-frame VT signatures, keyed by object ID. Lets us detect moveables
+--- whose VT never reaches T but is frozen (e.g. the GAME_OVER Jimbo character,
+--- positioned off-screen with a permanent T!=VT offset). Such objects are
+--- visually settled even though they never converge.
+local _prev_vt = {}
+
+--- A moveable is settled when position/rotation are at target (converged), OR
+--- when its VT did not change since the last poll (frozen). Scale is skipped:
+--- the hover-scale term keeps it perpetually off-target.
 local function is_settled(m)
   if m.juice then
     return false
@@ -34,13 +28,25 @@ local function is_settled(m)
   if not t or not vt then
     return true
   end
-  if math.abs(t.x - vt.x) > 0.01 or math.abs(t.y - vt.y) > 0.01 then
-    return false
+  local dx, dy, dr = math.abs(t.x - vt.x), math.abs(t.y - vt.y), math.abs(t.r - vt.r)
+  local converged = dx <= 0.01 and dy <= 0.01 and dr <= 0.001
+  if converged then
+    _prev_vt[m.ID] = nil
+    return true
   end
-  if math.abs(t.r - vt.r) > 0.001 then
-    return false
+  -- Frozen? Compare against the VT recorded on the previous poll.
+  local prev = _prev_vt[m.ID]
+  local cur_x, cur_y, cur_r = vt.x, vt.y, vt.r
+  _prev_vt[m.ID] = { cur_x, cur_y, cur_r }
+  if
+    prev
+    and math.abs(cur_x - prev[1]) < 0.001
+    and math.abs(cur_y - prev[2]) < 0.001
+    and math.abs(cur_r - prev[3]) < 0.0001
+  then
+    return true
   end
-  return true
+  return false
 end
 
 local function is_quiescent()
@@ -52,7 +58,7 @@ local function is_quiescent()
   return true
 end
 
---- Encode the current framebuffer to <id>.png (ondemand render armed first).
+--- Encode the current framebuffer to <id>.png (arms ondemand render first).
 ---@param id integer|string|nil JSON-RPC request id (filename stem)
 local function capture_now(id)
   local logs = os.getenv("BALATROBOT_PATH_LOGS")
@@ -68,12 +74,9 @@ local function capture_now(id)
   end
   local path = dir .. "/" .. safe_id .. ".png"
 
-  -- Re-arm ondemand rendering so the next love.draw renders the settled frame.
   if BB_SETTINGS.render == "ondemand" then
     BB_RENDER = true
   end
-
-  -- Suppress hover (stale-cursor artifact) until the frame is photographed.
   suppress_hover = true
 
   love.graphics.captureScreenshot(function(imagedata)
@@ -87,9 +90,7 @@ end
 
 ---@type Screenshot
 BB_SCREENSHOT = {
-  --- Wait until the screen is quiescent, capture it, then call `after` (which
-  --- sends the API response). No-op of the wait when screenshots are off is the
-  --- caller's responsibility (server calls this only when screenshots are on).
+  --- Wait until the screen is quiescent, capture it, then call `after`.
   ---@param id integer|string|nil JSON-RPC request id (filename stem)
   ---@param after fun() called in the same settled frame, after capture initiates
   capture_when_settled = function(id, after)
@@ -116,23 +117,30 @@ BB_SCREENSHOT = {
     }))
   end,
 
-  --- Clear hover state on every drawable node for the frame about to be
-  --- captured. Called from BB_SERVER.update, which runs AFTER G.CONTROLLER:update (where
-  --- the stale OS cursor re-applies hover every frame) but BEFORE love.draw
-  --- (which renders the frame the screenshot captures). Without this, a cursor
-  --- frozen over an element while the window is in another workspace/minimized
-  --- paints that element's hover tint into the screenshot. See ADR 0003.
+  --- Clear hover artifacts for the captured frame. Called from BB_SERVER.update,
+  --- the only slot after G.CONTROLLER:update (which sets hover) and before
+  --- love.draw (which renders+captures). Clears tint (hover.is), card popups
+  --- (h_popup), and tag/blind popups (alert/info).
   clear_hover_for_capture = function()
     if not suppress_hover then
       return
     end
-    -- G.DRAW_HASH holds every drawable node (cards + UI buttons/boxes);
-    -- G.CONTROLLER:set_cursor_hover sets states.hover.is on the one under the
-    -- (possibly stale) OS cursor. Clearing here runs after the controller and
-    -- before love.draw, so the photographed frame has no hover tint.
     for _, v in ipairs(G.DRAW_HASH) do
       if v.states and v.states.hover and v.states.hover.is then
         v.states.hover.is = false
+      end
+      if v.children then
+        if v.children.h_popup then
+          v:stop_hover()
+        end
+        if v.children.alert then
+          v.children.alert:remove()
+          v.children.alert = nil
+        end
+        if v.children.info then
+          v.children.info:remove()
+          v.children.info = nil
+        end
       end
     end
   end,
