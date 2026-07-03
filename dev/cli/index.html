@@ -1159,10 +1159,10 @@
 <td>Platform: <code>darwin</code>, <code>linux</code>, <code>windows</code>, <code>native</code></td>
 </tr>
 <tr>
-<td><code>--path-logs PATH</code></td>
-<td><code>BALATROBOT_PATH_LOGS</code></td>
+<td><code>--logs PATH</code></td>
+<td><code>BALATROBOT_LOGS</code></td>
 <td><code>logs</code></td>
-<td>Directory for log files</td>
+<td>Log directory (parent of timestamped sessions)</td>
 </tr>
 <tr>
 <td><code>-h, --help</code></td>
@@ -1309,7 +1309,7 @@ On error, prints <code>Error: NAME - message</code> to stderr (exit code 1).</p>
 <h2 id="process-management">Process Management</h2>
 <p>The CLI automatically:</p>
 <ul>
-<li>Logs output to <code>logs/{timestamp}/{port}.log</code></li>
+<li>Logs output to <code>logs/{timestamp}/{port}/balatro.log</code></li>
 <li>Sets up the correct environment variables</li>
 <li>Gracefully shuts down on Ctrl+C</li>
 </ul>
@@ -1421,7 +1421,7 @@ On error, prints <code>Error: NAME - message</code> to stderr (exit code 1).</p>
 </span></code></pre></div>
 </details>
 <h2 id="troubleshooting">Troubleshooting</h2>
-<p><strong>Connection refused</strong>: Ensure Balatro is running and the mod loaded successfully. Check logs in <code>logs/{timestamp}/{port}.log</code> for errors. Verify the in-game profile is named exactly <code>"BalatroBot"</code>.</p>
+<p><strong>Connection refused</strong>: Ensure Balatro is running and the mod loaded successfully. Check logs in <code>logs/{timestamp}/{port}/balatro.log</code> for errors. Verify the in-game profile is named exactly <code>"BalatroBot"</code>.</p>
 <p><strong>Mod not loading</strong>: Verify that Lovely Injector and Steamodded are installed correctly. Ensure you have a Balatro profile named <code>"BalatroBot"</code> and it is selected.</p>
 <p><strong>Port in use</strong>: Ports are allocated ephemerally. If you need a specific port, adjust your firewall rules to allow the ephemeral range.</p>
 <p><strong>Game crashes</strong>: Try running in headless mode with <code>--render headless</code> and the <code>fast</code> profile (<code>--settings fast</code>).</p>

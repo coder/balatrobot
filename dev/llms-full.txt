@@ -135,7 +135,7 @@ All options can be set via CLI flags or environment variables. CLI flags overrid
 | `--path-lovely PATH`  | `BALATROBOT_PATH_LOVELY`  | auto-detected | Path to lovely library (dll/so/dylib)              |
 | `--path-love PATH`    | `BALATROBOT_PATH_LOVE`    | auto-detected | Path to game launcher executable                   |
 | `--platform PLATFORM` | `BALATROBOT_PLATFORM`     | auto-detected | Platform: `darwin`, `linux`, `windows`, `native`   |
-| `--path-logs PATH`    | `BALATROBOT_PATH_LOGS`    | `logs`        | Directory for log files                            |
+| `--logs PATH`         | `BALATROBOT_LOGS`         | `logs`        | Log directory (parent of timestamped sessions)     |
 | `-h, --help`          | -                         | -             | Show help message and exit                         |
 
 ### Render Modes
@@ -269,7 +269,7 @@ uvx balatrobot serve
 
 The CLI automatically:
 
-- Logs output to `logs/{timestamp}/{port}.log`
+- Logs output to `logs/{timestamp}/{port}/balatro.log`
 - Sets up the correct environment variables
 - Gracefully shuts down on Ctrl+C
 
@@ -411,7 +411,7 @@ windowrulev2 = suppressevent activate, class:^(love)$, title:^(Balatro)$
 
 ## Troubleshooting
 
-**Connection refused**: Ensure Balatro is running and the mod loaded successfully. Check logs in `logs/{timestamp}/{port}.log` for errors. Verify the in-game profile is named exactly `"BalatroBot"`.
+**Connection refused**: Ensure Balatro is running and the mod loaded successfully. Check logs in `logs/{timestamp}/{port}/balatro.log` for errors. Verify the in-game profile is named exactly `"BalatroBot"`.
 
 **Mod not loading**: Verify that Lovely Injector and Steamodded are installed correctly. Ensure you have a Balatro profile named `"BalatroBot"` and it is selected.
 
