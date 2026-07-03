@@ -364,6 +364,34 @@ curl -X POST http://127.0.0.1:12346 \
 
 ______________________________________________________________________
 
+### `buy_and_use`
+
+Buy a shop consumable (Tarot/Planet/Spectral) and use it immediately, without occupying a consumable slot. Mirrors Balatro's **"Buy and Use"** shop button. Unlike [`buy`](#buy), this never places the card into a consumable slot, so it works even when consumable slots are full.
+
+**Parameters:**
+
+| Name   | Type    | Required | Description                                 |
+| ------ | ------- | -------- | ------------------------------------------- |
+| `card` | integer | Yes      | 0-based index of shop consumable to buy+use |
+
+**Returns:** [GameState](#gamestate-schema)
+
+**Errors:** `BAD_REQUEST`, `NOT_ALLOWED`
+
+**Required State:** `SHOP`
+
+**Example:**
+
+```bash
+# Buy and use the first shop consumable
+curl -X POST http://127.0.0.1:12346 \
+  -H "Content-Type: application/json" \
+  -d '{"jsonrpc": "2.0", "method": "buy_and_use", "params": {"card": 0}, "id": 1}'
+
+```
+
+______________________________________________________________________
+
 ### `pack`
 
 Select a card or skip a pack from an opened booster pack.
