@@ -14,7 +14,7 @@ ENV_MAP: dict[str, str] = {
     "path_lovely": "BALATROBOT_PATH_LOVELY",
     "path_love": "BALATROBOT_PATH_LOVE",
     "platform": "BALATROBOT_PLATFORM",
-    "path_logs": "BALATROBOT_PATH_LOGS",
+    "logs": "BALATROBOT_LOGS",
 }
 
 RENDER_CHOICES = frozenset({"headfull", "headless", "ondemand"})
@@ -52,7 +52,7 @@ class Config:
     path_lovely: str | None = None
     path_love: str | None = None
     platform: str | None = None
-    path_logs: str | None = None
+    logs: str | None = None
 
     def __post_init__(self) -> None:
         if self.render not in RENDER_CHOICES:
@@ -89,6 +89,11 @@ class Config:
         """Convert config to environment variables dict."""
         env: dict[str, str] = {}
         for field, env_var in ENV_MAP.items():
+            if field == "logs":
+                # Python-only: the Lua mod reads BALATROBOT_LOG_DIR (set
+                # imperatively by the launcher as the per-instance dir), not
+                # the parent. Don't emit a confusing second log var.
+                continue
             value = getattr(self, field)
             if value is None:
                 continue

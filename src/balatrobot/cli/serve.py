@@ -144,8 +144,8 @@ def serve(
         str | None,
         typer.Option("--platform", help="Platform (darwin, linux, windows, native)"),
     ] = None,
-    path_logs: Annotated[
-        str | None, typer.Option("--path-logs", help="Log directory")
+    logs: Annotated[
+        str | None, typer.Option("--logs", help="Log directory (parent of sessions)")
     ] = None,
     # fmt: on
 ) -> None:
@@ -175,7 +175,7 @@ def serve(
             path_lovely=path_lovely,
             path_love=path_love,
             platform=platform,
-            path_logs=path_logs,
+            logs=logs,
         )
     except ValueError as e:
         typer.echo(f"Error: {e}", err=True)
@@ -200,7 +200,7 @@ async def _serve(config: Config, n: int) -> None:
         for i, info in enumerate(pool.instances):
             typer.echo(f"Instance [{i}]: {info.url}")
         typer.echo(
-            f"Session: {pool.session_name} | Logs: {config.path_logs or 'logs'}/{pool.session_name}/"
+            f"Session: {pool.session_name} | Logs: {config.logs or 'logs'}/{pool.session_name}/"
         )
         typer.echo("Press Ctrl+C to stop.")
         await server.run()

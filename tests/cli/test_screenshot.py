@@ -39,7 +39,7 @@ async def test_screenshot_written_after_success(tmp_path: Path, render: str) -> 
         port=_random_port(),
         render=render,
         screenshots=True,
-        path_logs=str(tmp_path),
+        logs=str(tmp_path),
     ) as instance:
         url = f"http://127.0.0.1:{instance.port}"
         payload = {"jsonrpc": "2.0", "method": "menu", "params": {}, "id": 1}
@@ -56,7 +56,7 @@ async def test_screenshot_written_after_success(tmp_path: Path, render: str) -> 
         # PNG write happens asynchronously on the next frame; poll for it.
         png = None
         for _ in range(50):
-            matches = list(tmp_path.glob(f"*/{instance.port}/*.png"))
+            matches = list(tmp_path.glob(f"*/{instance.port}/screenshots/*.png"))
             if matches:
                 png = matches[0]
                 break

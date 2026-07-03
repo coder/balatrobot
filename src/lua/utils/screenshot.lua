@@ -61,13 +61,13 @@ end
 --- Encode the current framebuffer to <id>.png (arms ondemand render first).
 ---@param id integer|string|nil JSON-RPC request id (filename stem)
 local function capture_now(id)
-  local logs = os.getenv("BALATROBOT_PATH_LOGS")
+  local logs = os.getenv("BALATROBOT_LOG_DIR")
   if not logs or logs == "" then
     return
   end
 
   local safe_id = tostring(id):gsub("[^A-Za-z0-9._-]", "_")
-  local dir = logs .. "/" .. BB_SETTINGS.port
+  local dir = logs .. "/screenshots"
   if not nativefs.createDirectory(dir) then
     sendErrorMessage("Cannot create screenshot dir: " .. dir, "BB.SCREENSHOT")
     return

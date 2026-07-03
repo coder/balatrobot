@@ -59,7 +59,7 @@ class TestConfigDefaults:
         assert config.debug is False
         assert config.screenshots is False
         assert config.settings is None
-        assert config.path_logs is None
+        assert config.logs is None
         assert config.path_balatro is None
         assert config.path_lovely is None
         assert config.path_love is None
@@ -123,14 +123,14 @@ class TestConfigFromEnv:
         monkeypatch.setenv("BALATROBOT_PATH_BALATRO", "/balatro")
         monkeypatch.setenv("BALATROBOT_PATH_LOVELY", "/lovely")
         monkeypatch.setenv("BALATROBOT_PATH_LOVE", "/love")
-        monkeypatch.setenv("BALATROBOT_PATH_LOGS", "/logs")
+        monkeypatch.setenv("BALATROBOT_LOGS", "/logs")
 
         config = Config.from_env()
 
         assert config.path_balatro == "/balatro"
         assert config.path_lovely == "/lovely"
         assert config.path_love == "/love"
-        assert config.path_logs == "/logs"
+        assert config.logs == "/logs"
 
 
 class TestConfigToEnv:
@@ -179,11 +179,12 @@ class TestConfigToEnv:
             path_balatro="/balatro",
             path_lovely="/lovely",
             path_love="/love",
-            path_logs="/logs",
         )
         env = config.to_env()
 
         assert env["BALATROBOT_PATH_BALATRO"] == "/balatro"
         assert env["BALATROBOT_PATH_LOVELY"] == "/lovely"
         assert env["BALATROBOT_PATH_LOVE"] == "/love"
-        assert env["BALATROBOT_PATH_LOGS"] == "/logs"
+        # logs is Python-only: not emitted to the subprocess (Lua reads
+        # BALATROBOT_LOG_DIR, set imperatively by the launcher).
+        assert "BALATROBOT_LOGS" not in env

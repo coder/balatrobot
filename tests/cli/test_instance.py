@@ -164,7 +164,7 @@ class TestBalatroInstanceContextManager:
 
         monkeypatch.setattr("balatrobot.instance.get_launcher", lambda x: mock_launcher)
 
-        instance = BalatroInstance(path_logs=str(tmp_path))
+        instance = BalatroInstance(logs=str(tmp_path))
 
         # Mock health check to succeed immediately
         instance._wait_for_health = AsyncMock()  # ty: ignore[invalid-assignment]

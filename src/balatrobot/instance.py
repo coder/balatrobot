@@ -110,15 +110,16 @@ class BalatroInstance:
         session_name = self._session_name or datetime.now().strftime(
             "%Y-%m-%dT%H-%M-%S"
         )
-        session_dir = Path(self._config.path_logs or "logs") / session_name
-        session_dir.mkdir(parents=True, exist_ok=True)
-        self._log_path = session_dir / f"{self._config.port}.log"
+        session_dir = Path(self._config.logs or "logs") / session_name
+        instance_dir = session_dir / str(self._config.port)
+        instance_dir.mkdir(parents=True, exist_ok=True)
+        self._log_path = instance_dir / "balatro.log"
 
         # Get launcher and start process
         self._launcher = get_launcher(self._config.platform)
         print(f"Starting Balatro on port {self._config.port}...")
 
-        self._process = await self._launcher.start(self._config, session_dir)
+        self._process = await self._launcher.start(self._config, instance_dir)
 
         # Wait for health
         print(f"Waiting for health check on {self._config.host}:{self._config.port}...")

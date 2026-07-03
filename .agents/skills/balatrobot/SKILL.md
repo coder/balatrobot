@@ -65,4 +65,4 @@ balatrobot stop              # SIGTERM + 5s poll, cleans state file
 
 ## Logs
 
-Session directory `logs/<timestamp>/` contains `<port>.log`, `<port>.req.jsonl`, `<port>.res.jsonl`. Find paths via `balatrobot list --json`.
+Session directory `logs/<timestamp>/` holds one subdir per instance (`<port>/`), each containing `balatro.log`, `requests.jsonl`, `responses.jsonl`, and `screenshots/<id>.png`. Find paths via `balatrobot list --json`.

@@ -62,7 +62,7 @@ class TestServeCommand:
         assert "--path-balatro" in result.output
         assert "--path-lovely" in result.output
         assert "--path-love" in result.output
-        assert "--path-logs" in result.output
+        assert "--logs" in result.output
         assert "--host" in result.output
         # Old flags should NOT be present
         assert "--fast" not in result.output

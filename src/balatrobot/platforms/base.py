@@ -39,12 +39,13 @@ class BaseLauncher(ABC):
         """
         ...
 
-    async def start(self, config: Config, session_dir: Path) -> subprocess.Popen:
+    async def start(self, config: Config, instance_dir: Path) -> subprocess.Popen:
         """Start Balatro with the given configuration.
 
         Args:
             config: Launcher configuration (mutated with defaults).
-            session_dir: Directory for log files.
+            instance_dir: Per-instance directory for log files. Exposed to the
+                Lua mod as BALATROBOT_LOG_DIR.
 
         Returns:
             The subprocess.Popen object.
@@ -54,10 +55,10 @@ class BaseLauncher(ABC):
         """
         self.validate_paths(config)
         env = self.build_env(config)
-        env["BALATROBOT_PATH_LOGS"] = str(session_dir.resolve())
+        env["BALATROBOT_LOG_DIR"] = str(instance_dir.resolve())
         cmd = self.build_cmd(config)
 
-        log_path = session_dir / f"{config.port}.log"
+        log_path = instance_dir / "balatro.log"
 
         with open(log_path, "w") as log:
             process = subprocess.Popen(

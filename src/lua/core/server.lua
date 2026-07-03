@@ -135,11 +135,11 @@ function BB_SERVER.init()
 
   sendInfoMessage("HTTP server listening on http://" .. BB_SERVER.host .. ":" .. BB_SERVER.port, "BB.SERVER")
 
-  -- Open JSONL recording files if BALATROBOT_PATH_LOGS is set
-  local logs_path = os.getenv("BALATROBOT_PATH_LOGS")
+  -- Open JSONL recording files if BALATROBOT_LOG_DIR is set
+  local logs_path = os.getenv("BALATROBOT_LOG_DIR")
   if logs_path and logs_path ~= "" then
-    local req_path = logs_path .. "/" .. BB_SERVER.port .. ".req.jsonl"
-    local res_path = logs_path .. "/" .. BB_SERVER.port .. ".res.jsonl"
+    local req_path = logs_path .. "/requests.jsonl"
+    local res_path = logs_path .. "/responses.jsonl"
     local rf, rf_err = io.open(req_path, "a")
     if rf then
       BB_SERVER.req_file = rf
