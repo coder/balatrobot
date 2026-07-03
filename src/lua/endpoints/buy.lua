@@ -129,9 +129,15 @@ return {
       return
     end
 
-    -- Ensure there is space in joker area
+    -- Ensure there is space in joker area.
+    -- A Negative-edition card brings its own slot (card_limit=1), matching
+    -- the game's check_for_buy_space: config.card_limit + ability.card_limit.
     if card.set == "JOKER" then
-      if gamestate.jokers.count >= gamestate.jokers.limit then
+      local live_card = G.shop_jokers.cards[pos]
+      local card_limit = (live_card and live_card.ability and live_card.ability.card_limit) or 0
+      local extra_slots = (live_card and live_card.ability and live_card.ability.extra_slots_used) or 0
+      local effective_limit = gamestate.jokers.limit + card_limit - extra_slots
+      if gamestate.jokers.count >= effective_limit then
         send_response({
           message = "Cannot purchase joker card, joker slots are full. Current: "
             .. gamestate.jokers.count
@@ -144,9 +150,13 @@ return {
       end
     end
 
-    -- Ensure there is space in consumable area
+    -- Ensure there is space in consumable area (same capacity formula).
     if card.set == "PLANET" or card.set == "SPECTRAL" or card.set == "TAROT" then
-      if gamestate.consumables.count >= gamestate.consumables.limit then
+      local live_card = G.shop_jokers.cards[pos]
+      local card_limit = (live_card and live_card.ability and live_card.ability.card_limit) or 0
+      local extra_slots = (live_card and live_card.ability and live_card.ability.extra_slots_used) or 0
+      local effective_limit = gamestate.consumables.limit + card_limit - extra_slots
+      if gamestate.consumables.count >= effective_limit then
         send_response({
           message = "Cannot purchase consumable card, consumable slots are full. Current: "
             .. gamestate.consumables.count

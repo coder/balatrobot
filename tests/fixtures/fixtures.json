@@ -2047,6 +2047,109 @@
           "key": "p_celestial_normal_1"
         }
       }
+    ],
+    "seed-NEG003A--state-SHOP--jokers.count-5--shop.cards[0].edition-e_negative": [
+      {
+        "method": "menu",
+        "params": {}
+      },
+      {
+        "method": "start",
+        "params": {
+          "deck": "b_red",
+          "stake": "stake_white",
+          "seed": "NEG003A"
+        }
+      },
+      {
+        "method": "select",
+        "params": {}
+      },
+      {
+        "method": "set",
+        "params": {
+          "chips": 1000,
+          "money": 9999
+        }
+      },
+      {
+        "method": "play",
+        "params": {
+          "cards": [
+            0
+          ]
+        }
+      },
+      {
+        "method": "cash_out",
+        "params": {}
+      },
+      {
+        "method": "add",
+        "params": {
+          "key": "j_joker"
+        }
+      },
+      {
+        "method": "add",
+        "params": {
+          "key": "j_joker"
+        }
+      },
+      {
+        "method": "add",
+        "params": {
+          "key": "j_joker"
+        }
+      },
+      {
+        "method": "add",
+        "params": {
+          "key": "j_joker"
+        }
+      },
+      {
+        "method": "add",
+        "params": {
+          "key": "j_joker"
+        }
+      },
+      {
+        "method": "reroll",
+        "params": {}
+      },
+      {
+        "method": "reroll",
+        "params": {}
+      },
+      {
+        "method": "reroll",
+        "params": {}
+      },
+      {
+        "method": "reroll",
+        "params": {}
+      },
+      {
+        "method": "reroll",
+        "params": {}
+      },
+      {
+        "method": "reroll",
+        "params": {}
+      },
+      {
+        "method": "reroll",
+        "params": {}
+      },
+      {
+        "method": "reroll",
+        "params": {}
+      },
+      {
+        "method": "reroll",
+        "params": {}
+      }
     ]
   },
   "pack": {
@@ -2938,6 +3041,163 @@
         "method": "buy",
         "params": {
           "pack": 1
+        }
+      }
+    ],
+    "seed-NB001A--state-SMODS_BOOSTER_OPENED--jokers.count-5--pack.cards[1].edition-e_negative": [
+      {
+        "method": "menu",
+        "params": {}
+      },
+      {
+        "method": "start",
+        "params": {
+          "deck": "b_red",
+          "stake": "stake_white",
+          "seed": "NB001A"
+        }
+      },
+      {
+        "method": "select",
+        "params": {}
+      },
+      {
+        "method": "set",
+        "params": {
+          "chips": 1000,
+          "money": 99999
+        }
+      },
+      {
+        "method": "play",
+        "params": {
+          "cards": [
+            0
+          ]
+        }
+      },
+      {
+        "method": "cash_out",
+        "params": {}
+      },
+      {
+        "method": "buy",
+        "params": {
+          "pack": 0
+        }
+      },
+      {
+        "method": "pack",
+        "params": {
+          "skip": true
+        }
+      },
+      {
+        "method": "buy",
+        "params": {
+          "pack": 0
+        }
+      },
+      {
+        "method": "pack",
+        "params": {
+          "skip": true
+        }
+      },
+      {
+        "method": "add",
+        "params": {
+          "key": "j_joker"
+        }
+      },
+      {
+        "method": "add",
+        "params": {
+          "key": "j_joker"
+        }
+      },
+      {
+        "method": "add",
+        "params": {
+          "key": "j_joker"
+        }
+      },
+      {
+        "method": "add",
+        "params": {
+          "key": "j_joker"
+        }
+      },
+      {
+        "method": "add",
+        "params": {
+          "key": "j_joker"
+        }
+      },
+      {
+        "method": "add",
+        "params": {
+          "key": "p_buffoon_mega_1"
+        }
+      },
+      {
+        "method": "buy",
+        "params": {
+          "pack": 0
+        }
+      },
+      {
+        "method": "pack",
+        "params": {
+          "skip": true
+        }
+      },
+      {
+        "method": "add",
+        "params": {
+          "key": "p_buffoon_mega_1"
+        }
+      },
+      {
+        "method": "buy",
+        "params": {
+          "pack": 0
+        }
+      },
+      {
+        "method": "pack",
+        "params": {
+          "skip": true
+        }
+      },
+      {
+        "method": "add",
+        "params": {
+          "key": "p_buffoon_mega_1"
+        }
+      },
+      {
+        "method": "buy",
+        "params": {
+          "pack": 0
+        }
+      },
+      {
+        "method": "pack",
+        "params": {
+          "skip": true
+        }
+      },
+      {
+        "method": "add",
+        "params": {
+          "key": "p_buffoon_mega_1"
+        }
+      },
+      {
+        "method": "buy",
+        "params": {
+          "pack": 0
         }
       }
     ]

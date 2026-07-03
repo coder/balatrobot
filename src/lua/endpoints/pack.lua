@@ -135,11 +135,15 @@ return {
       local card = G.pack_cards.cards[pos]
       local card_key = card.config and card.config.center and card.config.center.key
 
-      -- Check if card is a Joker and validate that we have room
+      -- Check if card is a Joker and validate that we have room.
+      -- A Negative-edition Joker brings its own slot (card_limit=1).
       if card.ability and card.ability.set == "Joker" then
         local joker_count = G.jokers and G.jokers.config and G.jokers.config.card_count or 0
         local joker_limit = G.jokers and G.jokers.config and G.jokers.config.card_limit or 0
-        if joker_count >= joker_limit then
+        local card_limit = card.ability.card_limit or 0
+        local extra_slots = card.ability.extra_slots_used or 0
+        local effective_limit = joker_limit + card_limit - extra_slots
+        if joker_count >= effective_limit then
           send_response({
             message = "Cannot select joker, joker slots are full. Current: "
               .. joker_count

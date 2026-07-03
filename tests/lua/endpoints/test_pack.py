@@ -158,6 +158,30 @@ class TestPackEndpointJokerSlots:
             "Cannot select joker, joker slots are full. Current: 5, Limit: 5",
         )
 
+    def test_pack_negative_joker_when_full(self, client: httpx.Client) -> None:
+        """A Negative-edition joker can be selected from a pack even when full.
+
+        The Negative edition grants +1 slot, so the game allows the selection.
+        A mega pack keeps the pack open after one selection (2 choices), so
+        the state stays SMODS_BOOSTER_OPENED rather than returning to SHOP.
+        """
+        before = load_fixture(
+            client,
+            "pack",
+            "seed-NB001A--state-SMODS_BOOSTER_OPENED--jokers.count-5--pack.cards[1].edition-e_negative",
+        )
+        assert before["state"] == "SMODS_BOOSTER_OPENED"
+        assert before["jokers"]["count"] == 5
+        assert before["jokers"]["limit"] == 5
+        assert before["pack"]["cards"][1]["modifier"]["edition"] == "e_negative"
+
+        response = api(client, "pack", {"card": 1})
+        after = assert_gamestate_response(response)
+        # Mega pack: stays open for the second choice
+        assert after["state"] == "SMODS_BOOSTER_OPENED"
+        assert after["jokers"]["count"] == 6
+        assert after["jokers"]["limit"] == 6
+
     def test_pack_joker_slots_full_sell_joker(self, client: httpx.Client) -> None:
         """Test selling a joker to make room when joker slots are full during pack selection."""
         gamestate = load_fixture(

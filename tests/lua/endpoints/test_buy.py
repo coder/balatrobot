@@ -113,6 +113,29 @@ class TestBuyEndpoint:
             "Cannot purchase joker card, joker slots are full. Current: 5, Limit: 5. Sell a joker using `sell` to free a slot.",
         )
 
+    def test_buy_negative_joker_when_full(self, client: httpx.Client) -> None:
+        """A Negative-edition joker can be bought even when joker slots are full.
+
+        The Negative edition grants +1 slot, so the game allows the purchase.
+        balatrobot currently blocks it with 'joker slots are full'.
+        """
+        before = load_fixture(
+            client,
+            "buy",
+            "seed-NEG003A--state-SHOP--jokers.count-5--shop.cards[0].edition-e_negative",
+        )
+        assert before["state"] == "SHOP"
+        assert before["jokers"]["count"] == 5
+        assert before["jokers"]["limit"] == 5
+        assert before["shop"]["cards"][0]["key"] == "j_drunkard"
+        assert before["shop"]["cards"][0]["modifier"]["edition"] == "e_negative"
+
+        response = api(client, "buy", {"card": 0})
+        after = assert_gamestate_response(response)
+        assert after["jokers"]["count"] == 6
+        assert after["jokers"]["limit"] == 6
+        assert after["jokers"]["cards"][5]["key"] == "j_drunkard"
+
     def test_buy_consumable_slots_full(self, client: httpx.Client) -> None:
         """Test buy endpoint when player has the maximum number of consumables."""
         gamestate = load_fixture(
