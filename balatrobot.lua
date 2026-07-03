@@ -35,6 +35,7 @@ BB_ENDPOINTS = {
   "src/lua/endpoints/next_round.lua",
   "src/lua/endpoints/reroll.lua",
   "src/lua/endpoints/buy.lua",
+  "src/lua/endpoints/buy_and_use.lua",
   "src/lua/endpoints/pack.lua",
   -- Rearrange endpoint
   "src/lua/endpoints/rearrange.lua",

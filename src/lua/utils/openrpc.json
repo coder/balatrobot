@@ -173,6 +173,42 @@
       ]
     },
     {
+      "name": "buy_and_use",
+      "summary": "Buy and use a consumable from the shop in one step",
+      "description": "Buy a shop consumable (Tarot/Planet/Spectral) and use it immediately, without occupying a consumable slot. Mirrors Balatro's \"Buy and Use\" shop button. Must provide a card index.",
+      "tags": [
+        {
+          "$ref": "#/components/tags/shop"
+        }
+      ],
+      "params": [
+        {
+          "name": "card",
+          "description": "0-based index of shop consumable to buy and use",
+          "required": true,
+          "schema": {
+            "type": "integer",
+            "minimum": 0
+          }
+        }
+      ],
+      "result": {
+        "name": "gamestate",
+        "description": "Complete game state after the consumable is bought and used",
+        "schema": {
+          "$ref": "#/components/schemas/GameState"
+        }
+      },
+      "errors": [
+        {
+          "$ref": "#/components/errors/BadRequest"
+        },
+        {
+          "$ref": "#/components/errors/NotAllowed"
+        }
+      ]
+    },
+    {
       "name": "cash_out",
       "summary": "Cash out and collect round rewards",
       "description": "Cash out and collect round rewards, transitioning to the shop phase.",

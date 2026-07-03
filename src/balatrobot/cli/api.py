@@ -17,6 +17,7 @@ class Method(StrEnum):
 
     ADD = "add"
     BUY = "buy"
+    BUY_AND_USE = "buy_and_use"
     CASH_OUT = "cash_out"
     DISCARD = "discard"
     GAMESTATE = "gamestate"
