@@ -4841,5 +4841,567 @@
         }
       }
     ]
+  },
+  "buy_and_use": {
+    "state-BLIND_SELECT": [
+      {
+        "method": "menu",
+        "params": {}
+      },
+      {
+        "method": "start",
+        "params": {
+          "deck": "b_red",
+          "stake": "stake_white",
+          "seed": "TEST123"
+        }
+      }
+    ],
+    "state-SHOP--shop.cards[0].set-JOKER": [
+      {
+        "method": "menu",
+        "params": {}
+      },
+      {
+        "method": "start",
+        "params": {
+          "deck": "b_red",
+          "stake": "stake_white",
+          "seed": "TEST123"
+        }
+      },
+      {
+        "method": "select",
+        "params": {}
+      },
+      {
+        "method": "set",
+        "params": {
+          "chips": 1000
+        }
+      },
+      {
+        "method": "play",
+        "params": {
+          "cards": [
+            0
+          ]
+        }
+      },
+      {
+        "method": "cash_out",
+        "params": {}
+      }
+    ],
+    "state-SHOP--shop.cards[1].set-PLANET": [
+      {
+        "method": "menu",
+        "params": {}
+      },
+      {
+        "method": "start",
+        "params": {
+          "deck": "b_red",
+          "stake": "stake_white",
+          "seed": "TEST123"
+        }
+      },
+      {
+        "method": "select",
+        "params": {}
+      },
+      {
+        "method": "set",
+        "params": {
+          "chips": 1000
+        }
+      },
+      {
+        "method": "play",
+        "params": {
+          "cards": [
+            0
+          ]
+        }
+      },
+      {
+        "method": "cash_out",
+        "params": {}
+      }
+    ],
+    "state-SHOP--shop.count-0": [
+      {
+        "method": "menu",
+        "params": {}
+      },
+      {
+        "method": "start",
+        "params": {
+          "deck": "b_red",
+          "stake": "stake_white",
+          "seed": "TEST123"
+        }
+      },
+      {
+        "method": "select",
+        "params": {}
+      },
+      {
+        "method": "set",
+        "params": {
+          "chips": 1000
+        }
+      },
+      {
+        "method": "play",
+        "params": {
+          "cards": [
+            0
+          ]
+        }
+      },
+      {
+        "method": "cash_out",
+        "params": {}
+      },
+      {
+        "method": "buy",
+        "params": {
+          "card": 0
+        }
+      },
+      {
+        "method": "buy",
+        "params": {
+          "card": 0
+        }
+      }
+    ],
+    "state-SHOP--money-0": [
+      {
+        "method": "menu",
+        "params": {}
+      },
+      {
+        "method": "start",
+        "params": {
+          "deck": "b_red",
+          "stake": "stake_white",
+          "seed": "TEST123"
+        }
+      },
+      {
+        "method": "select",
+        "params": {}
+      },
+      {
+        "method": "set",
+        "params": {
+          "chips": 1000
+        }
+      },
+      {
+        "method": "play",
+        "params": {
+          "cards": [
+            0
+          ]
+        }
+      },
+      {
+        "method": "cash_out",
+        "params": {}
+      },
+      {
+        "method": "set",
+        "params": {
+          "money": 0
+        }
+      }
+    ],
+    "state-SHOP--consumables.count-2--shop.cards[1].set-PLANET": [
+      {
+        "method": "menu",
+        "params": {}
+      },
+      {
+        "method": "start",
+        "params": {
+          "deck": "b_red",
+          "stake": "stake_white",
+          "seed": "TEST123"
+        }
+      },
+      {
+        "method": "select",
+        "params": {}
+      },
+      {
+        "method": "set",
+        "params": {
+          "chips": 1000,
+          "money": 1000
+        }
+      },
+      {
+        "method": "play",
+        "params": {
+          "cards": [
+            0
+          ]
+        }
+      },
+      {
+        "method": "cash_out",
+        "params": {}
+      },
+      {
+        "method": "buy",
+        "params": {
+          "card": 1
+        }
+      },
+      {
+        "method": "reroll",
+        "params": {}
+      },
+      {
+        "method": "buy",
+        "params": {
+          "card": 1
+        }
+      },
+      {
+        "method": "reroll",
+        "params": {}
+      },
+      {
+        "method": "reroll",
+        "params": {}
+      },
+      {
+        "method": "reroll",
+        "params": {}
+      }
+    ],
+    "seed-ANKH0001--jokers.count-5--shop.cards[1].key-c_ankh": [
+      {
+        "method": "menu",
+        "params": {}
+      },
+      {
+        "method": "start",
+        "params": {
+          "deck": "b_ghost",
+          "stake": "stake_white",
+          "seed": "ANKH0001"
+        }
+      },
+      {
+        "method": "select",
+        "params": {}
+      },
+      {
+        "method": "set",
+        "params": {
+          "chips": 1000,
+          "money": 9999
+        }
+      },
+      {
+        "method": "play",
+        "params": {
+          "cards": [
+            0
+          ]
+        }
+      },
+      {
+        "method": "cash_out",
+        "params": {}
+      },
+      {
+        "method": "add",
+        "params": {
+          "key": "j_joker"
+        }
+      },
+      {
+        "method": "add",
+        "params": {
+          "key": "j_joker"
+        }
+      },
+      {
+        "method": "add",
+        "params": {
+          "key": "j_joker"
+        }
+      },
+      {
+        "method": "add",
+        "params": {
+          "key": "j_joker"
+        }
+      },
+      {
+        "method": "add",
+        "params": {
+          "key": "j_joker"
+        }
+      },
+      {
+        "method": "reroll",
+        "params": {}
+      },
+      {
+        "method": "reroll",
+        "params": {}
+      },
+      {
+        "method": "reroll",
+        "params": {}
+      },
+      {
+        "method": "reroll",
+        "params": {}
+      },
+      {
+        "method": "reroll",
+        "params": {}
+      },
+      {
+        "method": "reroll",
+        "params": {}
+      },
+      {
+        "method": "reroll",
+        "params": {}
+      },
+      {
+        "method": "reroll",
+        "params": {}
+      },
+      {
+        "method": "reroll",
+        "params": {}
+      },
+      {
+        "method": "reroll",
+        "params": {}
+      },
+      {
+        "method": "reroll",
+        "params": {}
+      },
+      {
+        "method": "reroll",
+        "params": {}
+      },
+      {
+        "method": "reroll",
+        "params": {}
+      },
+      {
+        "method": "reroll",
+        "params": {}
+      },
+      {
+        "method": "reroll",
+        "params": {}
+      },
+      {
+        "method": "reroll",
+        "params": {}
+      },
+      {
+        "method": "reroll",
+        "params": {}
+      },
+      {
+        "method": "reroll",
+        "params": {}
+      },
+      {
+        "method": "reroll",
+        "params": {}
+      },
+      {
+        "method": "reroll",
+        "params": {}
+      },
+      {
+        "method": "reroll",
+        "params": {}
+      },
+      {
+        "method": "reroll",
+        "params": {}
+      },
+      {
+        "method": "reroll",
+        "params": {}
+      },
+      {
+        "method": "reroll",
+        "params": {}
+      },
+      {
+        "method": "reroll",
+        "params": {}
+      },
+      {
+        "method": "reroll",
+        "params": {}
+      },
+      {
+        "method": "reroll",
+        "params": {}
+      },
+      {
+        "method": "reroll",
+        "params": {}
+      },
+      {
+        "method": "reroll",
+        "params": {}
+      },
+      {
+        "method": "reroll",
+        "params": {}
+      },
+      {
+        "method": "reroll",
+        "params": {}
+      },
+      {
+        "method": "reroll",
+        "params": {}
+      },
+      {
+        "method": "reroll",
+        "params": {}
+      },
+      {
+        "method": "reroll",
+        "params": {}
+      },
+      {
+        "method": "reroll",
+        "params": {}
+      },
+      {
+        "method": "reroll",
+        "params": {}
+      },
+      {
+        "method": "reroll",
+        "params": {}
+      },
+      {
+        "method": "reroll",
+        "params": {}
+      },
+      {
+        "method": "reroll",
+        "params": {}
+      },
+      {
+        "method": "reroll",
+        "params": {}
+      },
+      {
+        "method": "reroll",
+        "params": {}
+      },
+      {
+        "method": "reroll",
+        "params": {}
+      },
+      {
+        "method": "reroll",
+        "params": {}
+      },
+      {
+        "method": "reroll",
+        "params": {}
+      },
+      {
+        "method": "reroll",
+        "params": {}
+      },
+      {
+        "method": "reroll",
+        "params": {}
+      },
+      {
+        "method": "reroll",
+        "params": {}
+      },
+      {
+        "method": "reroll",
+        "params": {}
+      },
+      {
+        "method": "reroll",
+        "params": {}
+      },
+      {
+        "method": "reroll",
+        "params": {}
+      },
+      {
+        "method": "reroll",
+        "params": {}
+      },
+      {
+        "method": "reroll",
+        "params": {}
+      },
+      {
+        "method": "reroll",
+        "params": {}
+      }
+    ],
+    "state-SHOP--shop.cards[1].set-TAROT": [
+      {
+        "method": "menu",
+        "params": {}
+      },
+      {
+        "method": "start",
+        "params": {
+          "deck": "b_red",
+          "stake": "stake_white",
+          "seed": "TEST123"
+        }
+      },
+      {
+        "method": "select",
+        "params": {}
+      },
+      {
+        "method": "set",
+        "params": {
+          "chips": 1000
+        }
+      },
+      {
+        "method": "play",
+        "params": {
+          "cards": [
+            0
+          ]
+        }
+      },
+      {
+        "method": "cash_out",
+        "params": {}
+      },
+      {
+        "method": "reroll",
+        "params": {}
+      }
+    ]
   }
 }
