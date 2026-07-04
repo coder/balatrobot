@@ -27,6 +27,31 @@
 ---| "stake_orange" # 7. Shop can have Perishable Jokers. Applies all previous Stakes
 ---| "stake_gold" # 8. Shop can have Rental Jokers. Applies all previous Stakes
 
+-- Base-game challenges (G.CHALLENGES). Static list, but validated at runtime
+-- against the live G.CHALLENGES table in start.lua so SMODS-injected
+-- challenges remain reachable.
+---@alias Challenge
+---| "c_omelette_1" # The Omelette: no blind rewards, no interest, no hand money; start with 5 Eggs
+---| "c_city_1" # 15 Minute City: eternal Ride the Bus + Shortcut; deck is only 4–K
+---| "c_rich_1" # Rich get Richer: chips capped at current $; start with $100
+---| "c_knife_1" # On a Knife's Edge: eternal pinned Ceremonial Dagger
+---| "c_xray_1" # X-ray Vision: 1 in 4 cards drawn face-down
+---| "c_mad_world_1" # Mad World: no hand money/interest; eternal Pareidolia + Business Cards; deck is 2–9 only
+---| "c_luxury_1" # Luxury Tax: hand size -1 per $5 held; start with 10 hand size
+---| "c_non_perishable_1" # Non-Perishable: all Jokers are Eternal
+---| "c_medusa_1" # Medusa: eternal Marble Joker; all J/Q/K are Stone cards
+---| "c_double_nothing_1" # Double or Nothing: played cards debuff after scoring; all cards have Red seal
+---| "c_typecast_1" # Typecast: at ante 4 all Jokers become Eternal and slots drop to 0
+---| "c_inflation_1" # Inflation: prices +$1 every purchase; start with Credit Card
+---| "c_bram_poker_1" # Bram Poker: no shop jokers; eternal Vampire + Tarot-focused start
+---| "c_fragile_1" # Fragile: all-Glass deck; 2× negative eternal Oops; suit-change Tarots banned
+---| "c_monolith_1" # Monolith: eternal Obelisk + negative Marble
+---| "c_blast_off_1" # Blast Off: 2 hands, 2 discards, 4 slots; eternal Constellation + Rocket
+---| "c_five_card_1" # Five-Card Draw: 5-card hand size, 7 slots, 6 discards; Card Sharp + Joker
+---| "c_golden_needle_1" # Golden Needle: 1 hand; discards cost $1; start with Credit Card
+---| "c_cruelty_1" # Cruelty: 3 joker slots; Small & Big blinds give no reward
+---| "c_jokerless_1" # Jokerless: 0 joker slots; no jokers in shop; joker-granting cards banned
+
 ---@alias State
 ---| "SELECTING_HAND" # 1 When you can select cards to play or discard
 ---| "HAND_PLAYED" # 2 Duing hand playing animation

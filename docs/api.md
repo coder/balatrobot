@@ -188,15 +188,16 @@ curl -X POST http://127.0.0.1:12346 \
 
 ### `start`
 
-Start a new game run.
+Start a new game run. Either provide `deck` + `stake` for a normal run, or `challenge` for one of Balatro's 20 fixed-preset Challenge Runs. `challenge` is mutually exclusive with `deck`/`stake` but composes freely with `seed`. Lands in `BLIND_SELECT`.
 
 **Parameters:**
 
-| Name    | Type   | Required | Description           |
-| ------- | ------ | -------- | --------------------- |
-| `deck`  | string | Yes      | [Deck](#deck) to use  |
-| `stake` | string | Yes      | [Stake](#stake) level |
-| `seed`  | string | No       | Seed for the run      |
+| Name        | Type   | Required | Description                                                         |
+| ----------- | ------ | -------- | ------------------------------------------------------------------- |
+| `deck`      | string | No       | [Deck](#deck) to use (required unless `challenge` is given)         |
+| `stake`     | string | No       | [Stake](#stake) level (required unless `challenge` is given)        |
+| `seed`      | string | No       | Seed for the run                                                    |
+| `challenge` | string | No       | [Challenge](#challenge) id (mutually exclusive with `deck`/`stake`) |
 
 **Returns:** [GameState](#gamestate-schema) (state will be `BLIND_SELECT`)
 
@@ -207,9 +208,15 @@ Start a new game run.
 **Example:**
 
 ```bash
+# Normal run
 curl -X POST http://127.0.0.1:12346 \
   -H "Content-Type: application/json" \
   -d '{"jsonrpc": "2.0", "method": "start", "params": {"deck": "b_blue", "stake": "stake_white", "seed": "TEST123"}, "id": 1}'
+
+# Challenge run (The Omelette)
+curl -X POST http://127.0.0.1:12346 \
+  -H "Content-Type: application/json" \
+  -d '{"jsonrpc": "2.0", "method": "start", "params": {"challenge": "c_omelette_1"}, "id": 1}'
 ```
 
 ---
@@ -789,6 +796,7 @@ The complete game state returned by most methods.
   "deck": "b_red",
   "stake": "stake_white",
   "seed": "ABC123",
+  "challenge": "c_omelette_1",
   "won": false,
   "used_vouchers": {},
   "tags": [ ... ],
@@ -950,6 +958,33 @@ Represents a Balatro tag that provides bonuses when triggered.
 | `stake_purple` | Required score scales faster    |
 | `stake_orange` | Shop can have Perishable Jokers |
 | `stake_gold`   | Shop can have Rental Jokers     |
+
+### Challenge
+
+Challenge Run ids from `G.CHALLENGES`. The 20 base-game challenges. Validated at runtime against the live `G.CHALLENGES` table, so SMODS-injected challenges are also accepted. Pass one to [`start`](#start) (without `deck`/`stake`).
+
+| Value                | Description                                                                              |
+| -------------------- | ---------------------------------------------------------------------------------------- |
+| `c_omelette_1`       | The Omelette: no blind rewards, no interest, no hand money; start with 5 Eggs            |
+| `c_city_1`           | 15 Minute City: eternal Ride the Bus + Shortcut; deck is only 4–K                        |
+| `c_rich_1`           | Rich get Richer: chips capped at current $; start with $100                              |
+| `c_knife_1`          | On a Knife's Edge: eternal pinned Ceremonial Dagger                                      |
+| `c_xray_1`           | X-ray Vision: 1 in 4 cards drawn face-down                                               |
+| `c_mad_world_1`      | Mad World: no hand money/interest; eternal Pareidolia + Business Cards; deck is 2–9 only |
+| `c_luxury_1`         | Luxury Tax: hand size -1 per $5 held; start with 10 hand size                            |
+| `c_non_perishable_1` | Non-Perishable: all Jokers are Eternal                                                   |
+| `c_medusa_1`         | Medusa: eternal Marble Joker; all J/Q/K are Stone cards                                  |
+| `c_double_nothing_1` | Double or Nothing: played cards debuff after scoring; all cards have Red seal            |
+| `c_typecast_1`       | Typecast: at ante 4 all Jokers become Eternal and slots drop to 0                        |
+| `c_inflation_1`      | Inflation: prices +$1 every purchase; start with Credit Card                             |
+| `c_bram_poker_1`     | Bram Poker: no shop jokers; eternal Vampire + Tarot-focused start                        |
+| `c_fragile_1`        | Fragile: all-Glass deck; 2× negative eternal Oops; suit-change Tarots banned             |
+| `c_monolith_1`       | Monolith: eternal Obelisk + negative Marble                                              |
+| `c_blast_off_1`      | Blast Off: 2 hands, 2 discards, 4 slots; eternal Constellation + Rocket                  |
+| `c_five_card_1`      | Five-Card Draw: 5-card hand size, 7 slots, 6 discards; Card Sharp + Joker                |
+| `c_golden_needle_1`  | Golden Needle: 1 hand; discards cost $1; start with Credit Card                          |
+| `c_cruelty_1`        | Cruelty: 3 joker slots; Small & Big blinds give no reward                                |
+| `c_jokerless_1`      | Jokerless: 0 joker slots; no jokers in shop; joker-granting cards banned                 |
 
 ### Card Value Suit
 

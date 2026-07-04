@@ -839,6 +839,14 @@ function gamestate.get_gamestate()
       state_data.seed = G.GAME.pseudorandom.seed
     end
 
+    -- Challenge (optional) — present only during a Challenge Run. Bare id
+    -- (e.g. "c_omelette_1"), matching the keys-not-names convention used for
+    -- deck/stake. G.GAME.challenge is nil for normal runs (init_game_object
+    -- has no challenge key); conditionally absent here, not null.
+    if G.GAME.challenge then
+      state_data.challenge = G.GAME.challenge
+    end
+
     -- Used vouchers (table<string, string>)
     if G.GAME.used_vouchers then
       local used_vouchers = {}

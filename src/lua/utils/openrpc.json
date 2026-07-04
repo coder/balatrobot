@@ -851,8 +851,8 @@
     },
     {
       "name": "start",
-      "summary": "Start a new game run",
-      "description": "Start a new game run with specified deck and stake.",
+      "summary": "Start a new game run (deck+stake, or a challenge run)",
+      "description": "Start a new game run. Either provide `deck` + `stake` for a normal run, or `challenge` for one of Balatro's 20 fixed-preset Challenge Runs. `challenge` is mutually exclusive with `deck`/`stake` but composes freely with `seed`. Lands in BLIND_SELECT.",
       "tags": [
         {
           "$ref": "#/components/tags/game-control"
@@ -861,16 +861,16 @@
       "params": [
         {
           "name": "deck",
-          "description": "Deck to use for the run",
-          "required": true,
+          "description": "Deck to use for the run (required unless 'challenge' is given)",
+          "required": false,
           "schema": {
             "$ref": "#/components/schemas/Deck"
           }
         },
         {
           "name": "stake",
-          "description": "Stake level for the run",
-          "required": true,
+          "description": "Stake level for the run (required unless 'challenge' is given)",
+          "required": false,
           "schema": {
             "$ref": "#/components/schemas/Stake"
           }
@@ -881,6 +881,14 @@
           "required": false,
           "schema": {
             "type": "string"
+          }
+        },
+        {
+          "name": "challenge",
+          "description": "Challenge Run id from G.CHALLENGES (e.g. 'c_omelette_1'). Mutually exclusive with 'deck'/'stake'; composes freely with 'seed'.",
+          "required": false,
+          "schema": {
+            "$ref": "#/components/schemas/Challenge"
           }
         }
       ],
@@ -1017,6 +1025,10 @@
           "seed": {
             "type": "string",
             "description": "Seed used for the run"
+          },
+          "challenge": {
+            "$ref": "#/components/schemas/Challenge",
+            "description": "Challenge Run id; present only during a Challenge Run (omitted for normal runs)"
           },
           "won": {
             "type": "boolean",
@@ -1585,6 +1597,91 @@
           {
             "const": "stake_gold",
             "description": "Shop can have Rental Jokers"
+          }
+        ]
+      },
+      "Challenge": {
+        "description": "Challenge Run id (the 20 base-game challenges). Runtime-validated against live G.CHALLENGES, so SMODS-injected challenges are also accepted.",
+        "oneOf": [
+          {
+            "const": "c_omelette_1",
+            "description": "The Omelette: no blind rewards, no interest, no hand money; start with 5 Eggs"
+          },
+          {
+            "const": "c_city_1",
+            "description": "15 Minute City: eternal Ride the Bus + Shortcut; deck is only 4–K"
+          },
+          {
+            "const": "c_rich_1",
+            "description": "Rich get Richer: chips capped at current $; start with $100"
+          },
+          {
+            "const": "c_knife_1",
+            "description": "On a Knife's Edge: eternal pinned Ceremonial Dagger"
+          },
+          {
+            "const": "c_xray_1",
+            "description": "X-ray Vision: 1 in 4 cards drawn face-down"
+          },
+          {
+            "const": "c_mad_world_1",
+            "description": "Mad World: no hand money/interest; eternal Pareidolia + Business Cards; deck is 2–9 only"
+          },
+          {
+            "const": "c_luxury_1",
+            "description": "Luxury Tax: hand size -1 per $5 held; start with 10 hand size"
+          },
+          {
+            "const": "c_non_perishable_1",
+            "description": "Non-Perishable: all Jokers are Eternal"
+          },
+          {
+            "const": "c_medusa_1",
+            "description": "Medusa: eternal Marble Joker; all J/Q/K are Stone cards"
+          },
+          {
+            "const": "c_double_nothing_1",
+            "description": "Double or Nothing: played cards debuff after scoring; all cards have Red seal"
+          },
+          {
+            "const": "c_typecast_1",
+            "description": "Typecast: at ante 4 all Jokers become Eternal and slots drop to 0"
+          },
+          {
+            "const": "c_inflation_1",
+            "description": "Inflation: prices +$1 every purchase; start with Credit Card"
+          },
+          {
+            "const": "c_bram_poker_1",
+            "description": "Bram Poker: no shop jokers; eternal Vampire + Tarot-focused start"
+          },
+          {
+            "const": "c_fragile_1",
+            "description": "Fragile: all-Glass deck; 2× negative eternal Oops; suit-change Tarots banned"
+          },
+          {
+            "const": "c_monolith_1",
+            "description": "Monolith: eternal Obelisk + negative Marble"
+          },
+          {
+            "const": "c_blast_off_1",
+            "description": "Blast Off: 2 hands, 2 discards, 4 slots; eternal Constellation + Rocket"
+          },
+          {
+            "const": "c_five_card_1",
+            "description": "Five-Card Draw: 5-card hand size, 7 slots, 6 discards; Card Sharp + Joker"
+          },
+          {
+            "const": "c_golden_needle_1",
+            "description": "Golden Needle: 1 hand; discards cost $1; start with Credit Card"
+          },
+          {
+            "const": "c_cruelty_1",
+            "description": "Cruelty: 3 joker slots; Small & Big blinds give no reward"
+          },
+          {
+            "const": "c_jokerless_1",
+            "description": "Jokerless: 0 joker slots; no jokers in shop; joker-granting cards banned"
           }
         ]
       },
