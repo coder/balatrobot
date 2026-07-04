@@ -36,6 +36,7 @@ class Method(StrEnum):
     SELL = "sell"
     SET = "set"
     SKIP = "skip"
+    SORT = "sort"
     START = "start"
     USE = "use"
 

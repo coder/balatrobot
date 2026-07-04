@@ -811,6 +811,45 @@
       ]
     },
     {
+      "name": "sort",
+      "summary": "Sort the hand by rank or suit",
+      "description": "Sort the cards in hand, mirroring the in-game Sort by Rank / Sort by Suit buttons. Only available during SELECTING_HAND. Use 'rank' for descending rank (A>K>...>2, then Spades>Hearts>Clubs>Diamonds) or 'suit' for descending suit (Spades>Hearts>Clubs>Diamonds, then rank desc).",
+      "tags": [
+        {
+          "$ref": "#/components/tags/cards"
+        }
+      ],
+      "params": [
+        {
+          "name": "by",
+          "description": "Sort mode: 'rank' or 'suit'",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "enum": [
+              "rank",
+              "suit"
+            ]
+          }
+        }
+      ],
+      "result": {
+        "name": "gamestate",
+        "description": "Complete game state after the hand is sorted",
+        "schema": {
+          "$ref": "#/components/schemas/GameState"
+        }
+      },
+      "errors": [
+        {
+          "$ref": "#/components/errors/BadRequest"
+        },
+        {
+          "$ref": "#/components/errors/InvalidState"
+        }
+      ]
+    },
+    {
       "name": "start",
       "summary": "Start a new game run",
       "description": "Start a new game run with specified deck and stake.",
