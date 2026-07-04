@@ -21,6 +21,7 @@ Glossary of terms used in the BalatroBot project.
 | **joker** | A modifier card sitting in the joker area. Provides ongoing scoring effects. |
 | **consumable** | A one-time-use card: tarot, planet, or spectral. **Note:** Balatro's source code misspells this as `consumeables` — our API uses the correct spelling `consumables`. |
 | **voucher** | A permanent upgrade purchased in the shop. Persists for the entire run. |
+| **Reroll Boss Blind** | The voucher-gated player action available during `BLIND_SELECT` that replaces the upcoming boss blind with a random weighted pick for $10. Requires the Director's Cut (once per ante) or Retcon (unlimited) voucher. _Avoid_: boss reroll (ambiguous with the Boss Tag's free reroll and the `set` debug override), prescribe boss. |
 | **hand** | The cards currently dealt to the player (up to 8). An `Area` in the gamestate response. |
 | **hands** | Poker hand information dictionary (pair, flush, straight, etc.). Tracks level, chips, mult, times played. |
 | **area** | A card container in the gamestate (jokers, consumables, hand, cards, pack, shop, vouchers, packs). Each has `count`, `limit`, and `cards`. |
