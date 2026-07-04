@@ -138,6 +138,7 @@ ______________________________________________________________________
 - [`play`](#play) - Play cards from hand
 - [`discard`](#discard) - Discard cards from hand
 - [`rearrange`](#rearrange) - Rearrange cards in hand, jokers, or consumables
+- [`sort`](#sort) - Sort the hand by rank or suit
 - [`use`](#use) - Use a consumable card
 - [`add`](#add) - Add a card to the game (debug/testing)
 - [`screenshot`](#screenshot) - Take a screenshot of the game
@@ -635,6 +636,34 @@ Rearrange cards in hand, jokers, or consumables.
 curl -X POST http://127.0.0.1:12346 \
   -H "Content-Type: application/json" \
   -d '{"jsonrpc": "2.0", "method": "rearrange", "params": {"hand": [4, 3, 2, 1, 0]}, "id": 1}'
+
+```
+
+______________________________________________________________________
+
+### `sort`
+
+Sort the cards in hand. This is a faithful mirror of the in-game **Sort by Rank** / **Sort by Suit** buttons in the play bar — the game computes the new order for you (unlike `rearrange`, where you supply the order). Only available during `SELECTING_HAND`.
+
+**Parameters:**
+
+| Name | Type   | Required | Description                                                                                                                   |
+| ---- | ------ | -------- | ----------------------------------------------------------------------------------------------------------------------------- |
+| `by` | string | Yes      | Sort mode: `"rank"` (A>K>...>2, then Spades>Hearts>Clubs>Diamonds) or `"suit"` (Spades>Hearts>Clubs>Diamonds, then rank desc) |
+
+**Returns:** [GameState](#gamestate-schema)
+
+**Errors:** `BAD_REQUEST`, `INVALID_STATE`
+
+**Required State:** `SELECTING_HAND`
+
+**Example:**
+
+```bash
+# Sort hand by rank
+curl -X POST http://127.0.0.1:12346 \
+  -H "Content-Type: application/json" \
+  -d '{"jsonrpc": "2.0", "method": "sort", "params": {"by": "rank"}, "id": 1}'
 
 ```
 
