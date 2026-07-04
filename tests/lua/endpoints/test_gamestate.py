@@ -192,6 +192,7 @@ class TestGamestateBlinds:
                 "name": "The Manacle",
                 "effect": "-1 Hand Size",
                 "score": 600,
+                "reroll_available": False,
             },
         }
         actual_blinds = {
