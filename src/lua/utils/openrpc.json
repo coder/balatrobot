@@ -521,6 +521,32 @@
       ]
     },
     {
+      "name": "reroll_boss",
+      "summary": "Reroll the upcoming Boss Blind",
+      "description": "Replace the upcoming Boss Blind with a random weighted pick for $10. Requires the Director's Cut voucher (one reroll per ante) or the Retcon voucher (unlimited rerolls). Only available during BLIND_SELECT.",
+      "tags": [
+        {
+          "$ref": "#/components/tags/blind"
+        }
+      ],
+      "params": [],
+      "result": {
+        "name": "gamestate",
+        "description": "Complete game state after the boss blind is rerolled",
+        "schema": {
+          "$ref": "#/components/schemas/GameState"
+        }
+      },
+      "errors": [
+        {
+          "$ref": "#/components/errors/InvalidState"
+        },
+        {
+          "$ref": "#/components/errors/NotAllowed"
+        }
+      ]
+    },
+    {
       "name": "save",
       "summary": "Save the current run state to a file",
       "description": "Save the current run state to a file. Only works during an active run.",
@@ -1163,6 +1189,10 @@
           "tag": {
             "$ref": "#/components/schemas/Tag",
             "description": "Tag associated with this blind (Small/Big only)"
+          },
+          "reroll_available": {
+            "type": "boolean",
+            "description": "Whether the Reroll Boss Blind action is currently available (Boss only)"
           }
         },
         "required": [

@@ -62,6 +62,7 @@
 ---@field effect string Description of the blind's effect
 ---@field score integer Score requirement to beat this blind
 ---@field tag Tag? Tag associated with this blind (Small/Big only)
+---@field reroll_available boolean? Whether the Reroll Boss Blind action is currently available (Boss only)
 
 ---@class Area
 ---@field count integer Current number of cards in this area

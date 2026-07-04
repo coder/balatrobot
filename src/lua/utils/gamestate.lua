@@ -769,6 +769,17 @@ function gamestate.get_blinds_info()
     blinds.boss.score = math.floor(base_amount * 2 * ante_scaling)
   end
 
+  -- Reroll Boss Blind availability (mirrors G.FUNCS.reroll_boss_button gate):
+  -- affordability ((dollars - bankrupt_at) - 10 >= 0) AND
+  -- (v_retcon OR (v_directors_cut AND not boss_rerolled))
+  blinds.boss.reroll_available = not not (
+    ((G.GAME.dollars - G.GAME.bankrupt_at) - 10 >= 0)
+    and (
+      G.GAME.used_vouchers["v_retcon"]
+      or (G.GAME.used_vouchers["v_directors_cut"] and not G.GAME.round_resets.boss_rerolled)
+    )
+  )
+
   -- Boss blind has no tags (tag remains nil)
 
   return blinds

@@ -26,6 +26,7 @@ BB_ENDPOINTS = {
   -- Blind selection endpoints
   "src/lua/endpoints/skip.lua",
   "src/lua/endpoints/select.lua",
+  "src/lua/endpoints/reroll_boss.lua",
   -- Play/discard endpoints
   "src/lua/endpoints/play.lua",
   "src/lua/endpoints/discard.lua",
