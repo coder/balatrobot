@@ -913,6 +913,17 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#challenge" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Challenge
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#card-value-suit" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1603,6 +1614,17 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#challenge" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Challenge
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#card-value-suit" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1935,7 +1957,7 @@
 </span></code></pre></div>
 <hr />
 <h3 id="start"><code>start</code></h3>
-<p>Start a new game run.</p>
+<p>Start a new game run. Either provide <code>deck</code> + <code>stake</code> for a normal run, or <code>challenge</code> for one of Balatro's 20 fixed-preset Challenge Runs. <code>challenge</code> is mutually exclusive with <code>deck</code>/<code>stake</code> but composes freely with <code>seed</code>. Lands in <code>BLIND_SELECT</code>.</p>
 <p><strong>Parameters:</strong></p>
 <table>
 <thead>
@@ -1950,14 +1972,14 @@
 <tr>
 <td><code>deck</code></td>
 <td>string</td>
-<td>Yes</td>
-<td><a href="#deck">Deck</a> to use</td>
+<td>No</td>
+<td><a href="#deck">Deck</a> to use (required unless <code>challenge</code> is given)</td>
 </tr>
 <tr>
 <td><code>stake</code></td>
 <td>string</td>
-<td>Yes</td>
-<td><a href="#stake">Stake</a> level</td>
+<td>No</td>
+<td><a href="#stake">Stake</a> level (required unless <code>challenge</code> is given)</td>
 </tr>
 <tr>
 <td><code>seed</code></td>
@@ -1965,15 +1987,27 @@
 <td>No</td>
 <td>Seed for the run</td>
 </tr>
+<tr>
+<td><code>challenge</code></td>
+<td>string</td>
+<td>No</td>
+<td><a href="#challenge">Challenge</a> id (mutually exclusive with <code>deck</code>/<code>stake</code>)</td>
+</tr>
 </tbody>
 </table>
 <p><strong>Returns:</strong> <a href="#gamestate-schema">GameState</a> (state will be <code>BLIND_SELECT</code>)</p>
 <p><strong>Errors:</strong> <code>BAD_REQUEST</code>, <code>INVALID_STATE</code>, <code>INTERNAL_ERROR</code></p>
 <p><strong>Required State:</strong> <code>MENU</code></p>
 <p><strong>Example:</strong></p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-11-1">curl<span class="w"> </span>-X<span class="w"> </span>POST<span class="w"> </span>http://127.0.0.1:12346<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-11-2"><span class="w">  </span>-H<span class="w"> </span><span class="s2">&quot;Content-Type: application/json&quot;</span><span class="w"> </span><span class="se">\</span>
-</span><span id="__span-11-3"><span class="w">  </span>-d<span class="w"> </span><span class="s1">&#39;{&quot;jsonrpc&quot;: &quot;2.0&quot;, &quot;method&quot;: &quot;start&quot;, &quot;params&quot;: {&quot;deck&quot;: &quot;b_blue&quot;, &quot;stake&quot;: &quot;stake_white&quot;, &quot;seed&quot;: &quot;TEST123&quot;}, &quot;id&quot;: 1}&#39;</span>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-11-1"><span class="c1"># Normal run</span>
+</span><span id="__span-11-2">curl<span class="w"> </span>-X<span class="w"> </span>POST<span class="w"> </span>http://127.0.0.1:12346<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-11-3"><span class="w">  </span>-H<span class="w"> </span><span class="s2">&quot;Content-Type: application/json&quot;</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-11-4"><span class="w">  </span>-d<span class="w"> </span><span class="s1">&#39;{&quot;jsonrpc&quot;: &quot;2.0&quot;, &quot;method&quot;: &quot;start&quot;, &quot;params&quot;: {&quot;deck&quot;: &quot;b_blue&quot;, &quot;stake&quot;: &quot;stake_white&quot;, &quot;seed&quot;: &quot;TEST123&quot;}, &quot;id&quot;: 1}&#39;</span>
+</span><span id="__span-11-5">
+</span><span id="__span-11-6"><span class="c1"># Challenge run (The Omelette)</span>
+</span><span id="__span-11-7">curl<span class="w"> </span>-X<span class="w"> </span>POST<span class="w"> </span>http://127.0.0.1:12346<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-11-8"><span class="w">  </span>-H<span class="w"> </span><span class="s2">&quot;Content-Type: application/json&quot;</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-11-9"><span class="w">  </span>-d<span class="w"> </span><span class="s1">&#39;{&quot;jsonrpc&quot;: &quot;2.0&quot;, &quot;method&quot;: &quot;start&quot;, &quot;params&quot;: {&quot;challenge&quot;: &quot;c_omelette_1&quot;}, &quot;id&quot;: 1}&#39;</span>
 </span></code></pre></div>
 <hr />
 <h3 id="menu"><code>menu</code></h3>
@@ -2651,21 +2685,22 @@ works even when consumable slots are full.</p>
 </span><span id="__span-33-7"><span class="w">  </span><span class="nt">&quot;deck&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;b_red&quot;</span><span class="p">,</span>
 </span><span id="__span-33-8"><span class="w">  </span><span class="nt">&quot;stake&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;stake_white&quot;</span><span class="p">,</span>
 </span><span id="__span-33-9"><span class="w">  </span><span class="nt">&quot;seed&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;ABC123&quot;</span><span class="p">,</span>
-</span><span id="__span-33-10"><span class="w">  </span><span class="nt">&quot;won&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
-</span><span id="__span-33-11"><span class="w">  </span><span class="nt">&quot;used_vouchers&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{},</span>
-</span><span id="__span-33-12"><span class="w">  </span><span class="nt">&quot;tags&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w"> </span><span class="err">...</span><span class="w"> </span><span class="p">],</span>
-</span><span id="__span-33-13"><span class="w">  </span><span class="nt">&quot;hands&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="err">...</span><span class="w"> </span><span class="p">},</span>
-</span><span id="__span-33-14"><span class="w">  </span><span class="nt">&quot;round&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="err">...</span><span class="w"> </span><span class="p">},</span>
-</span><span id="__span-33-15"><span class="w">  </span><span class="nt">&quot;blinds&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="err">...</span><span class="w"> </span><span class="p">},</span>
-</span><span id="__span-33-16"><span class="w">  </span><span class="nt">&quot;jokers&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="err">...</span><span class="w"> </span><span class="p">},</span>
-</span><span id="__span-33-17"><span class="w">  </span><span class="nt">&quot;consumables&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="err">...</span><span class="w"> </span><span class="p">},</span>
-</span><span id="__span-33-18"><span class="w">  </span><span class="nt">&quot;cards&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="err">...</span><span class="w"> </span><span class="p">},</span>
-</span><span id="__span-33-19"><span class="w">  </span><span class="nt">&quot;hand&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="err">...</span><span class="w"> </span><span class="p">},</span>
-</span><span id="__span-33-20"><span class="w">  </span><span class="nt">&quot;shop&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="err">...</span><span class="w"> </span><span class="p">},</span>
-</span><span id="__span-33-21"><span class="w">  </span><span class="nt">&quot;vouchers&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="err">...</span><span class="w"> </span><span class="p">},</span>
-</span><span id="__span-33-22"><span class="w">  </span><span class="nt">&quot;packs&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="err">...</span><span class="w"> </span><span class="p">},</span>
-</span><span id="__span-33-23"><span class="w">  </span><span class="nt">&quot;pack&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="err">...</span><span class="w"> </span><span class="p">}</span>
-</span><span id="__span-33-24"><span class="p">}</span>
+</span><span id="__span-33-10"><span class="w">  </span><span class="nt">&quot;challenge&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;c_omelette_1&quot;</span><span class="p">,</span>
+</span><span id="__span-33-11"><span class="w">  </span><span class="nt">&quot;won&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
+</span><span id="__span-33-12"><span class="w">  </span><span class="nt">&quot;used_vouchers&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{},</span>
+</span><span id="__span-33-13"><span class="w">  </span><span class="nt">&quot;tags&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w"> </span><span class="err">...</span><span class="w"> </span><span class="p">],</span>
+</span><span id="__span-33-14"><span class="w">  </span><span class="nt">&quot;hands&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="err">...</span><span class="w"> </span><span class="p">},</span>
+</span><span id="__span-33-15"><span class="w">  </span><span class="nt">&quot;round&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="err">...</span><span class="w"> </span><span class="p">},</span>
+</span><span id="__span-33-16"><span class="w">  </span><span class="nt">&quot;blinds&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="err">...</span><span class="w"> </span><span class="p">},</span>
+</span><span id="__span-33-17"><span class="w">  </span><span class="nt">&quot;jokers&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="err">...</span><span class="w"> </span><span class="p">},</span>
+</span><span id="__span-33-18"><span class="w">  </span><span class="nt">&quot;consumables&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="err">...</span><span class="w"> </span><span class="p">},</span>
+</span><span id="__span-33-19"><span class="w">  </span><span class="nt">&quot;cards&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="err">...</span><span class="w"> </span><span class="p">},</span>
+</span><span id="__span-33-20"><span class="w">  </span><span class="nt">&quot;hand&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="err">...</span><span class="w"> </span><span class="p">},</span>
+</span><span id="__span-33-21"><span class="w">  </span><span class="nt">&quot;shop&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="err">...</span><span class="w"> </span><span class="p">},</span>
+</span><span id="__span-33-22"><span class="w">  </span><span class="nt">&quot;vouchers&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="err">...</span><span class="w"> </span><span class="p">},</span>
+</span><span id="__span-33-23"><span class="w">  </span><span class="nt">&quot;packs&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="err">...</span><span class="w"> </span><span class="p">},</span>
+</span><span id="__span-33-24"><span class="w">  </span><span class="nt">&quot;pack&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="err">...</span><span class="w"> </span><span class="p">}</span>
+</span><span id="__span-33-25"><span class="p">}</span>
 </span></code></pre></div>
 <h3 id="area">Area</h3>
 <p>Represents a card area (hand, jokers, consumables, shop, etc.).</p>
@@ -2867,6 +2902,98 @@ whether the <a href="#reroll_boss">Reroll Boss Blind</a> action is currently ava
 <tr>
 <td><code>stake_gold</code></td>
 <td>Shop can have Rental Jokers</td>
+</tr>
+</tbody>
+</table>
+<h3 id="challenge">Challenge</h3>
+<p>Challenge Run ids from <code>G.CHALLENGES</code>. The 20 base-game challenges. Validated at runtime against the live <code>G.CHALLENGES</code> table, so SMODS-injected challenges are also accepted. Pass one to <a href="#start"><code>start</code></a> (without <code>deck</code>/<code>stake</code>).</p>
+<table>
+<thead>
+<tr>
+<th>Value</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>c_omelette_1</code></td>
+<td>The Omelette: no blind rewards, no interest, no hand money; start with 5 Eggs</td>
+</tr>
+<tr>
+<td><code>c_city_1</code></td>
+<td>15 Minute City: eternal Ride the Bus + Shortcut; deck is only 4–K</td>
+</tr>
+<tr>
+<td><code>c_rich_1</code></td>
+<td>Rich get Richer: chips capped at current $; start with $100</td>
+</tr>
+<tr>
+<td><code>c_knife_1</code></td>
+<td>On a Knife's Edge: eternal pinned Ceremonial Dagger</td>
+</tr>
+<tr>
+<td><code>c_xray_1</code></td>
+<td>X-ray Vision: 1 in 4 cards drawn face-down</td>
+</tr>
+<tr>
+<td><code>c_mad_world_1</code></td>
+<td>Mad World: no hand money/interest; eternal Pareidolia + Business Cards; deck is 2–9 only</td>
+</tr>
+<tr>
+<td><code>c_luxury_1</code></td>
+<td>Luxury Tax: hand size -1 per $5 held; start with 10 hand size</td>
+</tr>
+<tr>
+<td><code>c_non_perishable_1</code></td>
+<td>Non-Perishable: all Jokers are Eternal</td>
+</tr>
+<tr>
+<td><code>c_medusa_1</code></td>
+<td>Medusa: eternal Marble Joker; all J/Q/K are Stone cards</td>
+</tr>
+<tr>
+<td><code>c_double_nothing_1</code></td>
+<td>Double or Nothing: played cards debuff after scoring; all cards have Red seal</td>
+</tr>
+<tr>
+<td><code>c_typecast_1</code></td>
+<td>Typecast: at ante 4 all Jokers become Eternal and slots drop to 0</td>
+</tr>
+<tr>
+<td><code>c_inflation_1</code></td>
+<td>Inflation: prices +$1 every purchase; start with Credit Card</td>
+</tr>
+<tr>
+<td><code>c_bram_poker_1</code></td>
+<td>Bram Poker: no shop jokers; eternal Vampire + Tarot-focused start</td>
+</tr>
+<tr>
+<td><code>c_fragile_1</code></td>
+<td>Fragile: all-Glass deck; 2× negative eternal Oops; suit-change Tarots banned</td>
+</tr>
+<tr>
+<td><code>c_monolith_1</code></td>
+<td>Monolith: eternal Obelisk + negative Marble</td>
+</tr>
+<tr>
+<td><code>c_blast_off_1</code></td>
+<td>Blast Off: 2 hands, 2 discards, 4 slots; eternal Constellation + Rocket</td>
+</tr>
+<tr>
+<td><code>c_five_card_1</code></td>
+<td>Five-Card Draw: 5-card hand size, 7 slots, 6 discards; Card Sharp + Joker</td>
+</tr>
+<tr>
+<td><code>c_golden_needle_1</code></td>
+<td>Golden Needle: 1 hand; discards cost $1; start with Credit Card</td>
+</tr>
+<tr>
+<td><code>c_cruelty_1</code></td>
+<td>Cruelty: 3 joker slots; Small &amp; Big blinds give no reward</td>
+</tr>
+<tr>
+<td><code>c_jokerless_1</code></td>
+<td>Jokerless: 0 joker slots; no jokers in shop; joker-granting cards banned</td>
 </tr>
 </tbody>
 </table>
