@@ -604,6 +604,17 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#reroll_boss" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        reroll_boss
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#buy" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1265,6 +1276,17 @@
     <span class="md-ellipsis">
       
         skip
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#reroll_boss" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        reroll_boss
       
     </span>
   </a>
@@ -2020,6 +2042,24 @@
 </span><span id="__span-16-3"><span class="w">  </span>-d<span class="w"> </span><span class="s1">&#39;{&quot;jsonrpc&quot;: &quot;2.0&quot;, &quot;method&quot;: &quot;skip&quot;, &quot;id&quot;: 1}&#39;</span>
 </span></code></pre></div>
 <hr />
+<h3 id="reroll_boss"><code>reroll_boss</code></h3>
+<p>Reroll the upcoming Boss Blind, replacing it with a random weighted pick for <strong>$10</strong>.
+Requires the <strong>Director's Cut</strong> voucher (one reroll per ante) or the <strong>Retcon</strong>
+voucher (unlimited rerolls). Mirrors Balatro's <strong>"Reroll Boss"</strong> button on the
+boss blind pane.</p>
+<p>Unlike the free Boss-Tag reroll and the deterministic <a href="#set"><code>set</code></a> boss override,
+this action charges $10 and keeps the new boss random. Availability is reported in
+the gamestate as <a href="#blind"><code>blinds.boss.reroll_available</code></a>.</p>
+<p><strong>Returns:</strong> <a href="#gamestate-schema">GameState</a> (state stays <code>BLIND_SELECT</code>)</p>
+<p><strong>Errors:</strong> <code>INVALID_STATE</code>, <code>NOT_ALLOWED</code></p>
+<p><strong>Required State:</strong> <code>BLIND_SELECT</code></p>
+<p><strong>Example:</strong></p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-17-1"><span class="c1"># Reroll the boss blind for $10</span>
+</span><span id="__span-17-2">curl<span class="w"> </span>-X<span class="w"> </span>POST<span class="w"> </span>http://127.0.0.1:12346<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-17-3"><span class="w">  </span>-H<span class="w"> </span><span class="s2">&quot;Content-Type: application/json&quot;</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-17-4"><span class="w">  </span>-d<span class="w"> </span><span class="s1">&#39;{&quot;jsonrpc&quot;: &quot;2.0&quot;, &quot;method&quot;: &quot;reroll_boss&quot;, &quot;id&quot;: 1}&#39;</span>
+</span></code></pre></div>
+<hr />
 <h3 id="buy"><code>buy</code></h3>
 <p>Buy a card, voucher, or pack from the shop.</p>
 <p><strong>Parameters:</strong> (exactly one required)</p>
@@ -2057,10 +2097,10 @@
 <p><strong>Errors:</strong> <code>BAD_REQUEST</code>, <code>NOT_ALLOWED</code></p>
 <p><strong>Required State:</strong> <code>SHOP</code></p>
 <p><strong>Example:</strong></p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-17-1"><span class="c1"># Buy first card in shop</span>
-</span><span id="__span-17-2">curl<span class="w"> </span>-X<span class="w"> </span>POST<span class="w"> </span>http://127.0.0.1:12346<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-17-3"><span class="w">  </span>-H<span class="w"> </span><span class="s2">&quot;Content-Type: application/json&quot;</span><span class="w"> </span><span class="se">\</span>
-</span><span id="__span-17-4"><span class="w">  </span>-d<span class="w"> </span><span class="s1">&#39;{&quot;jsonrpc&quot;: &quot;2.0&quot;, &quot;method&quot;: &quot;buy&quot;, &quot;params&quot;: {&quot;card&quot;: 0}, &quot;id&quot;: 1}&#39;</span>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-18-1"><span class="c1"># Buy first card in shop</span>
+</span><span id="__span-18-2">curl<span class="w"> </span>-X<span class="w"> </span>POST<span class="w"> </span>http://127.0.0.1:12346<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-18-3"><span class="w">  </span>-H<span class="w"> </span><span class="s2">&quot;Content-Type: application/json&quot;</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-18-4"><span class="w">  </span>-d<span class="w"> </span><span class="s1">&#39;{&quot;jsonrpc&quot;: &quot;2.0&quot;, &quot;method&quot;: &quot;buy&quot;, &quot;params&quot;: {&quot;card&quot;: 0}, &quot;id&quot;: 1}&#39;</span>
 </span></code></pre></div>
 <hr />
 <h3 id="buy_and_use"><code>buy_and_use</code></h3>
@@ -2091,10 +2131,10 @@ works even when consumable slots are full.</p>
 <p><strong>Errors:</strong> <code>BAD_REQUEST</code>, <code>NOT_ALLOWED</code></p>
 <p><strong>Required State:</strong> <code>SHOP</code></p>
 <p><strong>Example:</strong></p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-18-1"><span class="c1"># Buy and use the first shop consumable</span>
-</span><span id="__span-18-2">curl<span class="w"> </span>-X<span class="w"> </span>POST<span class="w"> </span>http://127.0.0.1:12346<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-18-3"><span class="w">  </span>-H<span class="w"> </span><span class="s2">&quot;Content-Type: application/json&quot;</span><span class="w"> </span><span class="se">\</span>
-</span><span id="__span-18-4"><span class="w">  </span>-d<span class="w"> </span><span class="s1">&#39;{&quot;jsonrpc&quot;: &quot;2.0&quot;, &quot;method&quot;: &quot;buy_and_use&quot;, &quot;params&quot;: {&quot;card&quot;: 0}, &quot;id&quot;: 1}&#39;</span>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-19-1"><span class="c1"># Buy and use the first shop consumable</span>
+</span><span id="__span-19-2">curl<span class="w"> </span>-X<span class="w"> </span>POST<span class="w"> </span>http://127.0.0.1:12346<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-19-3"><span class="w">  </span>-H<span class="w"> </span><span class="s2">&quot;Content-Type: application/json&quot;</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-19-4"><span class="w">  </span>-d<span class="w"> </span><span class="s1">&#39;{&quot;jsonrpc&quot;: &quot;2.0&quot;, &quot;method&quot;: &quot;buy_and_use&quot;, &quot;params&quot;: {&quot;card&quot;: 0}, &quot;id&quot;: 1}&#39;</span>
 </span></code></pre></div>
 <hr />
 <h3 id="pack"><code>pack</code></h3>
@@ -2141,20 +2181,20 @@ works even when consumable slots are full.</p>
 <p><strong>Errors:</strong> <code>BAD_REQUEST</code>, <code>INVALID_STATE</code>, <code>NOT_ALLOWED</code></p>
 <p><strong>Required State:</strong> <code>SMODS_BOOSTER_OPENED</code></p>
 <p><strong>Examples:</strong></p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-19-1"><span class="c1"># Select first card from a Buffoon pack (adds joker to slots)</span>
-</span><span id="__span-19-2">curl<span class="w"> </span>-X<span class="w"> </span>POST<span class="w"> </span>http://127.0.0.1:12346<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-19-3"><span class="w">  </span>-H<span class="w"> </span><span class="s2">&quot;Content-Type: application/json&quot;</span><span class="w"> </span><span class="se">\</span>
-</span><span id="__span-19-4"><span class="w">  </span>-d<span class="w"> </span><span class="s1">&#39;{&quot;jsonrpc&quot;: &quot;2.0&quot;, &quot;method&quot;: &quot;pack&quot;, &quot;params&quot;: {&quot;card&quot;: 0}, &quot;id&quot;: 1}&#39;</span>
-</span><span id="__span-19-5">
-</span><span id="__span-19-6"><span class="c1"># Select a Tarot card requiring targets (e.g., The Magician on 2 hand cards)</span>
-</span><span id="__span-19-7">curl<span class="w"> </span>-X<span class="w"> </span>POST<span class="w"> </span>http://127.0.0.1:12346<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-19-8"><span class="w">  </span>-H<span class="w"> </span><span class="s2">&quot;Content-Type: application/json&quot;</span><span class="w"> </span><span class="se">\</span>
-</span><span id="__span-19-9"><span class="w">  </span>-d<span class="w"> </span><span class="s1">&#39;{&quot;jsonrpc&quot;: &quot;2.0&quot;, &quot;method&quot;: &quot;pack&quot;, &quot;params&quot;: {&quot;card&quot;: 0, &quot;targets&quot;: [0, 1]}, &quot;id&quot;: 1}&#39;</span>
-</span><span id="__span-19-10">
-</span><span id="__span-19-11"><span class="c1"># Skip pack selection</span>
-</span><span id="__span-19-12">curl<span class="w"> </span>-X<span class="w"> </span>POST<span class="w"> </span>http://127.0.0.1:12346<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-19-13"><span class="w">  </span>-H<span class="w"> </span><span class="s2">&quot;Content-Type: application/json&quot;</span><span class="w"> </span><span class="se">\</span>
-</span><span id="__span-19-14"><span class="w">  </span>-d<span class="w"> </span><span class="s1">&#39;{&quot;jsonrpc&quot;: &quot;2.0&quot;, &quot;method&quot;: &quot;pack&quot;, &quot;params&quot;: {&quot;skip&quot;: true}, &quot;id&quot;: 1}&#39;</span>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-20-1"><span class="c1"># Select first card from a Buffoon pack (adds joker to slots)</span>
+</span><span id="__span-20-2">curl<span class="w"> </span>-X<span class="w"> </span>POST<span class="w"> </span>http://127.0.0.1:12346<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-20-3"><span class="w">  </span>-H<span class="w"> </span><span class="s2">&quot;Content-Type: application/json&quot;</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-20-4"><span class="w">  </span>-d<span class="w"> </span><span class="s1">&#39;{&quot;jsonrpc&quot;: &quot;2.0&quot;, &quot;method&quot;: &quot;pack&quot;, &quot;params&quot;: {&quot;card&quot;: 0}, &quot;id&quot;: 1}&#39;</span>
+</span><span id="__span-20-5">
+</span><span id="__span-20-6"><span class="c1"># Select a Tarot card requiring targets (e.g., The Magician on 2 hand cards)</span>
+</span><span id="__span-20-7">curl<span class="w"> </span>-X<span class="w"> </span>POST<span class="w"> </span>http://127.0.0.1:12346<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-20-8"><span class="w">  </span>-H<span class="w"> </span><span class="s2">&quot;Content-Type: application/json&quot;</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-20-9"><span class="w">  </span>-d<span class="w"> </span><span class="s1">&#39;{&quot;jsonrpc&quot;: &quot;2.0&quot;, &quot;method&quot;: &quot;pack&quot;, &quot;params&quot;: {&quot;card&quot;: 0, &quot;targets&quot;: [0, 1]}, &quot;id&quot;: 1}&#39;</span>
+</span><span id="__span-20-10">
+</span><span id="__span-20-11"><span class="c1"># Skip pack selection</span>
+</span><span id="__span-20-12">curl<span class="w"> </span>-X<span class="w"> </span>POST<span class="w"> </span>http://127.0.0.1:12346<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-20-13"><span class="w">  </span>-H<span class="w"> </span><span class="s2">&quot;Content-Type: application/json&quot;</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-20-14"><span class="w">  </span>-d<span class="w"> </span><span class="s1">&#39;{&quot;jsonrpc&quot;: &quot;2.0&quot;, &quot;method&quot;: &quot;pack&quot;, &quot;params&quot;: {&quot;skip&quot;: true}, &quot;id&quot;: 1}&#39;</span>
 </span></code></pre></div>
 <hr />
 <h3 id="sell"><code>sell</code></h3>
@@ -2187,10 +2227,10 @@ works even when consumable slots are full.</p>
 <p><strong>Returns:</strong> <a href="#gamestate-schema">GameState</a></p>
 <p><strong>Errors:</strong> <code>BAD_REQUEST</code>, <code>INVALID_STATE</code>, <code>NOT_ALLOWED</code></p>
 <p><strong>Example:</strong></p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-20-1"><span class="c1"># Sell first joker</span>
-</span><span id="__span-20-2">curl<span class="w"> </span>-X<span class="w"> </span>POST<span class="w"> </span>http://127.0.0.1:12346<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-20-3"><span class="w">  </span>-H<span class="w"> </span><span class="s2">&quot;Content-Type: application/json&quot;</span><span class="w"> </span><span class="se">\</span>
-</span><span id="__span-20-4"><span class="w">  </span>-d<span class="w"> </span><span class="s1">&#39;{&quot;jsonrpc&quot;: &quot;2.0&quot;, &quot;method&quot;: &quot;sell&quot;, &quot;params&quot;: {&quot;joker&quot;: 0}, &quot;id&quot;: 1}&#39;</span>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-21-1"><span class="c1"># Sell first joker</span>
+</span><span id="__span-21-2">curl<span class="w"> </span>-X<span class="w"> </span>POST<span class="w"> </span>http://127.0.0.1:12346<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-21-3"><span class="w">  </span>-H<span class="w"> </span><span class="s2">&quot;Content-Type: application/json&quot;</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-21-4"><span class="w">  </span>-d<span class="w"> </span><span class="s1">&#39;{&quot;jsonrpc&quot;: &quot;2.0&quot;, &quot;method&quot;: &quot;sell&quot;, &quot;params&quot;: {&quot;joker&quot;: 0}, &quot;id&quot;: 1}&#39;</span>
 </span></code></pre></div>
 <hr />
 <h3 id="reroll"><code>reroll</code></h3>
@@ -2199,9 +2239,9 @@ works even when consumable slots are full.</p>
 <p><strong>Errors:</strong> <code>INVALID_STATE</code>, <code>NOT_ALLOWED</code></p>
 <p><strong>Required State:</strong> <code>SHOP</code></p>
 <p><strong>Example:</strong></p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-21-1">curl<span class="w"> </span>-X<span class="w"> </span>POST<span class="w"> </span>http://127.0.0.1:12346<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-21-2"><span class="w">  </span>-H<span class="w"> </span><span class="s2">&quot;Content-Type: application/json&quot;</span><span class="w"> </span><span class="se">\</span>
-</span><span id="__span-21-3"><span class="w">  </span>-d<span class="w"> </span><span class="s1">&#39;{&quot;jsonrpc&quot;: &quot;2.0&quot;, &quot;method&quot;: &quot;reroll&quot;, &quot;id&quot;: 1}&#39;</span>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-22-1">curl<span class="w"> </span>-X<span class="w"> </span>POST<span class="w"> </span>http://127.0.0.1:12346<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-22-2"><span class="w">  </span>-H<span class="w"> </span><span class="s2">&quot;Content-Type: application/json&quot;</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-22-3"><span class="w">  </span>-d<span class="w"> </span><span class="s1">&#39;{&quot;jsonrpc&quot;: &quot;2.0&quot;, &quot;method&quot;: &quot;reroll&quot;, &quot;id&quot;: 1}&#39;</span>
 </span></code></pre></div>
 <hr />
 <h3 id="cash_out"><code>cash_out</code></h3>
@@ -2210,9 +2250,9 @@ works even when consumable slots are full.</p>
 <p><strong>Errors:</strong> <code>INVALID_STATE</code></p>
 <p><strong>Required State:</strong> <code>ROUND_EVAL</code></p>
 <p><strong>Example:</strong></p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-22-1">curl<span class="w"> </span>-X<span class="w"> </span>POST<span class="w"> </span>http://127.0.0.1:12346<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-22-2"><span class="w">  </span>-H<span class="w"> </span><span class="s2">&quot;Content-Type: application/json&quot;</span><span class="w"> </span><span class="se">\</span>
-</span><span id="__span-22-3"><span class="w">  </span>-d<span class="w"> </span><span class="s1">&#39;{&quot;jsonrpc&quot;: &quot;2.0&quot;, &quot;method&quot;: &quot;cash_out&quot;, &quot;id&quot;: 1}&#39;</span>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-23-1">curl<span class="w"> </span>-X<span class="w"> </span>POST<span class="w"> </span>http://127.0.0.1:12346<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-23-2"><span class="w">  </span>-H<span class="w"> </span><span class="s2">&quot;Content-Type: application/json&quot;</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-23-3"><span class="w">  </span>-d<span class="w"> </span><span class="s1">&#39;{&quot;jsonrpc&quot;: &quot;2.0&quot;, &quot;method&quot;: &quot;cash_out&quot;, &quot;id&quot;: 1}&#39;</span>
 </span></code></pre></div>
 <hr />
 <h3 id="next_round"><code>next_round</code></h3>
@@ -2221,9 +2261,9 @@ works even when consumable slots are full.</p>
 <p><strong>Errors:</strong> <code>INVALID_STATE</code></p>
 <p><strong>Required State:</strong> <code>SHOP</code></p>
 <p><strong>Example:</strong></p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-23-1">curl<span class="w"> </span>-X<span class="w"> </span>POST<span class="w"> </span>http://127.0.0.1:12346<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-23-2"><span class="w">  </span>-H<span class="w"> </span><span class="s2">&quot;Content-Type: application/json&quot;</span><span class="w"> </span><span class="se">\</span>
-</span><span id="__span-23-3"><span class="w">  </span>-d<span class="w"> </span><span class="s1">&#39;{&quot;jsonrpc&quot;: &quot;2.0&quot;, &quot;method&quot;: &quot;next_round&quot;, &quot;id&quot;: 1}&#39;</span>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-24-1">curl<span class="w"> </span>-X<span class="w"> </span>POST<span class="w"> </span>http://127.0.0.1:12346<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-24-2"><span class="w">  </span>-H<span class="w"> </span><span class="s2">&quot;Content-Type: application/json&quot;</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-24-3"><span class="w">  </span>-d<span class="w"> </span><span class="s1">&#39;{&quot;jsonrpc&quot;: &quot;2.0&quot;, &quot;method&quot;: &quot;next_round&quot;, &quot;id&quot;: 1}&#39;</span>
 </span></code></pre></div>
 <hr />
 <h3 id="play"><code>play</code></h3>
@@ -2251,10 +2291,10 @@ works even when consumable slots are full.</p>
 <p><strong>Errors:</strong> <code>BAD_REQUEST</code></p>
 <p><strong>Required State:</strong> <code>SELECTING_HAND</code></p>
 <p><strong>Example:</strong></p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-24-1"><span class="c1"># Play cards at positions 0, 2, 4</span>
-</span><span id="__span-24-2">curl<span class="w"> </span>-X<span class="w"> </span>POST<span class="w"> </span>http://127.0.0.1:12346<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-24-3"><span class="w">  </span>-H<span class="w"> </span><span class="s2">&quot;Content-Type: application/json&quot;</span><span class="w"> </span><span class="se">\</span>
-</span><span id="__span-24-4"><span class="w">  </span>-d<span class="w"> </span><span class="s1">&#39;{&quot;jsonrpc&quot;: &quot;2.0&quot;, &quot;method&quot;: &quot;play&quot;, &quot;params&quot;: {&quot;cards&quot;: [0, 2, 4]}, &quot;id&quot;: 1}&#39;</span>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-25-1"><span class="c1"># Play cards at positions 0, 2, 4</span>
+</span><span id="__span-25-2">curl<span class="w"> </span>-X<span class="w"> </span>POST<span class="w"> </span>http://127.0.0.1:12346<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-25-3"><span class="w">  </span>-H<span class="w"> </span><span class="s2">&quot;Content-Type: application/json&quot;</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-25-4"><span class="w">  </span>-d<span class="w"> </span><span class="s1">&#39;{&quot;jsonrpc&quot;: &quot;2.0&quot;, &quot;method&quot;: &quot;play&quot;, &quot;params&quot;: {&quot;cards&quot;: [0, 2, 4]}, &quot;id&quot;: 1}&#39;</span>
 </span></code></pre></div>
 <hr />
 <h3 id="discard"><code>discard</code></h3>
@@ -2282,10 +2322,10 @@ works even when consumable slots are full.</p>
 <p><strong>Errors:</strong> <code>BAD_REQUEST</code></p>
 <p><strong>Required State:</strong> <code>SELECTING_HAND</code></p>
 <p><strong>Example:</strong></p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-25-1"><span class="c1"># Discard cards at positions 0 and 1</span>
-</span><span id="__span-25-2">curl<span class="w"> </span>-X<span class="w"> </span>POST<span class="w"> </span>http://127.0.0.1:12346<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-25-3"><span class="w">  </span>-H<span class="w"> </span><span class="s2">&quot;Content-Type: application/json&quot;</span><span class="w"> </span><span class="se">\</span>
-</span><span id="__span-25-4"><span class="w">  </span>-d<span class="w"> </span><span class="s1">&#39;{&quot;jsonrpc&quot;: &quot;2.0&quot;, &quot;method&quot;: &quot;discard&quot;, &quot;params&quot;: {&quot;cards&quot;: [0, 1]}, &quot;id&quot;: 1}&#39;</span>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-26-1"><span class="c1"># Discard cards at positions 0 and 1</span>
+</span><span id="__span-26-2">curl<span class="w"> </span>-X<span class="w"> </span>POST<span class="w"> </span>http://127.0.0.1:12346<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-26-3"><span class="w">  </span>-H<span class="w"> </span><span class="s2">&quot;Content-Type: application/json&quot;</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-26-4"><span class="w">  </span>-d<span class="w"> </span><span class="s1">&#39;{&quot;jsonrpc&quot;: &quot;2.0&quot;, &quot;method&quot;: &quot;discard&quot;, &quot;params&quot;: {&quot;cards&quot;: [0, 1]}, &quot;id&quot;: 1}&#39;</span>
 </span></code></pre></div>
 <hr />
 <h3 id="rearrange"><code>rearrange</code></h3>
@@ -2325,10 +2365,10 @@ works even when consumable slots are full.</p>
 <p><strong>Errors:</strong> <code>BAD_REQUEST</code>, <code>INVALID_STATE</code>, <code>NOT_ALLOWED</code></p>
 <p><strong>Required State:</strong> Hand cards can be rearranged in <code>SELECTING_HAND</code> or <code>SMODS_BOOSTER_OPENED</code>. Jokers and consumables can be rearranged in <code>SHOP</code>, <code>SELECTING_HAND</code>, or <code>SMODS_BOOSTER_OPENED</code>.</p>
 <p><strong>Example:</strong></p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-26-1"><span class="c1"># Reverse a 5-card hand</span>
-</span><span id="__span-26-2">curl<span class="w"> </span>-X<span class="w"> </span>POST<span class="w"> </span>http://127.0.0.1:12346<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-26-3"><span class="w">  </span>-H<span class="w"> </span><span class="s2">&quot;Content-Type: application/json&quot;</span><span class="w"> </span><span class="se">\</span>
-</span><span id="__span-26-4"><span class="w">  </span>-d<span class="w"> </span><span class="s1">&#39;{&quot;jsonrpc&quot;: &quot;2.0&quot;, &quot;method&quot;: &quot;rearrange&quot;, &quot;params&quot;: {&quot;hand&quot;: [4, 3, 2, 1, 0]}, &quot;id&quot;: 1}&#39;</span>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-27-1"><span class="c1"># Reverse a 5-card hand</span>
+</span><span id="__span-27-2">curl<span class="w"> </span>-X<span class="w"> </span>POST<span class="w"> </span>http://127.0.0.1:12346<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-27-3"><span class="w">  </span>-H<span class="w"> </span><span class="s2">&quot;Content-Type: application/json&quot;</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-27-4"><span class="w">  </span>-d<span class="w"> </span><span class="s1">&#39;{&quot;jsonrpc&quot;: &quot;2.0&quot;, &quot;method&quot;: &quot;rearrange&quot;, &quot;params&quot;: {&quot;hand&quot;: [4, 3, 2, 1, 0]}, &quot;id&quot;: 1}&#39;</span>
 </span></code></pre></div>
 <hr />
 <h3 id="use"><code>use</code></h3>
@@ -2361,10 +2401,10 @@ works even when consumable slots are full.</p>
 <p><strong>Returns:</strong> <a href="#gamestate-schema">GameState</a></p>
 <p><strong>Errors:</strong> <code>BAD_REQUEST</code>, <code>INVALID_STATE</code>, <code>NOT_ALLOWED</code></p>
 <p><strong>Example:</strong></p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-27-1"><span class="c1"># Use The Magician on cards 0 and 1</span>
-</span><span id="__span-27-2">curl<span class="w"> </span>-X<span class="w"> </span>POST<span class="w"> </span>http://127.0.0.1:12346<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-27-3"><span class="w">  </span>-H<span class="w"> </span><span class="s2">&quot;Content-Type: application/json&quot;</span><span class="w"> </span><span class="se">\</span>
-</span><span id="__span-27-4"><span class="w">  </span>-d<span class="w"> </span><span class="s1">&#39;{&quot;jsonrpc&quot;: &quot;2.0&quot;, &quot;method&quot;: &quot;use&quot;, &quot;params&quot;: {&quot;consumable&quot;: 0, &quot;cards&quot;: [0, 1]}, &quot;id&quot;: 1}&#39;</span>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-28-1"><span class="c1"># Use The Magician on cards 0 and 1</span>
+</span><span id="__span-28-2">curl<span class="w"> </span>-X<span class="w"> </span>POST<span class="w"> </span>http://127.0.0.1:12346<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-28-3"><span class="w">  </span>-H<span class="w"> </span><span class="s2">&quot;Content-Type: application/json&quot;</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-28-4"><span class="w">  </span>-d<span class="w"> </span><span class="s1">&#39;{&quot;jsonrpc&quot;: &quot;2.0&quot;, &quot;method&quot;: &quot;use&quot;, &quot;params&quot;: {&quot;consumable&quot;: 0, &quot;cards&quot;: [0, 1]}, &quot;id&quot;: 1}&#39;</span>
 </span></code></pre></div>
 <hr />
 <h3 id="add"><code>add</code></h3>
@@ -2428,15 +2468,15 @@ works even when consumable slots are full.</p>
 <p><strong>Errors:</strong> <code>BAD_REQUEST</code>, <code>INVALID_STATE</code>, <code>NOT_ALLOWED</code></p>
 <p><strong>Required State:</strong> Vouchers and packs require <code>SHOP</code> state. Packs also require available booster slots.</p>
 <p><strong>Examples:</strong></p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-28-1"><span class="c1"># Add a Polychrome Joker</span>
-</span><span id="__span-28-2">curl<span class="w"> </span>-X<span class="w"> </span>POST<span class="w"> </span>http://127.0.0.1:12346<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-28-3"><span class="w">  </span>-H<span class="w"> </span><span class="s2">&quot;Content-Type: application/json&quot;</span><span class="w"> </span><span class="se">\</span>
-</span><span id="__span-28-4"><span class="w">  </span>-d<span class="w"> </span><span class="s1">&#39;{&quot;jsonrpc&quot;: &quot;2.0&quot;, &quot;method&quot;: &quot;add&quot;, &quot;params&quot;: {&quot;key&quot;: &quot;j_joker&quot;, &quot;edition&quot;: &quot;e_polychrome&quot;}, &quot;id&quot;: 1}&#39;</span>
-</span><span id="__span-28-5">
-</span><span id="__span-28-6"><span class="c1"># Add an Arcana Pack to the shop (requires SHOP state)</span>
-</span><span id="__span-28-7">curl<span class="w"> </span>-X<span class="w"> </span>POST<span class="w"> </span>http://127.0.0.1:12346<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-28-8"><span class="w">  </span>-H<span class="w"> </span><span class="s2">&quot;Content-Type: application/json&quot;</span><span class="w"> </span><span class="se">\</span>
-</span><span id="__span-28-9"><span class="w">  </span>-d<span class="w"> </span><span class="s1">&#39;{&quot;jsonrpc&quot;: &quot;2.0&quot;, &quot;method&quot;: &quot;add&quot;, &quot;params&quot;: {&quot;key&quot;: &quot;p_arcana_normal_1&quot;}, &quot;id&quot;: 1}&#39;</span>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-29-1"><span class="c1"># Add a Polychrome Joker</span>
+</span><span id="__span-29-2">curl<span class="w"> </span>-X<span class="w"> </span>POST<span class="w"> </span>http://127.0.0.1:12346<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-29-3"><span class="w">  </span>-H<span class="w"> </span><span class="s2">&quot;Content-Type: application/json&quot;</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-29-4"><span class="w">  </span>-d<span class="w"> </span><span class="s1">&#39;{&quot;jsonrpc&quot;: &quot;2.0&quot;, &quot;method&quot;: &quot;add&quot;, &quot;params&quot;: {&quot;key&quot;: &quot;j_joker&quot;, &quot;edition&quot;: &quot;e_polychrome&quot;}, &quot;id&quot;: 1}&#39;</span>
+</span><span id="__span-29-5">
+</span><span id="__span-29-6"><span class="c1"># Add an Arcana Pack to the shop (requires SHOP state)</span>
+</span><span id="__span-29-7">curl<span class="w"> </span>-X<span class="w"> </span>POST<span class="w"> </span>http://127.0.0.1:12346<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-29-8"><span class="w">  </span>-H<span class="w"> </span><span class="s2">&quot;Content-Type: application/json&quot;</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-29-9"><span class="w">  </span>-d<span class="w"> </span><span class="s1">&#39;{&quot;jsonrpc&quot;: &quot;2.0&quot;, &quot;method&quot;: &quot;add&quot;, &quot;params&quot;: {&quot;key&quot;: &quot;p_arcana_normal_1&quot;}, &quot;id&quot;: 1}&#39;</span>
 </span></code></pre></div>
 <hr />
 <h3 id="screenshot"><code>screenshot</code></h3>
@@ -2463,9 +2503,9 @@ works even when consumable slots are full.</p>
 <p><strong>Returns:</strong> <code>{ "success": true, "path": "..." }</code></p>
 <p><strong>Errors:</strong> <code>INTERNAL_ERROR</code></p>
 <p><strong>Example:</strong></p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-29-1">curl<span class="w"> </span>-X<span class="w"> </span>POST<span class="w"> </span>http://127.0.0.1:12346<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-29-2"><span class="w">  </span>-H<span class="w"> </span><span class="s2">&quot;Content-Type: application/json&quot;</span><span class="w"> </span><span class="se">\</span>
-</span><span id="__span-29-3"><span class="w">  </span>-d<span class="w"> </span><span class="s1">&#39;{&quot;jsonrpc&quot;: &quot;2.0&quot;, &quot;method&quot;: &quot;screenshot&quot;, &quot;params&quot;: {&quot;path&quot;: &quot;/tmp/screenshot.png&quot;}, &quot;id&quot;: 1}&#39;</span>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-30-1">curl<span class="w"> </span>-X<span class="w"> </span>POST<span class="w"> </span>http://127.0.0.1:12346<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-30-2"><span class="w">  </span>-H<span class="w"> </span><span class="s2">&quot;Content-Type: application/json&quot;</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-30-3"><span class="w">  </span>-d<span class="w"> </span><span class="s1">&#39;{&quot;jsonrpc&quot;: &quot;2.0&quot;, &quot;method&quot;: &quot;screenshot&quot;, &quot;params&quot;: {&quot;path&quot;: &quot;/tmp/screenshot.png&quot;}, &quot;id&quot;: 1}&#39;</span>
 </span></code></pre></div>
 <hr />
 <h3 id="set"><code>set</code></h3>
@@ -2534,127 +2574,131 @@ works even when consumable slots are full.</p>
 <p><strong>Returns:</strong> <a href="#gamestate-schema">GameState</a></p>
 <p><strong>Errors:</strong> <code>BAD_REQUEST</code>, <code>INVALID_STATE</code>, <code>NOT_ALLOWED</code></p>
 <p><strong>Examples:</strong></p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-30-1"><span class="c1"># Set money to 100 and hands to 5</span>
-</span><span id="__span-30-2">curl<span class="w"> </span>-X<span class="w"> </span>POST<span class="w"> </span>http://127.0.0.1:12346<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-30-3"><span class="w">  </span>-H<span class="w"> </span><span class="s2">&quot;Content-Type: application/json&quot;</span><span class="w"> </span><span class="se">\</span>
-</span><span id="__span-30-4"><span class="w">  </span>-d<span class="w"> </span><span class="s1">&#39;{&quot;jsonrpc&quot;: &quot;2.0&quot;, &quot;method&quot;: &quot;set&quot;, &quot;params&quot;: {&quot;money&quot;: 100, &quot;hands&quot;: 5}, &quot;id&quot;: 1}&#39;</span>
-</span><span id="__span-30-5">
-</span><span id="__span-30-6"><span class="c1"># Override boss blind to The Hook</span>
-</span><span id="__span-30-7">curl<span class="w"> </span>-X<span class="w"> </span>POST<span class="w"> </span>http://127.0.0.1:12346<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-30-8"><span class="w">  </span>-H<span class="w"> </span><span class="s2">&quot;Content-Type: application/json&quot;</span><span class="w"> </span><span class="se">\</span>
-</span><span id="__span-30-9"><span class="w">  </span>-d<span class="w"> </span><span class="s1">&#39;{&quot;jsonrpc&quot;: &quot;2.0&quot;, &quot;method&quot;: &quot;set&quot;, &quot;params&quot;: {&quot;boss&quot;: &quot;bl_hook&quot;}, &quot;id&quot;: 1}&#39;</span>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-31-1"><span class="c1"># Set money to 100 and hands to 5</span>
+</span><span id="__span-31-2">curl<span class="w"> </span>-X<span class="w"> </span>POST<span class="w"> </span>http://127.0.0.1:12346<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-31-3"><span class="w">  </span>-H<span class="w"> </span><span class="s2">&quot;Content-Type: application/json&quot;</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-31-4"><span class="w">  </span>-d<span class="w"> </span><span class="s1">&#39;{&quot;jsonrpc&quot;: &quot;2.0&quot;, &quot;method&quot;: &quot;set&quot;, &quot;params&quot;: {&quot;money&quot;: 100, &quot;hands&quot;: 5}, &quot;id&quot;: 1}&#39;</span>
+</span><span id="__span-31-5">
+</span><span id="__span-31-6"><span class="c1"># Override boss blind to The Hook</span>
+</span><span id="__span-31-7">curl<span class="w"> </span>-X<span class="w"> </span>POST<span class="w"> </span>http://127.0.0.1:12346<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-31-8"><span class="w">  </span>-H<span class="w"> </span><span class="s2">&quot;Content-Type: application/json&quot;</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-31-9"><span class="w">  </span>-d<span class="w"> </span><span class="s1">&#39;{&quot;jsonrpc&quot;: &quot;2.0&quot;, &quot;method&quot;: &quot;set&quot;, &quot;params&quot;: {&quot;boss&quot;: &quot;bl_hook&quot;}, &quot;id&quot;: 1}&#39;</span>
 </span></code></pre></div>
 <hr />
 <h2 id="schemas">Schemas</h2>
 <h3 id="gamestate-schema">GameState Schema</h3>
 <p>The complete game state returned by most methods.</p>
-<div class="language-json highlight"><pre><span></span><code><span id="__span-31-1"><span class="p">{</span>
-</span><span id="__span-31-2"><span class="w">  </span><span class="nt">&quot;state&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;SELECTING_HAND&quot;</span><span class="p">,</span>
-</span><span id="__span-31-3"><span class="w">  </span><span class="nt">&quot;paused&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
-</span><span id="__span-31-4"><span class="w">  </span><span class="nt">&quot;round_num&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span>
-</span><span id="__span-31-5"><span class="w">  </span><span class="nt">&quot;ante_num&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span>
-</span><span id="__span-31-6"><span class="w">  </span><span class="nt">&quot;money&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">4</span><span class="p">,</span>
-</span><span id="__span-31-7"><span class="w">  </span><span class="nt">&quot;deck&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;b_red&quot;</span><span class="p">,</span>
-</span><span id="__span-31-8"><span class="w">  </span><span class="nt">&quot;stake&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;stake_white&quot;</span><span class="p">,</span>
-</span><span id="__span-31-9"><span class="w">  </span><span class="nt">&quot;seed&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;ABC123&quot;</span><span class="p">,</span>
-</span><span id="__span-31-10"><span class="w">  </span><span class="nt">&quot;won&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
-</span><span id="__span-31-11"><span class="w">  </span><span class="nt">&quot;used_vouchers&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{},</span>
-</span><span id="__span-31-12"><span class="w">  </span><span class="nt">&quot;tags&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w"> </span><span class="err">...</span><span class="w"> </span><span class="p">],</span>
-</span><span id="__span-31-13"><span class="w">  </span><span class="nt">&quot;hands&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="err">...</span><span class="w"> </span><span class="p">},</span>
-</span><span id="__span-31-14"><span class="w">  </span><span class="nt">&quot;round&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="err">...</span><span class="w"> </span><span class="p">},</span>
-</span><span id="__span-31-15"><span class="w">  </span><span class="nt">&quot;blinds&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="err">...</span><span class="w"> </span><span class="p">},</span>
-</span><span id="__span-31-16"><span class="w">  </span><span class="nt">&quot;jokers&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="err">...</span><span class="w"> </span><span class="p">},</span>
-</span><span id="__span-31-17"><span class="w">  </span><span class="nt">&quot;consumables&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="err">...</span><span class="w"> </span><span class="p">},</span>
-</span><span id="__span-31-18"><span class="w">  </span><span class="nt">&quot;cards&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="err">...</span><span class="w"> </span><span class="p">},</span>
-</span><span id="__span-31-19"><span class="w">  </span><span class="nt">&quot;hand&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="err">...</span><span class="w"> </span><span class="p">},</span>
-</span><span id="__span-31-20"><span class="w">  </span><span class="nt">&quot;shop&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="err">...</span><span class="w"> </span><span class="p">},</span>
-</span><span id="__span-31-21"><span class="w">  </span><span class="nt">&quot;vouchers&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="err">...</span><span class="w"> </span><span class="p">},</span>
-</span><span id="__span-31-22"><span class="w">  </span><span class="nt">&quot;packs&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="err">...</span><span class="w"> </span><span class="p">},</span>
-</span><span id="__span-31-23"><span class="w">  </span><span class="nt">&quot;pack&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="err">...</span><span class="w"> </span><span class="p">}</span>
-</span><span id="__span-31-24"><span class="p">}</span>
+<div class="language-json highlight"><pre><span></span><code><span id="__span-32-1"><span class="p">{</span>
+</span><span id="__span-32-2"><span class="w">  </span><span class="nt">&quot;state&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;SELECTING_HAND&quot;</span><span class="p">,</span>
+</span><span id="__span-32-3"><span class="w">  </span><span class="nt">&quot;paused&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
+</span><span id="__span-32-4"><span class="w">  </span><span class="nt">&quot;round_num&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span>
+</span><span id="__span-32-5"><span class="w">  </span><span class="nt">&quot;ante_num&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span>
+</span><span id="__span-32-6"><span class="w">  </span><span class="nt">&quot;money&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">4</span><span class="p">,</span>
+</span><span id="__span-32-7"><span class="w">  </span><span class="nt">&quot;deck&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;b_red&quot;</span><span class="p">,</span>
+</span><span id="__span-32-8"><span class="w">  </span><span class="nt">&quot;stake&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;stake_white&quot;</span><span class="p">,</span>
+</span><span id="__span-32-9"><span class="w">  </span><span class="nt">&quot;seed&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;ABC123&quot;</span><span class="p">,</span>
+</span><span id="__span-32-10"><span class="w">  </span><span class="nt">&quot;won&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
+</span><span id="__span-32-11"><span class="w">  </span><span class="nt">&quot;used_vouchers&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{},</span>
+</span><span id="__span-32-12"><span class="w">  </span><span class="nt">&quot;tags&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w"> </span><span class="err">...</span><span class="w"> </span><span class="p">],</span>
+</span><span id="__span-32-13"><span class="w">  </span><span class="nt">&quot;hands&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="err">...</span><span class="w"> </span><span class="p">},</span>
+</span><span id="__span-32-14"><span class="w">  </span><span class="nt">&quot;round&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="err">...</span><span class="w"> </span><span class="p">},</span>
+</span><span id="__span-32-15"><span class="w">  </span><span class="nt">&quot;blinds&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="err">...</span><span class="w"> </span><span class="p">},</span>
+</span><span id="__span-32-16"><span class="w">  </span><span class="nt">&quot;jokers&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="err">...</span><span class="w"> </span><span class="p">},</span>
+</span><span id="__span-32-17"><span class="w">  </span><span class="nt">&quot;consumables&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="err">...</span><span class="w"> </span><span class="p">},</span>
+</span><span id="__span-32-18"><span class="w">  </span><span class="nt">&quot;cards&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="err">...</span><span class="w"> </span><span class="p">},</span>
+</span><span id="__span-32-19"><span class="w">  </span><span class="nt">&quot;hand&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="err">...</span><span class="w"> </span><span class="p">},</span>
+</span><span id="__span-32-20"><span class="w">  </span><span class="nt">&quot;shop&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="err">...</span><span class="w"> </span><span class="p">},</span>
+</span><span id="__span-32-21"><span class="w">  </span><span class="nt">&quot;vouchers&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="err">...</span><span class="w"> </span><span class="p">},</span>
+</span><span id="__span-32-22"><span class="w">  </span><span class="nt">&quot;packs&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="err">...</span><span class="w"> </span><span class="p">},</span>
+</span><span id="__span-32-23"><span class="w">  </span><span class="nt">&quot;pack&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="err">...</span><span class="w"> </span><span class="p">}</span>
+</span><span id="__span-32-24"><span class="p">}</span>
 </span></code></pre></div>
 <h3 id="area">Area</h3>
 <p>Represents a card area (hand, jokers, consumables, shop, etc.).</p>
-<div class="language-json highlight"><pre><span></span><code><span id="__span-32-1"><span class="p">{</span>
-</span><span id="__span-32-2"><span class="w">  </span><span class="nt">&quot;count&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">8</span><span class="p">,</span>
-</span><span id="__span-32-3"><span class="w">  </span><span class="nt">&quot;limit&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">8</span><span class="p">,</span>
-</span><span id="__span-32-4"><span class="w">  </span><span class="nt">&quot;highlighted_limit&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">5</span><span class="p">,</span>
-</span><span id="__span-32-5"><span class="w">  </span><span class="nt">&quot;cards&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w"> </span><span class="err">...</span><span class="w"> </span><span class="p">]</span>
-</span><span id="__span-32-6"><span class="p">}</span>
+<div class="language-json highlight"><pre><span></span><code><span id="__span-33-1"><span class="p">{</span>
+</span><span id="__span-33-2"><span class="w">  </span><span class="nt">&quot;count&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">8</span><span class="p">,</span>
+</span><span id="__span-33-3"><span class="w">  </span><span class="nt">&quot;limit&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">8</span><span class="p">,</span>
+</span><span id="__span-33-4"><span class="w">  </span><span class="nt">&quot;highlighted_limit&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">5</span><span class="p">,</span>
+</span><span id="__span-33-5"><span class="w">  </span><span class="nt">&quot;cards&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w"> </span><span class="err">...</span><span class="w"> </span><span class="p">]</span>
+</span><span id="__span-33-6"><span class="p">}</span>
 </span></code></pre></div>
 <h3 id="card">Card</h3>
-<div class="language-json highlight"><pre><span></span><code><span id="__span-33-1"><span class="p">{</span>
-</span><span id="__span-33-2"><span class="w">  </span><span class="nt">&quot;id&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span>
-</span><span id="__span-33-3"><span class="w">  </span><span class="nt">&quot;key&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;H_A&quot;</span><span class="p">,</span>
-</span><span id="__span-33-4"><span class="w">  </span><span class="nt">&quot;set&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;DEFAULT&quot;</span><span class="p">,</span>
-</span><span id="__span-33-5"><span class="w">  </span><span class="nt">&quot;label&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Ace of Hearts&quot;</span><span class="p">,</span>
-</span><span id="__span-33-6"><span class="w">  </span><span class="nt">&quot;value&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-33-7"><span class="w">    </span><span class="nt">&quot;suit&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;H&quot;</span><span class="p">,</span>
-</span><span id="__span-33-8"><span class="w">    </span><span class="nt">&quot;rank&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;A&quot;</span><span class="p">,</span>
-</span><span id="__span-33-9"><span class="w">    </span><span class="nt">&quot;effect&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;...&quot;</span>
-</span><span id="__span-33-10"><span class="w">  </span><span class="p">},</span>
-</span><span id="__span-33-11"><span class="w">  </span><span class="nt">&quot;modifier&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-33-12"><span class="w">    </span><span class="nt">&quot;seal&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
-</span><span id="__span-33-13"><span class="w">    </span><span class="nt">&quot;edition&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
-</span><span id="__span-33-14"><span class="w">    </span><span class="nt">&quot;enhancement&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
-</span><span id="__span-33-15"><span class="w">    </span><span class="nt">&quot;eternal&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
-</span><span id="__span-33-16"><span class="w">    </span><span class="nt">&quot;perishable&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
-</span><span id="__span-33-17"><span class="w">    </span><span class="nt">&quot;rental&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span>
-</span><span id="__span-33-18"><span class="w">  </span><span class="p">},</span>
-</span><span id="__span-33-19"><span class="w">  </span><span class="nt">&quot;state&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-33-20"><span class="w">    </span><span class="nt">&quot;debuff&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
-</span><span id="__span-33-21"><span class="w">    </span><span class="nt">&quot;hidden&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
-</span><span id="__span-33-22"><span class="w">    </span><span class="nt">&quot;highlight&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span>
-</span><span id="__span-33-23"><span class="w">  </span><span class="p">},</span>
-</span><span id="__span-33-24"><span class="w">  </span><span class="nt">&quot;cost&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-33-25"><span class="w">    </span><span class="nt">&quot;sell&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span>
-</span><span id="__span-33-26"><span class="w">    </span><span class="nt">&quot;buy&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span>
-</span><span id="__span-33-27"><span class="w">  </span><span class="p">}</span>
-</span><span id="__span-33-28"><span class="p">}</span>
+<div class="language-json highlight"><pre><span></span><code><span id="__span-34-1"><span class="p">{</span>
+</span><span id="__span-34-2"><span class="w">  </span><span class="nt">&quot;id&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span>
+</span><span id="__span-34-3"><span class="w">  </span><span class="nt">&quot;key&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;H_A&quot;</span><span class="p">,</span>
+</span><span id="__span-34-4"><span class="w">  </span><span class="nt">&quot;set&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;DEFAULT&quot;</span><span class="p">,</span>
+</span><span id="__span-34-5"><span class="w">  </span><span class="nt">&quot;label&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Ace of Hearts&quot;</span><span class="p">,</span>
+</span><span id="__span-34-6"><span class="w">  </span><span class="nt">&quot;value&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-34-7"><span class="w">    </span><span class="nt">&quot;suit&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;H&quot;</span><span class="p">,</span>
+</span><span id="__span-34-8"><span class="w">    </span><span class="nt">&quot;rank&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;A&quot;</span><span class="p">,</span>
+</span><span id="__span-34-9"><span class="w">    </span><span class="nt">&quot;effect&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;...&quot;</span>
+</span><span id="__span-34-10"><span class="w">  </span><span class="p">},</span>
+</span><span id="__span-34-11"><span class="w">  </span><span class="nt">&quot;modifier&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-34-12"><span class="w">    </span><span class="nt">&quot;seal&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
+</span><span id="__span-34-13"><span class="w">    </span><span class="nt">&quot;edition&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
+</span><span id="__span-34-14"><span class="w">    </span><span class="nt">&quot;enhancement&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
+</span><span id="__span-34-15"><span class="w">    </span><span class="nt">&quot;eternal&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
+</span><span id="__span-34-16"><span class="w">    </span><span class="nt">&quot;perishable&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
+</span><span id="__span-34-17"><span class="w">    </span><span class="nt">&quot;rental&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span>
+</span><span id="__span-34-18"><span class="w">  </span><span class="p">},</span>
+</span><span id="__span-34-19"><span class="w">  </span><span class="nt">&quot;state&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-34-20"><span class="w">    </span><span class="nt">&quot;debuff&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
+</span><span id="__span-34-21"><span class="w">    </span><span class="nt">&quot;hidden&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
+</span><span id="__span-34-22"><span class="w">    </span><span class="nt">&quot;highlight&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span>
+</span><span id="__span-34-23"><span class="w">  </span><span class="p">},</span>
+</span><span id="__span-34-24"><span class="w">  </span><span class="nt">&quot;cost&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-34-25"><span class="w">    </span><span class="nt">&quot;sell&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span>
+</span><span id="__span-34-26"><span class="w">    </span><span class="nt">&quot;buy&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span>
+</span><span id="__span-34-27"><span class="w">  </span><span class="p">}</span>
+</span><span id="__span-34-28"><span class="p">}</span>
 </span></code></pre></div>
 <h3 id="round">Round</h3>
-<div class="language-json highlight"><pre><span></span><code><span id="__span-34-1"><span class="p">{</span>
-</span><span id="__span-34-2"><span class="w">  </span><span class="nt">&quot;hands_left&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">4</span><span class="p">,</span>
-</span><span id="__span-34-3"><span class="w">  </span><span class="nt">&quot;hands_played&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span>
-</span><span id="__span-34-4"><span class="w">  </span><span class="nt">&quot;discards_left&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">3</span><span class="p">,</span>
-</span><span id="__span-34-5"><span class="w">  </span><span class="nt">&quot;discards_used&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span>
-</span><span id="__span-34-6"><span class="w">  </span><span class="nt">&quot;reroll_cost&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">5</span><span class="p">,</span>
-</span><span id="__span-34-7"><span class="w">  </span><span class="nt">&quot;chips&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span>
-</span><span id="__span-34-8"><span class="p">}</span>
+<div class="language-json highlight"><pre><span></span><code><span id="__span-35-1"><span class="p">{</span>
+</span><span id="__span-35-2"><span class="w">  </span><span class="nt">&quot;hands_left&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">4</span><span class="p">,</span>
+</span><span id="__span-35-3"><span class="w">  </span><span class="nt">&quot;hands_played&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span>
+</span><span id="__span-35-4"><span class="w">  </span><span class="nt">&quot;discards_left&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">3</span><span class="p">,</span>
+</span><span id="__span-35-5"><span class="w">  </span><span class="nt">&quot;discards_used&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span>
+</span><span id="__span-35-6"><span class="w">  </span><span class="nt">&quot;reroll_cost&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">5</span><span class="p">,</span>
+</span><span id="__span-35-7"><span class="w">  </span><span class="nt">&quot;chips&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span>
+</span><span id="__span-35-8"><span class="p">}</span>
 </span></code></pre></div>
 <h3 id="blind">Blind</h3>
-<div class="language-json highlight"><pre><span></span><code><span id="__span-35-1"><span class="p">{</span>
-</span><span id="__span-35-2"><span class="w">  </span><span class="nt">&quot;key&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;bl_small&quot;</span><span class="p">,</span>
-</span><span id="__span-35-3"><span class="w">  </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;SMALL&quot;</span><span class="p">,</span>
-</span><span id="__span-35-4"><span class="w">  </span><span class="nt">&quot;status&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;SELECT&quot;</span><span class="p">,</span>
-</span><span id="__span-35-5"><span class="w">  </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Small Blind&quot;</span><span class="p">,</span>
-</span><span id="__span-35-6"><span class="w">  </span><span class="nt">&quot;effect&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;No special effect&quot;</span><span class="p">,</span>
-</span><span id="__span-35-7"><span class="w">  </span><span class="nt">&quot;score&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">300</span><span class="p">,</span>
-</span><span id="__span-35-8"><span class="w">  </span><span class="nt">&quot;tag&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-35-9"><span class="w">    </span><span class="nt">&quot;key&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;tag_juggle&quot;</span><span class="p">,</span>
-</span><span id="__span-35-10"><span class="w">    </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Juggle Tag&quot;</span><span class="p">,</span>
-</span><span id="__span-35-11"><span class="w">    </span><span class="nt">&quot;effect&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;+3 hand size next round&quot;</span>
-</span><span id="__span-35-12"><span class="w">  </span><span class="p">}</span>
-</span><span id="__span-35-13"><span class="p">}</span>
+<div class="language-json highlight"><pre><span></span><code><span id="__span-36-1"><span class="p">{</span>
+</span><span id="__span-36-2"><span class="w">  </span><span class="nt">&quot;key&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;bl_small&quot;</span><span class="p">,</span>
+</span><span id="__span-36-3"><span class="w">  </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;SMALL&quot;</span><span class="p">,</span>
+</span><span id="__span-36-4"><span class="w">  </span><span class="nt">&quot;status&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;SELECT&quot;</span><span class="p">,</span>
+</span><span id="__span-36-5"><span class="w">  </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Small Blind&quot;</span><span class="p">,</span>
+</span><span id="__span-36-6"><span class="w">  </span><span class="nt">&quot;effect&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;No special effect&quot;</span><span class="p">,</span>
+</span><span id="__span-36-7"><span class="w">  </span><span class="nt">&quot;score&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">300</span><span class="p">,</span>
+</span><span id="__span-36-8"><span class="w">  </span><span class="nt">&quot;tag&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-36-9"><span class="w">    </span><span class="nt">&quot;key&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;tag_juggle&quot;</span><span class="p">,</span>
+</span><span id="__span-36-10"><span class="w">    </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Juggle Tag&quot;</span><span class="p">,</span>
+</span><span id="__span-36-11"><span class="w">    </span><span class="nt">&quot;effect&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;+3 hand size next round&quot;</span>
+</span><span id="__span-36-12"><span class="w">  </span><span class="p">},</span>
+</span><span id="__span-36-13"><span class="w">  </span><span class="nt">&quot;reroll_available&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span>
+</span><span id="__span-36-14"><span class="p">}</span>
 </span></code></pre></div>
+<p>The optional <code>reroll_available</code> field is populated for the Boss blind and reports
+whether the <a href="#reroll_boss">Reroll Boss Blind</a> action is currently available
+(player can afford $10 and holds the Director's Cut or Retcon voucher).</p>
 <h3 id="tag">Tag</h3>
 <p>Represents a Balatro tag that provides bonuses when triggered.</p>
-<div class="language-json highlight"><pre><span></span><code><span id="__span-36-1"><span class="p">{</span>
-</span><span id="__span-36-2"><span class="w">  </span><span class="nt">&quot;key&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;tag_juggle&quot;</span><span class="p">,</span>
-</span><span id="__span-36-3"><span class="w">  </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Juggle Tag&quot;</span><span class="p">,</span>
-</span><span id="__span-36-4"><span class="w">  </span><span class="nt">&quot;effect&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;+3 hand size next round&quot;</span>
-</span><span id="__span-36-5"><span class="p">}</span>
+<div class="language-json highlight"><pre><span></span><code><span id="__span-37-1"><span class="p">{</span>
+</span><span id="__span-37-2"><span class="w">  </span><span class="nt">&quot;key&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;tag_juggle&quot;</span><span class="p">,</span>
+</span><span id="__span-37-3"><span class="w">  </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Juggle Tag&quot;</span><span class="p">,</span>
+</span><span id="__span-37-4"><span class="w">  </span><span class="nt">&quot;effect&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;+3 hand size next round&quot;</span>
+</span><span id="__span-37-5"><span class="p">}</span>
 </span></code></pre></div>
 <h3 id="hand-poker-hand-info">Hand (Poker Hand Info)</h3>
-<div class="language-json highlight"><pre><span></span><code><span id="__span-37-1"><span class="p">{</span>
-</span><span id="__span-37-2"><span class="w">  </span><span class="nt">&quot;order&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span>
-</span><span id="__span-37-3"><span class="w">  </span><span class="nt">&quot;level&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span>
-</span><span id="__span-37-4"><span class="w">  </span><span class="nt">&quot;chips&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">10</span><span class="p">,</span>
-</span><span id="__span-37-5"><span class="w">  </span><span class="nt">&quot;mult&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span>
-</span><span id="__span-37-6"><span class="w">  </span><span class="nt">&quot;played&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span>
-</span><span id="__span-37-7"><span class="w">  </span><span class="nt">&quot;played_this_round&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span>
-</span><span id="__span-37-8"><span class="w">  </span><span class="nt">&quot;example&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[[</span><span class="s2">&quot;H_A&quot;</span><span class="p">,</span><span class="w"> </span><span class="kc">true</span><span class="p">],</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;H_K&quot;</span><span class="p">,</span><span class="w"> </span><span class="kc">true</span><span class="p">]]</span>
-</span><span id="__span-37-9"><span class="p">}</span>
+<div class="language-json highlight"><pre><span></span><code><span id="__span-38-1"><span class="p">{</span>
+</span><span id="__span-38-2"><span class="w">  </span><span class="nt">&quot;order&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span>
+</span><span id="__span-38-3"><span class="w">  </span><span class="nt">&quot;level&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span>
+</span><span id="__span-38-4"><span class="w">  </span><span class="nt">&quot;chips&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">10</span><span class="p">,</span>
+</span><span id="__span-38-5"><span class="w">  </span><span class="nt">&quot;mult&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span>
+</span><span id="__span-38-6"><span class="w">  </span><span class="nt">&quot;played&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span>
+</span><span id="__span-38-7"><span class="w">  </span><span class="nt">&quot;played_this_round&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span>
+</span><span id="__span-38-8"><span class="w">  </span><span class="nt">&quot;example&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[[</span><span class="s2">&quot;H_A&quot;</span><span class="p">,</span><span class="w"> </span><span class="kc">true</span><span class="p">],</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;H_K&quot;</span><span class="p">,</span><span class="w"> </span><span class="kc">true</span><span class="p">]]</span>
+</span><span id="__span-38-9"><span class="p">}</span>
 </span></code></pre></div>
 <hr />
 <h2 id="enums">Enums</h2>

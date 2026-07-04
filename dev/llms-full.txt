@@ -755,6 +755,30 @@ curl -X POST http://127.0.0.1:12346 \
 
 ______________________________________________________________________
 
+### `reroll_boss`
+
+Reroll the upcoming Boss Blind, replacing it with a random weighted pick for **$10**. Requires the **Director's Cut** voucher (one reroll per ante) or the **Retcon** voucher (unlimited rerolls). Mirrors Balatro's **"Reroll Boss"** button on the boss blind pane.
+
+Unlike the free Boss-Tag reroll and the deterministic [`set`](#set) boss override, this action charges $10 and keeps the new boss random. Availability is reported in the gamestate as [`blinds.boss.reroll_available`](#blind).
+
+**Returns:** [GameState](#gamestate-schema) (state stays `BLIND_SELECT`)
+
+**Errors:** `INVALID_STATE`, `NOT_ALLOWED`
+
+**Required State:** `BLIND_SELECT`
+
+**Example:**
+
+```bash
+# Reroll the boss blind for $10
+curl -X POST http://127.0.0.1:12346 \
+  -H "Content-Type: application/json" \
+  -d '{"jsonrpc": "2.0", "method": "reroll_boss", "id": 1}'
+
+```
+
+______________________________________________________________________
+
 ### `buy`
 
 Buy a card, voucher, or pack from the shop.
@@ -1276,10 +1300,13 @@ Represents a card area (hand, jokers, consumables, shop, etc.).
     "key": "tag_juggle",
     "name": "Juggle Tag",
     "effect": "+3 hand size next round"
-  }
+  },
+  "reroll_available": false
 }
 
 ```
+
+The optional `reroll_available` field is populated for the Boss blind and reports whether the [Reroll Boss Blind](#reroll_boss) action is currently available (player can afford $10 and holds the Director's Cut or Retcon voucher).
 
 ### Tag
 
