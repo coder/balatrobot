@@ -17,6 +17,7 @@ Glossary of terms used in the BalatroBot project.
 | **ante** | A set of 3 rounds within a run: small blind, big blind, boss blind. Runs go from ante 1 to ante 8. |
 | **round** | A single blind within a run. Each ante has 3 rounds. |
 | **blind** | Overloaded by design — clear from context. Can refer to: (1) the game phase `BLIND_SELECT` where you choose a blind, (2) the specific blind type (small/big/boss), or (3) the blind entity with its name, effect, and score requirement. |
+| **Challenge Run** | A run variant started from one of Balatro's fixed presets (e.g. *The Omelette*, *Mad World*, *Jokerless*), each dictating a specific deck, starting jokers/consumeables/vouchers, rules/modifiers, and card restrictions. Named by a **challenge id** with the `c_` prefix (e.g. `c_omelette_1`). _Avoid_: challenge (bare noun — ambiguous with the id), challenge mode (the in-game Challenges tab UI), custom run. |
 | **playing card** | A standard 52-card deck card (suit + rank). Can hold modifiers: seal, edition, enhancement. |
 | **joker** | A modifier card sitting in the joker area. Provides ongoing scoring effects. |
 | **consumable** | A one-time-use card: tarot, planet, or spectral. **Note:** Balatro's source code misspells this as `consumeables` — our API uses the correct spelling `consumables`. |
