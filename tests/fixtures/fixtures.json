@@ -5403,5 +5403,287 @@
         "params": {}
       }
     ]
+  },
+  "reroll_boss": {
+    "state-BLIND_SELECT--blinds.boss.status-SELECT": [
+      {
+        "method": "menu",
+        "params": {}
+      },
+      {
+        "method": "start",
+        "params": {
+          "deck": "b_red",
+          "stake": "stake_white",
+          "seed": "TEST123"
+        }
+      },
+      {
+        "method": "skip",
+        "params": {}
+      },
+      {
+        "method": "skip",
+        "params": {}
+      }
+    ],
+    "state-BLIND_SELECT--blinds.boss.status-SELECT--used_vouchers.v_directors_cut-1--money-20": [
+      {
+        "method": "menu",
+        "params": {}
+      },
+      {
+        "method": "start",
+        "params": {
+          "deck": "b_red",
+          "stake": "stake_white",
+          "seed": "TEST123"
+        }
+      },
+      {
+        "method": "select",
+        "params": {}
+      },
+      {
+        "method": "set",
+        "params": {
+          "chips": 1000
+        }
+      },
+      {
+        "method": "play",
+        "params": {
+          "cards": [
+            0
+          ]
+        }
+      },
+      {
+        "method": "cash_out",
+        "params": {}
+      },
+      {
+        "method": "set",
+        "params": {
+          "money": 100
+        }
+      },
+      {
+        "method": "buy",
+        "params": {
+          "voucher": 0
+        }
+      },
+      {
+        "method": "add",
+        "params": {
+          "key": "v_directors_cut"
+        }
+      },
+      {
+        "method": "buy",
+        "params": {
+          "voucher": 0
+        }
+      },
+      {
+        "method": "next_round",
+        "params": {}
+      },
+      {
+        "method": "skip",
+        "params": {}
+      },
+      {
+        "method": "set",
+        "params": {
+          "money": 20
+        }
+      }
+    ],
+    "state-BLIND_SELECT--blinds.boss.status-SELECT--used_vouchers.v_directors_cut-1--money-5": [
+      {
+        "method": "menu",
+        "params": {}
+      },
+      {
+        "method": "start",
+        "params": {
+          "deck": "b_red",
+          "stake": "stake_white",
+          "seed": "TEST123"
+        }
+      },
+      {
+        "method": "select",
+        "params": {}
+      },
+      {
+        "method": "set",
+        "params": {
+          "chips": 1000
+        }
+      },
+      {
+        "method": "play",
+        "params": {
+          "cards": [
+            0
+          ]
+        }
+      },
+      {
+        "method": "cash_out",
+        "params": {}
+      },
+      {
+        "method": "set",
+        "params": {
+          "money": 100
+        }
+      },
+      {
+        "method": "buy",
+        "params": {
+          "voucher": 0
+        }
+      },
+      {
+        "method": "add",
+        "params": {
+          "key": "v_directors_cut"
+        }
+      },
+      {
+        "method": "buy",
+        "params": {
+          "voucher": 0
+        }
+      },
+      {
+        "method": "next_round",
+        "params": {}
+      },
+      {
+        "method": "skip",
+        "params": {}
+      },
+      {
+        "method": "set",
+        "params": {
+          "money": 5
+        }
+      }
+    ],
+    "state-BLIND_SELECT--blinds.boss.status-SELECT--used_vouchers.v_retcon-1--money-30": [
+      {
+        "method": "menu",
+        "params": {}
+      },
+      {
+        "method": "start",
+        "params": {
+          "deck": "b_red",
+          "stake": "stake_white",
+          "seed": "TEST123"
+        }
+      },
+      {
+        "method": "select",
+        "params": {}
+      },
+      {
+        "method": "set",
+        "params": {
+          "chips": 1000
+        }
+      },
+      {
+        "method": "play",
+        "params": {
+          "cards": [
+            0
+          ]
+        }
+      },
+      {
+        "method": "cash_out",
+        "params": {}
+      },
+      {
+        "method": "set",
+        "params": {
+          "money": 100
+        }
+      },
+      {
+        "method": "buy",
+        "params": {
+          "voucher": 0
+        }
+      },
+      {
+        "method": "add",
+        "params": {
+          "key": "v_retcon"
+        }
+      },
+      {
+        "method": "buy",
+        "params": {
+          "voucher": 0
+        }
+      },
+      {
+        "method": "next_round",
+        "params": {}
+      },
+      {
+        "method": "skip",
+        "params": {}
+      },
+      {
+        "method": "set",
+        "params": {
+          "money": 30
+        }
+      }
+    ],
+    "state-SHOP": [
+      {
+        "method": "menu",
+        "params": {}
+      },
+      {
+        "method": "start",
+        "params": {
+          "deck": "b_red",
+          "stake": "stake_white",
+          "seed": "TEST123"
+        }
+      },
+      {
+        "method": "select",
+        "params": {}
+      },
+      {
+        "method": "set",
+        "params": {
+          "chips": 1000
+        }
+      },
+      {
+        "method": "play",
+        "params": {
+          "cards": [
+            0
+          ]
+        }
+      },
+      {
+        "method": "cash_out",
+        "params": {}
+      }
+    ]
   }
 }
