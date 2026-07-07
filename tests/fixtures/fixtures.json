@@ -4456,6 +4456,82 @@
           "pack": 0
         }
       }
+    ],
+    "state-SELECTING_HAND--blinds.boss.key-bl_house--consumables.cards[0].key-c_magician": [
+      {
+        "method": "menu",
+        "params": {}
+      },
+      {
+        "method": "start",
+        "params": {
+          "deck": "b_red",
+          "stake": "stake_white",
+          "seed": "TEST123"
+        }
+      },
+      {
+        "method": "set",
+        "params": {
+          "boss": "bl_house"
+        }
+      },
+      {
+        "method": "skip",
+        "params": {}
+      },
+      {
+        "method": "skip",
+        "params": {}
+      },
+      {
+        "method": "select",
+        "params": {}
+      },
+      {
+        "method": "add",
+        "params": {
+          "key": "c_magician"
+        }
+      }
+    ],
+    "state-SELECTING_HAND--blinds.boss.key-bl_house--consumables.cards[0].key-c_sigil": [
+      {
+        "method": "menu",
+        "params": {}
+      },
+      {
+        "method": "start",
+        "params": {
+          "deck": "b_red",
+          "stake": "stake_white",
+          "seed": "TEST123"
+        }
+      },
+      {
+        "method": "set",
+        "params": {
+          "boss": "bl_house"
+        }
+      },
+      {
+        "method": "skip",
+        "params": {}
+      },
+      {
+        "method": "skip",
+        "params": {}
+      },
+      {
+        "method": "select",
+        "params": {}
+      },
+      {
+        "method": "add",
+        "params": {
+          "key": "c_sigil"
+        }
+      }
     ]
   },
   "rearrange": {

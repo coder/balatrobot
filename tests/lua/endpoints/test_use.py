@@ -387,3 +387,169 @@ class TestUseEndpointStateRequirements:
             "NOT_ALLOWED",
             "Consumable 'Familiar' cannot be used at this time",
         )
+
+
+class TestUseRevealed:
+    """Test the transient `revealed` field emitted by the `use` endpoint.
+
+    Under a flip blind (The House, bl_house) the whole hand is dealt face-down.
+    Using a conversion consumable (Magician: mod_conv; Sigil/Ouija: whole-hand)
+    on a hidden card triggers the game's flip→modify→flip animation: the card is
+    momentarily shown face-up to a human, then flipped back face-down. The
+    transient `revealed: true` flag tells a fair-play consumer "you may now know
+    this card." It co-occurs with `hidden: true` (the card ends face-down) and
+    is present ONLY on the `use` response.
+    """
+
+    def test_use_magician_reveals_targeted_hidden_cards_under_the_house(
+        self, client: httpx.Client
+    ) -> None:
+        """Using Magician on hidden cards marks exactly those cards `revealed`."""
+        before = load_fixture(
+            client,
+            "use",
+            "state-SELECTING_HAND--blinds.boss.key-bl_house--consumables.cards[0].key-c_magician",
+        )
+        # Preconditions: The House active, round just started, c_magician ready,
+        # and the ENTIRE hand is face-down (hidden) — the glitch precondition.
+        assert before["state"] == "SELECTING_HAND"
+        assert before["blinds"]["boss"]["key"] == "bl_house"
+        assert before["consumables"]["cards"][0]["key"] == "c_magician"
+        assert before["round"]["hands_played"] == 0
+        assert before["round"]["discards_used"] == 0
+        assert all(c["state"].get("hidden") for c in before["hand"]["cards"])
+
+        # Use Magician (mod_conv=m_lucky) on hidden cards [0, 1].
+        response = api(client, "use", {"consumable": 0, "cards": [0, 1]})
+        after = assert_gamestate_response(response, state="SELECTING_HAND")
+
+        # The two targeted cards were momentarily exposed: revealed AND hidden.
+        for i in (0, 1):
+            card = after["hand"]["cards"][i]
+            assert card["state"].get("hidden") is True, (
+                f"card[{i}] should still be hidden under The House, got {card['state']}"
+            )
+            assert card["state"].get("revealed") is True, (
+                f"card[{i}] should be transiently revealed, got {card['state']}"
+            )
+        assert after["hand"]["cards"][0]["modifier"]["enhancement"] == "m_lucky"
+        assert after["hand"]["cards"][1]["modifier"]["enhancement"] == "m_lucky"
+
+        # A hidden card NOT targeted by the consumable is revealed for no one.
+        untargeted = after["hand"]["cards"][2]
+        assert untargeted["state"].get("hidden") is True
+        assert untargeted["state"].get("revealed") is not True, (
+            f"untargeted card[2] must not be revealed, got {untargeted['state']}"
+        )
+
+    def test_revealed_is_transient_and_absent_from_plain_gamestate(
+        self, client: httpx.Client
+    ) -> None:
+        """`revealed` is transient: a plain `gamestate` call after `use` has none.
+
+        Regression guard for the transient contract — a fair-play consumer must
+        capture `revealed` on the `use` response; it never appears elsewhere.
+        """
+        load_fixture(
+            client,
+            "use",
+            "state-SELECTING_HAND--blinds.boss.key-bl_house--consumables.cards[0].key-c_magician",
+        )
+        use_resp = api(client, "use", {"consumable": 0, "cards": [0, 1]})
+        assert _cards_with_revealed(use_resp["result"]) == [
+            "hand.cards[0]",
+            "hand.cards[1]",
+        ]
+
+        # A subsequent gamestate snapshot must carry NO revealed card anywhere.
+        gs_resp = api(client, "gamestate", {})
+        gs = assert_gamestate_response(gs_resp, state="SELECTING_HAND")
+        assert _cards_with_revealed(gs) == []
+
+    def test_use_sigil_reveals_whole_hidden_hand_under_the_house(
+        self, client: httpx.Client
+    ) -> None:
+        """Sigil (whole-hand conversion) reveals every previously-hidden card.
+
+        Drives the `ability.name == 'Sigil'` branch which snapshots the entire
+        G.hand.cards rather than G.hand.highlighted.
+        """
+        before = load_fixture(
+            client,
+            "use",
+            "state-SELECTING_HAND--blinds.boss.key-bl_house--consumables.cards[0].key-c_sigil",
+        )
+        assert before["blinds"]["boss"]["key"] == "bl_house"
+        assert before["consumables"]["cards"][0]["key"] == "c_sigil"
+        hand_count = before["hand"]["count"]
+        assert all(c["state"].get("hidden") for c in before["hand"]["cards"])
+
+        # Sigil needs no card selection (operates on the whole hand).
+        response = api(client, "use", {"consumable": 0})
+        after = assert_gamestate_response(response, state="SELECTING_HAND")
+
+        # Every hand card was flipped up → converted → flipped back: all hidden
+        # AND all revealed.
+        assert len(after["hand"]["cards"]) == hand_count
+        for i, card in enumerate(after["hand"]["cards"]):
+            assert card["state"].get("hidden") is True, (
+                f"card[{i}] should remain hidden under The House, got {card['state']}"
+            )
+            assert card["state"].get("revealed") is True, (
+                f"card[{i}] should be revealed by Sigil, got {card['state']}"
+            )
+
+    def test_use_on_face_up_cards_never_emits_revealed(
+        self, client: httpx.Client
+    ) -> None:
+        """A normal (non-flip-blind) use must not stamp `revealed` anywhere.
+
+        Regression guard against over-stamping: cards are face-up here, so the
+        reveal snapshot is empty and `revealed` must be absent from the response.
+        """
+        before = load_fixture(
+            client,
+            "use",
+            "state-SELECTING_HAND--consumables.cards[0].key-c_pluto--consumables.cards[1].key-c_magician",
+        )
+        assert before["state"] == "SELECTING_HAND"
+        # No flip blind → no hidden cards in hand. (state may serialize as []
+        # for flag-less cards, so guard with isinstance.)
+        assert not any(
+            isinstance(c.get("state"), dict) and c["state"].get("hidden")
+            for c in before["hand"]["cards"]
+        )
+
+        response = api(client, "use", {"consumable": 1, "cards": [0, 1]})
+        after = assert_gamestate_response(response, state="SELECTING_HAND")
+        assert after["hand"]["cards"][0]["modifier"]["enhancement"] == "m_lucky"
+
+        assert _cards_with_revealed(after) == []
+
+
+def _cards_with_revealed(gamestate: dict) -> list[str]:
+    """Return location labels (e.g. "hand.cards[0]") for every card whose
+    `state.revealed` is True across all card-bearing areas.
+
+    Robust to the Lua→JSON quirk where a card with no state flags serializes its
+    empty `state` table as `[]` (array) rather than `{}`.
+    """
+    found: list[str] = []
+    for area in (
+        "jokers",
+        "consumables",
+        "hand",
+        "cards",
+        "shop",
+        "vouchers",
+        "packs",
+        "pack",
+    ):
+        area_data = gamestate.get(area)
+        if not isinstance(area_data, dict):
+            continue
+        for i, card in enumerate(area_data.get("cards", [])):
+            state = card.get("state")
+            if isinstance(state, dict) and state.get("revealed"):
+                found.append(f"{area}.cards[{i}]")
+    return found

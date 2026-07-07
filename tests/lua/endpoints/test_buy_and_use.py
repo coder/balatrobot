@@ -190,6 +190,31 @@ class TestBuyAndUseEndpoint:
         # ...but no joker created — the noop. Honest success, not an error.
         assert after["jokers"]["count"] == 5
 
+    def test_buy_and_use_never_emits_revealed(self, client: httpx.Client) -> None:
+        """buy_and_use must never emit the transient `revealed` field.
+
+        Regression guard (issue #215): `revealed` is a `use`-endpoint-only
+        signal. In vanilla, Blind:disable clears hidden cards before SHOP, so
+        the shop snapshot is always empty of hidden cards anyway — and
+        buy_and_use never calls the revealed registry. Either way, `revealed`
+        must be absent from its response.
+        """
+        before = load_fixture(
+            client, "buy_and_use", "state-SHOP--shop.cards[1].set-PLANET"
+        )
+        assert before["state"] == "SHOP"
+
+        response = api(client, "buy_and_use", {"card": 1})
+        after = assert_gamestate_response(response, state="SHOP")
+
+        revealed = []
+        for area in ("jokers", "consumables", "hand", "shop", "vouchers", "packs"):
+            for i, card in enumerate(after.get(area, {}).get("cards", [])):
+                state = card.get("state")
+                if isinstance(state, dict) and state.get("revealed"):
+                    revealed.append(f"{area}.cards[{i}]")
+        assert revealed == [], f"buy_and_use leaked revealed: {revealed}"
+
 
 class TestBuyAndUseEndpointValidation:
     """Test buy_and_use endpoint parameter type validation."""
