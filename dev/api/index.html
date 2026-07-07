@@ -2733,14 +2733,25 @@ works even when consumable slots are full.</p>
 </span><span id="__span-35-19"><span class="w">  </span><span class="nt">&quot;state&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
 </span><span id="__span-35-20"><span class="w">    </span><span class="nt">&quot;debuff&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
 </span><span id="__span-35-21"><span class="w">    </span><span class="nt">&quot;hidden&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
-</span><span id="__span-35-22"><span class="w">    </span><span class="nt">&quot;highlight&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span>
-</span><span id="__span-35-23"><span class="w">  </span><span class="p">},</span>
-</span><span id="__span-35-24"><span class="w">  </span><span class="nt">&quot;cost&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-35-25"><span class="w">    </span><span class="nt">&quot;sell&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span>
-</span><span id="__span-35-26"><span class="w">    </span><span class="nt">&quot;buy&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span>
-</span><span id="__span-35-27"><span class="w">  </span><span class="p">}</span>
-</span><span id="__span-35-28"><span class="p">}</span>
+</span><span id="__span-35-22"><span class="w">    </span><span class="nt">&quot;highlight&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
+</span><span id="__span-35-23"><span class="w">    </span><span class="nt">&quot;revealed&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span>
+</span><span id="__span-35-24"><span class="w">  </span><span class="p">},</span>
+</span><span id="__span-35-25"><span class="w">  </span><span class="nt">&quot;cost&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-35-26"><span class="w">    </span><span class="nt">&quot;sell&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span>
+</span><span id="__span-35-27"><span class="w">    </span><span class="nt">&quot;buy&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span>
+</span><span id="__span-35-28"><span class="w">  </span><span class="p">}</span>
+</span><span id="__span-35-29"><span class="p">}</span>
 </span></code></pre></div>
+<p>The optional <code>revealed</code> flag is <strong>transient</strong> and emitted <strong>only by the
+<a href="#use"><code>use</code></a> endpoint</strong>. Under a flip blind (e.g. <em>The House</em>), using a
+conversion consumable (Magician, Death, Strength, Sigil, Ouija, …) on a
+face-down card triggers the game's flip→modify→flip animation: the card is
+momentarily shown face-up to a human watching the screen, then flipped back
+face-down — so it ends <code>hidden: true</code> despite its identity having been
+exposed. <code>revealed: true</code> tells a fair-play bot (one that refrains from reading
+hidden-card data) "you may now know this card." It always co-occurs with
+<code>hidden: true</code> and appears <strong>only</strong> on the <code>use</code> response; it is absent from
+<code>gamestate</code>, <code>play</code>, <code>sort</code>, and <code>buy_and_use</code>.</p>
 <h3 id="round">Round</h3>
 <div class="language-json highlight"><pre><span></span><code><span id="__span-36-1"><span class="p">{</span>
 </span><span id="__span-36-2"><span class="w">  </span><span class="nt">&quot;hands_left&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">4</span><span class="p">,</span>

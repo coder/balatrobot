@@ -878,7 +878,8 @@ Represents a card area (hand, jokers, consumables, shop, etc.).
   "state": {
     "debuff": false,
     "hidden": false,
-    "highlight": false
+    "highlight": false,
+    "revealed": false
   },
   "cost": {
     "sell": 1,
@@ -887,6 +888,8 @@ Represents a card area (hand, jokers, consumables, shop, etc.).
 }
 
 ```
+
+The optional `revealed` flag is **transient** and emitted **only by the [`use`](#use) endpoint**. Under a flip blind (e.g. *The House*), using a conversion consumable (Magician, Death, Strength, Sigil, Ouija, …) on a face-down card triggers the game's flip→modify→flip animation: the card is momentarily shown face-up to a human watching the screen, then flipped back face-down — so it ends `hidden: true` despite its identity having been exposed. `revealed: true` tells a fair-play bot (one that refrains from reading hidden-card data) "you may now know this card." It always co-occurs with `hidden: true` and appears **only** on the `use` response; it is absent from `gamestate`, `play`, `sort`, and `buy_and_use`.
 
 ### Round
 
