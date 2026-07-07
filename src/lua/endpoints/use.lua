@@ -12,6 +12,41 @@ local BB_FORMAT = assert(SMODS.load_file("src/lua/utils/format.lua"))()
 ---@field cards integer[]? 0-based indices of cards to target
 
 -- ==========================================================================
+-- Reveal Snapshot (transient `revealed` field support)
+-- ==========================================================================
+
+---Compute the set of currently-hidden cards a conversion consumable will flip
+---face-up during its flip→modify→flip animation, so the `use` response can stamp
+---the transient `revealed` flag on them. Mirrors the use_consumeable branches in
+---card.lua:1110-1159 (mod_conv/suit_conv operate on G.hand.highlighted) and
+---card.lua:1235-1266 (Sigil/Ouija operate on the whole G.hand.cards).
+---
+---Must run BEFORE G.FUNCS.use_card, which clears G.hand.highlighted mid-op.
+---@param consumable_card table The consumable about to be used
+---@return table[] snapshot Array of hidden (facing == "back") game card objects
+local function get_reveal_snapshot(consumable_card)
+  local ability = consumable_card.ability or {}
+  local consumeable = ability.consumeable or {}
+
+  local affected
+  if consumeable.mod_conv or consumeable.suit_conv then
+    affected = G.hand.highlighted
+  elseif ability.name == "Sigil" or ability.name == "Ouija" then
+    affected = G.hand.cards
+  else
+    return {}
+  end
+
+  local snapshot = {}
+  for _, card in ipairs(affected) do
+    if card.facing == "back" then
+      snapshot[#snapshot + 1] = card
+    end
+  end
+  return snapshot
+end
+
+-- ==========================================================================
 -- Use Endpoint
 -- ==========================================================================
 
@@ -199,6 +234,12 @@ return {
       },
     }
 
+    -- Snapshot the hidden cards a conversion consumable will momentarily expose
+    -- during its flip→modify→flip animation. Captured BEFORE use_card because
+    -- use_card clears G.hand.highlighted mid-operation. Drives the transient
+    -- `revealed` flag stamped on the response.
+    local reveal_snapshot = get_reveal_snapshot(consumable_card)
+
     -- Call game's use_card function
     G.FUNCS.use_card(mock_element, true, true)
 
@@ -222,7 +263,12 @@ return {
 
         if state_restored and controller_unlocked and no_stop_use then
           sendDebugMessage("use() → ok", "BB.ENDPOINTS")
+          -- Stamp the transient `revealed` flag onto the response gamestate for
+          -- the cards the consumable momentarily exposed, then clear the
+          -- registry so `revealed` never leaks into later (non-use) snapshots.
+          BB_GAMESTATE.set_revealed(reveal_snapshot)
           send_response(BB_GAMESTATE.get_gamestate())
+          BB_GAMESTATE.clear_revealed()
           return true
         end
 

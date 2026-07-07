@@ -7,7 +7,24 @@
 ---@field check_game_over fun()
 ---@field get_blinds_info fun(): table<string, Blind>
 ---@field get_gamestate fun(): GameState
+---@field set_revealed fun(cards: table[]) Mark cards as transiently revealed (use endpoint only)
+---@field clear_revealed fun() Clear the revealed registry
 local gamestate = {}
+
+-- ==========================================================================
+-- Revealed Card Registry (transient, use-endpoint only)
+--
+-- A hidden card flipped face-up → modified → flipped back face-down by a
+-- conversion consumable (Magician, Death, Sigil, …) was momentarily visible to
+-- a human watching the screen. The `revealed` flag tells a fair-play consumer
+-- "you may now know this card". This is OBSERVATION-time info, stamped onto the
+-- `use` response right before extraction and cleared immediately after.
+--
+-- Do NOT "simplify" `revealed` into reading `ability.wheel_flipped`: that is
+-- DEALING-time info (set at deal time, coupled to the blind, and cleared as a
+-- side effect by Card:flip()'s back→front branch). It is the wrong primitive.
+-- ==========================================================================
+local revealed_cards = {} ---@type table<table, boolean> {[card] = true}
 
 -- ==========================================================================
 -- State Name Mapping
@@ -245,6 +262,13 @@ local function extract_card_state(card)
   -- Hidden (facing == "back")
   if card.facing and card.facing == "back" then
     state.hidden = true
+  end
+
+  -- Revealed (transient): a hidden card momentarily exposed by a conversion
+  -- consumable during the `use` endpoint. Set/cleared around the response
+  -- extraction via gamestate.set_revealed / clear_revealed.
+  if revealed_cards[card] then
+    state.revealed = true
   end
 
   -- Highlighted
@@ -926,6 +950,28 @@ function gamestate.check_game_over()
     gamestate.on_game_over(gamestate.get_gamestate())
     gamestate.on_game_over = nil
   end
+end
+
+-- ==========================================================================
+-- Revealed Registry API (transient, use-endpoint only)
+-- ==========================================================================
+
+---Mark the given cards as transiently revealed. The `use` endpoint calls this
+---with the snapshot of hidden cards a conversion consumable will flip, right
+---before extracting the response gamestate. Pair every call with
+---clear_revealed() immediately after extraction so later snapshots stay clean.
+---@param cards table[] Array of game card objects to mark revealed
+function gamestate.set_revealed(cards)
+  for _, card in ipairs(cards) do
+    revealed_cards[card] = true
+  end
+end
+
+---Clear the revealed registry. Called by the `use` endpoint right after the
+---response gamestate is extracted, so `revealed` never leaks into later
+---(non-use) snapshots.
+function gamestate.clear_revealed()
+  revealed_cards = {}
 end
 
 return gamestate

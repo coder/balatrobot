@@ -1394,6 +1394,10 @@
           "highlight": {
             "type": "boolean",
             "description": "If true, card is currently highlighted"
+          },
+          "revealed": {
+            "type": "boolean",
+            "description": "If true, a hidden card was momentarily exposed to a human during a conversion consumable's flip→modify→flip animation (use endpoint only; co-occurs with hidden)"
           }
         }
       },

@@ -98,6 +98,7 @@
 ---@field debuff boolean? If true, card is debuffed and won't score
 ---@field hidden boolean? If true, card is face down (facing == "back")
 ---@field highlight boolean? If true, card is currently highlighted
+---@field revealed boolean? If true, a hidden card was momentarily exposed to a human during a conversion consumable's flip→modify→flip animation (emitted by the `use` endpoint only; co-occurs with `hidden: true`)
 
 ---@class Card.Cost
 ---@field sell integer Sell value of the card
