@@ -13,6 +13,7 @@ Glossary of terms used in the BalatroBot project.
 | **DebugPlus** | Optional SMODS mod for debug logging and UI. Required for the `--debug` flag. [github.com/WilsontheWolf/DebugPlus](https://github.com/WilsontheWolf/DebugPlus) |
 | **OpenRPC spec** | Machine-readable API specification in `src/lua/utils/openrpc.json`. Describes all endpoints, params, and responses. [open-rpc.org](https://open-rpc.org/) |
 | **game state** / **state** / **gamestate** | Ambiguous by design — meaning is clear from context. Can refer to: (1) the current game phase (e.g. `BLIND_SELECT`, `SHOP`), or (2) the JSON object returned by the API endpoints (a full snapshot of the game - see ./src/lua/utils/types.lua for fields). |
+| **omniscient** | The API returns the true rank, suit, and identity of *every* card at all times, including face-down ones. A `hidden` card is reported as hidden, but its `value` is still its true value — the API performs no information hiding. _Avoid_: cheating, god-mode. |
 | **run** | A full game from start to win or loss. Progresses through antes (1–8 by default). |
 | **ante** | A set of 3 rounds within a run: small blind, big blind, boss blind. Runs go from ante 1 to ante 8. |
 | **round** | A single blind within a run. Each ante has 3 rounds. |
