@@ -313,8 +313,6 @@ local function extract_card(card)
       set = "VOUCHER"
     elseif ability_set == "Booster" then
       set = "BOOSTER"
-    elseif ability_set == "Edition" then
-      set = "EDITION"
     elseif card.ability.effect and card.ability.effect ~= "Base" then
       set = "ENHANCED"
     end

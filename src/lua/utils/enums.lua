@@ -78,7 +78,6 @@
 ---@alias Card.Set
 ---| "BOOSTER" # Booster pack purchasale in the shop
 ---| "DEFAULT" # Default playing card
----| "EDITION" # Card with an edition
 ---| "ENHANCED" # Playing card with an enhancement
 ---| "JOKER" # Joker card
 ---| "TAROT" # Tarot card (consumable)
