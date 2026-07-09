@@ -1092,3 +1092,223 @@ class TestGamestateCardCosts:
         """Test gamestate card cost buy."""
 
         # TODO: add later
+
+
+# Default poker-hand values at run start (level 1, never played).
+# Sourced from G.GAME.hands init: vendors/balatro/game.lua:2002-2013.
+# {hand_name: {order, mult (level 1), chips (level 1), example}}
+_DEFAULT_HANDS = {
+    "Flush Five": {
+        "order": 1,
+        "mult": 16,
+        "chips": 160,
+        "example": [
+            ["S_A", True],
+            ["S_A", True],
+            ["S_A", True],
+            ["S_A", True],
+            ["S_A", True],
+        ],
+    },
+    "Flush House": {
+        "order": 2,
+        "mult": 14,
+        "chips": 140,
+        "example": [
+            ["D_7", True],
+            ["D_7", True],
+            ["D_7", True],
+            ["D_4", True],
+            ["D_4", True],
+        ],
+    },
+    "Five of a Kind": {
+        "order": 3,
+        "mult": 12,
+        "chips": 120,
+        "example": [
+            ["S_A", True],
+            ["H_A", True],
+            ["H_A", True],
+            ["C_A", True],
+            ["D_A", True],
+        ],
+    },
+    "Straight Flush": {
+        "order": 4,
+        "mult": 8,
+        "chips": 100,
+        "example": [
+            ["S_Q", True],
+            ["S_J", True],
+            ["S_T", True],
+            ["S_9", True],
+            ["S_8", True],
+        ],
+    },
+    "Four of a Kind": {
+        "order": 5,
+        "mult": 7,
+        "chips": 60,
+        "example": [
+            ["S_J", True],
+            ["H_J", True],
+            ["C_J", True],
+            ["D_J", True],
+            ["C_3", False],
+        ],
+    },
+    "Full House": {
+        "order": 6,
+        "mult": 4,
+        "chips": 40,
+        "example": [
+            ["H_K", True],
+            ["C_K", True],
+            ["D_K", True],
+            ["S_2", True],
+            ["D_2", True],
+        ],
+    },
+    "Flush": {
+        "order": 7,
+        "mult": 4,
+        "chips": 35,
+        "example": [
+            ["H_A", True],
+            ["H_K", True],
+            ["H_T", True],
+            ["H_5", True],
+            ["H_4", True],
+        ],
+    },
+    "Straight": {
+        "order": 8,
+        "mult": 4,
+        "chips": 30,
+        "example": [
+            ["D_J", True],
+            ["C_T", True],
+            ["C_9", True],
+            ["S_8", True],
+            ["H_7", True],
+        ],
+    },
+    "Three of a Kind": {
+        "order": 9,
+        "mult": 3,
+        "chips": 30,
+        "example": [
+            ["S_T", True],
+            ["C_T", True],
+            ["D_T", True],
+            ["H_6", False],
+            ["D_5", False],
+        ],
+    },
+    "Two Pair": {
+        "order": 10,
+        "mult": 2,
+        "chips": 20,
+        "example": [
+            ["H_A", True],
+            ["D_A", True],
+            ["C_Q", False],
+            ["H_4", True],
+            ["C_4", True],
+        ],
+    },
+    "Pair": {
+        "order": 11,
+        "mult": 2,
+        "chips": 10,
+        "example": [
+            ["S_K", False],
+            ["S_9", True],
+            ["D_9", True],
+            ["H_6", False],
+            ["D_3", False],
+        ],
+    },
+    "High Card": {
+        "order": 12,
+        "mult": 1,
+        "chips": 5,
+        "example": [
+            ["S_A", True],
+            ["D_Q", False],
+            ["D_9", False],
+            ["C_4", False],
+            ["D_3", False],
+        ],
+    },
+}
+
+
+class TestGamestateHands:
+    """Test gamestate hands (poker hand levels) extraction.
+
+    Covers extract_hand_info() in src/lua/utils/gamestate.lua and the Hand
+    type in src/lua/utils/types.lua. Level-up math from level_up_hand in
+    vendors/balatro/functions/common_events.lua:464:
+        level = level + amount
+        mult  = s_mult  + l_mult  * (level - 1)
+        chips = s_chips + l_chips * (level - 1)
+    """
+
+    def test_hands_present_at_run_start(self, client: httpx.Client) -> None:
+        """All 12 poker hands are present in the gamestate at run start."""
+        gamestate = load_fixture(client, "gamestate", "state-SELECTING_HAND")
+        assert set(gamestate["hands"].keys()) == set(_DEFAULT_HANDS.keys())
+
+    @pytest.mark.parametrize("hand_name", list(_DEFAULT_HANDS.keys()))
+    def test_hands_default_values(self, client: httpx.Client, hand_name: str) -> None:
+        """Each hand reports its default level-1 values and example."""
+        gamestate = load_fixture(client, "gamestate", "state-SELECTING_HAND")
+        expected = _DEFAULT_HANDS[hand_name]
+        hand = gamestate["hands"][hand_name]
+        assert hand["order"] == expected["order"]
+        assert hand["level"] == 1
+        assert hand["mult"] == expected["mult"]
+        assert hand["chips"] == expected["chips"]
+        assert hand["played"] == 0
+        assert hand["played_this_round"] == 0
+        assert hand["example"] == expected["example"]
+
+    @pytest.mark.parametrize(
+        "planet_key,hand_name,expected_mult,expected_chips",
+        [
+            # c_mercury -> Pair:   s_mult=2, l_mult=1, s_chips=10, l_chips=15
+            ("c_mercury", "Pair", 3, 25),
+            # c_jupiter -> Flush:  s_mult=4, l_mult=2, s_chips=35, l_chips=15
+            ("c_jupiter", "Flush", 6, 50),
+        ],
+        ids=["mercury-pair", "jupiter-flush"],
+    )
+    def test_hands_level_up_via_planet(
+        self,
+        client: httpx.Client,
+        planet_key: str,
+        hand_name: str,
+        expected_mult: int,
+        expected_chips: int,
+    ) -> None:
+        """Using a Planet card raises the matching hand's level/mult/chips."""
+        load_fixture(client, "gamestate", "state-SELECTING_HAND")
+        api(client, "add", {"key": planet_key})
+        response = api(client, "use", {"consumable": 0})
+        hand = assert_gamestate_response(response)["hands"][hand_name]
+        assert hand["level"] == 2
+        assert hand["mult"] == expected_mult
+        assert hand["chips"] == expected_chips
+        # Leveling does not touch the play counters.
+        assert hand["played"] == 0
+        assert hand["played_this_round"] == 0
+
+    def test_hands_played_counter(self, client: httpx.Client) -> None:
+        """Playing a single High Card increments its played counters."""
+        load_fixture(client, "gamestate", "state-SELECTING_HAND")
+        response = api(client, "play", {"cards": [0]})
+        hand = assert_gamestate_response(response)["hands"]["High Card"]
+        assert hand["played"] == 1
+        assert hand["played_this_round"] == 1
