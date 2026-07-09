@@ -1027,38 +1027,150 @@ class TestGamestateTags:
         assert tag["key"].startswith("tag_")
 
 
+# Fixtures reused from the `add` category for modifier reachability.
+_ADD_SELECTING_HAND = (
+    "state-SELECTING_HAND--jokers.count-0--consumables.count-0--hand.count-8"
+)
+_ADD_SHOP_EMPTY = (
+    "state-SHOP--jokers.count-0--consumables.count-0--vouchers.count-0--packs.count-0"
+)
+
+
 class TestGamestateCardModifiers:
-    """Test gamestate card modifiers."""
+    """Test gamestate card modifier extraction (extract_card_modifier).
+
+    Covers the Card.Modifier type in src/lua/utils/types.lua: seal, edition,
+    enhancement, eternal, perishable, rental. Modifiers are reached via the
+    `add` endpoint and the gamestate modifier object is asserted to be EXACTLY
+    the expected dict (no spurious/leaked keys) — the contract gap left by
+    test_add.py, which only checks the named key.
+
+    Note: a card with NO modifiers serializes as `[]`, not `{}` — an rxi/json.lua
+    quirk (empty Lua tables become JSON arrays). That empty case is pinned by
+    TestGamestateCards.test_modifier_absent_fields; the non-empty modifier is a
+    proper object, as the exact-dict assertions below verify.
+    """
 
     class TestGamestateCardModifierSeal:
-        """Test gamestate card modifier seal."""
+        """seal: Red/Blue/Gold/Purple (playing cards only)."""
 
-        # TODO: add later
+        @pytest.mark.parametrize("seal", ["Red", "Blue", "Gold", "Purple"])
+        def test_seal_extracted_alone(self, client: httpx.Client, seal: str) -> None:
+            """A sealed playing card reports exactly {seal: <seal>}."""
+            load_fixture(client, "add", _ADD_SELECTING_HAND)
+            response = api(client, "add", {"key": "H_A", "seal": seal})
+            card = assert_gamestate_response(response)["hand"]["cards"][8]
+            assert card["modifier"] == {"seal": seal}
 
     class TestGamestateCardModifierEdition:
-        """Test gamestate card modifier edition."""
+        """edition: e_foil/e_holo/e_polychrome/e_negative."""
 
-        # TODO: add later
+        @pytest.mark.parametrize(
+            "edition",
+            ["e_foil", "e_holo", "e_polychrome", "e_negative"],
+        )
+        def test_edition_on_playing_card(
+            self, client: httpx.Client, edition: str
+        ) -> None:
+            """An editioned playing card reports exactly {edition: <edition>}."""
+            load_fixture(client, "add", _ADD_SELECTING_HAND)
+            response = api(client, "add", {"key": "H_A", "edition": edition})
+            card = assert_gamestate_response(response)["hand"]["cards"][8]
+            assert card["modifier"] == {"edition": edition}
+
+        @pytest.mark.parametrize(
+            "edition",
+            ["e_foil", "e_holo", "e_polychrome", "e_negative"],
+        )
+        def test_edition_on_joker(self, client: httpx.Client, edition: str) -> None:
+            """An editioned joker reports exactly {edition: <edition>}."""
+            load_fixture(client, "add", _ADD_SHOP_EMPTY)
+            response = api(client, "add", {"key": "j_joker", "edition": edition})
+            card = assert_gamestate_response(response)["jokers"]["cards"][0]
+            assert card["modifier"] == {"edition": edition}
+
+        def test_edition_negative_on_consumable(self, client: httpx.Client) -> None:
+            """A e_negative consumable reports exactly {edition: e_negative}."""
+            load_fixture(client, "add", _ADD_SHOP_EMPTY)
+            response = api(client, "add", {"key": "c_fool", "edition": "e_negative"})
+            card = assert_gamestate_response(response)["consumables"]["cards"][0]
+            assert card["modifier"] == {"edition": "e_negative"}
 
     class TestGamestateCardModifierEnhancement:
-        """Test gamestate card modifier enhancement."""
+        """enhancement: m_* (eight values, playing cards only)."""
 
-        # TODO: add later
+        @pytest.mark.parametrize(
+            "enhancement",
+            [
+                "m_bonus",
+                "m_mult",
+                "m_wild",
+                "m_glass",
+                "m_steel",
+                "m_stone",
+                "m_gold",
+                "m_lucky",
+            ],
+        )
+        def test_enhancement_extracted(
+            self, client: httpx.Client, enhancement: str
+        ) -> None:
+            """An enhanced playing card reports exactly {enhancement: <m_*>}."""
+            load_fixture(client, "add", _ADD_SELECTING_HAND)
+            response = api(client, "add", {"key": "H_A", "enhancement": enhancement})
+            card = assert_gamestate_response(response)["hand"]["cards"][8]
+            assert card["modifier"] == {"enhancement": enhancement}
 
     class TestGamestateCardModifierEternal:
-        """Test gamestate card modifier eternal."""
+        """eternal: boolean (jokers only)."""
 
-        # TODO: add later
+        def test_eternal_extracted(self, client: httpx.Client) -> None:
+            """An eternal joker reports exactly {eternal: true}."""
+            load_fixture(client, "add", _ADD_SHOP_EMPTY)
+            response = api(client, "add", {"key": "j_joker", "eternal": True})
+            card = assert_gamestate_response(response)["jokers"]["cards"][0]
+            assert card["modifier"] == {"eternal": True}
 
     class TestGamestateCardModifierPerishable:
-        """Test gamestate card modifier perishable."""
+        """perishable: integer rounds remaining (jokers only)."""
 
-        # TODO: add later
+        @pytest.mark.parametrize("rounds", [1, 5, 10])
+        def test_perishable_extracted(self, client: httpx.Client, rounds: int) -> None:
+            """A perishable joker reports exactly {perishable: <rounds>}."""
+            load_fixture(client, "add", _ADD_SHOP_EMPTY)
+            response = api(client, "add", {"key": "j_joker", "perishable": rounds})
+            card = assert_gamestate_response(response)["jokers"]["cards"][0]
+            assert card["modifier"] == {"perishable": rounds}
 
     class TestGamestateCardModifierRental:
-        """Test gamestate card modifier rental."""
+        """rental: boolean (jokers only)."""
 
-        # TODO: add later
+        def test_rental_extracted(self, client: httpx.Client) -> None:
+            """A rental joker reports exactly {rental: true}."""
+            load_fixture(client, "add", _ADD_SHOP_EMPTY)
+            response = api(client, "add", {"key": "j_joker", "rental": True})
+            card = assert_gamestate_response(response)["jokers"]["cards"][0]
+            assert card["modifier"] == {"rental": True}
+
+    def test_all_playing_card_modifiers_co_occur(self, client: httpx.Client) -> None:
+        """seal + edition + enhancement are all extracted on a single card."""
+        load_fixture(client, "add", _ADD_SELECTING_HAND)
+        response = api(
+            client,
+            "add",
+            {
+                "key": "H_A",
+                "seal": "Red",
+                "edition": "e_foil",
+                "enhancement": "m_bonus",
+            },
+        )
+        card = assert_gamestate_response(response)["hand"]["cards"][8]
+        assert card["modifier"] == {
+            "seal": "Red",
+            "edition": "e_foil",
+            "enhancement": "m_bonus",
+        }
 
 
 class TestGamestateCardStates:
