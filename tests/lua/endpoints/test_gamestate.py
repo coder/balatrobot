@@ -1200,6 +1200,15 @@ def _is_card_debuffed(card: dict) -> bool:
     return isinstance(state, dict) and state.get("debuff") is True
 
 
+def _is_card_hidden(card: dict) -> bool:
+    """True iff the gamestate card is hidden (face-down).
+
+    See ``_is_card_debuffed`` for the empty-state ``[]`` quirk rationale.
+    """
+    state = card.get("state")
+    return isinstance(state, dict) and state.get("hidden") is True
+
+
 # Face-card ranks (J/Q/K) — debuffed by The Plant (bl_plant).
 _FACE_RANKS = {"J", "Q", "K"}
 
@@ -1263,9 +1272,36 @@ class TestGamestateCardStates:
                 assert not _is_card_debuffed(card), card
 
     class TestGamestateCardStateHidden:
-        """Test gamestate card state hidden."""
+        """state.hidden: cards flipped face-down (facing == "back") by boss
+        blinds via Blind:stay_flipped.
 
-        # TODO: add later
+        Reached with the same boss-injection helper as the debuff tests.
+        bl_house hides the entire first hand (deterministic); bl_mark hides
+        face cards (deterministic). The probabilistic/conditional bosses
+        (bl_wheel, bl_fish) are intentionally not asserted.
+        """
+
+        def test_all_cards_hidden_under_bl_house(self, client: httpx.Client) -> None:
+            """bl_house hides the whole first hand: every card has exactly
+            {hidden: true}."""
+            gamestate = _reach_boss_selecting_hand(client, "bl_house")
+            cards = gamestate["hand"]["cards"]
+            assert cards, "expected a dealt hand"
+            for card in cards:
+                assert card["state"] == {"hidden": True}, card
+
+        def test_face_cards_hidden_under_bl_mark(self, client: httpx.Client) -> None:
+            """bl_mark hides face cards (J/Q/K): faces get exactly
+            {hidden: true}; numbered cards stay visible (not hidden)."""
+            gamestate = _reach_boss_selecting_hand(client, "bl_mark")
+            cards = gamestate["hand"]["cards"]
+            faces = [c for c in cards if c["value"].get("rank") in _FACE_RANKS]
+            numbered = [c for c in cards if c["value"].get("rank") not in _FACE_RANKS]
+            assert faces, "expected at least one face card in the dealt hand"
+            for card in faces:
+                assert card["state"] == {"hidden": True}, card
+            for card in numbered:
+                assert not _is_card_hidden(card), card
 
     class TestGamestateCardStateHighlight:
         """Test gamestate card state highlight."""
