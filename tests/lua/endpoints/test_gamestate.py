@@ -56,6 +56,28 @@ class TestGamestateTopLevel:
         gamestate = load_fixture(client, "gamestate", fixture_name)
         assert gamestate["seed"] == "TEST123"
 
+    def test_challenge_absent_in_normal_run(self, client: httpx.Client) -> None:
+        """Normal run: the challenge key is omitted, not null.
+
+        The extractor guards with ``if G.GAME.challenge then``, so a
+        non-challenge run (G.GAME.challenge is nil) has no challenge key at
+        all — the contract is conditional absence.
+        """
+        fixture_name = "state-BLIND_SELECT--deck-b_blue--stake-stake_red"
+        gamestate = load_fixture(client, "gamestate", fixture_name)
+        assert "challenge" not in gamestate
+
+    def test_challenge_present_during_challenge_run(self, client: httpx.Client) -> None:
+        """Challenge run: the challenge key holds the bare challenge id.
+
+        test_start.py owns the broader challenge-run matrix (deck/stake/seed/
+        effect/conflict); this pins the gamestate extractor's positive branch.
+        """
+        api(client, "menu", {})
+        response = api(client, "start", {"challenge": "c_omelette_1"})
+        gamestate = assert_gamestate_response(response, state="BLIND_SELECT")
+        assert gamestate["challenge"] == "c_omelette_1"
+
     def test_money_extraction(self, client: httpx.Client) -> None:
         """Test money field after using `set` to modify it."""
         fixture_name = "state-BLIND_SELECT--deck-b_blue--stake-stake_red"
