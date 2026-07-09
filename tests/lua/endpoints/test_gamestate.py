@@ -1173,13 +1173,94 @@ class TestGamestateCardModifiers:
         }
 
 
+# --- helpers for Card.State tests ---------------------------------------------
+def _reach_boss_selecting_hand(client: httpx.Client, boss_key: str) -> dict:
+    """Drive to SELECTING_HAND with a specific boss blind active.
+
+    Loads the Small-blind BLIND_SELECT fixture, injects ``boss_key`` as the
+    upcoming Boss via ``set``, skips Small and Big, then selects the Boss. The
+    dealt hand has the boss's debuff rules already applied
+    (``Blind:debuff_card`` → ``card:set_debuff``).
+    """
+    load_fixture(client, "skip", "state-BLIND_SELECT--blinds.small.status-SELECT")
+    api(client, "set", {"boss": boss_key})
+    api(client, "skip")  # skip Small → Big on deck
+    api(client, "skip")  # skip Big   → Boss on deck
+    return assert_gamestate_response(api(client, "select"), state="SELECTING_HAND")
+
+
+def _is_card_debuffed(card: dict) -> bool:
+    """True iff the gamestate card is debuffed.
+
+    Robust to the empty-state ``[]`` serialization quirk: a card with no state
+    flags has ``state == []`` (rxi/json.lua renders empty tables as arrays),
+    so we guard the dict access.
+    """
+    state = card.get("state")
+    return isinstance(state, dict) and state.get("debuff") is True
+
+
+# Face-card ranks (J/Q/K) — debuffed by The Plant (bl_plant).
+_FACE_RANKS = {"J", "Q", "K"}
+
+# Suit-debuff bosses → the gamestate suit enum they debuff (single-letter).
+# Each boss in Blind:debuff_card matches `self.debuff.suit`; the gamestate
+# exposes suits via convert_suit_to_enum (Clubs→C, Spades→S, Hearts→H,
+# Diamonds→D).
+_SUIT_DEBUFF_BOSSES = {
+    "bl_club": "C",
+    "bl_goad": "S",
+    "bl_head": "H",
+    "bl_window": "D",
+}
+
+
 class TestGamestateCardStates:
     """Test gamestate card states."""
 
     class TestGamestateCardStateDebuff:
-        """Test gamestate card state debuff."""
+        """state.debuff: applied by boss blinds via Blind:debuff_card.
 
-        # TODO: add later
+        Reached by injecting a debuff boss (``set``), skipping Small+Big, and
+        selecting the Boss — landing in SELECTING_HAND with the boss's debuff
+        rules applied to the dealt hand. The extractor is a pass-through
+        (``if card.debuff then state.debuff = true``); tests pin it for two
+        distinct debuff triggers: suit (bl_club → Clubs) and face (bl_plant).
+        """
+
+        @pytest.mark.parametrize("boss,suit", list(_SUIT_DEBUFF_BOSSES.items()))
+        def test_suit_cards_debuffed(
+            self, client: httpx.Client, boss: str, suit: str
+        ) -> None:
+            """Suit-debuff bosses: cards of the boss's suit get exactly
+            {debuff: true}; all others stay un-debuffed.
+
+            The positive case is conditional on the seed-dependent dealt hand
+            containing that suit (an 8-card hand may miss any one suit); the
+            negative assertions always run, and test_face_cards_debuffed_
+            under_bl_plant below guarantees a positive hit for the extractor.
+            """
+            gamestate = _reach_boss_selecting_hand(client, boss)
+            cards = gamestate["hand"]["cards"]
+            matching = [c for c in cards if c["value"].get("suit") == suit]
+            others = [c for c in cards if c["value"].get("suit") != suit]
+            for card in matching:
+                assert card["state"] == {"debuff": True}, card
+            for card in others:
+                assert not _is_card_debuffed(card), card
+
+        def test_face_cards_debuffed_under_bl_plant(self, client: httpx.Client) -> None:
+            """bl_plant debuffs face cards (J/Q/K): faces get exactly
+            {debuff: true}, numbered cards stay un-debuffed."""
+            gamestate = _reach_boss_selecting_hand(client, "bl_plant")
+            cards = gamestate["hand"]["cards"]
+            faces = [c for c in cards if c["value"].get("rank") in _FACE_RANKS]
+            numbered = [c for c in cards if c["value"].get("rank") not in _FACE_RANKS]
+            assert faces, "expected at least one face card in the dealt hand"
+            for card in faces:
+                assert card["state"] == {"debuff": True}, card
+            for card in numbered:
+                assert not _is_card_debuffed(card), card
 
     class TestGamestateCardStateHidden:
         """Test gamestate card state hidden."""
