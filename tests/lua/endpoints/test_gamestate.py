@@ -243,6 +243,49 @@ class TestGamestateBlinds:
         assert gamestate["blinds"]["big"]["status"] == "SELECT"
         assert gamestate["blinds"]["boss"]["status"] == "UPCOMING"
 
+    @pytest.mark.parametrize(
+        "fixture,expected",
+        [
+            # True: Director's Cut + affordable ($20 >= $10).
+            (
+                "state-BLIND_SELECT--blinds.boss.status-SELECT"
+                "--used_vouchers.v_directors_cut-1--money-20",
+                True,
+            ),
+            # False: voucher held but unaffordable ($5 < $10).
+            (
+                "state-BLIND_SELECT--blinds.boss.status-SELECT"
+                "--used_vouchers.v_directors_cut-1--money-5",
+                False,
+            ),
+            # False: no reroll voucher at all.
+            ("state-BLIND_SELECT--blinds.boss.status-SELECT", False),
+            # True: Retcon (unlimited rerolls) + affordable ($30).
+            (
+                "state-BLIND_SELECT--blinds.boss.status-SELECT"
+                "--used_vouchers.v_retcon-1--money-30",
+                True,
+            ),
+        ],
+        ids=["directors_cut_affordable", "directors_cut_poor", "no_voucher", "retcon"],
+    )
+    def test_boss_reroll_available_gate(
+        self,
+        client: httpx.Client,
+        fixture: str,
+        expected: bool,
+    ) -> None:
+        """Extractor reports reroll_available per the gate in get_blinds_info:
+        affordable (dollars - bankrupt_at >= 10) AND (v_retcon OR
+        (v_directors_cut AND not boss_rerolled)).
+
+        Pins the gamestate-extractor contract for the static branches.
+        test_reroll_boss.py owns the full endpoint-behavior matrix, including
+        the post-reroll (boss_rerolled → False) and Retcon-stays-True cases.
+        """
+        gamestate = load_fixture(client, "reroll_boss", fixture)
+        assert gamestate["blinds"]["boss"]["reroll_available"] is expected
+
 
 class TestGamestateAreas:
     """Test gamestate areas extraction."""
