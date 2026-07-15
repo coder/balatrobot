@@ -153,6 +153,38 @@ local function setup()
   G.F_VERBOSE = BB_SETTINGS.debug
   G.PROFILES[profile_num].all_unlocked = true
 
+  -- all_unlocked bypasses locks but not G.P_CENTERS[*].discovered; mirror
+  -- G.FUNCS.unlock_all so fixtures stay portable across hosts (issue #220).
+  local function bb_force_unlock()
+    for _, centers in ipairs({ G.P_CENTERS, G.P_BLINDS, G.P_TAGS }) do
+      for _, v in pairs(centers) do
+        if not v.demo and not v.wip then
+          v.alerted = true
+          v.discovered = true
+          v.unlocked = true
+        end
+      end
+    end
+  end
+
+  -- Prototypes load before setup(), so force-discover now.
+  if G.P_CENTERS and next(G.P_CENTERS) then
+    bb_force_unlock()
+    sendInfoMessage("Forced all centers discovered/unlocked", "BB.SETTINGS")
+  end
+
+  -- Re-apply on profile reload; the inner name check keeps other profiles safe.
+  local _init_item_prototypes = Game.init_item_prototypes
+  ---@diagnostic disable-next-line: duplicate-set-field
+  Game.init_item_prototypes = function(self)
+    _init_item_prototypes(self)
+    local p = G.PROFILES and G.SETTINGS and G.SETTINGS.profile
+      and G.PROFILES[G.SETTINGS.profile]
+    if p and p.name == "BalatroBot" then
+      bb_force_unlock()
+    end
+  end
+
   -- Apply settings profile (default if none specified)
   BB_SETTINGS.settings = BB_SETTINGS.settings or "default"
   apply_profile(BB_SETTINGS.settings)
