@@ -4,6 +4,7 @@ These are pure unit tests: ``shutil.which`` and ``subprocess.run`` are mocked
 so no docker daemon or balatrobox image is required.
 """
 
+from pathlib import Path
 from unittest.mock import MagicMock
 
 import pytest
@@ -207,3 +208,21 @@ class TestDockerBuildCmd:
         cmd = launcher.build_cmd(Config(port=14001))
 
         assert not any(a.endswith(":rw") for a in cmd)
+
+    def test_instance_dir_mounted_and_forwarded(self, monkeypatch):
+        """Per-instance log dir is mounted rw and BALATROBOT_LOG_DIR forwarded."""
+        monkeypatch.setattr("os.environ", {})
+        launcher = DockerLauncher()
+        launcher.instance_dir = Path("/host/inst")
+        cmd = launcher.build_cmd(Config(port=14001))
+
+        assert "/host/inst:/host/inst:rw" in cmd
+        assert "BALATROBOT_LOG_DIR=/host/inst" in cmd
+
+    def test_no_instance_dir_mount_when_unset(self, monkeypatch):
+        """No instance-dir mount or BALATROBOT_LOG_DIR before start() sets it."""
+        monkeypatch.setattr("os.environ", {})
+        launcher = DockerLauncher()
+        cmd = launcher.build_cmd(Config(port=14001))
+
+        assert not any(a.startswith("BALATROBOT_LOG_DIR=") for a in cmd)

@@ -109,5 +109,15 @@ class DockerLauncher(BaseLauncher):
             if value is not None:
                 cmd += ["-e", f"{env_var}={value}"]
 
+        # Per-instance log directory
+        instance_dir = getattr(self, "instance_dir", None)
+        if instance_dir is not None:
+            cmd += [
+                "-v",
+                f"{instance_dir}:{instance_dir}:rw",
+                "-e",
+                f"BALATROBOT_LOG_DIR={instance_dir}",
+            ]
+
         cmd.append(IMAGE)
         return cmd

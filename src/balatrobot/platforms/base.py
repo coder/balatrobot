@@ -56,6 +56,8 @@ class BaseLauncher(ABC):
         self.validate_paths(config)
         env = self.build_env(config)
         env["BALATROBOT_LOG_DIR"] = str(instance_dir.resolve())
+        # Expose instance dir so docker can bind-mount it.
+        self.instance_dir = instance_dir.resolve()
         cmd = self.build_cmd(config)
 
         log_path = instance_dir / "balatro.log"
