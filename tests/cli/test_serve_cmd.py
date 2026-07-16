@@ -23,7 +23,7 @@ class TestServeCommand:
 
     def test_serve_valid_platforms(self):
         """All valid platforms in list."""
-        assert PLATFORM_CHOICES == ["darwin", "linux", "windows", "native"]
+        assert PLATFORM_CHOICES == ["darwin", "linux", "windows", "native", "docker"]
 
     # --- Num instances validation tests ---
 

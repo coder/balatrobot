@@ -308,6 +308,45 @@ uvx balatrobot serve --platform native --path-balatro /path/to/balatro/source
     windowrulev2 = suppressevent activate, class:^(love)$, title:^(Balatro)$
     ```
 
+### Docker Platform
+
+The `docker` platform runs the [`balatrobox`](https://github.com/coder/balatrobox) reference image — a container with LOVE + Lovely + Steamodded + the balatrobot mod pre-baked. One container = one Balatro process. balatrobot never touches game files on the host; it only drives the container through the same JSON-RPC API.
+
+**Requirements:**
+
+- Docker installed and the daemon running
+- The image built once from the balatrobox repo: `docker build -t balatrobox .`
+
+**Launch:**
+
+```bash
+# Spin up 2 containers and drive them through the usual pool/list/stop commands
+uvx balatrobot serve --platform docker --num 2
+uvx balatrobot list
+uvx balatrobot api health --index 1
+```
+
+**Streaming (HLS):** Set `BALATROBOX_STREAM=1` on the host. The pool allocates one stream port per instance (mapped to the container's internal `:8080`) and `balatrobot list` prints each `stream` URL:
+
+```bash
+export BALATROBOX_STREAM=1
+uvx balatrobot serve --platform docker --num 2
+uvx balatrobot list   # rpc urls + stream urls
+mpv <stream_url>      # e.g. http://127.0.0.1:<stream_port>/index.m3u8
+```
+
+**Mounting local checkouts (optional):** The docker platform reads these host env vars and translates them into read-only bind mounts — handy for developing balatrobot, the game source, or the DebugPlus mod without rebuilding the image:
+
+| Env var                 | Mounts to                               |
+| ----------------------- | --------------------------------------- |
+| `BALATROSRC_LOCAL_REPO` | `/app/balatro:ro` (game source)         |
+| `BALATROBOT_LOCAL_REPO` | `/mods/balatrobot:ro` (this mod)        |
+| `DEBUGPLUS_LOCAL_REPO`  | `/mods/DebugPlus:ro` (debug dependency) |
+
+All other `BALATROBOX_*` and `BALATROSRC_GITHUB_*` / `BALATROBOT_GITHUB_*` vars are forwarded into the container verbatim when set (see the balatrobox README). `BALATROBOX_PLATFORM` is a build/run-arch concern and is ignored.
+
+**Mounting extra host paths (optional):** `BALATROBOT_DOCKER_MOUNT` is a colon-separated list of host paths bind-mounted **read-write at their identical path** inside the container. Because the `load`/`save` endpoints open the exact path string they receive, these are identity mounts (same path inside and out). The test suite sets this automatically when `BALATROBOT_PLATFORM=docker` to expose `tests/fixtures/` and a temp dir to the container.
+
 ## Troubleshooting
 
 **Connection refused**: Ensure Balatro is running and the mod loaded successfully. Check logs in `logs/{timestamp}/{port}/balatro.log` for errors. Verify the in-game profile is named exactly `"BalatroBot"`.

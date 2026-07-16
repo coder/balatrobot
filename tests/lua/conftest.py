@@ -78,6 +78,10 @@ def pytest_configure(config):
     config._balatro_ports = ports
     config._balatro_parallel = parallel
 
+    if os.environ.get("BALATROBOT_PLATFORM") == "docker":
+        repo_root = Path(__file__).parent.parent.parent.resolve()
+        os.environ["BALATROBOT_DOCKER_MOUNTS"] = str(repo_root)
+
     # Start instances
     base_config = Config.from_env()
     instances: list[BalatroInstance] = []

@@ -50,6 +50,14 @@ class TestGetLauncher:
         assert "linux" in VALID_PLATFORMS
         assert "windows" in VALID_PLATFORMS
         assert "native" in VALID_PLATFORMS
+        assert "docker" in VALID_PLATFORMS
+
+    def test_docker_returns_docker_launcher(self):
+        """'docker' returns DockerLauncher."""
+        from balatrobot.platforms.docker import DockerLauncher
+
+        launcher = get_launcher("docker")
+        assert isinstance(launcher, DockerLauncher)
 
 
 @pytest.mark.skipif(not IS_MACOS, reason="macOS only")

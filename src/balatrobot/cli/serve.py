@@ -16,7 +16,7 @@ from balatrobot.pool import BalatroPool
 from balatrobot.state import StateFile, StateFileBusy, default_state_path
 
 # Platform choices for validation
-PLATFORM_CHOICES = ["darwin", "linux", "windows", "native"]
+PLATFORM_CHOICES = ["darwin", "linux", "windows", "native", "docker"]
 
 # Regex for valid settings profile names
 _SETTINGS_RE = re.compile(r"^[a-zA-Z0-9][a-zA-Z0-9_-]*$")
@@ -142,7 +142,10 @@ def serve(
     ] = None,
     platform: Annotated[
         str | None,
-        typer.Option("--platform", help="Platform (darwin, linux, windows, native)"),
+        typer.Option(
+            "--platform",
+            help="Platform (darwin, linux, windows, native, docker)",
+        ),
     ] = None,
     logs: Annotated[
         str | None, typer.Option("--logs", help="Log directory (parent of sessions)")
