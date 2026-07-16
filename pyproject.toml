@@ -44,7 +44,7 @@ lint.task-tags = ["FIX", "TODO", "HACK", "WARN", "PERF", "NOTE", "TEST"]
 [tool.pytest.ini_options]
 asyncio_mode = "auto"
 asyncio_default_fixture_loop_scope = "session"
-addopts = "--dist loadscope"
+addopts = "--basetemp=.pytest_tmp --dist loadscope"
 markers = [
   "dev: marks tests currently being developed (run with `-m dev`, remove when done)",
 ]
