@@ -194,6 +194,7 @@ class StateFile:
                         log_path=Path(inst["log_path"])
                         if inst["log_path"] is not None
                         else None,
+                        stream_port=inst.get("stream_port"),
                     )
             raise InstanceNotFoundError(index=None, total=len(instances))
 
@@ -207,6 +208,7 @@ class StateFile:
             host=inst["host"],
             port=inst["port"],
             log_path=Path(inst["log_path"]) if inst["log_path"] is not None else None,
+            stream_port=inst.get("stream_port"),
         )
 
     # -- Write / Delete ----------------------------------------------------
@@ -237,6 +239,7 @@ class StateFile:
                     "log_path": str(info.log_path)
                     if info.log_path is not None
                     else None,
+                    "stream_port": info.stream_port,
                 }
                 for info in instances
             ],

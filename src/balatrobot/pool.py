@@ -1,6 +1,7 @@
 """BalatroPool — manages N BalatroInstance instances."""
 
 import asyncio
+import os
 from datetime import datetime
 
 from balatrobot.config import Config
@@ -71,6 +72,13 @@ class BalatroPool:
 
             ports = allocate_ports(self._n)
 
+        if os.environ.get("BALATROBOX_STREAM") == "1":
+            from balatrobot.state import allocate_ports
+
+            stream_ports = allocate_ports(len(ports))
+        else:
+            stream_ports = [None] * len(ports)
+
         # Generate shared session directory name (timestamp)
         self._session_name = datetime.now().strftime("%Y-%m-%dT%H-%M-%S")
 
@@ -79,17 +87,23 @@ class BalatroPool:
         self._infos = []
 
         try:
-            for port in ports:
+            for port, stream_port in zip(ports, stream_ports):
+                overrides: dict[str, object] = {"port": port}
+                if stream_port is not None:
+                    overrides["stream_port"] = stream_port
                 inst = BalatroInstance(
                     self._config,
                     session_name=self._session_name,
-                    port=port,
+                    **overrides,
                 )
                 await inst.start()
                 self._instances.append(inst)
                 self._infos.append(
                     InstanceInfo(
-                        host=self._config.host, port=port, log_path=inst.log_path
+                        host=self._config.host,
+                        port=port,
+                        log_path=inst.log_path,
+                        stream_port=stream_port,
                     )
                 )
         except Exception:

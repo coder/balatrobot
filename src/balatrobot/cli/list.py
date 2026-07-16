@@ -30,6 +30,8 @@ def list_cmd(
     typer.echo(f"Started: {started_at}")
     typer.echo(f"Instances ({len(instances)}):")
     for i, inst in enumerate(instances):
-        typer.echo(
-            f"  [{i}] http://{inst['host']}:{inst['port']}  log: {inst['log_path']}"
-        )
+        line = f"  [{i}] http://{inst['host']}:{inst['port']}  log: {inst['log_path']}"
+        stream_port = inst.get("stream_port")
+        if stream_port is not None:
+            line += f"  stream: http://{inst['host']}:{stream_port}/index.m3u8"
+        typer.echo(line)

@@ -20,11 +20,19 @@ class InstanceInfo:
     host: str
     port: int
     log_path: Path | None = None
+    stream_port: int | None = None
 
     @property
     def url(self) -> str:
         """Full HTTP URL for this instance."""
         return f"http://{self.host}:{self.port}"
+
+    @property
+    def stream_url(self) -> str | None:
+        """HLS stream URL when streaming is enabled, else None."""
+        if self.stream_port is None:
+            return None
+        return f"http://{self.host}:{self.stream_port}/index.m3u8"
 
 
 HEALTH_TIMEOUT = 30.0

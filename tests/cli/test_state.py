@@ -304,6 +304,48 @@ class TestStateFileResolve:
         with pytest.raises(InstanceNotFoundError):
             StateFile.resolve(host="127.0.0.1", port=99999)
 
+    def test_resolve_stream_port_present(self, tmp_path, monkeypatch):
+        """resolve() surfaces stream_port when recorded."""
+        state_path = tmp_path / "state.json"
+        state_data = {
+            "pid": os.getpid(),
+            "started_at": "2026-05-28T12:00:00Z",
+            "instances": [
+                {
+                    "host": "127.0.0.1",
+                    "port": 14001,
+                    "log_path": "/tmp/logs/s/14001.log",
+                    "stream_port": 8081,
+                }
+            ],
+        }
+        state_path.write_text(json.dumps(state_data))
+        monkeypatch.setenv("BALATROBOT_STATE_DIR", str(tmp_path))
+
+        info = StateFile.resolve()
+        assert info.stream_port == 8081
+        assert info.stream_url == "http://127.0.0.1:8081/index.m3u8"
+
+    def test_resolve_stream_port_missing_is_none(self, tmp_path, monkeypatch):
+        """resolve() yields stream_port=None for legacy state files."""
+        state_path = tmp_path / "state.json"
+        state_data = {
+            "pid": os.getpid(),
+            "started_at": "2026-05-28T12:00:00Z",
+            "instances": [
+                {
+                    "host": "127.0.0.1",
+                    "port": 14001,
+                    "log_path": "/tmp/logs/s/14001.log",
+                }
+            ],
+        }
+        state_path.write_text(json.dumps(state_data))
+        monkeypatch.setenv("BALATROBOT_STATE_DIR", str(tmp_path))
+
+        info = StateFile.resolve()
+        assert info.stream_port is None
+
 
 # ============================================================================
 # StateFile.write / delete tests
@@ -342,6 +384,21 @@ class TestStateFileWriteDelete:
         instances = [InstanceInfo(host="127.0.0.1", port=14001)]
         StateFile.write(state_path, pid=os.getpid(), instances=instances)
         assert state_path.exists()
+
+    def test_write_persists_stream_port(self, tmp_path):
+        """write() records stream_port on each instance."""
+        from balatrobot.instance import InstanceInfo
+
+        state_path = tmp_path / "state.json"
+        instances = [
+            InstanceInfo(host="127.0.0.1", port=14001, stream_port=8081),
+            InstanceInfo(host="127.0.0.1", port=14002, stream_port=None),
+        ]
+        StateFile.write(state_path, pid=os.getpid(), instances=instances)
+
+        data = json.loads(state_path.read_text())
+        assert data["instances"][0]["stream_port"] == 8081
+        assert data["instances"][1]["stream_port"] is None
 
     def test_write_creates_parent_dir(self, tmp_path):
         """write() creates parent directories if they don't exist."""

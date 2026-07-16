@@ -54,6 +54,9 @@ class Config:
     platform: str | None = None
     logs: str | None = None
 
+    # Set if BALATROBOX_STREAM=1 and BALATROBOT_PLATFORM=docker
+    stream_port: int | None = None
+
     def __post_init__(self) -> None:
         if self.render not in RENDER_CHOICES:
             raise ValueError(

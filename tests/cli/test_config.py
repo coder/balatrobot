@@ -66,6 +66,25 @@ class TestConfigDefaults:
         assert config.platform is None
 
 
+class TestConfigStreamPort:
+    """Tests for the stream_port field (Python-only override, not in ENV_MAP)."""
+
+    def test_default_none(self, clean_env):
+        """stream_port defaults to None."""
+        config = Config()
+        assert config.stream_port is None
+
+    def test_explicit_value(self):
+        """stream_port accepts an int."""
+        config = Config(stream_port=8080)
+        assert config.stream_port == 8080
+
+    def test_not_serialized_to_env(self):
+        """stream_port is Python-only — never emitted by to_env()."""
+        config = Config(stream_port=8080)
+        assert "BALATROBOT_STREAM_PORT" not in config.to_env()
+
+
 class TestConfigRenderValidation:
     """Tests for render mode validation in Config."""
 

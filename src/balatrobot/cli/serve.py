@@ -198,7 +198,10 @@ async def _serve(config: Config, n: int) -> None:
         pool = server.pool
         assert pool is not None
         for i, info in enumerate(pool.instances):
-            typer.echo(f"Instance [{i}]: {info.url}")
+            line = f"Instance [{i}]: {info.url}"
+            if info.stream_url is not None:
+                line += f"  stream: {info.stream_url}"
+            typer.echo(line)
         typer.echo(
             f"Session: {pool.session_name} | Logs: {config.logs or 'logs'}/{pool.session_name}/"
         )

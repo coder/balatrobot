@@ -55,6 +55,26 @@ class TestInstanceInfo:
         b = InstanceInfo(host="127.0.0.1", port=9999)
         assert a != b
 
+    def test_stream_port_default_none(self):
+        """stream_port defaults to None."""
+        info = InstanceInfo(host="127.0.0.1", port=12346)
+        assert info.stream_port is None
+
+    def test_stream_port_set(self):
+        """stream_port is stored."""
+        info = InstanceInfo(host="127.0.0.1", port=12346, stream_port=8080)
+        assert info.stream_port == 8080
+
+    def test_stream_url_none_when_no_stream_port(self):
+        """stream_url is None when stream_port is unset."""
+        info = InstanceInfo(host="127.0.0.1", port=12346)
+        assert info.stream_url is None
+
+    def test_stream_url_built_from_host_and_stream_port(self):
+        """stream_url is the HLS endpoint when stream_port is set."""
+        info = InstanceInfo(host="127.0.0.1", port=12346, stream_port=8080)
+        assert info.stream_url == "http://127.0.0.1:8080/index.m3u8"
+
 
 # ============================================================================
 # BalatroPool tests
@@ -375,5 +395,69 @@ class TestBalatroPoolConfigDerivation:
         # All instances share the same session name
         assert len(set(captured_session_names)) == 1
         assert captured_session_names[0] is not None
+
+        await pool.stop()
+
+
+class TestBalatroPoolStreamPorts:
+    """Tests for BALATROBOX_STREAM-driven stream-port allocation."""
+
+    @pytest.mark.asyncio
+    async def test_no_stream_ports_when_env_unset(self, tmp_path, monkeypatch):
+        """stream_port override is not passed when BALATROBOX_STREAM is unset."""
+        monkeypatch.delenv("BALATROBOX_STREAM", raising=False)
+        config = Config(logs=str(tmp_path))
+
+        captured = []
+
+        def factory(config_arg, **kwargs):
+            captured.append(kwargs)
+            inst = MagicMock(spec=BalatroInstance)
+            inst.port = kwargs.get("port")
+            inst.log_path = Path(f"/tmp/test-logs/{kwargs.get('port')}.log")
+            inst.start = AsyncMock()
+            inst.stop = AsyncMock()
+            return inst
+
+        with patch("balatrobot.pool.BalatroInstance", side_effect=factory):
+            pool = BalatroPool(config, ports=[14001, 14002])
+            await pool.start()
+
+        for kw in captured:
+            assert "stream_port" not in kw
+        for info in pool.instances:
+            assert info.stream_port is None
+
+        await pool.stop()
+
+    @pytest.mark.asyncio
+    async def test_allocates_stream_ports_when_env_set(self, tmp_path, monkeypatch):
+        """BALATROBOX_STREAM=1 allocates one stream port per instance."""
+        monkeypatch.setenv("BALATROBOX_STREAM", "1")
+        config = Config(logs=str(tmp_path))
+
+        captured = []
+
+        def factory(config_arg, **kwargs):
+            captured.append(kwargs)
+            inst = MagicMock(spec=BalatroInstance)
+            inst.port = kwargs.get("port")
+            inst.log_path = Path(f"/tmp/test-logs/{kwargs.get('port')}.log")
+            inst.start = AsyncMock()
+            inst.stop = AsyncMock()
+            return inst
+
+        with patch("balatrobot.pool.BalatroInstance", side_effect=factory):
+            pool = BalatroPool(config, ports=[14001, 14002])
+            await pool.start()
+
+        # One stream_port override per instance, all distinct.
+        stream_ports = [kw.get("stream_port") for kw in captured]
+        assert len(stream_ports) == 2
+        assert len(set(stream_ports)) == 2
+        # InstanceInfo carries the same stream ports.
+        infos = pool.instances
+        assert {i.stream_port for i in infos} == set(stream_ports)
+        assert all(i.stream_url is not None for i in infos)
 
         await pool.stop()
