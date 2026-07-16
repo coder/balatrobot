@@ -665,6 +665,17 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#docker-platform" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Docker Platform
+      
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -1024,6 +1035,17 @@
     <span class="md-ellipsis">
       
         Native Platform (Linux Only)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#docker-platform" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Docker Platform
       
     </span>
   </a>
@@ -1420,6 +1442,50 @@ On error, prints <code>Error: NAME - message</code> to stderr (exit code 1).</p>
 </span><span id="__span-13-16"><span class="na">windowrulev2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">suppressevent activate, class:^(love)$, title:^(Balatro)$</span>
 </span></code></pre></div>
 </details>
+<h3 id="docker-platform">Docker Platform</h3>
+<p>The <code>docker</code> platform runs the <a href="https://github.com/coder/balatrobox"><code>balatrobox</code></a> reference image — a container with LOVE + Lovely + Steamodded + the balatrobot mod pre-baked. One container = one Balatro process. balatrobot never touches game files on the host; it only drives the container through the same JSON-RPC API.</p>
+<p><strong>Requirements:</strong></p>
+<ul>
+<li>Docker installed and the daemon running</li>
+<li>The image built once from the balatrobox repo: <code>docker build -t balatrobox .</code></li>
+</ul>
+<p><strong>Launch:</strong></p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-14-1"><span class="c1"># Spin up 2 containers and drive them through the usual pool/list/stop commands</span>
+</span><span id="__span-14-2">uvx<span class="w"> </span>balatrobot<span class="w"> </span>serve<span class="w"> </span>--platform<span class="w"> </span>docker<span class="w"> </span>--num<span class="w"> </span><span class="m">2</span>
+</span><span id="__span-14-3">uvx<span class="w"> </span>balatrobot<span class="w"> </span>list
+</span><span id="__span-14-4">uvx<span class="w"> </span>balatrobot<span class="w"> </span>api<span class="w"> </span>health<span class="w"> </span>--index<span class="w"> </span><span class="m">1</span>
+</span></code></pre></div>
+<p><strong>Streaming (HLS):</strong> Set <code>BALATROBOX_STREAM=1</code> on the host. The pool allocates one stream port per instance (mapped to the container's internal <code>:8080</code>) and <code>balatrobot list</code> prints each <code>stream</code> URL:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-15-1"><span class="nb">export</span><span class="w"> </span><span class="nv">BALATROBOX_STREAM</span><span class="o">=</span><span class="m">1</span>
+</span><span id="__span-15-2">uvx<span class="w"> </span>balatrobot<span class="w"> </span>serve<span class="w"> </span>--platform<span class="w"> </span>docker<span class="w"> </span>--num<span class="w"> </span><span class="m">2</span>
+</span><span id="__span-15-3">uvx<span class="w"> </span>balatrobot<span class="w"> </span>list<span class="w">   </span><span class="c1"># rpc urls + stream urls</span>
+</span><span id="__span-15-4">mpv<span class="w"> </span>&lt;stream_url&gt;<span class="w">      </span><span class="c1"># e.g. http://127.0.0.1:&lt;stream_port&gt;/index.m3u8</span>
+</span></code></pre></div>
+<p><strong>Mounting local checkouts (optional):</strong> The docker platform reads these host env vars and translates them into read-only bind mounts — handy for developing balatrobot, the game source, or the DebugPlus mod without rebuilding the image:</p>
+<table>
+<thead>
+<tr>
+<th>Env var</th>
+<th>Mounts to</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>BALATROSRC_LOCAL_REPO</code></td>
+<td><code>/app/balatro:ro</code> (game source)</td>
+</tr>
+<tr>
+<td><code>BALATROBOT_LOCAL_REPO</code></td>
+<td><code>/mods/balatrobot:ro</code> (this mod)</td>
+</tr>
+<tr>
+<td><code>DEBUGPLUS_LOCAL_REPO</code></td>
+<td><code>/mods/DebugPlus:ro</code> (debug dependency)</td>
+</tr>
+</tbody>
+</table>
+<p>All other <code>BALATROBOX_*</code> and <code>BALATROSRC_GITHUB_*</code> / <code>BALATROBOT_GITHUB_*</code> vars are forwarded into the container verbatim when set (see the balatrobox README). <code>BALATROBOX_PLATFORM</code> is a build/run-arch concern and is ignored.</p>
+<p><strong>Mounting extra host paths (optional):</strong> <code>BALATROBOT_DOCKER_MOUNT</code> is a colon-separated list of host paths bind-mounted <strong>read-write at their identical path</strong> inside the container. Because the <code>load</code>/<code>save</code> endpoints open the exact path string they receive, these are identity mounts (same path inside and out). The test suite sets this automatically when <code>BALATROBOT_PLATFORM=docker</code> to expose <code>tests/fixtures/</code> and a temp dir to the container.</p>
 <h2 id="troubleshooting">Troubleshooting</h2>
 <p><strong>Connection refused</strong>: Ensure Balatro is running and the mod loaded successfully. Check logs in <code>logs/{timestamp}/{port}/balatro.log</code> for errors. Verify the in-game profile is named exactly <code>"BalatroBot"</code>.</p>
 <p><strong>Mod not loading</strong>: Verify that Lovely Injector and Steamodded are installed correctly. Ensure you have a Balatro profile named <code>"BalatroBot"</code> and it is selected.</p>
