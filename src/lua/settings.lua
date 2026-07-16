@@ -178,8 +178,7 @@ local function setup()
   ---@diagnostic disable-next-line: duplicate-set-field
   Game.init_item_prototypes = function(self)
     _init_item_prototypes(self)
-    local p = G.PROFILES and G.SETTINGS and G.SETTINGS.profile
-      and G.PROFILES[G.SETTINGS.profile]
+    local p = G.PROFILES and G.SETTINGS and G.SETTINGS.profile and G.PROFILES[G.SETTINGS.profile]
     if p and p.name == "BalatroBot" then
       bb_force_unlock()
     end
