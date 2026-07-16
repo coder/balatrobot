@@ -11,11 +11,17 @@ RESET  := \033[0m
 # Print helper
 PRINT = printf "%b\n"
 
-# Max pytest-xdist workers
-MAX_XDIST ?= 6
-
-# Compute worker count using Python (cross-platform)
-XDIST_WORKERS := $(shell MAX_XDIST=$(MAX_XDIST) python -c "import multiprocessing as mp, os; print(min(mp.cpu_count(), int(os.environ.get('MAX_XDIST', 6))))")
+# Worker counts tuned per platform
+XDIST_CLI_WORKERS ?= 2
+ifndef XDIST_LUA_WORKERS
+ifeq ($(BALATROBOT_PLATFORM),darwin)
+  XDIST_LUA_WORKERS := 6
+else ifeq ($(BALATROBOT_PLATFORM),docker)
+  XDIST_LUA_WORKERS := 4
+else
+  XDIST_LUA_WORKERS := 2
+endif
+endif
 
 help: ## Show this help message
 	@$(PRINT) "$(BLUE)BalatroBot Development Makefile$(RESET)"
@@ -72,10 +78,10 @@ fixtures: ## Generate fixtures
 	python tests/fixtures/generate.py
 
 test: ## Run all tests
-	@$(PRINT) "$(YELLOW)Running tests/cli with 2 workers...$(RESET)"
-	pytest -n 2 tests/cli
-	@$(PRINT) "$(YELLOW)Running tests/lua with $(XDIST_WORKERS) workers...$(RESET)"
-	pytest -n $(XDIST_WORKERS) tests/lua
+	@$(PRINT) "$(YELLOW)Running tests/cli with $(XDIST_CLI_WORKERS) workers...$(RESET)"
+	pytest -n $(XDIST_CLI_WORKERS) tests/cli
+	@$(PRINT) "$(YELLOW)Running tests/lua with $(XDIST_LUA_WORKERS) workers...$(RESET)"
+	pytest -n $(XDIST_LUA_WORKERS) tests/lua
 
 
 all: lint format typecheck test ## Run all code quality checks and tests
