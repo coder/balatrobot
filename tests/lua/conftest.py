@@ -4,8 +4,6 @@ import asyncio
 import json
 import os
 import random
-import tempfile
-import uuid
 from pathlib import Path
 from typing import Any, AsyncGenerator, Generator
 
@@ -259,16 +257,6 @@ def get_fixture_path(endpoint: str, fixture_name: str) -> Path:
     """
     fixtures_dir = Path(__file__).parent.parent / "fixtures"
     return fixtures_dir / endpoint / f"{fixture_name}.jkr"
-
-
-def create_temp_save_path() -> Path:
-    """Create a temporary path for save files.
-
-    Returns:
-        Path to a temporary .jkr file in the system temp directory.
-    """
-    temp_dir = Path(tempfile.gettempdir())
-    return temp_dir / f"balatrobot_test_{uuid.uuid4().hex[:8]}.jkr"
 
 
 def load_fixture(
