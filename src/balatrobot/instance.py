@@ -100,7 +100,7 @@ class BalatroInstance:
                     data = response.json()
                     if "result" in data and data["result"].get("status") == "ok":
                         return
-            except (httpx.ConnectError, httpx.TimeoutException):
+            except (httpx.ConnectError, httpx.TimeoutException, httpx.ReadError):
                 pass
             await asyncio.sleep(0.5)
 

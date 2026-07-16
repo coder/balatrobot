@@ -142,6 +142,39 @@ class TestBalatroInstanceHealthCheck:
         with pytest.raises(RuntimeError, match="Health check failed"):
             await instance._wait_for_health(timeout=1.0)
 
+    @pytest.mark.asyncio
+    async def test_health_check_tolerates_read_error(self, monkeypatch):
+        """Transient ReadError (e.g. docker port-proxy during cold start) is retried.
+
+        On Docker Desktop the published-port proxy accepts the host TCP connection
+        before the container's listener is ready, then resets it — surfacing as
+        httpx.ReadError. The loop must swallow it and keep retrying, just like
+        ConnectError.
+        """
+        from unittest.mock import AsyncMock, MagicMock
+
+        import httpx
+
+        calls = {"n": 0}
+
+        async def mock_post(*args, **kwargs):
+            calls["n"] += 1
+            if calls["n"] == 1:
+                raise httpx.ReadError("connection reset")
+            response = MagicMock()
+            response.json.return_value = {"result": {"status": "ok"}}
+            return response
+
+        mock_client = MagicMock()
+        mock_client.__aenter__ = AsyncMock(return_value=mock_client)
+        mock_client.__aexit__ = AsyncMock(return_value=None)
+        mock_client.post = mock_post
+        monkeypatch.setattr("httpx.AsyncClient", MagicMock(return_value=mock_client))
+
+        instance = BalatroInstance()
+        await instance._wait_for_health(timeout=5.0)  # should not raise
+        assert calls["n"] >= 2  # retried after the ReadError
+
 
 class TestBalatroInstanceContextManager:
     """Tests for BalatroInstance context manager protocol."""
