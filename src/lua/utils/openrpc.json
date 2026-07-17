@@ -906,6 +906,46 @@
             "type": "boolean",
             "description": "Whether the game has been won"
           },
+          "tags": {
+            "type": "array",
+            "description": "Held tags from skips (not blind skip offers). Empty when none.",
+            "items": {
+              "$ref": "#/components/schemas/GameTag"
+            }
+          },
+          "economy": {
+            "$ref": "#/components/schemas/Economy",
+            "description": "Interest, discount, and shop slot helpers"
+          },
+          "probabilities": {
+            "type": "object",
+            "description": "Odds multipliers (Oops All 6s scales normal)",
+            "properties": {
+              "normal": {
+                "type": "number",
+                "description": "Base odds multiplier (1 by default)"
+              }
+            }
+          },
+          "pool_flags": {
+            "type": "object",
+            "description": "Run pool flags (e.g. Gros Michel extinct)",
+            "additionalProperties": {
+              "type": "boolean"
+            }
+          },
+          "skips": {
+            "type": "integer",
+            "description": "Number of blinds skipped this run"
+          },
+          "starting_deck_size": {
+            "type": "integer",
+            "description": "Starting deck size (Erosion baseline)"
+          },
+          "consumable_usage_total": {
+            "$ref": "#/components/schemas/ConsumableUsageTotal",
+            "description": "Tarot/Planet/Spectral use counts; omitted until first consumable is used"
+          },
           "used_vouchers": {
             "type": "object",
             "description": "Vouchers used (name -> description)",
@@ -1047,9 +1087,129 @@
             "type": "integer",
             "description": "Current cost to reroll the shop"
           },
+          "free_rerolls": {
+            "type": "integer",
+            "description": "Free shop rerolls remaining"
+          },
           "chips": {
             "type": "integer",
             "description": "Current chips scored in this round"
+          },
+          "idol_card": {
+            "type": "object",
+            "description": "Current The Idol suit/rank target",
+            "properties": {
+              "suit": {
+                "$ref": "#/components/schemas/Suit"
+              },
+              "rank": {
+                "$ref": "#/components/schemas/Rank"
+              }
+            }
+          },
+          "mail_card": {
+            "type": "object",
+            "description": "Current Mail-In Rebate rank target",
+            "properties": {
+              "rank": {
+                "$ref": "#/components/schemas/Rank"
+              }
+            }
+          },
+          "ancient_card": {
+            "type": "object",
+            "description": "Current Ancient Joker suit target",
+            "properties": {
+              "suit": {
+                "$ref": "#/components/schemas/Suit"
+              }
+            }
+          },
+          "castle_card": {
+            "type": "object",
+            "description": "Current Castle suit target",
+            "properties": {
+              "suit": {
+                "$ref": "#/components/schemas/Suit"
+              }
+            }
+          }
+        }
+      },
+      "GameTag": {
+        "type": "object",
+        "description": "A held tag from skipping a blind",
+        "properties": {
+          "key": {
+            "type": "string",
+            "description": "Tag key (e.g. tag_coupon)"
+          },
+          "name": {
+            "type": "string",
+            "description": "Localized tag name"
+          },
+          "effect": {
+            "type": "string",
+            "description": "Localized tag effect description"
+          }
+        },
+        "required": [
+          "key",
+          "name",
+          "effect"
+        ]
+      },
+      "Economy": {
+        "type": "object",
+        "description": "Interest, discount, and shop slot helpers",
+        "properties": {
+          "interest_cap": {
+            "type": "integer",
+            "description": "Money needed for max interest"
+          },
+          "interest_amount": {
+            "type": "integer",
+            "description": "Interest earned per $5 held"
+          },
+          "bankrupt_at": {
+            "type": "integer",
+            "description": "Minimum money before bankruptcy (Credit Card: -20)"
+          },
+          "discount_percent": {
+            "type": "integer",
+            "description": "Shop discount percent (Clearance Sale / Liquidation)"
+          },
+          "shop_slots": {
+            "type": "integer",
+            "description": "Number of main shop card slots (not the shop Area)"
+          }
+        },
+        "required": [
+          "interest_cap",
+          "interest_amount",
+          "bankrupt_at",
+          "discount_percent",
+          "shop_slots"
+        ]
+      },
+      "ConsumableUsageTotal": {
+        "type": "object",
+        "description": "Consumable use counts for this run",
+        "properties": {
+          "tarot": {
+            "type": "integer"
+          },
+          "planet": {
+            "type": "integer"
+          },
+          "spectral": {
+            "type": "integer"
+          },
+          "tarot_planet": {
+            "type": "integer"
+          },
+          "all": {
+            "type": "integer"
           }
         }
       },

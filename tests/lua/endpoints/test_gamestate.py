@@ -89,6 +89,63 @@ class TestGamestateTopLevel:
         response = api(client, "play", {"cards": [0]})
         assert response["result"]["won"] is True
 
+    def test_tags_empty_at_run_start(self, client: httpx.Client) -> None:
+        """Fresh runs have no held tags."""
+        gamestate = load_fixture(client, "gamestate", "state-SELECTING_HAND")
+        assert gamestate["tags"] == []
+
+    def test_tags_and_skips_after_skip(self, client: httpx.Client) -> None:
+        """Skipping a blind increments skips; held tags expose key/name/effect."""
+        before = load_fixture(
+            client, "skip", "state-BLIND_SELECT--blinds.small.status-SELECT"
+        )
+        assert before.get("skips", 0) == 0
+        response = api(client, "skip", {})
+        after = assert_gamestate_response(response, state="BLIND_SELECT")
+        assert after["skips"] == 1
+        assert isinstance(after["tags"], list)
+        for tag in after["tags"]:
+            assert isinstance(tag["key"], str) and tag["key"].startswith("tag_")
+            assert isinstance(tag["name"], str) and tag["name"]
+            assert isinstance(tag["effect"], str)
+
+    def test_economy_defaults(self, client: httpx.Client) -> None:
+        """Economy helpers expose interest and shop slot defaults."""
+        gamestate = load_fixture(client, "gamestate", "state-SELECTING_HAND")
+        economy = gamestate["economy"]
+        assert economy["interest_cap"] == 25
+        assert economy["interest_amount"] == 1
+        assert economy["bankrupt_at"] == 0
+        assert economy["discount_percent"] == 0
+        assert economy["shop_slots"] == 2
+
+    def test_probabilities_normal_default_and_oops(self, client: httpx.Client) -> None:
+        """probabilities.normal starts at 1 and doubles with Oops All 6s."""
+        gamestate = load_fixture(client, "gamestate", "state-SELECTING_HAND")
+        assert gamestate["probabilities"]["normal"] == 1
+        response = api(client, "add", {"key": "j_oops"})
+        after = assert_gamestate_response(response)
+        assert after["probabilities"]["normal"] == 2
+
+    def test_pool_flags_and_starting_deck_size(self, client: httpx.Client) -> None:
+        """pool_flags and starting_deck_size are present on a started run."""
+        gamestate = load_fixture(client, "gamestate", "state-SELECTING_HAND")
+        assert gamestate["pool_flags"] == {}
+        assert gamestate["starting_deck_size"] == 52
+
+    def test_consumable_usage_total_after_using_tarot(
+        self, client: httpx.Client
+    ) -> None:
+        """Using a Tarot populates consumable_usage_total."""
+        before = load_fixture(client, "gamestate", "state-SELECTING_HAND")
+        assert before.get("consumable_usage_total") is None
+        api(client, "add", {"key": "c_hermit"})
+        response = api(client, "use", {"consumable": 0})
+        after = assert_gamestate_response(response)
+        usage = after["consumable_usage_total"]
+        assert usage["tarot"] >= 1
+        assert usage["all"] >= 1
+
 
 class TestGamestateRound:
     """Test gamestate round extraction."""
@@ -132,6 +189,47 @@ class TestGamestateRound:
         assert gamestate["round"]["reroll_cost"] == 5
         response = api(client, "reroll", {})
         assert response["result"]["round"]["reroll_cost"] == 6
+
+    def test_round_joker_targets_and_free_rerolls(self, client: httpx.Client) -> None:
+        """Round exposes Idol/Mail/Ancient/Castle targets and free_rerolls."""
+        selecting = load_fixture(client, "gamestate", "state-SELECTING_HAND")
+        assert selecting["round"]["idol_card"]["suit"] in {"H", "D", "C", "S"}
+        assert selecting["round"]["idol_card"]["rank"] in {
+            "2",
+            "3",
+            "4",
+            "5",
+            "6",
+            "7",
+            "8",
+            "9",
+            "T",
+            "J",
+            "Q",
+            "K",
+            "A",
+        }
+        assert selecting["round"]["mail_card"]["rank"] in {
+            "2",
+            "3",
+            "4",
+            "5",
+            "6",
+            "7",
+            "8",
+            "9",
+            "T",
+            "J",
+            "Q",
+            "K",
+            "A",
+        }
+        assert selecting["round"]["ancient_card"]["suit"] in {"H", "D", "C", "S"}
+        assert selecting["round"]["castle_card"]["suit"] in {"H", "D", "C", "S"}
+
+        shop = load_fixture(client, "gamestate", "state-SHOP")
+        assert isinstance(shop["round"]["free_rerolls"], int)
+        assert shop["round"]["free_rerolls"] >= 0
 
 
 class TestGamestateBlinds:

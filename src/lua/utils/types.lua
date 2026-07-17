@@ -16,6 +16,13 @@
 ---@field round_num integer Current round number
 ---@field ante_num integer Current ante number
 ---@field money integer Current money amount
+---@field tags GameState.Tag[]? Held tags from skips (not blind skip offers)
+---@field economy GameState.Economy? Interest, discount, and shop slot helpers
+---@field probabilities GameState.Probabilities? Odds multipliers (Oops All 6s)
+---@field pool_flags table<string, boolean>? Run pool flags (e.g. Gros Michel extinct)
+---@field skips integer? Number of blinds skipped this run
+---@field starting_deck_size integer? Starting deck size (Erosion baseline)
+---@field consumable_usage_total GameState.ConsumableUsageTotal? Tarot/Planet/Spectral use counts; omitted until first use
 ---@field used_vouchers table<string, string>? Vouchers used (name -> description)
 ---@field hands table<string, Hand>? Poker hands information
 ---@field round Round? Current round state
@@ -29,6 +36,28 @@
 ---@field vouchers Area? Vouchers area (available during shop phase)
 ---@field packs Area? Booster packs area (available during shop phase)
 ---@field won boolean? Whether the game has been won
+
+---@class GameState.Tag
+---@field key string Tag key (e.g. "tag_coupon")
+---@field name string Localized tag name
+---@field effect string Localized tag effect description
+
+---@class GameState.Economy
+---@field interest_cap integer Money needed for max interest
+---@field interest_amount integer Interest earned per $5 held
+---@field bankrupt_at integer Minimum money before bankruptcy (Credit Card: -20)
+---@field discount_percent integer Shop discount percent (Clearance Sale / Liquidation)
+---@field shop_slots integer Number of main shop card slots (not the shop Area)
+
+---@class GameState.Probabilities
+---@field normal number Base odds multiplier (1 by default; 2 with Oops All 6s)
+
+---@class GameState.ConsumableUsageTotal
+---@field tarot integer Tarot cards used this run
+---@field planet integer Planet cards used this run
+---@field spectral integer Spectral cards used this run
+---@field tarot_planet integer Tarot + Planet cards used this run
+---@field all integer All consumables used this run
 
 ---@class Hand
 ---@field order integer The importance/ordering of the hand
@@ -45,7 +74,22 @@
 ---@field discards_left integer? Number of discards remaining in this round
 ---@field discards_used integer? Number of discards used in this round
 ---@field reroll_cost integer? Current cost to reroll the shop
+---@field free_rerolls integer? Free shop rerolls remaining
 ---@field chips integer? Current chips scored in this round
+---@field idol_card Round.IdolCard? Current The Idol suit/rank target
+---@field mail_card Round.MailCard? Current Mail-In Rebate rank target
+---@field ancient_card Round.SuitCard? Current Ancient Joker suit target
+---@field castle_card Round.SuitCard? Current Castle suit target
+
+---@class Round.IdolCard
+---@field suit Card.Value.Suit
+---@field rank Card.Value.Rank
+
+---@class Round.MailCard
+---@field rank Card.Value.Rank
+
+---@class Round.SuitCard
+---@field suit Card.Value.Suit
 
 ---@class Blind
 ---@field type Blind.Type Type of the blind

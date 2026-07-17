@@ -169,3 +169,7 @@ Error responses follow JSON-RPC 2.0 format:
   "id": 1
 }
 ```
+
+**Gotcha — held tags vs blind tag offers:** `GameState.tags` is the list of skip rewards currently held (`G.GAME.tags`). Blind *offers* for the next skip remain under `blinds.small|big.tag_name` / `tag_effect`. Immediate tags may resolve on skip and leave `tags` empty.
+
+**Gotcha — `economy.shop_slots` vs Area `shop`:** `economy.shop_slots` is how many cards the main shop holds (Overstock). `shop` is still the Area of cards currently for sale.
