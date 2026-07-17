@@ -697,6 +697,19 @@ The complete game state returned by most methods.
   "stake": "WHITE",
   "seed": "ABC123",
   "won": false,
+  "tags": [],
+  "economy": {
+    "interest_cap": 25,
+    "interest_amount": 1,
+    "bankrupt_at": 0,
+    "discount_percent": 0,
+    "shop_slots": 2
+  },
+  "probabilities": { "normal": 1 },
+  "pool_flags": {},
+  "skips": 0,
+  "starting_deck_size": 52,
+  "consumable_usage_total": { "tarot": 1, "planet": 0, "spectral": 0, "tarot_planet": 1, "all": 1 },
   "used_vouchers": {},
   "hands": { ... },
   "round": { ... },
@@ -711,6 +724,8 @@ The complete game state returned by most methods.
   "pack": { ... }
 }
 ```
+
+`tags` are held skip rewards (not the Small/Big blind *offer* tags under `blinds.*.tag_name`). `economy.shop_slots` is the shop card-slot count; `shop` remains the shop card Area. `consumable_usage_total` is omitted until a consumable has been used. `round` also includes `idol_card` / `mail_card` / `ancient_card` / `castle_card` targets and `free_rerolls`.
 
 ### Area
 
@@ -763,6 +778,11 @@ Represents a card area (hand, jokers, consumables, shop, etc.).
 ```json
 {
   "hands_left": 4,
+  "free_rerolls": 0,
+  "idol_card": { "suit": "S", "rank": "A" },
+  "mail_card": { "rank": "A" },
+  "ancient_card": { "suit": "S" },
+  "castle_card": { "suit": "S" },
   "hands_played": 0,
   "discards_left": 3,
   "discards_used": 0,

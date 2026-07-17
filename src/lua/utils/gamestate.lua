@@ -441,31 +441,61 @@ local function extract_round_info()
     return {}
   end
 
+  local current = G.GAME.current_round
   local round = {}
 
-  if G.GAME.current_round.hands_left then
-    round.hands_left = G.GAME.current_round.hands_left
+  if current.hands_left ~= nil then
+    round.hands_left = current.hands_left
   end
 
-  if G.GAME.current_round.hands_played then
-    round.hands_played = G.GAME.current_round.hands_played
+  if current.hands_played ~= nil then
+    round.hands_played = current.hands_played
   end
 
-  if G.GAME.current_round.discards_left then
-    round.discards_left = G.GAME.current_round.discards_left
+  if current.discards_left ~= nil then
+    round.discards_left = current.discards_left
   end
 
-  if G.GAME.current_round.discards_used then
-    round.discards_used = G.GAME.current_round.discards_used
+  if current.discards_used ~= nil then
+    round.discards_used = current.discards_used
   end
 
-  if G.GAME.current_round.reroll_cost then
-    round.reroll_cost = G.GAME.current_round.reroll_cost
+  if current.reroll_cost ~= nil then
+    round.reroll_cost = current.reroll_cost
+  end
+
+  if current.free_rerolls ~= nil then
+    round.free_rerolls = current.free_rerolls
   end
 
   -- Chips is stored in G.GAME not G.GAME.current_round
   if G.GAME.chips then
     round.chips = G.GAME.chips
+  end
+
+  if current.idol_card then
+    round.idol_card = {
+      suit = convert_suit_to_enum(current.idol_card.suit),
+      rank = convert_rank_to_enum(current.idol_card.rank),
+    }
+  end
+
+  if current.mail_card then
+    round.mail_card = {
+      rank = convert_rank_to_enum(current.mail_card.rank),
+    }
+  end
+
+  if current.ancient_card then
+    round.ancient_card = {
+      suit = convert_suit_to_enum(current.ancient_card.suit),
+    }
+  end
+
+  if current.castle_card then
+    round.castle_card = {
+      suit = convert_suit_to_enum(current.castle_card.suit),
+    }
   end
 
   return round
@@ -568,6 +598,61 @@ local function get_tag_info(tag_key)
   end
 
   return result
+end
+
+---Extracts held tags from G.GAME.tags (skip rewards that have not resolved yet)
+---@return GameState.Tag[] tags
+local function extract_tags()
+  local tags = {}
+  if not G or not G.GAME or not G.GAME.tags then
+    return tags
+  end
+
+  for i, tag in ipairs(G.GAME.tags) do
+    local key = tag.key or ""
+    local info = get_tag_info(key)
+    tags[i] = {
+      key = key,
+      name = info.name,
+      effect = info.effect,
+    }
+  end
+
+  return tags
+end
+
+---Extracts economy helpers (interest, discount, shop slots)
+---@return GameState.Economy economy
+local function extract_economy()
+  local shop_slots = 2
+  if G and G.GAME and G.GAME.shop and G.GAME.shop.joker_max ~= nil then
+    shop_slots = G.GAME.shop.joker_max
+  end
+
+  return {
+    interest_cap = (G and G.GAME and G.GAME.interest_cap) or 25,
+    interest_amount = (G and G.GAME and G.GAME.interest_amount) or 1,
+    bankrupt_at = (G and G.GAME and G.GAME.bankrupt_at) or 0,
+    discount_percent = (G and G.GAME and G.GAME.discount_percent) or 0,
+    shop_slots = shop_slots,
+  }
+end
+
+---Extracts consumable usage totals (Fortune Teller / Satellite counters)
+---@return table<string, integer>? usage
+local function extract_consumable_usage_total()
+  if not G or not G.GAME or not G.GAME.consumeable_usage_total then
+    return nil
+  end
+
+  local usage = G.GAME.consumeable_usage_total
+  return {
+    tarot = usage.tarot or 0,
+    planet = usage.planet or 0,
+    spectral = usage.spectral or 0,
+    tarot_planet = usage.tarot_planet or 0,
+    all = usage.all or 0,
+  }
 end
 
 ---Converts game blind status to uppercase enum
@@ -752,6 +837,34 @@ function gamestate.get_gamestate()
     -- Seed (optional)
     if G.GAME.pseudorandom and G.GAME.pseudorandom.seed then
       state_data.seed = G.GAME.pseudorandom.seed
+    end
+
+    -- Held tags (skip rewards not yet resolved)
+    state_data.tags = extract_tags()
+
+    -- Economy helpers (interest / discount / shop slots)
+    state_data.economy = extract_economy()
+
+    -- Odds multiplier (Oops All 6s scales probabilities.normal)
+    state_data.probabilities = {
+      normal = (G.GAME.probabilities and G.GAME.probabilities.normal) or 1,
+    }
+
+    -- Pool flags (e.g. Gros Michel extinct)
+    state_data.pool_flags = G.GAME.pool_flags or {}
+
+    -- Blind skips this run (Throwback)
+    state_data.skips = G.GAME.skips or 0
+
+    -- Starting deck size (Erosion)
+    if G.GAME.starting_deck_size ~= nil then
+      state_data.starting_deck_size = G.GAME.starting_deck_size
+    end
+
+    -- Consumable usage totals (omitted until a consumable has been used)
+    local consumable_usage_total = extract_consumable_usage_total()
+    if consumable_usage_total then
+      state_data.consumable_usage_total = consumable_usage_total
     end
 
     -- Used vouchers (table<string, string>)
