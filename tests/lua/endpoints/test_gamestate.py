@@ -89,6 +89,28 @@ class TestGamestateTopLevel:
         response = api(client, "play", {"cards": [0]})
         assert response["result"]["won"] is True
 
+    def test_last_tarot_planet_absent_at_run_start(self, client: httpx.Client) -> None:
+        """Fresh runs have no last Tarot/Planet for The Fool to copy."""
+        fixture_name = "state-SELECTING_HAND"
+        gamestate = load_fixture(client, "gamestate", fixture_name)
+        assert gamestate.get("last_tarot_planet") is None
+
+    def test_last_tarot_planet_after_using_tarot(self, client: httpx.Client) -> None:
+        """Using a Tarot updates last_tarot_planet to that card key."""
+        load_fixture(client, "gamestate", "state-SELECTING_HAND")
+        api(client, "add", {"key": "c_hermit"})
+        response = api(client, "use", {"consumable": 0})
+        after = assert_gamestate_response(response)
+        assert after["last_tarot_planet"] == "c_hermit"
+
+    def test_last_tarot_planet_after_using_planet(self, client: httpx.Client) -> None:
+        """Using a Planet updates last_tarot_planet to that card key."""
+        load_fixture(client, "gamestate", "state-SELECTING_HAND")
+        api(client, "add", {"key": "c_pluto"})
+        response = api(client, "use", {"consumable": 0})
+        after = assert_gamestate_response(response)
+        assert after["last_tarot_planet"] == "c_pluto"
+
 
 class TestGamestateRound:
     """Test gamestate round extraction."""

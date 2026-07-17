@@ -169,3 +169,5 @@ Error responses follow JSON-RPC 2.0 format:
   "id": 1
 }
 ```
+
+**Gotcha — The Fool / `last_tarot_planet`:** Balatro stores the card The Fool would create in `G.GAME.last_tarot_planet` (a key like `c_hermit`). Expose it on GameState as optional `last_tarot_planet`. Omit when unset. Using The Fool itself sets the value to `c_fool`, which The Fool cannot copy again until another Tarot/Planet is used.

@@ -754,6 +754,11 @@ function gamestate.get_gamestate()
       state_data.seed = G.GAME.pseudorandom.seed
     end
 
+    -- Last Tarot/Planet used (what The Fool would create; omitted when none)
+    if G.GAME.last_tarot_planet then
+      state_data.last_tarot_planet = G.GAME.last_tarot_planet
+    end
+
     -- Used vouchers (table<string, string>)
     if G.GAME.used_vouchers then
       local used_vouchers = {}

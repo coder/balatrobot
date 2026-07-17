@@ -12,6 +12,7 @@
 ---@field deck Deck? Current selected deck
 ---@field stake Stake? Current selected stake
 ---@field seed string? Seed used for the run
+---@field last_tarot_planet string? Key of the last Tarot or Planet used this run (what The Fool copies); omitted when none
 ---@field state State Current game state
 ---@field round_num integer Current round number
 ---@field ante_num integer Current ante number

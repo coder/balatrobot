@@ -902,6 +902,10 @@
             "type": "string",
             "description": "Seed used for the run"
           },
+          "last_tarot_planet": {
+            "type": "string",
+            "description": "Key of the last Tarot or Planet card used during this run (what The Fool would create). Omitted when none has been used yet."
+          },
           "won": {
             "type": "boolean",
             "description": "Whether the game has been won"
