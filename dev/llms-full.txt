@@ -1284,6 +1284,7 @@ The complete game state returned by most methods.
   "stake": "stake_white",
   "seed": "ABC123",
   "challenge": "c_omelette_1",
+  "last_tarot_planet": "c_hermit",
   "won": false,
   "used_vouchers": {},
   "tags": [ ... ],
@@ -1301,6 +1302,8 @@ The complete game state returned by most methods.
 }
 
 ```
+
+`challenge` is present only during a Challenge Run; `last_tarot_planet` is the card key The Fool would create (e.g. `c_hermit`), omitted until a Tarot or Planet has been used this run. Both are conditionally absent, not `null`.
 
 ### Area
 
@@ -1641,6 +1644,8 @@ Card keys are used with the `add` method and appear in the `key` field of Card o
 #### Tarot Cards
 
 Consumables that enhance playing cards, change suits, generate other cards, or provide money. Keys use prefix `c_` followed by the card name (e.g., `c_fool`, `c_magician`). 22 cards total.
+
+The card The Fool would create is exposed on [GameState](#gamestate-schema) as `last_tarot_planet`.
 
 | Key                  | Effect                                                                          |
 | -------------------- | ------------------------------------------------------------------------------- |
