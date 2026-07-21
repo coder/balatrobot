@@ -78,6 +78,38 @@ class TestGamestateTopLevel:
         gamestate = assert_gamestate_response(response, state="BLIND_SELECT")
         assert gamestate["challenge"] == "c_omelette_1"
 
+    def test_last_tarot_planet_absent_at_run_start(self, client: httpx.Client) -> None:
+        """Fresh run: the key is omitted, not null (conditional-absence contract)."""
+        gamestate = load_fixture(client, "gamestate", "state-SELECTING_HAND")
+        assert "last_tarot_planet" not in gamestate
+
+    def test_last_tarot_planet_after_using_tarot(self, client: httpx.Client) -> None:
+        """Using a Tarot sets last_tarot_planet to that card's key."""
+        load_fixture(client, "gamestate", "state-SELECTING_HAND")
+        api(client, "add", {"key": "c_hermit"})
+        response = api(client, "use", {"consumable": 0})
+        after = assert_gamestate_response(response)
+        assert after["last_tarot_planet"] == "c_hermit"
+
+    def test_last_tarot_planet_after_using_planet(self, client: httpx.Client) -> None:
+        """Using a Planet also sets last_tarot_planet (The Fool copies either)."""
+        load_fixture(client, "gamestate", "state-SELECTING_HAND")
+        api(client, "add", {"key": "c_pluto"})
+        response = api(client, "use", {"consumable": 0})
+        after = assert_gamestate_response(response)
+        assert after["last_tarot_planet"] == "c_pluto"
+
+    def test_last_tarot_planet_used_by_the_fool(self, client: httpx.Client) -> None:
+        """The Fool creates exactly the card named by last_tarot_planet."""
+        load_fixture(client, "gamestate", "state-SELECTING_HAND")
+        api(client, "add", {"key": "c_hermit"})
+        api(client, "use", {"consumable": 0})  # loads last_tarot_planet = c_hermit
+        api(client, "add", {"key": "c_fool"})
+        response = api(client, "use", {"consumable": 0})  # Fool creates c_hermit
+        after = assert_gamestate_response(response)
+        keys = {c["key"] for c in after["consumables"]["cards"]}
+        assert "c_hermit" in keys
+
     def test_money_extraction(self, client: httpx.Client) -> None:
         """Test money field after using `set` to modify it."""
         fixture_name = "state-BLIND_SELECT--deck-b_blue--stake-stake_red"
