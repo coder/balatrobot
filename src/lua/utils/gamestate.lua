@@ -869,6 +869,12 @@ function gamestate.get_gamestate()
       state_data.challenge = G.GAME.challenge
     end
 
+    -- Last Tarot/Planet used (optional) — the key The Fool would create
+    -- (e.g. "c_hermit"). Nil until first use; conditionally absent here.
+    if G.GAME.last_tarot_planet then
+      state_data.last_tarot_planet = G.GAME.last_tarot_planet
+    end
+
     -- Used vouchers (table<string, string>)
     if G.GAME.used_vouchers then
       local used_vouchers = {}

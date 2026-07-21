@@ -1030,6 +1030,10 @@
             "$ref": "#/components/schemas/Challenge",
             "description": "Challenge Run id; present only during a Challenge Run (omitted for normal runs)"
           },
+          "last_tarot_planet": {
+            "type": "string",
+            "description": "Key of the last Tarot or Planet card used this run (what The Fool would create). Omitted when none has been used yet."
+          },
           "won": {
             "type": "boolean",
             "description": "Whether the game has been won"

@@ -13,6 +13,7 @@
 ---@field stake Stake? Current selected stake
 ---@field seed string? Seed used for the run
 ---@field challenge Challenge? Challenge Run id (e.g. "c_omelette_1"); present only during a Challenge Run
+---@field last_tarot_planet string? Key of the last Tarot/Planet used (what The Fool copies); omitted until first use
 ---@field state State Current game state
 ---@field paused boolean Whether the game is paused by a blocking overlay (win screen, pause menu, game over)
 ---@field round_num integer Current round number
