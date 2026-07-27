@@ -1031,7 +1031,14 @@
             "description": "Challenge Run id; present only during a Challenge Run (omitted for normal runs)"
           },
           "last_tarot_planet": {
-            "type": "string",
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/TarotKey"
+              },
+              {
+                "$ref": "#/components/schemas/PlanetKey"
+              }
+            ],
             "description": "Key of the last Tarot or Planet card used this run (what The Fool would create). Omitted when none has been used yet."
           },
           "won": {
