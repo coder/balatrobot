@@ -1571,6 +1571,49 @@ _DEFAULT_HANDS = {
 }
 
 
+class TestGamestateHandName:
+    """Test round.most_played_hand extraction and the tightened hands key typing."""
+
+    def test_most_played_hand_present_and_valid_at_selecting_hand(
+        self, client: httpx.Client
+    ) -> None:
+        """round.most_played_hand is present at SELECTING_HAND and is a Hand.Name."""
+        gamestate = load_fixture(client, "gamestate", "state-SELECTING_HAND")
+        assert gamestate["round"]["most_played_hand"] in _DEFAULT_HANDS
+
+    def test_most_played_hand_default_is_high_card(self, client: httpx.Client) -> None:
+        """Defaults to 'High Card' before any Boss blind is defeated."""
+        gamestate = load_fixture(client, "gamestate", "state-SELECTING_HAND")
+        assert gamestate["round"]["most_played_hand"] == "High Card"
+
+    def test_most_played_hand_tracks_most_played_after_boss_defeat(
+        self, client: httpx.Client
+    ) -> None:
+        """Updates to the most-played hand after a Boss blind is defeated."""
+        api(client, "menu", {})
+        api(
+            client,
+            "start",
+            {"deck": "b_red", "stake": "stake_white", "seed": "TEST123"},
+        )
+        # Skip to the Boss blind.
+        api(client, "skip", {})
+        api(client, "skip", {})
+        api(client, "select", {})
+        before = api(client, "gamestate", {})["result"]
+        assert before["round"]["most_played_hand"] == "High Card"
+        # Build a Pair by duplicating the first card; it lands at index len(hand).
+        dealt = before["hand"]["cards"]
+        new_index = len(dealt)
+        first = dealt[0]
+        dup_key = f"{first['value']['suit']}_{first['value']['rank']}"
+        api(client, "add", {"key": dup_key})
+        api(client, "set", {"chips": 1000000})  # guarantee the boss is beaten
+        response = api(client, "play", {"cards": [0, new_index]})
+        after = assert_gamestate_response(response, state="ROUND_EVAL")
+        assert after["round"]["most_played_hand"] == "Pair"
+
+
 class TestGamestateHands:
     """Test gamestate hands (poker hand levels) extraction.
 
@@ -1586,6 +1629,12 @@ class TestGamestateHands:
         """All 12 poker hands are present in the gamestate at run start."""
         gamestate = load_fixture(client, "gamestate", "state-SELECTING_HAND")
         assert set(gamestate["hands"].keys()) == set(_DEFAULT_HANDS.keys())
+
+    def test_hands_keys_are_hand_name_members(self, client: httpx.Client) -> None:
+        """Every hands key is a member of the Hand.Name enum."""
+        gamestate = load_fixture(client, "gamestate", "state-SELECTING_HAND")
+        assert set(gamestate["hands"].keys()) <= set(_DEFAULT_HANDS.keys())
+        assert "Royal Flush" not in gamestate["hands"]
 
     @pytest.mark.parametrize("hand_name", list(_DEFAULT_HANDS.keys()))
     def test_hands_default_values(self, client: httpx.Client, hand_name: str) -> None:
