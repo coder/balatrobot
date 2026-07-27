@@ -52,6 +52,20 @@
 ---| "c_cruelty_1" # Cruelty: 3 joker slots; Small & Big blinds give no reward
 ---| "c_jokerless_1" # Jokerless: 0 joker slots; no jokers in shop; joker-granting cards banned
 
+---@alias Hand.Name
+---| "Flush Five" # order 1
+---| "Flush House" # order 2
+---| "Five of a Kind" # order 3
+---| "Straight Flush" # order 4
+---| "Four of a Kind" # order 5
+---| "Full House" # order 6
+---| "Flush" # order 7
+---| "Straight" # order 8
+---| "Three of a Kind" # order 9
+---| "Two Pair" # order 10
+---| "Pair" # order 11
+---| "High Card" # order 12
+
 ---@alias State
 ---| "SELECTING_HAND" # 1 When you can select cards to play or discard
 ---| "HAND_PLAYED" # 2 Duing hand playing animation

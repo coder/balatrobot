@@ -884,9 +884,15 @@ hidden-card data) "you may now know this card." It always co-occurs with
   "discards_left": 3,
   "discards_used": 0,
   "reroll_cost": 5,
-  "chips": 0
+  "chips": 0,
+  "most_played_hand": "High Card"
 }
 ```
+
+`most_played_hand` is the poker hand played most this run — the per-round
+target of _The Ox_, which a bot must avoid playing. It defaults to `High Card`
+and updates after each Boss blind is defeated. It is a
+[`Hand Name`](#hand-name) enum value.
 
 ### Blind
 
@@ -940,6 +946,25 @@ Represents a Balatro tag that provides bonuses when triggered.
 ---
 
 ## Enums
+
+### Hand Name
+
+The 12 vanilla poker-hand names: the keys of [`hands`](#hand-poker-hand-info) and the value of [`round.most_played_hand`](#round). `order` is lower = stronger (1 = Flush Five ... 12 = High Card). `Royal Flush` is a display alias of Straight Flush and is intentionally excluded.
+
+| Value             | order |
+| ----------------- | ----- |
+| `Flush Five`      | 1     |
+| `Flush House`     | 2     |
+| `Five of a Kind`  | 3     |
+| `Straight Flush`  | 4     |
+| `Four of a Kind`  | 5     |
+| `Full House`      | 6     |
+| `Flush`           | 7     |
+| `Straight`        | 8     |
+| `Three of a Kind` | 9     |
+| `Two Pair`        | 10    |
+| `Pair`            | 11    |
+| `High Card`       | 12    |
 
 ### Deck
 

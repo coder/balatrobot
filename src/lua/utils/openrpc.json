@@ -1117,6 +1117,24 @@
           "money"
         ]
       },
+      "HandName": {
+        "type": "string",
+        "description": "The 12 vanilla poker-hand names",
+        "enum": [
+          "Flush Five",
+          "Flush House",
+          "Five of a Kind",
+          "Straight Flush",
+          "Four of a Kind",
+          "Full House",
+          "Flush",
+          "Straight",
+          "Three of a Kind",
+          "Two Pair",
+          "Pair",
+          "High Card"
+        ]
+      },
       "Hand": {
         "type": "object",
         "description": "Poker hand information",
@@ -1189,6 +1207,10 @@
           "chips": {
             "type": "integer",
             "description": "Current chips scored in this round"
+          },
+          "most_played_hand": {
+            "$ref": "#/components/schemas/HandName",
+            "description": "Most played poker hand this run"
           }
         }
       },

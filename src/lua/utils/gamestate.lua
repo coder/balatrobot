@@ -439,6 +439,10 @@ local function extract_round_info()
     round.chips = G.GAME.chips
   end
 
+  if G.GAME.current_round.most_played_poker_hand then
+    round.most_played_hand = G.GAME.current_round.most_played_poker_hand
+  end
+
   return round
 end
 

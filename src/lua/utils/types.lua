@@ -21,7 +21,7 @@
 ---@field money integer Current money amount
 ---@field used_vouchers table<string, string>? Vouchers used (name -> description)
 ---@field tags Tag[]? Accumulated tags owned by the player
----@field hands table<string, Hand>? Poker hands information
+---@field hands table<Hand.Name, Hand>? Poker hands information
 ---@field round Round? Current round state
 ---@field blinds table<"small"|"big"|"boss", Blind>? Blind information
 ---@field jokers Area? Jokers area
@@ -50,6 +50,7 @@
 ---@field discards_used integer? Number of discards used in this round
 ---@field reroll_cost integer? Current cost to reroll the shop
 ---@field chips integer? Current chips scored in this round
+---@field most_played_hand Hand.Name? Most played poker hand this run
 
 ---@class Tag
 ---@field key string The tag key (e.g., "tag_polychrome", "tag_double")
