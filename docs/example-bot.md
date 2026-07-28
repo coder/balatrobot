@@ -17,14 +17,18 @@ import requests
 # BalatroBot API endpoint
 URL = "http://127.0.0.1:12346"
 
+
 def rpc(method: str, params: dict = {}) -> dict:
     """Send a JSON-RPC 2.0 request to the BalatroBot API."""
-    response = requests.post(URL, json={
-        "jsonrpc": "2.0",
-        "method": method,
-        "params": params,
-        "id": 1,
-    })
+    response = requests.post(
+        URL,
+        json={
+            "jsonrpc": "2.0",
+            "method": method,
+            "params": params,
+            "id": 1,
+        },
+    )
     data = response.json()
     # Raise if error, otherwise return result (contains game state)
     if "error" in data:
