@@ -62,8 +62,8 @@ class BaseLauncher(ABC):
 
         log_path = instance_dir / "balatro.log"
 
-        with open(log_path, "w") as log:
-            process = subprocess.Popen(
+        with open(log_path, "w") as log:  # noqa: ASYNC230
+            process = subprocess.Popen(  # noqa: ASYNC220
                 cmd,
                 env=env,
                 stdout=log,
@@ -79,4 +79,3 @@ class BaseLauncher(ABC):
         Override in platform launchers that need special shutdown
         (e.g. wineserver -k for Proton on Linux).
         """
-        pass

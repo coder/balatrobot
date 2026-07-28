@@ -157,7 +157,7 @@ def _resolve_target(
     try:
         info = StateFile.resolve(index=index)
         return info.host, info.port
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001 - top-level CLI error reporting
         typer.echo(f"Error: {e}", err=True)
         raise typer.Exit(code=1)
 

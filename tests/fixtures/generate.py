@@ -1,6 +1,5 @@
-#!/usr/bin/env python3
-
 import json
+import sys
 from collections import defaultdict
 from dataclasses import dataclass
 from pathlib import Path
@@ -112,7 +111,7 @@ def generate_fixture(client: httpx.Client, spec: FixtureSpec, pbar: tqdm) -> boo
 
         return True
 
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001 - report any failure and continue
         pbar.write(f"  Error: {relative_path} failed: {e}")
         return False
 
@@ -170,10 +169,10 @@ def main() -> int:
     except httpx.TimeoutException:
         print(f"Error: Connection timeout to Balatro at {host}:{port}")
         return 1
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001 - top-level error reporting
         print(f"Error: {e}")
         return 1
 
 
 if __name__ == "__main__":
-    exit(main())
+    sys.exit(main())

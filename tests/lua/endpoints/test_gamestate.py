@@ -303,13 +303,13 @@ class TestGamestateBlinds:
             # True: Director's Cut + affordable ($20 >= $10).
             (
                 "state-BLIND_SELECT--blinds.boss.status-SELECT"
-                "--used_vouchers.v_directors_cut-1--money-20",
+                + "--used_vouchers.v_directors_cut-1--money-20",
                 True,
             ),
             # False: voucher held but unaffordable ($5 < $10).
             (
                 "state-BLIND_SELECT--blinds.boss.status-SELECT"
-                "--used_vouchers.v_directors_cut-1--money-5",
+                + "--used_vouchers.v_directors_cut-1--money-5",
                 False,
             ),
             # False: no reroll voucher at all.
@@ -317,7 +317,7 @@ class TestGamestateBlinds:
             # True: Retcon (unlimited rerolls) + affordable ($30).
             (
                 "state-BLIND_SELECT--blinds.boss.status-SELECT"
-                "--used_vouchers.v_retcon-1--money-30",
+                + "--used_vouchers.v_retcon-1--money-30",
                 True,
             ),
         ],
@@ -980,7 +980,7 @@ class TestGamestateUsedVouchers:
             (
                 "v_telescope",
                 "Celestial Packs always contain the Planet card for your "
-                "most played poker hand",
+                + "most played poker hand",
             ),
             ("v_magic_trick", "Playing cards can be purchased from the shop"),
             (
@@ -1045,7 +1045,7 @@ class TestGamestateUsedVouchers:
             (
                 "v_observatory",
                 "Planet cards in your consumable area give X1.5 Mult "
-                "for their specified poker hand",
+                + "for their specified poker hand",
             ),
         ],
         ids=lambda v: v if v.startswith("v_") else "",

@@ -156,7 +156,7 @@ class TestServerRun:
             async with Server(config, n=1, state_path=state_path) as server:
                 # Mock check_alive to raise InstanceDiedError
                 assert server._pool is not None
-                server._pool.check_alive = MagicMock(  # ty: ignore[invalid-assignment]
+                server._pool.check_alive = MagicMock(
                     side_effect=InstanceDiedError(
                         port=14001, log_path="/tmp/test-logs/14001.log"
                     )

@@ -79,8 +79,8 @@ class BalatroPool:
         else:
             stream_ports = [None] * len(ports)
 
-        # Generate shared session directory name (timestamp)
-        self._session_name = datetime.now().strftime("%Y-%m-%dT%H-%M-%S")
+        # Local time for human-readable session directory names
+        self._session_name = datetime.now().strftime("%Y-%m-%dT%H-%M-%S")  # noqa: DTZ005
 
         # Create and start instances
         self._instances = []

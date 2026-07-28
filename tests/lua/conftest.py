@@ -4,8 +4,9 @@ import asyncio
 import json
 import os
 import random
+from collections.abc import AsyncGenerator, Generator
 from pathlib import Path
-from typing import Any, AsyncGenerator, Generator
+from typing import Any
 
 import httpx
 import pytest
@@ -115,7 +116,7 @@ def pytest_unconfigure(config):
 
     try:
         asyncio.run(stop_all())
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001 - best-effort teardown error reporting
         print(f"Error stopping Balatro instances: {e}")
 
 
@@ -139,7 +140,7 @@ def instance(worker_id) -> InstanceInfo:
 
 
 @pytest.fixture(scope="session")
-async def balatro_server(instance: InstanceInfo) -> AsyncGenerator[None, None]:
+async def balatro_server(instance: InstanceInfo) -> AsyncGenerator[None]:
     """Wait for pre-started Balatro instance to be healthy."""
     timeout = 10.0
     elapsed = 0.0
@@ -155,9 +156,7 @@ async def balatro_server(instance: InstanceInfo) -> AsyncGenerator[None, None]:
 
 
 @pytest.fixture
-def client(
-    instance: InstanceInfo, balatro_server
-) -> Generator[httpx.Client, None, None]:
+def client(instance: InstanceInfo, balatro_server) -> Generator[httpx.Client]:
     """Create an HTTP client connected to Balatro game instance.
 
     Args:
@@ -182,7 +181,7 @@ def client(
 def api(
     client: httpx.Client,
     method: str,
-    params: dict = {},
+    params: dict | None = None,
     timeout: float = REQUEST_TIMEOUT,
 ) -> dict[str, Any]:
     """Send a JSON-RPC 2.0 API call to the Balatro game and get the response.
@@ -196,6 +195,8 @@ def api(
     Returns:
         The raw JSON-RPC 2.0 response with either 'result' or 'error' field.
     """
+    if params is None:
+        params = {}
     global _request_id_counter
     _request_id_counter += 1
 
@@ -275,7 +276,6 @@ def load_fixture(
     If the fixture file doesn't exist or cache=False, it will be automatically
     generated using the setup steps defined in fixtures.json.
     """
-    global _USE_CACHE_DEFAULT
     if cache is None:
         cache = _USE_CACHE_DEFAULT
 

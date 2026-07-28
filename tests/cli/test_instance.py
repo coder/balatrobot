@@ -111,7 +111,7 @@ class TestBalatroInstanceStop:
             if call_count == 1:
                 # First call (graceful wait) times out
                 await coro  # Consume the coroutine to avoid warning
-                raise asyncio.TimeoutError()
+                raise TimeoutError()
             # Second call (after kill) succeeds
             return await original_wait_for(coro, timeout)
 
@@ -200,7 +200,7 @@ class TestBalatroInstanceContextManager:
         instance = BalatroInstance(logs=str(tmp_path))
 
         # Mock health check to succeed immediately
-        instance._wait_for_health = AsyncMock()  # ty: ignore[invalid-assignment]
+        instance._wait_for_health = AsyncMock()
 
         async with instance:
             assert instance._process is mock_process
@@ -223,12 +223,13 @@ class TestBalatroInstanceCheckAlive:
 
     def test_check_alive_dead(self):
         """Raises InstanceDiedError when process has exited."""
+        from pathlib import Path
+
         instance = BalatroInstance(port=14001)
         mock_process = MagicMock()
         mock_process.poll.return_value = 1  # Exit code 1
         instance._process = mock_process
-        instance._log_path = MagicMock()
-        instance._log_path.__str__ = lambda self: "/tmp/test/14001.log"
+        instance._log_path = Path("/tmp/test/14001.log")
 
         with pytest.raises(InstanceDiedError) as exc_info:
             instance.check_alive()

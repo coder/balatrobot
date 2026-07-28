@@ -75,7 +75,7 @@ def pytest_unconfigure(config):
 
     try:
         asyncio.run(stop_all())
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001 - best-effort teardown error reporting
         print(f"Error stopping Balatro instances: {e}")
 
 

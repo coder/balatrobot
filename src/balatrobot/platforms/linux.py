@@ -156,4 +156,5 @@ class LinuxLauncher(BaseLauncher):
             env={"WINEPREFIX": str(wineprefix)},
             capture_output=True,
             timeout=10,
+            check=False,
         )

@@ -6,7 +6,7 @@ import re
 import signal
 import sys
 from pathlib import Path
-from typing import Annotated
+from typing import Annotated, Self
 
 import typer
 
@@ -63,7 +63,7 @@ class Server:
     def pool(self) -> BalatroPool | None:
         return self._pool
 
-    async def __aenter__(self) -> "Server":
+    async def __aenter__(self) -> Self:
         # 1. Check for existing live state file
         existing = StateFile.read(self._state_path)
         if existing is not None:
@@ -102,7 +102,7 @@ class Server:
                 self._pool.check_alive()
                 try:
                     await asyncio.wait_for(self._shutdown.wait(), timeout=5)
-                except asyncio.TimeoutError:
+                except TimeoutError:
                     pass
         finally:
             if sys.platform != "win32":
@@ -110,7 +110,6 @@ class Server:
 
 
 def serve(
-    # fmt: off
     num: Annotated[
         int, typer.Option("--num", help="Number of instances to start (default: 1)")
     ] = 1,
@@ -150,7 +149,6 @@ def serve(
     logs: Annotated[
         str | None, typer.Option("--logs", help="Log directory (parent of sessions)")
     ] = None,
-    # fmt: on
 ) -> None:
     """Start Balatro with BalatroBot mod loaded."""
     # Validate platform choice

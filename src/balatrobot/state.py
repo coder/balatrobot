@@ -9,7 +9,7 @@ import json
 import os
 import socket
 import tempfile
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
@@ -231,7 +231,7 @@ class StateFile:
         """
         data = {
             "pid": pid,
-            "started_at": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
+            "started_at": datetime.now(UTC).strftime("%Y-%m-%dT%H:%M:%SZ"),
             "instances": [
                 {
                     "host": info.host,

@@ -5,6 +5,7 @@ import subprocess
 from dataclasses import dataclass, replace
 from datetime import datetime
 from pathlib import Path
+from typing import Self
 
 import httpx
 
@@ -114,8 +115,8 @@ class BalatroInstance:
         if self._process is not None:
             raise RuntimeError("Instance already started")
 
-        # Create session directory (use provided session_name or generate one)
-        session_name = self._session_name or datetime.now().strftime(
+        # Local time for human-readable session directory names
+        session_name = self._session_name or datetime.now().strftime(  # noqa: DTZ005
             "%Y-%m-%dT%H-%M-%S"
         )
         session_dir = Path(self._config.logs or "logs") / session_name
@@ -162,7 +163,7 @@ class BalatroInstance:
                 loop.run_in_executor(None, process.wait),
                 timeout=5,
             )
-        except asyncio.TimeoutError:
+        except TimeoutError:
             print(f"Force killing instance on port {self._config.port}...")
             process.kill()
             await loop.run_in_executor(None, process.wait)
@@ -181,7 +182,7 @@ class BalatroInstance:
                 log_path=str(self._log_path) if self._log_path is not None else None,
             )
 
-    async def __aenter__(self) -> "BalatroInstance":
+    async def __aenter__(self) -> Self:
         """Start instance on context entry."""
         await self.start()
         return self

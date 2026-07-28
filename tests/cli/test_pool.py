@@ -41,7 +41,7 @@ class TestInstanceInfo:
         """InstanceInfo is immutable."""
         info = InstanceInfo(host="127.0.0.1", port=12346)
         with pytest.raises(FrozenInstanceError):
-            setattr(info, "port", 9999)
+            setattr(info, "port", 9999)  # noqa: B010 - tests runtime immutability
 
     def test_equality(self):
         """Two InstanceInfo with same values are equal."""

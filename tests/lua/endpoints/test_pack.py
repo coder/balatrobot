@@ -190,14 +190,14 @@ class TestPackEndpointJokerSlots:
             "state-SMODS_BOOSTER_OPENED--pack.type-buffoon--jokers.count-5",
         )
         assert gamestate["jokers"]["count"] == 5
-        before_jokers = set(j["key"] for j in gamestate["jokers"]["cards"])
+        before_jokers = {j["key"] for j in gamestate["jokers"]["cards"]}
         result = api(client, "sell", {"joker": 0})
         gamestate = assert_gamestate_response(result)
         assert gamestate["jokers"]["count"] == 4
         result = api(client, "pack", {"card": 0})
         gamestate = assert_gamestate_response(result, state="SHOP")
         assert gamestate["jokers"]["count"] == 5
-        after_jokers = set(j["key"] for j in gamestate["jokers"]["cards"])
+        after_jokers = {j["key"] for j in gamestate["jokers"]["cards"]}
         assert before_jokers != after_jokers
 
     def test_pack_joker_slots_available(self, client: httpx.Client) -> None:

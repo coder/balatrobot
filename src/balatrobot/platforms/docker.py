@@ -44,6 +44,7 @@ class DockerLauncher(BaseLauncher):
             ["docker", "image", "inspect", IMAGE],
             stdout=subprocess.DEVNULL,
             stderr=subprocess.DEVNULL,
+            check=False,
         )
         if result.returncode != 0:
             raise RuntimeError(

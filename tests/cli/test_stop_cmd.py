@@ -137,7 +137,6 @@ class TestStopCommand:
             """Allow signal-0 alive checks, raise on SIGTERM."""
             if sig == signal.SIGTERM:
                 raise PermissionError("Not allowed")
-            return None
 
         with patch("balatrobot.cli.stop.os.kill", side_effect=kill_permission_denied):
             result = runner.invoke(app, ["stop"])
