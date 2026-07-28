@@ -1045,6 +1045,10 @@
             "type": "boolean",
             "description": "Whether the game has been won"
           },
+          "starting_deck_size": {
+            "type": "integer",
+            "description": "Deck size at run start (Erosion baseline; e.g. 52)"
+          },
           "used_vouchers": {
             "type": "object",
             "description": "Vouchers used (name -> description)",

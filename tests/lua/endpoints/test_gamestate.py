@@ -163,6 +163,12 @@ class TestGamestateTopLevel:
         assert api(client, "next_round")["result"]["won"] is True
         assert api(client, "select")["result"]["won"] is True
 
+    def test_starting_deck_size_standard_deck(self, client: httpx.Client) -> None:
+        """Standard deck run: starting_deck_size is 52 (the Erosion baseline)."""
+        fixture_name = "state-BLIND_SELECT--round_num-0--deck-b_red--stake-stake_white"
+        gamestate = load_fixture(client, "gamestate", fixture_name)
+        assert gamestate["starting_deck_size"] == 52
+
 
 class TestGamestateRound:
     """Test gamestate round extraction."""

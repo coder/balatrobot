@@ -19,6 +19,7 @@
 ---@field round_num integer Current round number
 ---@field ante_num integer Current ante number
 ---@field money integer Current money amount
+---@field starting_deck_size integer Deck size at run start (Erosion baseline; e.g. 52)
 ---@field used_vouchers table<string, string>? Vouchers used (name -> description)
 ---@field tags Tag[]? Accumulated tags owned by the player
 ---@field hands table<Hand.Name, Hand>? Poker hands information

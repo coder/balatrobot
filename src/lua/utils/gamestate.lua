@@ -842,6 +842,7 @@ function gamestate.get_gamestate()
     state_data.ante_num = (G.GAME.round_resets and G.GAME.round_resets.ante) or 0
     state_data.money = G.GAME.dollars or 0
     state_data.won = G.GAME.won
+    state_data.starting_deck_size = G.GAME.starting_deck_size
 
     -- Deck (optional)
     if G.GAME.selected_back and G.GAME.selected_back.effect and G.GAME.selected_back.effect.center then
