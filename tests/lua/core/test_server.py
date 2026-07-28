@@ -18,22 +18,28 @@ import threading
 import httpx
 import pytest
 
+from balatrobot.instance import InstanceInfo
+
 
 class TestHTTPServerInit:
     """Tests for HTTP server initialization and port binding."""
 
-    def test_server_binds_to_configured_port(self, port: int, balatro_server) -> None:
+    def test_server_binds_to_configured_port(
+        self, instance: InstanceInfo, balatro_server
+    ) -> None:
         """Test that server is listening on the expected port."""
         with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
             sock.settimeout(2)
-            sock.connect(("127.0.0.1", port))
-            assert sock.fileno() != -1, f"Should connect to port {port}"
+            sock.connect(("127.0.0.1", instance.port))
+            assert sock.fileno() != -1, f"Should connect to port {instance.port}"
 
-    def test_port_is_exclusively_bound(self, port: int, balatro_server) -> None:
+    def test_port_is_exclusively_bound(
+        self, instance: InstanceInfo, balatro_server
+    ) -> None:
         """Test that server exclusively binds the port."""
         with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
             with pytest.raises(OSError) as exc_info:
-                sock.bind(("127.0.0.1", port))
+                sock.bind(("127.0.0.1", instance.port))
             assert exc_info.value.errno == errno.EADDRINUSE
 
     def test_server_responds_to_http(self, client: httpx.Client) -> None:
@@ -500,7 +506,7 @@ class TestHTTPServerConcurrency:
     """Tests for concurrent request handling."""
 
     def test_concurrent_requests_do_not_crash(
-        self, instance, balatro_server, client: httpx.Client
+        self, instance: InstanceInfo, balatro_server, client: httpx.Client
     ) -> None:
         """Two concurrent requests must not crash the server (#193)."""
         barrier = threading.Barrier(2)
@@ -524,7 +530,7 @@ class TestHTTPServerConcurrency:
                     while True:
                         try:
                             chunk = s.recv(4096)
-                        except socket.timeout:
+                        except TimeoutError:
                             break
                         if not chunk:
                             break

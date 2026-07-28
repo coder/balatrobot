@@ -3,6 +3,7 @@
 import re
 
 import httpx
+import pytest
 
 from tests.lua.conftest import api, assert_gamestate_response, load_fixture
 
@@ -18,19 +19,19 @@ class TestGamestateEndpoint:
 
     def test_gamestate_from_BLIND_SELECT(self, client: httpx.Client) -> None:
         """Test that gamestate from BLIND_SELECT state is valid."""
-        fixture_name = "state-BLIND_SELECT--round_num-0--deck-RED--stake-WHITE"
+        fixture_name = "state-BLIND_SELECT--round_num-0--deck-b_red--stake-stake_white"
         gamestate = load_fixture(client, "gamestate", fixture_name)
         assert gamestate["state"] == "BLIND_SELECT"
         assert gamestate["round_num"] == 0
-        assert gamestate["deck"] == "RED"
-        assert gamestate["stake"] == "WHITE"
+        assert gamestate["deck"] == "b_red"
+        assert gamestate["stake"] == "stake_white"
         response = api(client, "gamestate", {})
         assert_gamestate_response(
             response,
             state="BLIND_SELECT",
             round_num=0,
-            deck="RED",
-            stake="WHITE",
+            deck="b_red",
+            stake="stake_white",
         )
 
 
@@ -38,47 +39,101 @@ class TestGamestateTopLevel:
     """Test gamestate endpoint with top-level fields."""
 
     def test_deck_extraction(self, client: httpx.Client) -> None:
-        """Test deck field matches started deck (e.g., "BLUE")."""
-        fixture_name = "state-BLIND_SELECT--deck-BLUE--stake-RED"
+        """Test deck field matches started deck (e.g., "b_blue")."""
+        fixture_name = "state-BLIND_SELECT--deck-b_blue--stake-stake_red"
         gamestate = load_fixture(client, "gamestate", fixture_name)
-        assert gamestate["deck"] == "BLUE"
+        assert gamestate["deck"] == "b_blue"
 
     def test_stake_extraction(self, client: httpx.Client) -> None:
-        """Test stake field matches started stake (e.g., "RED")."""
-        fixture_name = "state-BLIND_SELECT--deck-BLUE--stake-RED"
+        """Test stake field matches started stake (e.g., "stake_red")."""
+        fixture_name = "state-BLIND_SELECT--deck-b_blue--stake-stake_red"
         gamestate = load_fixture(client, "gamestate", fixture_name)
-        assert gamestate["stake"] == "RED"
+        assert gamestate["stake"] == "stake_red"
 
     def test_seed_extraction(self, client: httpx.Client) -> None:
         """Test seed field matches the seed used in `start`."""
-        fixture_name = "state-BLIND_SELECT--deck-BLUE--stake-RED"
+        fixture_name = "state-BLIND_SELECT--deck-b_blue--stake-stake_red"
         gamestate = load_fixture(client, "gamestate", fixture_name)
         assert gamestate["seed"] == "TEST123"
 
+    def test_challenge_absent_in_normal_run(self, client: httpx.Client) -> None:
+        """Normal run: the challenge key is omitted, not null.
+
+        The extractor guards with ``if G.GAME.challenge then``, so a
+        non-challenge run (G.GAME.challenge is nil) has no challenge key at
+        all — the contract is conditional absence.
+        """
+        fixture_name = "state-BLIND_SELECT--deck-b_blue--stake-stake_red"
+        gamestate = load_fixture(client, "gamestate", fixture_name)
+        assert "challenge" not in gamestate
+
+    def test_challenge_present_during_challenge_run(self, client: httpx.Client) -> None:
+        """Challenge run: the challenge key holds the bare challenge id.
+
+        test_start.py owns the broader challenge-run matrix (deck/stake/seed/
+        effect/conflict); this pins the gamestate extractor's positive branch.
+        """
+        api(client, "menu", {})
+        response = api(client, "start", {"challenge": "c_omelette_1"})
+        gamestate = assert_gamestate_response(response, state="BLIND_SELECT")
+        assert gamestate["challenge"] == "c_omelette_1"
+
+    def test_last_tarot_planet_absent_at_run_start(self, client: httpx.Client) -> None:
+        """Fresh run: the key is omitted, not null (conditional-absence contract)."""
+        gamestate = load_fixture(client, "gamestate", "state-SELECTING_HAND")
+        assert "last_tarot_planet" not in gamestate
+
+    def test_last_tarot_planet_after_using_tarot(self, client: httpx.Client) -> None:
+        """Using a Tarot sets last_tarot_planet to that card's key."""
+        load_fixture(client, "gamestate", "state-SELECTING_HAND")
+        api(client, "add", {"key": "c_hermit"})
+        response = api(client, "use", {"consumable": 0})
+        after = assert_gamestate_response(response)
+        assert after["last_tarot_planet"] == "c_hermit"
+
+    def test_last_tarot_planet_after_using_planet(self, client: httpx.Client) -> None:
+        """Using a Planet also sets last_tarot_planet (The Fool copies either)."""
+        load_fixture(client, "gamestate", "state-SELECTING_HAND")
+        api(client, "add", {"key": "c_pluto"})
+        response = api(client, "use", {"consumable": 0})
+        after = assert_gamestate_response(response)
+        assert after["last_tarot_planet"] == "c_pluto"
+
+    def test_last_tarot_planet_used_by_the_fool(self, client: httpx.Client) -> None:
+        """The Fool creates exactly the card named by last_tarot_planet."""
+        load_fixture(client, "gamestate", "state-SELECTING_HAND")
+        api(client, "add", {"key": "c_hermit"})
+        api(client, "use", {"consumable": 0})  # loads last_tarot_planet = c_hermit
+        api(client, "add", {"key": "c_fool"})
+        response = api(client, "use", {"consumable": 0})  # Fool creates c_hermit
+        after = assert_gamestate_response(response)
+        keys = {c["key"] for c in after["consumables"]["cards"]}
+        assert "c_hermit" in keys
+
     def test_money_extraction(self, client: httpx.Client) -> None:
         """Test money field after using `set` to modify it."""
-        fixture_name = "state-BLIND_SELECT--deck-BLUE--stake-RED"
+        fixture_name = "state-BLIND_SELECT--deck-b_blue--stake-stake_red"
         load_fixture(client, "gamestate", fixture_name)
         response = api(client, "set", {"money": 42})
         assert response["result"]["seed"] == "TEST123"
 
     def test_ante_num_extractions(self, client: httpx.Client) -> None:
         """Test ante_num field after using `set` to modify it."""
-        fixture_name = "state-BLIND_SELECT--deck-BLUE--stake-RED"
+        fixture_name = "state-BLIND_SELECT--deck-b_blue--stake-stake_red"
         load_fixture(client, "gamestate", fixture_name)
         response = api(client, "set", {"ante": 5})
         assert response["result"]["ante_num"] == 5
 
     def test_round_num_extractions(self, client: httpx.Client) -> None:
         """Test round_num field after using `set` to modify it."""
-        fixture_name = "state-BLIND_SELECT--deck-BLUE--stake-RED"
+        fixture_name = "state-BLIND_SELECT--deck-b_blue--stake-stake_red"
         load_fixture(client, "gamestate", fixture_name)
         response = api(client, "set", {"round": 5})
         assert response["result"]["round_num"] == 5
 
     def test_won_false_extraction(self, client: httpx.Client) -> None:
         """Test won field after defeating ante 8 boss."""
-        fixture_name = "state-BLIND_SELECT--deck-BLUE--stake-RED"
+        fixture_name = "state-BLIND_SELECT--deck-b_blue--stake-stake_red"
         gamestate = load_fixture(client, "gamestate", fixture_name)
         assert gamestate["won"] is False
 
@@ -88,6 +143,31 @@ class TestGamestateTopLevel:
         load_fixture(client, "gamestate", fixture_name)
         response = api(client, "play", {"cards": [0]})
         assert response["result"]["won"] is True
+
+    def test_won_persists_through_endless_cycle(self, client: httpx.Client) -> None:
+        """won=true persists across the endless-mode round-transition cycle."""
+        # Drive live to a win, then continue; won must stay true at every step.
+        api(client, "menu")
+        api(
+            client,
+            "start",
+            {"deck": "b_red", "stake": "stake_white", "seed": "TEST123"},
+        )
+        api(client, "skip")
+        api(client, "skip")
+        api(client, "select")
+        api(client, "set", {"ante": 8, "chips": 1000000})
+        win = api(client, "play", {"cards": [0, 3, 4, 5, 6]})
+        assert win["result"]["won"] is True
+        assert api(client, "cash_out")["result"]["won"] is True
+        assert api(client, "next_round")["result"]["won"] is True
+        assert api(client, "select")["result"]["won"] is True
+
+    def test_starting_deck_size_standard_deck(self, client: httpx.Client) -> None:
+        """Standard deck run: starting_deck_size is 52 (the Erosion baseline)."""
+        fixture_name = "state-BLIND_SELECT--round_num-0--deck-b_red--stake-stake_white"
+        gamestate = load_fixture(client, "gamestate", fixture_name)
+        assert gamestate["starting_deck_size"] == 52
 
 
 class TestGamestateRound:
@@ -133,38 +213,111 @@ class TestGamestateRound:
         response = api(client, "reroll", {})
         assert response["result"]["round"]["reroll_cost"] == 6
 
+    @pytest.mark.parametrize(
+        "field,keys",
+        [
+            ("idol_card", {"suit", "rank"}),
+            ("mail_card", {"rank"}),
+            ("ancient_card", {"suit"}),
+            ("castle_card", {"suit"}),
+        ],
+    )
+    def test_round_card_target_shape(
+        self, client: httpx.Client, field: str, keys: set[str]
+    ) -> None:
+        """Each joker card target has its exact shape with valid enums."""
+        gamestate = load_fixture(client, "gamestate", "state-SELECTING_HAND")
+        target = gamestate["round"][field]
+        assert set(target.keys()) == keys
+        if "suit" in target:
+            assert target["suit"] in ["H", "D", "C", "S"]
+        if "rank" in target:
+            assert target["rank"] in [
+                "2",
+                "3",
+                "4",
+                "5",
+                "6",
+                "7",
+                "8",
+                "9",
+                "T",
+                "J",
+                "Q",
+                "K",
+                "A",
+            ]
+
+    def test_round_to_do_list_hands_absent_without_joker(
+        self, client: httpx.Client
+    ) -> None:
+        """round.to_do_list_hands is omitted when no To Do List is owned."""
+        gamestate = load_fixture(client, "gamestate", "state-SELECTING_HAND")
+        assert "to_do_list_hands" not in gamestate["round"]
+
+    def test_round_to_do_list_hands_after_add(self, client: httpx.Client) -> None:
+        """Adding a To Do List exposes its target hand (one entry per owned copy)."""
+        load_fixture(client, "gamestate", "state-SELECTING_HAND")
+        response = api(client, "add", {"key": "j_todo_list"})
+        hands = response["result"]["round"]["to_do_list_hands"]
+        valid_hands = {
+            "Flush Five",
+            "Flush House",
+            "Five of a Kind",
+            "Straight Flush",
+            "Four of a Kind",
+            "Full House",
+            "Flush",
+            "Straight",
+            "Three of a Kind",
+            "Two Pair",
+            "Pair",
+            "High Card",
+        }
+        assert isinstance(hands, list)
+        assert len(hands) == 1
+        assert hands[0] in valid_hands
+
 
 class TestGamestateBlinds:
     """Test gamestate blind extraction."""
 
     def test_blinds_structure_extraction(self, client: httpx.Client) -> None:
         """Test blind extraction structure."""
-        fixture_name = "state-BLIND_SELECT--round_num-0--deck-RED--stake-WHITE"
+        fixture_name = "state-BLIND_SELECT--round_num-0--deck-b_red--stake-stake_white"
         gamestate = load_fixture(client, "gamestate", fixture_name)
         expected_blinds = {
             "small": {
                 "type": "SMALL",
+                "key": "bl_small",
                 "name": "Small Blind",
                 "effect": "",
                 "score": 300,
-                "tag_effect": "Next base edition shop Joker is free and becomes Polychrome",
-                "tag_name": "Polychrome Tag",
+                "tag": {
+                    "key": "tag_polychrome",
+                    "name": "Polychrome Tag",
+                    "effect": "Next base edition shop Joker is free and becomes Polychrome",
+                },
             },
             "big": {
-                "effect": "",
-                "name": "Big Blind",
-                "score": 450,
-                "tag_effect": "After defeating the Boss Blind, gain $25",
-                "tag_name": "Investment Tag",
                 "type": "BIG",
+                "key": "bl_big",
+                "name": "Big Blind",
+                "effect": "",
+                "score": 450,
+                "tag": {
+                    "key": "tag_investment",
+                    "name": "Investment Tag",
+                    "effect": "After defeating the Boss Blind, gain $25",
+                },
             },
             "boss": {
-                "effect": "-1 Hand Size",
-                "name": "The Manacle",
-                "score": 600,
-                "tag_effect": "",
-                "tag_name": "",
                 "type": "BOSS",
+                "key": "bl_manacle",
+                "name": "The Manacle",
+                "effect": "-1 Hand Size",
+                "score": 600,
+                "reroll_available": False,
             },
         }
         actual_blinds = {
@@ -175,7 +328,7 @@ class TestGamestateBlinds:
 
     def test_blinds_zero_skip_extraction(self, client: httpx.Client) -> None:
         """Test initial blind extraction."""
-        fixture_name = "state-BLIND_SELECT--round_num-0--deck-RED--stake-WHITE"
+        fixture_name = "state-BLIND_SELECT--round_num-0--deck-b_red--stake-stake_white"
         gamestate = load_fixture(client, "gamestate", fixture_name)
         assert gamestate["blinds"]["small"]["status"] == "SELECT"
         assert gamestate["blinds"]["big"]["status"] == "UPCOMING"
@@ -183,7 +336,7 @@ class TestGamestateBlinds:
 
     def test_blinds_one_skip_extraction(self, client: httpx.Client) -> None:
         """Test blind extraction after one skip."""
-        fixture_name = "state-BLIND_SELECT--round_num-0--deck-RED--stake-WHITE"
+        fixture_name = "state-BLIND_SELECT--round_num-0--deck-b_red--stake-stake_white"
         load_fixture(client, "gamestate", fixture_name)
         gamestate = api(client, "skip", {})["result"]
         assert gamestate["blinds"]["small"]["status"] == "SKIPPED"
@@ -192,7 +345,7 @@ class TestGamestateBlinds:
 
     def test_blinds_two_skip_extraction(self, client: httpx.Client) -> None:
         """Test blind extraction after two skip."""
-        fixture_name = "state-BLIND_SELECT--round_num-0--deck-RED--stake-WHITE"
+        fixture_name = "state-BLIND_SELECT--round_num-0--deck-b_red--stake-stake_white"
         load_fixture(client, "gamestate", fixture_name)
         api(client, "skip", {})
         gamestate = api(client, "skip", {})["result"]
@@ -215,6 +368,49 @@ class TestGamestateBlinds:
         assert gamestate["blinds"]["big"]["status"] == "SELECT"
         assert gamestate["blinds"]["boss"]["status"] == "UPCOMING"
 
+    @pytest.mark.parametrize(
+        "fixture,expected",
+        [
+            # True: Director's Cut + affordable ($20 >= $10).
+            (
+                "state-BLIND_SELECT--blinds.boss.status-SELECT"
+                + "--used_vouchers.v_directors_cut-1--money-20",
+                True,
+            ),
+            # False: voucher held but unaffordable ($5 < $10).
+            (
+                "state-BLIND_SELECT--blinds.boss.status-SELECT"
+                + "--used_vouchers.v_directors_cut-1--money-5",
+                False,
+            ),
+            # False: no reroll voucher at all.
+            ("state-BLIND_SELECT--blinds.boss.status-SELECT", False),
+            # True: Retcon (unlimited rerolls) + affordable ($30).
+            (
+                "state-BLIND_SELECT--blinds.boss.status-SELECT"
+                + "--used_vouchers.v_retcon-1--money-30",
+                True,
+            ),
+        ],
+        ids=["directors_cut_affordable", "directors_cut_poor", "no_voucher", "retcon"],
+    )
+    def test_boss_reroll_available_gate(
+        self,
+        client: httpx.Client,
+        fixture: str,
+        expected: bool,
+    ) -> None:
+        """Extractor reports reroll_available per the gate in get_blinds_info:
+        affordable (dollars - bankrupt_at >= 10) AND (v_retcon OR
+        (v_directors_cut AND not boss_rerolled)).
+
+        Pins the gamestate-extractor contract for the static branches.
+        test_reroll_boss.py owns the full endpoint-behavior matrix, including
+        the post-reroll (boss_rerolled → False) and Retcon-stays-True cases.
+        """
+        gamestate = load_fixture(client, "reroll_boss", fixture)
+        assert gamestate["blinds"]["boss"]["reroll_available"] is expected
+
 
 class TestGamestateAreas:
     """Test gamestate areas extraction."""
@@ -224,7 +420,9 @@ class TestGamestateAreas:
 
         def test_jokers_area_empty_initial(self, client: httpx.Client) -> None:
             """Test jokers area is empty at start of run."""
-            fixture_name = "state-BLIND_SELECT--round_num-0--deck-RED--stake-WHITE"
+            fixture_name = (
+                "state-BLIND_SELECT--round_num-0--deck-b_red--stake-stake_white"
+            )
             gamestate = load_fixture(client, "gamestate", fixture_name)
             assert gamestate["jokers"]["count"] == 0
             assert gamestate["jokers"]["cards"] == []
@@ -239,7 +437,9 @@ class TestGamestateAreas:
 
         def test_jokers_area_limit(self, client: httpx.Client) -> None:
             """Test jokers area limit."""
-            fixture_name = "state-BLIND_SELECT--round_num-0--deck-RED--stake-WHITE"
+            fixture_name = (
+                "state-BLIND_SELECT--round_num-0--deck-b_red--stake-stake_white"
+            )
             gamestate = load_fixture(client, "gamestate", fixture_name)
             assert gamestate["jokers"]["limit"] == 5
 
@@ -248,7 +448,9 @@ class TestGamestateAreas:
 
         def test_consumables_area_empty_initial(self, client: httpx.Client) -> None:
             """Test consumables area is empty at start of run."""
-            fixture_name = "state-BLIND_SELECT--round_num-0--deck-RED--stake-WHITE"
+            fixture_name = (
+                "state-BLIND_SELECT--round_num-0--deck-b_red--stake-stake_white"
+            )
             gamestate = load_fixture(client, "gamestate", fixture_name)
             assert gamestate["consumables"]["count"] == 0
             assert gamestate["consumables"]["cards"] == []
@@ -263,7 +465,9 @@ class TestGamestateAreas:
 
         def test_consumables_area_limit(self, client: httpx.Client) -> None:
             """Test consumables area limit."""
-            fixture_name = "state-BLIND_SELECT--round_num-0--deck-RED--stake-WHITE"
+            fixture_name = (
+                "state-BLIND_SELECT--round_num-0--deck-b_red--stake-stake_white"
+            )
             gamestate = load_fixture(client, "gamestate", fixture_name)
             assert gamestate["consumables"]["limit"] == 2
 
@@ -272,20 +476,26 @@ class TestGamestateAreas:
 
         def test_cards_area_initial_count(self, client: httpx.Client) -> None:
             """Test cards area has full deck at blind selection."""
-            fixture_name = "state-BLIND_SELECT--round_num-0--deck-RED--stake-WHITE"
+            fixture_name = (
+                "state-BLIND_SELECT--round_num-0--deck-b_red--stake-stake_white"
+            )
             gamestate = load_fixture(client, "gamestate", fixture_name)
             assert gamestate["cards"]["count"] == 52
 
         def test_cards_area_count_after_draw(self, client: httpx.Client) -> None:
             """Test cards area count after drawing cards."""
-            fixture_name = "state-BLIND_SELECT--round_num-0--deck-RED--stake-WHITE"
+            fixture_name = (
+                "state-BLIND_SELECT--round_num-0--deck-b_red--stake-stake_white"
+            )
             load_fixture(client, "gamestate", fixture_name)
             response = api(client, "select", {})
             assert response["result"]["cards"]["count"] == 52 - 8  # 8 cards drawn
 
         def test_cards_area_limit(self, client: httpx.Client) -> None:
             """Test cards area limit."""
-            fixture_name = "state-BLIND_SELECT--round_num-0--deck-RED--stake-WHITE"
+            fixture_name = (
+                "state-BLIND_SELECT--round_num-0--deck-b_red--stake-stake_white"
+            )
             gamestate = load_fixture(client, "gamestate", fixture_name)
             assert gamestate["cards"]["limit"] == 52
 
@@ -294,7 +504,9 @@ class TestGamestateAreas:
 
         def test_hand_area_count_in_BLIND_SELECT(self, client: httpx.Client) -> None:
             """Test hand area is absent in BLIND_SELECT state."""
-            fixture_name = "state-BLIND_SELECT--round_num-0--deck-RED--stake-WHITE"
+            fixture_name = (
+                "state-BLIND_SELECT--round_num-0--deck-b_red--stake-stake_white"
+            )
             gamestate = load_fixture(client, "gamestate", fixture_name)
             assert gamestate["hand"]["count"] == 0
 
@@ -349,7 +561,9 @@ class TestGamestateAreas:
 
         def test_shop_area_absent_in_BLIND_SELECT(self, client: httpx.Client) -> None:
             """Test shop area is absent in BLIND_SELECT state."""
-            fixture_name = "state-BLIND_SELECT--round_num-0--deck-RED--stake-WHITE"
+            fixture_name = (
+                "state-BLIND_SELECT--round_num-0--deck-b_red--stake-stake_white"
+            )
             gamestate = load_fixture(client, "gamestate", fixture_name)
             assert "shop" not in gamestate
 
@@ -374,7 +588,9 @@ class TestGamestateAreas:
             self, client: httpx.Client
         ) -> None:
             """Test vouchers area is absent in BLIND_SELECT state."""
-            fixture_name = "state-BLIND_SELECT--round_num-0--deck-RED--stake-WHITE"
+            fixture_name = (
+                "state-BLIND_SELECT--round_num-0--deck-b_red--stake-stake_white"
+            )
             gamestate = load_fixture(client, "gamestate", fixture_name)
             assert "vouchers" not in gamestate
 
@@ -397,7 +613,9 @@ class TestGamestateAreas:
 
         def test_packs_area_absent_in_BLIND_SELECT(self, client: httpx.Client) -> None:
             """Test packs area is absent in BLIND_SELECT state."""
-            fixture_name = "state-BLIND_SELECT--round_num-0--deck-RED--stake-WHITE"
+            fixture_name = (
+                "state-BLIND_SELECT--round_num-0--deck-b_red--stake-stake_white"
+            )
             gamestate = load_fixture(client, "gamestate", fixture_name)
             assert "packs" not in gamestate
 
@@ -571,7 +789,7 @@ class TestGamestateCards:
             """Test enhanced playing cards have ENHANCED set."""
             fixture_name = "state-SELECTING_HAND"
             load_fixture(client, "gamestate", fixture_name)
-            response = api(client, "add", {"key": "H_A", "enhancement": "BONUS"})
+            response = api(client, "add", {"key": "H_A", "enhancement": "m_bonus"})
             # Find the enhanced card (last card in hand)
             cards = response["result"]["hand"]["cards"]
             card = cards[-1]
@@ -816,52 +1034,442 @@ class TestGamestateCards:
             assert joker["cost"]["sell"] > 0
 
 
+class TestGamestateUsedVouchers:
+    """Test gamestate used_vouchers effect text extraction."""
+
+    @pytest.mark.parametrize(
+        "voucher_key,expected_effect",
+        [
+            # --- No loc_vars ---
+            ("v_overstock_norm", "+1 card slot available in shop"),
+            ("v_overstock_plus", "+1 card slot available in shop"),
+            ("v_crystal_ball", "+1 consumable slot"),
+            (
+                "v_omen_globe",
+                "Spectral cards may appear in any of the Arcana Packs",
+            ),
+            (
+                "v_telescope",
+                "Celestial Packs always contain the Planet card for your "
+                + "most played poker hand",
+            ),
+            ("v_magic_trick", "Playing cards can be purchased from the shop"),
+            (
+                "v_illusion",
+                "Playing cards in shop may have an Enhancement, Edition, and/or a Seal",
+            ),
+            ("v_blank", "Does nothing?"),
+            ("v_antimatter", "+1 Joker Slot"),
+            # --- Uses center.config.extra_disp ---
+            (
+                "v_tarot_merchant",
+                "Tarot cards appear 2X more frequently in the shop",
+            ),
+            (
+                "v_tarot_tycoon",
+                "Tarot cards appear 4X more frequently in the shop",
+            ),
+            (
+                "v_planet_merchant",
+                "Planet cards appear 2X more frequently in the shop",
+            ),
+            (
+                "v_planet_tycoon",
+                "Planet cards appear 4X more frequently in the shop",
+            ),
+            # --- Uses center.config.extra ---
+            (
+                "v_hone",
+                "Foil, Holographic, and Polychrome cards appear 2X more often",
+            ),
+            (
+                "v_glow_up",
+                "Foil, Holographic, and Polychrome cards appear 4X more often",
+            ),
+            ("v_reroll_surplus", "Rerolls cost $2 less"),
+            ("v_reroll_glut", "Rerolls cost $2 less"),
+            ("v_grabber", "Permanently gain +1 hand per round"),
+            ("v_nacho_tong", "Permanently gain +1 hand per round"),
+            ("v_wasteful", "Permanently gain +1 discard each round"),
+            ("v_recyclomancy", "Permanently gain +1 discard each round"),
+            ("v_clearance_sale", "All cards and packs in shop are 25% off"),
+            ("v_liquidation", "All cards and packs in shop are 50% off"),
+            (
+                "v_directors_cut",
+                "Reroll Boss Blind 1 time per Ante, $10 per roll",
+            ),
+            ("v_retcon", "Reroll Boss Blind unlimited times, $10 per roll"),
+            ("v_paint_brush", "+1 hand size"),
+            ("v_palette", "+1 hand size"),
+            ("v_hieroglyph", "-1 Ante, -1 hand each round"),
+            ("v_petroglyph", "-1 Ante, -1 discard each round"),
+            # --- Uses center.config.extra / 5 ---
+            (
+                "v_seed_money",
+                "Raise the cap on interest earned in each round to $10",
+            ),
+            (
+                "v_money_tree",
+                "Raise the cap on interest earned in each round to $20",
+            ),
+            # --- Uses center.config.extra (mult) ---
+            (
+                "v_observatory",
+                "Planet cards in your consumable area give X1.5 Mult "
+                + "for their specified poker hand",
+            ),
+        ],
+        ids=lambda v: v if v.startswith("v_") else "",
+    )
+    def test_voucher_effect_text(
+        self, client: httpx.Client, voucher_key: str, expected_effect: str
+    ) -> None:
+        """Test that used_vouchers contains correct effect text for each voucher."""
+        load_fixture(
+            client,
+            "gamestate",
+            "state-SHOP",
+        )
+        response = api(client, "add", {"key": voucher_key})
+        gamestate = assert_gamestate_response(response)
+        assert gamestate["vouchers"]["cards"][1]["value"]["effect"] == expected_effect
+        response = api(client, "buy", {"voucher": 1})
+        gamestate = assert_gamestate_response(response)
+        assert voucher_key in gamestate["used_vouchers"]
+        assert gamestate["used_vouchers"][voucher_key] == expected_effect
+
+
+class TestGamestateTags:
+    """Test gamestate Tag structure and owned_tags extraction."""
+
+    def test_blind_tag_structure(self, client: httpx.Client) -> None:
+        """Test blind tag has key, name, effect fields."""
+        fixture_name = "state-BLIND_SELECT--round_num-0--deck-b_red--stake-stake_white"
+        gamestate = load_fixture(client, "gamestate", fixture_name)
+
+        # Small blind should have a tag
+        small_tag = gamestate["blinds"]["small"]["tag"]
+        assert small_tag is not None
+        assert "key" in small_tag
+        assert "name" in small_tag
+        assert "effect" in small_tag
+        assert small_tag["key"] == "tag_polychrome"
+        assert small_tag["name"] == "Polychrome Tag"
+        assert "Polychrome" in small_tag["effect"]
+
+        # Big blind should have a tag
+        big_tag = gamestate["blinds"]["big"]["tag"]
+        assert big_tag is not None
+        assert "key" in big_tag
+        assert "name" in big_tag
+        assert "effect" in big_tag
+
+        # Boss blind should not have a tag
+        assert gamestate["blinds"]["boss"].get("tag") is None
+
+    def test_tags_empty_initially(self, client: httpx.Client) -> None:
+        """Test tags is empty/not present at start of run."""
+        fixture_name = "state-BLIND_SELECT--round_num-0--deck-b_red--stake-stake_white"
+        gamestate = load_fixture(client, "gamestate", fixture_name)
+        # tags should not be present when empty
+        assert "tags" not in gamestate
+
+    def test_tags_populated_after_skip(self, client: httpx.Client) -> None:
+        """Test tags is populated after skipping a blind."""
+        fixture_name = "state-BLIND_SELECT--round_num-0--deck-b_red--stake-stake_white"
+        load_fixture(client, "gamestate", fixture_name)
+
+        # Skip the small blind to get its tag
+        response = api(client, "skip", {})
+        gamestate = assert_gamestate_response(response)
+
+        # Should now have tags
+        assert "tags" in gamestate
+        assert len(gamestate["tags"]) >= 1
+
+        # Check tag structure
+        tag = gamestate["tags"][0]
+        assert "key" in tag
+        assert "name" in tag
+        assert "effect" in tag
+        assert tag["key"].startswith("tag_")
+
+
+# Fixtures reused from the `add` category for modifier reachability.
+_ADD_SELECTING_HAND = (
+    "state-SELECTING_HAND--jokers.count-0--consumables.count-0--hand.count-8"
+)
+_ADD_SHOP_EMPTY = (
+    "state-SHOP--jokers.count-0--consumables.count-0--vouchers.count-0--packs.count-0"
+)
+
+
 class TestGamestateCardModifiers:
-    """Test gamestate card modifiers."""
+    """Test gamestate card modifier extraction (extract_card_modifier).
+
+    Covers the Card.Modifier type in src/lua/utils/types.lua: seal, edition,
+    enhancement, eternal, perishable, rental. Modifiers are reached via the
+    `add` endpoint and the gamestate modifier object is asserted to be EXACTLY
+    the expected dict (no spurious/leaked keys) — the contract gap left by
+    test_add.py, which only checks the named key.
+
+    Note: a card with NO modifiers serializes as `[]`, not `{}` — an rxi/json.lua
+    quirk (empty Lua tables become JSON arrays). That empty case is pinned by
+    TestGamestateCards.test_modifier_absent_fields; the non-empty modifier is a
+    proper object, as the exact-dict assertions below verify.
+    """
 
     class TestGamestateCardModifierSeal:
-        """Test gamestate card modifier seal."""
+        """seal: Red/Blue/Gold/Purple (playing cards only)."""
 
-        # TODO: add later
+        @pytest.mark.parametrize("seal", ["Red", "Blue", "Gold", "Purple"])
+        def test_seal_extracted_alone(self, client: httpx.Client, seal: str) -> None:
+            """A sealed playing card reports exactly {seal: <seal>}."""
+            load_fixture(client, "add", _ADD_SELECTING_HAND)
+            response = api(client, "add", {"key": "H_A", "seal": seal})
+            card = assert_gamestate_response(response)["hand"]["cards"][8]
+            assert card["modifier"] == {"seal": seal}
 
     class TestGamestateCardModifierEdition:
-        """Test gamestate card modifier edition."""
+        """edition: e_foil/e_holo/e_polychrome/e_negative."""
 
-        # TODO: add later
+        @pytest.mark.parametrize(
+            "edition",
+            ["e_foil", "e_holo", "e_polychrome", "e_negative"],
+        )
+        def test_edition_on_playing_card(
+            self, client: httpx.Client, edition: str
+        ) -> None:
+            """An editioned playing card reports exactly {edition: <edition>}."""
+            load_fixture(client, "add", _ADD_SELECTING_HAND)
+            response = api(client, "add", {"key": "H_A", "edition": edition})
+            card = assert_gamestate_response(response)["hand"]["cards"][8]
+            assert card["modifier"] == {"edition": edition}
+
+        @pytest.mark.parametrize(
+            "edition",
+            ["e_foil", "e_holo", "e_polychrome", "e_negative"],
+        )
+        def test_edition_on_joker(self, client: httpx.Client, edition: str) -> None:
+            """An editioned joker reports exactly {edition: <edition>}."""
+            load_fixture(client, "add", _ADD_SHOP_EMPTY)
+            response = api(client, "add", {"key": "j_joker", "edition": edition})
+            card = assert_gamestate_response(response)["jokers"]["cards"][0]
+            assert card["modifier"] == {"edition": edition}
+
+        def test_edition_negative_on_consumable(self, client: httpx.Client) -> None:
+            """A e_negative consumable reports exactly {edition: e_negative}."""
+            load_fixture(client, "add", _ADD_SHOP_EMPTY)
+            response = api(client, "add", {"key": "c_fool", "edition": "e_negative"})
+            card = assert_gamestate_response(response)["consumables"]["cards"][0]
+            assert card["modifier"] == {"edition": "e_negative"}
 
     class TestGamestateCardModifierEnhancement:
-        """Test gamestate card modifier enhancement."""
+        """enhancement: m_* (eight values, playing cards only)."""
 
-        # TODO: add later
+        @pytest.mark.parametrize(
+            "enhancement",
+            [
+                "m_bonus",
+                "m_mult",
+                "m_wild",
+                "m_glass",
+                "m_steel",
+                "m_stone",
+                "m_gold",
+                "m_lucky",
+            ],
+        )
+        def test_enhancement_extracted(
+            self, client: httpx.Client, enhancement: str
+        ) -> None:
+            """An enhanced playing card reports exactly {enhancement: <m_*>}."""
+            load_fixture(client, "add", _ADD_SELECTING_HAND)
+            response = api(client, "add", {"key": "H_A", "enhancement": enhancement})
+            card = assert_gamestate_response(response)["hand"]["cards"][8]
+            assert card["modifier"] == {"enhancement": enhancement}
 
     class TestGamestateCardModifierEternal:
-        """Test gamestate card modifier eternal."""
+        """eternal: boolean (jokers only)."""
 
-        # TODO: add later
+        def test_eternal_extracted(self, client: httpx.Client) -> None:
+            """An eternal joker reports exactly {eternal: true}."""
+            load_fixture(client, "add", _ADD_SHOP_EMPTY)
+            response = api(client, "add", {"key": "j_joker", "eternal": True})
+            card = assert_gamestate_response(response)["jokers"]["cards"][0]
+            assert card["modifier"] == {"eternal": True}
 
     class TestGamestateCardModifierPerishable:
-        """Test gamestate card modifier perishable."""
+        """perishable: integer rounds remaining (jokers only)."""
 
-        # TODO: add later
+        @pytest.mark.parametrize("rounds", [1, 5, 10])
+        def test_perishable_extracted(self, client: httpx.Client, rounds: int) -> None:
+            """A perishable joker reports exactly {perishable: <rounds>}."""
+            load_fixture(client, "add", _ADD_SHOP_EMPTY)
+            response = api(client, "add", {"key": "j_joker", "perishable": rounds})
+            card = assert_gamestate_response(response)["jokers"]["cards"][0]
+            assert card["modifier"] == {"perishable": rounds}
 
     class TestGamestateCardModifierRental:
-        """Test gamestate card modifier rental."""
+        """rental: boolean (jokers only)."""
 
-        # TODO: add later
+        def test_rental_extracted(self, client: httpx.Client) -> None:
+            """A rental joker reports exactly {rental: true}."""
+            load_fixture(client, "add", _ADD_SHOP_EMPTY)
+            response = api(client, "add", {"key": "j_joker", "rental": True})
+            card = assert_gamestate_response(response)["jokers"]["cards"][0]
+            assert card["modifier"] == {"rental": True}
+
+    def test_all_playing_card_modifiers_co_occur(self, client: httpx.Client) -> None:
+        """seal + edition + enhancement are all extracted on a single card."""
+        load_fixture(client, "add", _ADD_SELECTING_HAND)
+        response = api(
+            client,
+            "add",
+            {
+                "key": "H_A",
+                "seal": "Red",
+                "edition": "e_foil",
+                "enhancement": "m_bonus",
+            },
+        )
+        card = assert_gamestate_response(response)["hand"]["cards"][8]
+        assert card["modifier"] == {
+            "seal": "Red",
+            "edition": "e_foil",
+            "enhancement": "m_bonus",
+        }
+
+
+# --- helpers for Card.State tests ---------------------------------------------
+def _reach_boss_selecting_hand(client: httpx.Client, boss_key: str) -> dict:
+    """Drive to SELECTING_HAND with a specific boss blind active.
+
+    Loads the Small-blind BLIND_SELECT fixture, injects ``boss_key`` as the
+    upcoming Boss via ``set``, skips Small and Big, then selects the Boss. The
+    dealt hand has the boss's debuff rules already applied
+    (``Blind:debuff_card`` → ``card:set_debuff``).
+    """
+    load_fixture(client, "skip", "state-BLIND_SELECT--blinds.small.status-SELECT")
+    api(client, "set", {"boss": boss_key})
+    api(client, "skip")  # skip Small → Big on deck
+    api(client, "skip")  # skip Big   → Boss on deck
+    return assert_gamestate_response(api(client, "select"), state="SELECTING_HAND")
+
+
+def _is_card_debuffed(card: dict) -> bool:
+    """True iff the gamestate card is debuffed.
+
+    Robust to the empty-state ``[]`` serialization quirk: a card with no state
+    flags has ``state == []`` (rxi/json.lua renders empty tables as arrays),
+    so we guard the dict access.
+    """
+    state = card.get("state")
+    return isinstance(state, dict) and state.get("debuff") is True
+
+
+def _is_card_hidden(card: dict) -> bool:
+    """True iff the gamestate card is hidden (face-down).
+
+    See ``_is_card_debuffed`` for the empty-state ``[]`` quirk rationale.
+    """
+    state = card.get("state")
+    return isinstance(state, dict) and state.get("hidden") is True
+
+
+# Face-card ranks (J/Q/K) — debuffed by The Plant (bl_plant).
+_FACE_RANKS = {"J", "Q", "K"}
+
+# Suit-debuff bosses → the gamestate suit enum they debuff (single-letter).
+# Each boss in Blind:debuff_card matches `self.debuff.suit`; the gamestate
+# exposes suits via convert_suit_to_enum (Clubs→C, Spades→S, Hearts→H,
+# Diamonds→D).
+_SUIT_DEBUFF_BOSSES = {
+    "bl_club": "C",
+    "bl_goad": "S",
+    "bl_head": "H",
+    "bl_window": "D",
+}
 
 
 class TestGamestateCardStates:
     """Test gamestate card states."""
 
     class TestGamestateCardStateDebuff:
-        """Test gamestate card state debuff."""
+        """state.debuff: applied by boss blinds via Blind:debuff_card.
 
-        # TODO: add later
+        Reached by injecting a debuff boss (``set``), skipping Small+Big, and
+        selecting the Boss — landing in SELECTING_HAND with the boss's debuff
+        rules applied to the dealt hand. The extractor is a pass-through
+        (``if card.debuff then state.debuff = true``); tests pin it for two
+        distinct debuff triggers: suit (bl_club → Clubs) and face (bl_plant).
+        """
+
+        @pytest.mark.parametrize("boss,suit", list(_SUIT_DEBUFF_BOSSES.items()))
+        def test_suit_cards_debuffed(
+            self, client: httpx.Client, boss: str, suit: str
+        ) -> None:
+            """Suit-debuff bosses: cards of the boss's suit get exactly
+            {debuff: true}; all others stay un-debuffed.
+
+            The positive case is conditional on the seed-dependent dealt hand
+            containing that suit (an 8-card hand may miss any one suit); the
+            negative assertions always run, and test_face_cards_debuffed_
+            under_bl_plant below guarantees a positive hit for the extractor.
+            """
+            gamestate = _reach_boss_selecting_hand(client, boss)
+            cards = gamestate["hand"]["cards"]
+            matching = [c for c in cards if c["value"].get("suit") == suit]
+            others = [c for c in cards if c["value"].get("suit") != suit]
+            for card in matching:
+                assert card["state"] == {"debuff": True}, card
+            for card in others:
+                assert not _is_card_debuffed(card), card
+
+        def test_face_cards_debuffed_under_bl_plant(self, client: httpx.Client) -> None:
+            """bl_plant debuffs face cards (J/Q/K): faces get exactly
+            {debuff: true}, numbered cards stay un-debuffed."""
+            gamestate = _reach_boss_selecting_hand(client, "bl_plant")
+            cards = gamestate["hand"]["cards"]
+            faces = [c for c in cards if c["value"].get("rank") in _FACE_RANKS]
+            numbered = [c for c in cards if c["value"].get("rank") not in _FACE_RANKS]
+            assert faces, "expected at least one face card in the dealt hand"
+            for card in faces:
+                assert card["state"] == {"debuff": True}, card
+            for card in numbered:
+                assert not _is_card_debuffed(card), card
 
     class TestGamestateCardStateHidden:
-        """Test gamestate card state hidden."""
+        """state.hidden: cards flipped face-down (facing == "back") by boss
+        blinds via Blind:stay_flipped.
 
-        # TODO: add later
+        Reached with the same boss-injection helper as the debuff tests.
+        bl_house hides the entire first hand (deterministic); bl_mark hides
+        face cards (deterministic). The probabilistic/conditional bosses
+        (bl_wheel, bl_fish) are intentionally not asserted.
+        """
+
+        def test_all_cards_hidden_under_bl_house(self, client: httpx.Client) -> None:
+            """bl_house hides the whole first hand: every card has exactly
+            {hidden: true}."""
+            gamestate = _reach_boss_selecting_hand(client, "bl_house")
+            cards = gamestate["hand"]["cards"]
+            assert cards, "expected a dealt hand"
+            for card in cards:
+                assert card["state"] == {"hidden": True}, card
+
+        def test_face_cards_hidden_under_bl_mark(self, client: httpx.Client) -> None:
+            """bl_mark hides face cards (J/Q/K): faces get exactly
+            {hidden: true}; numbered cards stay visible (not hidden)."""
+            gamestate = _reach_boss_selecting_hand(client, "bl_mark")
+            cards = gamestate["hand"]["cards"]
+            faces = [c for c in cards if c["value"].get("rank") in _FACE_RANKS]
+            numbered = [c for c in cards if c["value"].get("rank") not in _FACE_RANKS]
+            assert faces, "expected at least one face card in the dealt hand"
+            for card in faces:
+                assert card["state"] == {"hidden": True}, card
+            for card in numbered:
+                assert not _is_card_hidden(card), card
 
     class TestGamestateCardStateHighlight:
         """Test gamestate card state highlight."""
@@ -881,3 +1489,272 @@ class TestGamestateCardCosts:
         """Test gamestate card cost buy."""
 
         # TODO: add later
+
+
+# Default poker-hand values at run start (level 1, never played).
+# Sourced from G.GAME.hands init: vendors/balatro/game.lua:2002-2013.
+# {hand_name: {order, mult (level 1), chips (level 1), example}}
+_DEFAULT_HANDS = {
+    "Flush Five": {
+        "order": 1,
+        "mult": 16,
+        "chips": 160,
+        "example": [
+            ["S_A", True],
+            ["S_A", True],
+            ["S_A", True],
+            ["S_A", True],
+            ["S_A", True],
+        ],
+    },
+    "Flush House": {
+        "order": 2,
+        "mult": 14,
+        "chips": 140,
+        "example": [
+            ["D_7", True],
+            ["D_7", True],
+            ["D_7", True],
+            ["D_4", True],
+            ["D_4", True],
+        ],
+    },
+    "Five of a Kind": {
+        "order": 3,
+        "mult": 12,
+        "chips": 120,
+        "example": [
+            ["S_A", True],
+            ["H_A", True],
+            ["H_A", True],
+            ["C_A", True],
+            ["D_A", True],
+        ],
+    },
+    "Straight Flush": {
+        "order": 4,
+        "mult": 8,
+        "chips": 100,
+        "example": [
+            ["S_Q", True],
+            ["S_J", True],
+            ["S_T", True],
+            ["S_9", True],
+            ["S_8", True],
+        ],
+    },
+    "Four of a Kind": {
+        "order": 5,
+        "mult": 7,
+        "chips": 60,
+        "example": [
+            ["S_J", True],
+            ["H_J", True],
+            ["C_J", True],
+            ["D_J", True],
+            ["C_3", False],
+        ],
+    },
+    "Full House": {
+        "order": 6,
+        "mult": 4,
+        "chips": 40,
+        "example": [
+            ["H_K", True],
+            ["C_K", True],
+            ["D_K", True],
+            ["S_2", True],
+            ["D_2", True],
+        ],
+    },
+    "Flush": {
+        "order": 7,
+        "mult": 4,
+        "chips": 35,
+        "example": [
+            ["H_A", True],
+            ["H_K", True],
+            ["H_T", True],
+            ["H_5", True],
+            ["H_4", True],
+        ],
+    },
+    "Straight": {
+        "order": 8,
+        "mult": 4,
+        "chips": 30,
+        "example": [
+            ["D_J", True],
+            ["C_T", True],
+            ["C_9", True],
+            ["S_8", True],
+            ["H_7", True],
+        ],
+    },
+    "Three of a Kind": {
+        "order": 9,
+        "mult": 3,
+        "chips": 30,
+        "example": [
+            ["S_T", True],
+            ["C_T", True],
+            ["D_T", True],
+            ["H_6", False],
+            ["D_5", False],
+        ],
+    },
+    "Two Pair": {
+        "order": 10,
+        "mult": 2,
+        "chips": 20,
+        "example": [
+            ["H_A", True],
+            ["D_A", True],
+            ["C_Q", False],
+            ["H_4", True],
+            ["C_4", True],
+        ],
+    },
+    "Pair": {
+        "order": 11,
+        "mult": 2,
+        "chips": 10,
+        "example": [
+            ["S_K", False],
+            ["S_9", True],
+            ["D_9", True],
+            ["H_6", False],
+            ["D_3", False],
+        ],
+    },
+    "High Card": {
+        "order": 12,
+        "mult": 1,
+        "chips": 5,
+        "example": [
+            ["S_A", True],
+            ["D_Q", False],
+            ["D_9", False],
+            ["C_4", False],
+            ["D_3", False],
+        ],
+    },
+}
+
+
+class TestGamestateHandName:
+    """Test round.most_played_hand extraction and the tightened hands key typing."""
+
+    def test_most_played_hand_present_and_valid_at_selecting_hand(
+        self, client: httpx.Client
+    ) -> None:
+        """round.most_played_hand is present at SELECTING_HAND and is a Hand.Name."""
+        gamestate = load_fixture(client, "gamestate", "state-SELECTING_HAND")
+        assert gamestate["round"]["most_played_hand"] in _DEFAULT_HANDS
+
+    def test_most_played_hand_default_is_high_card(self, client: httpx.Client) -> None:
+        """Defaults to 'High Card' before any Boss blind is defeated."""
+        gamestate = load_fixture(client, "gamestate", "state-SELECTING_HAND")
+        assert gamestate["round"]["most_played_hand"] == "High Card"
+
+    def test_most_played_hand_tracks_most_played_after_boss_defeat(
+        self, client: httpx.Client
+    ) -> None:
+        """Updates to the most-played hand after a Boss blind is defeated."""
+        api(client, "menu", {})
+        api(
+            client,
+            "start",
+            {"deck": "b_red", "stake": "stake_white", "seed": "TEST123"},
+        )
+        # Skip to the Boss blind.
+        api(client, "skip", {})
+        api(client, "skip", {})
+        api(client, "select", {})
+        before = api(client, "gamestate", {})["result"]
+        assert before["round"]["most_played_hand"] == "High Card"
+        # Build a Pair by duplicating the first card; it lands at index len(hand).
+        dealt = before["hand"]["cards"]
+        new_index = len(dealt)
+        first = dealt[0]
+        dup_key = f"{first['value']['suit']}_{first['value']['rank']}"
+        api(client, "add", {"key": dup_key})
+        api(client, "set", {"chips": 1000000})  # guarantee the boss is beaten
+        response = api(client, "play", {"cards": [0, new_index]})
+        after = assert_gamestate_response(response, state="ROUND_EVAL")
+        assert after["round"]["most_played_hand"] == "Pair"
+
+
+class TestGamestateHands:
+    """Test gamestate hands (poker hand levels) extraction.
+
+    Covers extract_hand_info() in src/lua/utils/gamestate.lua and the Hand
+    type in src/lua/utils/types.lua. Level-up math from level_up_hand in
+    vendors/balatro/functions/common_events.lua:464:
+        level = level + amount
+        mult  = s_mult  + l_mult  * (level - 1)
+        chips = s_chips + l_chips * (level - 1)
+    """
+
+    def test_hands_present_at_run_start(self, client: httpx.Client) -> None:
+        """All 12 poker hands are present in the gamestate at run start."""
+        gamestate = load_fixture(client, "gamestate", "state-SELECTING_HAND")
+        assert set(gamestate["hands"].keys()) == set(_DEFAULT_HANDS.keys())
+
+    def test_hands_keys_are_hand_name_members(self, client: httpx.Client) -> None:
+        """Every hands key is a member of the Hand.Name enum."""
+        gamestate = load_fixture(client, "gamestate", "state-SELECTING_HAND")
+        assert set(gamestate["hands"].keys()) <= set(_DEFAULT_HANDS.keys())
+        assert "Royal Flush" not in gamestate["hands"]
+
+    @pytest.mark.parametrize("hand_name", list(_DEFAULT_HANDS.keys()))
+    def test_hands_default_values(self, client: httpx.Client, hand_name: str) -> None:
+        """Each hand reports its default level-1 values and example."""
+        gamestate = load_fixture(client, "gamestate", "state-SELECTING_HAND")
+        expected = _DEFAULT_HANDS[hand_name]
+        hand = gamestate["hands"][hand_name]
+        assert hand["order"] == expected["order"]
+        assert hand["level"] == 1
+        assert hand["mult"] == expected["mult"]
+        assert hand["chips"] == expected["chips"]
+        assert hand["played"] == 0
+        assert hand["played_this_round"] == 0
+        assert hand["example"] == expected["example"]
+
+    @pytest.mark.parametrize(
+        "planet_key,hand_name,expected_mult,expected_chips",
+        [
+            # c_mercury -> Pair:   s_mult=2, l_mult=1, s_chips=10, l_chips=15
+            ("c_mercury", "Pair", 3, 25),
+            # c_jupiter -> Flush:  s_mult=4, l_mult=2, s_chips=35, l_chips=15
+            ("c_jupiter", "Flush", 6, 50),
+        ],
+        ids=["mercury-pair", "jupiter-flush"],
+    )
+    def test_hands_level_up_via_planet(
+        self,
+        client: httpx.Client,
+        planet_key: str,
+        hand_name: str,
+        expected_mult: int,
+        expected_chips: int,
+    ) -> None:
+        """Using a Planet card raises the matching hand's level/mult/chips."""
+        load_fixture(client, "gamestate", "state-SELECTING_HAND")
+        api(client, "add", {"key": planet_key})
+        response = api(client, "use", {"consumable": 0})
+        hand = assert_gamestate_response(response)["hands"][hand_name]
+        assert hand["level"] == 2
+        assert hand["mult"] == expected_mult
+        assert hand["chips"] == expected_chips
+        # Leveling does not touch the play counters.
+        assert hand["played"] == 0
+        assert hand["played_this_round"] == 0
+
+    def test_hands_played_counter(self, client: httpx.Client) -> None:
+        """Playing a single High Card increments its played counters."""
+        load_fixture(client, "gamestate", "state-SELECTING_HAND")
+        response = api(client, "play", {"cards": [0]})
+        hand = assert_gamestate_response(response)["hands"]["High Card"]
+        assert hand["played"] == 1
+        assert hand["played_this_round"] == 1

@@ -3,28 +3,19 @@
 import asyncio
 import os
 import random
-from pathlib import Path
 from unittest.mock import AsyncMock, MagicMock
 
 import pytest
 
 from balatrobot.cli.client import BalatroClient
 from balatrobot.config import ENV_MAP, Config
-from balatrobot.manager import BalatroInstance
+from balatrobot.instance import BalatroInstance
 
 # ============================================================================
 # Constants
 # ============================================================================
 
 HOST = "127.0.0.1"
-
-# Files that contain integration tests requiring Balatro
-INTEGRATION_FILES = {
-    "test_client.py",
-    "test_api_cmd.py",
-    "test_serve_cmd.py",
-    "test_integration.py",
-}
 
 
 # ============================================================================
@@ -84,25 +75,8 @@ def pytest_unconfigure(config):
 
     try:
         asyncio.run(stop_all())
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001 - best-effort teardown error reporting
         print(f"Error stopping Balatro instances: {e}")
-
-
-def pytest_collection_modifyitems(items):
-    """Mark integration test files automatically."""
-    current_dir = Path(__file__).parent
-
-    for item in items:
-        # Only process items in this directory
-        if (
-            current_dir not in Path(item.path).parents
-            and Path(item.path).parent != current_dir
-        ):
-            continue
-
-        # Mark files that need Balatro as integration tests
-        if item.path.name in INTEGRATION_FILES:
-            item.add_marker(pytest.mark.integration)
 
 
 # ============================================================================

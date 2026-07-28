@@ -68,7 +68,7 @@ curl -X POST http://127.0.0.1:12346 \
 ```bash
 curl -X POST http://127.0.0.1:12346 \
   -H "Content-Type: application/json" \
-  -d '{"jsonrpc": "2.0", "method": "start", "params": {"deck": "RED", "stake": "WHITE"}, "id": 1}'
+  -d '{"jsonrpc": "2.0", "method": "start", "params": {"deck": "b_red", "stake": "stake_white"}, "id": 1}'
 ```
 
 #### 4. Select Blind and Play Cards
@@ -130,6 +130,7 @@ MENU ──► BLIND_SELECT ──► SELECTING_HAND ──► ROUND_EVAL ──
 - [`play`](#play) - Play cards from hand
 - [`discard`](#discard) - Discard cards from hand
 - [`rearrange`](#rearrange) - Rearrange cards in hand, jokers, or consumables
+- [`sort`](#sort) - Sort the hand by rank or suit
 - [`use`](#use) - Use a consumable card
 - [`add`](#add) - Add a card to the game (debug/testing)
 - [`screenshot`](#screenshot) - Take a screenshot of the game
@@ -187,15 +188,16 @@ curl -X POST http://127.0.0.1:12346 \
 
 ### `start`
 
-Start a new game run.
+Start a new game run. Either provide `deck` + `stake` for a normal run, or `challenge` for one of Balatro's 20 fixed-preset Challenge Runs. `challenge` is mutually exclusive with `deck`/`stake` but composes freely with `seed`. Lands in `BLIND_SELECT`.
 
 **Parameters:**
 
-| Name    | Type   | Required | Description           |
-| ------- | ------ | -------- | --------------------- |
-| `deck`  | string | Yes      | [Deck](#deck) to use  |
-| `stake` | string | Yes      | [Stake](#stake) level |
-| `seed`  | string | No       | Seed for the run      |
+| Name        | Type   | Required | Description                                                         |
+| ----------- | ------ | -------- | ------------------------------------------------------------------- |
+| `deck`      | string | No       | [Deck](#deck) to use (required unless `challenge` is given)         |
+| `stake`     | string | No       | [Stake](#stake) level (required unless `challenge` is given)        |
+| `seed`      | string | No       | Seed for the run                                                    |
+| `challenge` | string | No       | [Challenge](#challenge) id (mutually exclusive with `deck`/`stake`) |
 
 **Returns:** [GameState](#gamestate-schema) (state will be `BLIND_SELECT`)
 
@@ -206,9 +208,15 @@ Start a new game run.
 **Example:**
 
 ```bash
+# Normal run
 curl -X POST http://127.0.0.1:12346 \
   -H "Content-Type: application/json" \
-  -d '{"jsonrpc": "2.0", "method": "start", "params": {"deck": "BLUE", "stake": "WHITE", "seed": "TEST123"}, "id": 1}'
+  -d '{"jsonrpc": "2.0", "method": "start", "params": {"deck": "b_blue", "stake": "stake_white", "seed": "TEST123"}, "id": 1}'
+
+# Challenge run (The Omelette)
+curl -X POST http://127.0.0.1:12346 \
+  -H "Content-Type: application/json" \
+  -d '{"jsonrpc": "2.0", "method": "start", "params": {"challenge": "c_omelette_1"}, "id": 1}'
 ```
 
 ---
@@ -317,6 +325,34 @@ curl -X POST http://127.0.0.1:12346 \
 
 ---
 
+### `reroll_boss`
+
+Reroll the upcoming Boss Blind, replacing it with a random weighted pick for **$10**.
+Requires the **Director's Cut** voucher (one reroll per ante) or the **Retcon**
+voucher (unlimited rerolls). Mirrors Balatro's **"Reroll Boss"** button on the
+boss blind pane.
+
+Unlike the free Boss-Tag reroll and the deterministic [`set`](#set) boss override,
+this action charges $10 and keeps the new boss random. Availability is reported in
+the gamestate as [`blinds.boss.reroll_available`](#blind).
+
+**Returns:** [GameState](#gamestate-schema) (state stays `BLIND_SELECT`)
+
+**Errors:** `INVALID_STATE`, `NOT_ALLOWED`
+
+**Required State:** `BLIND_SELECT`
+
+**Example:**
+
+```bash
+# Reroll the boss blind for $10
+curl -X POST http://127.0.0.1:12346 \
+  -H "Content-Type: application/json" \
+  -d '{"jsonrpc": "2.0", "method": "reroll_boss", "id": 1}'
+```
+
+---
+
 ### `buy`
 
 Buy a card, voucher, or pack from the shop.
@@ -342,6 +378,36 @@ Buy a card, voucher, or pack from the shop.
 curl -X POST http://127.0.0.1:12346 \
   -H "Content-Type: application/json" \
   -d '{"jsonrpc": "2.0", "method": "buy", "params": {"card": 0}, "id": 1}'
+```
+
+---
+
+### `buy_and_use`
+
+Buy a shop consumable (Tarot/Planet/Spectral) and use it immediately, without
+occupying a consumable slot. Mirrors Balatro's **"Buy and Use"** shop button.
+Unlike [`buy`](#buy), this never places the card into a consumable slot, so it
+works even when consumable slots are full.
+
+**Parameters:**
+
+| Name   | Type    | Required | Description                                 |
+| ------ | ------- | -------- | ------------------------------------------- |
+| `card` | integer | Yes      | 0-based index of shop consumable to buy+use |
+
+**Returns:** [GameState](#gamestate-schema)
+
+**Errors:** `BAD_REQUEST`, `NOT_ALLOWED`
+
+**Required State:** `SHOP`
+
+**Example:**
+
+```bash
+# Buy and use the first shop consumable
+curl -X POST http://127.0.0.1:12346 \
+  -H "Content-Type: application/json" \
+  -d '{"jsonrpc": "2.0", "method": "buy_and_use", "params": {"card": 0}, "id": 1}'
 ```
 
 ---
@@ -395,7 +461,7 @@ curl -X POST http://127.0.0.1:12346 \
 
 ### `sell`
 
-Sell a joker or consumable.
+Sell a joker or consumable. Available in SHOP, SELECTING_HAND states, and when a Buffoon pack is open (to make room for new jokers).
 
 **Parameters:** (exactly one required)
 
@@ -406,7 +472,7 @@ Sell a joker or consumable.
 
 **Returns:** [GameState](#gamestate-schema)
 
-**Errors:** `BAD_REQUEST`, `NOT_ALLOWED`
+**Errors:** `BAD_REQUEST`, `INVALID_STATE`, `NOT_ALLOWED`
 
 **Example:**
 
@@ -562,6 +628,33 @@ curl -X POST http://127.0.0.1:12346 \
 
 ---
 
+### `sort`
+
+Sort the cards in hand. This is a faithful mirror of the in-game **Sort by Rank** / **Sort by Suit** buttons in the play bar — the game computes the new order for you (unlike `rearrange`, where you supply the order). Only available during `SELECTING_HAND`.
+
+**Parameters:**
+
+| Name | Type   | Required | Description                                                                                                                   |
+| ---- | ------ | -------- | ----------------------------------------------------------------------------------------------------------------------------- |
+| `by` | string | Yes      | Sort mode: `"rank"` (A>K>...>2, then Spades>Hearts>Clubs>Diamonds) or `"suit"` (Spades>Hearts>Clubs>Diamonds, then rank desc) |
+
+**Returns:** [GameState](#gamestate-schema)
+
+**Errors:** `BAD_REQUEST`, `INVALID_STATE`
+
+**Required State:** `SELECTING_HAND`
+
+**Example:**
+
+```bash
+# Sort hand by rank
+curl -X POST http://127.0.0.1:12346 \
+  -H "Content-Type: application/json" \
+  -d '{"jsonrpc": "2.0", "method": "sort", "params": {"by": "rank"}, "id": 1}'
+```
+
+---
+
 ### `use`
 
 Use a consumable card.
@@ -598,7 +691,7 @@ Add a card to the game (debug/testing). Supports jokers, consumables, vouchers, 
 | ------------- | ------- | -------- | ------------------------------------------------------------------------------ |
 | `key`         | string  | Yes      | [Card key](#card-keys) (e.g., `j_joker`, `c_fool`, `p_arcana_normal_1`, `H_A`) |
 | `seal`        | string  | No       | [Seal](#card-modifier-seal) type (playing cards only)                          |
-| `edition`     | string  | No       | [Edition](#card-modifier-edition) type (not vouchers or packs)                 |
+| `edition`     | string  | No       | [Edition](#card-modifier-edition) key (e.g. `e_foil`, not vouchers or packs)   |
 | `enhancement` | string  | No       | [Enhancement](#card-modifier-enhancement) type (playing cards only)            |
 | `eternal`     | boolean | No       | Cannot be sold/destroyed (jokers only)                                         |
 | `perishable`  | integer | No       | Rounds until perish (jokers only)                                              |
@@ -616,7 +709,7 @@ Add a card to the game (debug/testing). Supports jokers, consumables, vouchers, 
 # Add a Polychrome Joker
 curl -X POST http://127.0.0.1:12346 \
   -H "Content-Type: application/json" \
-  -d '{"jsonrpc": "2.0", "method": "add", "params": {"key": "j_joker", "edition": "POLYCHROME"}, "id": 1}'
+  -d '{"jsonrpc": "2.0", "method": "add", "params": {"key": "j_joker", "edition": "e_polychrome"}, "id": 1}'
 
 # Add an Arcana Pack to the shop (requires SHOP state)
 curl -X POST http://127.0.0.1:12346 \
@@ -656,27 +749,33 @@ Set in-game values (debug/testing).
 
 **Parameters:** (at least one required)
 
-| Name       | Type    | Required | Description                     |
-| ---------- | ------- | -------- | ------------------------------- |
-| `money`    | integer | No       | Set money amount                |
-| `chips`    | integer | No       | Set chips scored                |
-| `ante`     | integer | No       | Set ante number                 |
-| `round`    | integer | No       | Set round number                |
-| `hands`    | integer | No       | Set hands remaining             |
-| `discards` | integer | No       | Set discards remaining          |
-| `shop`     | boolean | No       | Re-stock shop (SHOP state only) |
+| Name       | Type    | Required | Description                                                     |
+| ---------- | ------- | -------- | --------------------------------------------------------------- |
+| `money`    | integer | No       | Set money amount                                                |
+| `chips`    | integer | No       | Set chips scored                                                |
+| `ante`     | integer | No       | Set ante number                                                 |
+| `round`    | integer | No       | Set round number                                                |
+| `hands`    | integer | No       | Set hands remaining                                             |
+| `discards` | integer | No       | Set discards remaining                                          |
+| `shop`     | boolean | No       | Re-stock shop (SHOP state only)                                 |
+| `boss`     | string  | No       | Override Boss Blind (BLIND_SELECT state, boss must be Upcoming) |
 
 **Returns:** [GameState](#gamestate-schema)
 
 **Errors:** `BAD_REQUEST`, `INVALID_STATE`, `NOT_ALLOWED`
 
-**Example:**
+**Examples:**
 
 ```bash
 # Set money to 100 and hands to 5
 curl -X POST http://127.0.0.1:12346 \
   -H "Content-Type: application/json" \
   -d '{"jsonrpc": "2.0", "method": "set", "params": {"money": 100, "hands": 5}, "id": 1}'
+
+# Override boss blind to The Hook
+curl -X POST http://127.0.0.1:12346 \
+  -H "Content-Type: application/json" \
+  -d '{"jsonrpc": "2.0", "method": "set", "params": {"boss": "bl_hook"}, "id": 1}'
 ```
 
 ---
@@ -690,14 +789,18 @@ The complete game state returned by most methods.
 ```json
 {
   "state": "SELECTING_HAND",
+  "paused": false,
   "round_num": 1,
   "ante_num": 1,
   "money": 4,
-  "deck": "RED",
-  "stake": "WHITE",
+  "deck": "b_red",
+  "stake": "stake_white",
   "seed": "ABC123",
+  "challenge": "c_omelette_1",
+  "last_tarot_planet": "c_hermit",
   "won": false,
   "used_vouchers": {},
+  "tags": [ ... ],
   "hands": { ... },
   "round": { ... },
   "blinds": { ... },
@@ -711,6 +814,8 @@ The complete game state returned by most methods.
   "pack": { ... }
 }
 ```
+
+`challenge` is present only during a Challenge Run; `last_tarot_planet` is the card key The Fool would create (e.g. `c_hermit`), omitted until a Tarot or Planet has been used this run. Both are conditionally absent, not `null`.
 
 ### Area
 
@@ -749,7 +854,8 @@ Represents a card area (hand, jokers, consumables, shop, etc.).
   "state": {
     "debuff": false,
     "hidden": false,
-    "highlight": false
+    "highlight": false,
+    "revealed": false
   },
   "cost": {
     "sell": 1,
@@ -757,6 +863,17 @@ Represents a card area (hand, jokers, consumables, shop, etc.).
   }
 }
 ```
+
+The optional `revealed` flag is **transient** and emitted **only by the
+[`use`](#use) endpoint**. Under a flip blind (e.g. _The House_), using a
+conversion consumable (Magician, Death, Strength, Sigil, Ouija, …) on a
+face-down card triggers the game's flip→modify→flip animation: the card is
+momentarily shown face-up to a human watching the screen, then flipped back
+face-down — so it ends `hidden: true` despite its identity having been
+exposed. `revealed: true` tells a fair-play bot (one that refrains from reading
+hidden-card data) "you may now know this card." It always co-occurs with
+`hidden: true` and appears **only** on the `use` response; it is absent from
+`gamestate`, `play`, `sort`, and `buy_and_use`.
 
 ### Round
 
@@ -767,21 +884,48 @@ Represents a card area (hand, jokers, consumables, shop, etc.).
   "discards_left": 3,
   "discards_used": 0,
   "reroll_cost": 5,
-  "chips": 0
+  "chips": 0,
+  "most_played_hand": "High Card"
 }
 ```
+
+`most_played_hand` is the poker hand played most this run — the per-round
+target of _The Ox_, which a bot must avoid playing. It defaults to `High Card`
+and updates after each Boss blind is defeated. It is a
+[`Hand Name`](#hand-name) enum value.
 
 ### Blind
 
 ```json
 {
+  "key": "bl_small",
   "type": "SMALL",
   "status": "SELECT",
   "name": "Small Blind",
   "effect": "No special effect",
   "score": 300,
-  "tag_name": "Uncommon Tag",
-  "tag_effect": "Shop has a free Uncommon Joker"
+  "tag": {
+    "key": "tag_juggle",
+    "name": "Juggle Tag",
+    "effect": "+3 hand size next round"
+  },
+  "reroll_available": false
+}
+```
+
+The optional `reroll_available` field is populated for the Boss blind and reports
+whether the [Reroll Boss Blind](#reroll_boss) action is currently available
+(player can afford $10 and holds the Director's Cut or Retcon voucher).
+
+### Tag
+
+Represents a Balatro tag that provides bonuses when triggered.
+
+```json
+{
+  "key": "tag_juggle",
+  "name": "Juggle Tag",
+  "effect": "+3 hand size next round"
 }
 ```
 
@@ -803,38 +947,84 @@ Represents a card area (hand, jokers, consumables, shop, etc.).
 
 ## Enums
 
+### Hand Name
+
+The 12 vanilla poker-hand names: the keys of [`hands`](#hand-poker-hand-info) and the value of [`round.most_played_hand`](#round). `order` is lower = stronger (1 = Flush Five ... 12 = High Card). `Royal Flush` is a display alias of Straight Flush and is intentionally excluded.
+
+| Value             | order |
+| ----------------- | ----- |
+| `Flush Five`      | 1     |
+| `Flush House`     | 2     |
+| `Five of a Kind`  | 3     |
+| `Straight Flush`  | 4     |
+| `Four of a Kind`  | 5     |
+| `Full House`      | 6     |
+| `Flush`           | 7     |
+| `Straight`        | 8     |
+| `Three of a Kind` | 9     |
+| `Two Pair`        | 10    |
+| `Pair`            | 11    |
+| `High Card`       | 12    |
+
 ### Deck
 
-| Value       | Description                                                   |
-| ----------- | ------------------------------------------------------------- |
-| `RED`       | +1 discard every round                                        |
-| `BLUE`      | +1 hand every round                                           |
-| `YELLOW`    | Start with extra $10                                          |
-| `GREEN`     | $2 per remaining Hand, $1 per remaining Discard (no interest) |
-| `BLACK`     | +1 Joker slot, -1 hand every round                            |
-| `MAGIC`     | Start with Crystal Ball voucher and 2 copies of The Fool      |
-| `NEBULA`    | Start with Telescope voucher, -1 consumable slot              |
-| `GHOST`     | Spectral cards may appear in shop, start with Hex card        |
-| `ABANDONED` | Start with no Face Cards                                      |
-| `CHECKERED` | Start with 26 Spades and 26 Hearts                            |
-| `ZODIAC`    | Start with Tarot Merchant, Planet Merchant, and Overstock     |
-| `PAINTED`   | +2 hand size, -1 Joker slot                                   |
-| `ANAGLYPH`  | Gain Double Tag after each Boss Blind                         |
-| `PLASMA`    | Balanced Chips/Mult, 2X base Blind size                       |
-| `ERRATIC`   | Randomized Ranks and Suits                                    |
+| Value         | Description                                                   |
+| ------------- | ------------------------------------------------------------- |
+| `b_red`       | +1 discard every round                                        |
+| `b_blue`      | +1 hand every round                                           |
+| `b_yellow`    | Start with extra $10                                          |
+| `b_green`     | $2 per remaining Hand, $1 per remaining Discard (no interest) |
+| `b_black`     | +1 Joker slot, -1 hand every round                            |
+| `b_magic`     | Start with Crystal Ball voucher and 2 copies of The Fool      |
+| `b_nebula`    | Start with Telescope voucher, -1 consumable slot              |
+| `b_ghost`     | Spectral cards may appear in shop, start with Hex card        |
+| `b_abandoned` | Start with no Face Cards                                      |
+| `b_checkered` | Start with 26 Spades and 26 Hearts                            |
+| `b_zodiac`    | Start with Tarot Merchant, Planet Merchant, and Overstock     |
+| `b_painted`   | +2 hand size, -1 Joker slot                                   |
+| `b_anaglyph`  | Gain Double Tag after each Boss Blind                         |
+| `b_plasma`    | Balanced Chips/Mult, 2X base Blind size                       |
+| `b_erratic`   | Randomized Ranks and Suits                                    |
 
 ### Stake
 
-| Value    | Description                     |
-| -------- | ------------------------------- |
-| `WHITE`  | Base difficulty                 |
-| `RED`    | Small Blind gives no reward     |
-| `GREEN`  | Required score scales faster    |
-| `BLACK`  | Shop can have Eternal Jokers    |
-| `BLUE`   | -1 Discard                      |
-| `PURPLE` | Required score scales faster    |
-| `ORANGE` | Shop can have Perishable Jokers |
-| `GOLD`   | Shop can have Rental Jokers     |
+| Value          | Description                     |
+| -------------- | ------------------------------- |
+| `stake_white`  | Base difficulty                 |
+| `stake_red`    | Small Blind gives no reward     |
+| `stake_green`  | Required score scales faster    |
+| `stake_black`  | Shop can have Eternal Jokers    |
+| `stake_blue`   | -1 Discard                      |
+| `stake_purple` | Required score scales faster    |
+| `stake_orange` | Shop can have Perishable Jokers |
+| `stake_gold`   | Shop can have Rental Jokers     |
+
+### Challenge
+
+Challenge Run ids from `G.CHALLENGES`. The 20 base-game challenges. Validated at runtime against the live `G.CHALLENGES` table, so SMODS-injected challenges are also accepted. Pass one to [`start`](#start) (without `deck`/`stake`).
+
+| Value                | Description                                                                              |
+| -------------------- | ---------------------------------------------------------------------------------------- |
+| `c_omelette_1`       | The Omelette: no blind rewards, no interest, no hand money; start with 5 Eggs            |
+| `c_city_1`           | 15 Minute City: eternal Ride the Bus + Shortcut; deck is only 4–K                        |
+| `c_rich_1`           | Rich get Richer: chips capped at current $; start with $100                              |
+| `c_knife_1`          | On a Knife's Edge: eternal pinned Ceremonial Dagger                                      |
+| `c_xray_1`           | X-ray Vision: 1 in 4 cards drawn face-down                                               |
+| `c_mad_world_1`      | Mad World: no hand money/interest; eternal Pareidolia + Business Cards; deck is 2–9 only |
+| `c_luxury_1`         | Luxury Tax: hand size -1 per $5 held; start with 10 hand size                            |
+| `c_non_perishable_1` | Non-Perishable: all Jokers are Eternal                                                   |
+| `c_medusa_1`         | Medusa: eternal Marble Joker; all J/Q/K are Stone cards                                  |
+| `c_double_nothing_1` | Double or Nothing: played cards debuff after scoring; all cards have Red seal            |
+| `c_typecast_1`       | Typecast: at ante 4 all Jokers become Eternal and slots drop to 0                        |
+| `c_inflation_1`      | Inflation: prices +$1 every purchase; start with Credit Card                             |
+| `c_bram_poker_1`     | Bram Poker: no shop jokers; eternal Vampire + Tarot-focused start                        |
+| `c_fragile_1`        | Fragile: all-Glass deck; 2× negative eternal Oops; suit-change Tarots banned             |
+| `c_monolith_1`       | Monolith: eternal Obelisk + negative Marble                                              |
+| `c_blast_off_1`      | Blast Off: 2 hands, 2 discards, 4 slots; eternal Constellation + Rocket                  |
+| `c_five_card_1`      | Five-Card Draw: 5-card hand size, 7 slots, 6 discards; Card Sharp + Joker                |
+| `c_golden_needle_1`  | Golden Needle: 1 hand; discards cost $1; start with Credit Card                          |
+| `c_cruelty_1`        | Cruelty: 3 joker slots; Small & Big blinds give no reward                                |
+| `c_jokerless_1`      | Jokerless: 0 joker slots; no jokers in shop; joker-granting cards banned                 |
 
 ### Card Value Suit
 
@@ -880,32 +1070,32 @@ Represents a card area (hand, jokers, consumables, shop, etc.).
 
 | Value    | Description                                |
 | -------- | ------------------------------------------ |
-| `RED`    | Retrigger card 1 time                      |
-| `BLUE`   | Creates Planet card for final hand if held |
-| `GOLD`   | Earn $3 when scored                        |
-| `PURPLE` | Creates Tarot when discarded               |
+| `Red`    | Retrigger card 1 time                      |
+| `Blue`   | Creates Planet card for final hand if held |
+| `Gold`   | Earn $3 when scored                        |
+| `Purple` | Creates Tarot when discarded               |
 
 ### Card Modifier Edition
 
-| Value        | Description                       |
-| ------------ | --------------------------------- |
-| `FOIL`       | +50 Chips                         |
-| `HOLO`       | +10 Mult                          |
-| `POLYCHROME` | X1.5 Mult                         |
-| `NEGATIVE`   | +1 slot (jokers/consumables only) |
+| Value          | Description                       |
+| -------------- | --------------------------------- |
+| `e_foil`       | +50 Chips                         |
+| `e_holo`       | +10 Mult                          |
+| `e_polychrome` | X1.5 Mult                         |
+| `e_negative`   | +1 slot (jokers/consumables only) |
 
 ### Card Modifier Enhancement
 
-| Value   | Description                          |
-| ------- | ------------------------------------ |
-| `BONUS` | +30 Chips when scored                |
-| `MULT`  | +4 Mult when scored                  |
-| `WILD`  | Counts as every suit                 |
-| `GLASS` | X2 Mult when scored                  |
-| `STEEL` | X1.5 Mult while held                 |
-| `STONE` | +50 Chips (no rank/suit)             |
-| `GOLD`  | $3 if held at end of round           |
-| `LUCKY` | 1/5 chance +20 Mult, 1/15 chance $20 |
+| Value     | Description                          |
+| --------- | ------------------------------------ |
+| `m_bonus` | +30 Chips when scored                |
+| `m_mult`  | +4 Mult when scored                  |
+| `m_wild`  | Counts as every suit                 |
+| `m_glass` | X2 Mult when scored                  |
+| `m_steel` | X1.5 Mult while held                 |
+| `m_stone` | +50 Chips (no rank/suit)             |
+| `m_gold`  | $3 if held at end of round           |
+| `m_lucky` | 1/5 chance +20 Mult, 1/15 chance $20 |
 
 ### Blind Type
 
@@ -914,6 +1104,39 @@ Represents a card area (hand, jokers, consumables, shop, etc.).
 | `SMALL` | Can be skipped for a Tag              |
 | `BIG`   | Can be skipped for a Tag              |
 | `BOSS`  | Cannot be skipped, has special effect |
+
+### Boss Blind Keys
+
+| Key               | Name        |
+| ----------------- | ----------- |
+| `bl_hook`         | The Hook    |
+| `bl_ox`           | The Ox      |
+| `bl_mouth`        | The Mouth   |
+| `bl_fish`         | The Fish    |
+| `bl_club`         | The Club    |
+| `bl_manacle`      | The Manacle |
+| `bl_tooth`        | The Tooth   |
+| `bl_wall`         | The Wall    |
+| `bl_house`        | The House   |
+| `bl_mark`         | The Mark    |
+| `bl_wheel`        | The Wheel   |
+| `bl_arm`          | The Arm     |
+| `bl_psychic`      | The Psychic |
+| `bl_goad`         | The Goad    |
+| `bl_water`        | The Water   |
+| `bl_eye`          | The Eye     |
+| `bl_plant`        | The Plant   |
+| `bl_needle`       | The Needle  |
+| `bl_head`         | The Head    |
+| `bl_window`       | The Window  |
+| `bl_serpent`      | The Serpent |
+| `bl_pillar`       | The Pillar  |
+| `bl_flint`        | The Flint   |
+| `bl_final_bell`   | The Bell    |
+| `bl_final_leaf`   | The Leaf    |
+| `bl_final_vessel` | The Vessel  |
+| `bl_final_acorn`  | The Acorn   |
+| `bl_final_heart`  | The Heart   |
 
 ### Blind Status
 
@@ -925,6 +1148,37 @@ Represents a card area (hand, jokers, consumables, shop, etc.).
 | `DEFEATED` | Previously beaten  |
 | `SKIPPED`  | Previously skipped |
 
+### Tags
+
+Tags provide bonuses when triggered, typically after skipping a blind or defeating a boss blind.
+
+| Value            | Description                                                  |
+| ---------------- | ------------------------------------------------------------ |
+| `tag_uncommon`   | Shop has a free Uncommon Joker                               |
+| `tag_rare`       | Shop has a free Rare Joker                                   |
+| `tag_negative`   | Next base edition shop Joker is free and becomes Negative    |
+| `tag_foil`       | Next base edition shop Joker is free and becomes Foil        |
+| `tag_holo`       | Next base edition shop Joker is free and becomes Holographic |
+| `tag_polychrome` | Next base edition shop Joker is free and becomes Polychrome  |
+| `tag_investment` | Gain $25 after defeating the next Boss Blind                 |
+| `tag_voucher`    | Adds one Voucher to the next shop                            |
+| `tag_boss`       | Rerolls the Boss Blind                                       |
+| `tag_standard`   | Gives a free Mega Standard Pack                              |
+| `tag_charm`      | Gives a free Mega Arcana Pack                                |
+| `tag_meteor`     | Gives a free Mega Celestial Pack                             |
+| `tag_buffoon`    | Gives a free Mega Buffoon Pack                               |
+| `tag_handy`      | Gives $1 per played hand this run                            |
+| `tag_garbage`    | Gives $1 per unused discard this run                         |
+| `tag_ethereal`   | Gives a free Spectral Pack                                   |
+| `tag_coupon`     | Initial cards and booster packs in next shop are free        |
+| `tag_double`     | Gives a copy of the next selected Tag (Double Tag excluded)  |
+| `tag_juggle`     | +3 hand size next round                                      |
+| `tag_d_six`      | Rerolls in next shop start at $0                             |
+| `tag_top_up`     | Create up to 2 Common Jokers (Must have room)                |
+| `tag_skip`       | Gives $5 per skipped Blind this run                          |
+| `tag_orbital`    | Upgrade [poker hand] by 3 levels                             |
+| `tag_economy`    | Doubles your money (Max of $40)                              |
+
 ### Card Keys
 
 Card keys are used with the `add` method and appear in the `key` field of Card objects.
@@ -932,6 +1186,8 @@ Card keys are used with the `add` method and appear in the `key` field of Card o
 #### Tarot Cards
 
 Consumables that enhance playing cards, change suits, generate other cards, or provide money. Keys use prefix `c_` followed by the card name (e.g., `c_fool`, `c_magician`). 22 cards total.
+
+The card The Fool would create is exposed on [GameState](#gamestate-schema) as `last_tarot_planet`.
 
 | Key                  | Effect                                                                          |
 | -------------------- | ------------------------------------------------------------------------------- |

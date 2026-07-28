@@ -32,12 +32,18 @@ return {
     },
   },
 
-  requires_state = { G.STATES.SELECTING_HAND, G.STATES.SHOP },
+  requires_state = {
+    G.STATES.SELECTING_HAND,
+    G.STATES.SHOP,
+    G.STATES.SMODS_BOOSTER_OPENED,
+    G.STATES.ROUND_EVAL,
+    G.STATES.BLIND_SELECT,
+  },
 
   ---@param args Request.Endpoint.Sell.Params
   ---@param send_response fun(response: Response.Endpoint)
   execute = function(args, send_response)
-    sendDebugMessage("Init sell()", "BB.ENDPOINTS")
+    sendDebugMessage("sell()", "BB.ENDPOINTS")
 
     -- Validate exactly one parameter is provided
     local param_count = (args.joker and 1 or 0) + (args.consumable and 1 or 0)
@@ -96,15 +102,12 @@ return {
     local card = source_array[pos]
 
     -- Track initial state for completion verification
-    local area = sell_type == "joker" and G.jokers or G.consumeables
-    local initial_count = area.config.card_count
     local initial_money = G.GAME.dollars
     local expected_money = initial_money + card.sell_cost
-    local card_id = card.sort_id
 
     -- Log what we're selling
     local item_name = card.ability and card.ability.name or "Unknown"
-    sendDebugMessage(string.format("Selling %s '%s' for $%d", sell_type, item_name, card.sell_cost), "BB.ENDPOINTS")
+    sendInfoMessage(string.format("Selling %s '%s' for $%d", sell_type, item_name, card.sell_cost), "BB.ENDPOINTS")
 
     -- Create mock UI element for G.FUNCS.sell_card
     local mock_element = {
@@ -116,39 +119,31 @@ return {
     -- Call the game function to trigger sell
     G.FUNCS.sell_card(mock_element)
 
-    -- Wait for sell completion with comprehensive verification
+    -- Wait for sell completion with verification
     G.E_MANAGER:add_event(Event({
       trigger = "condition",
       blocking = false,
       func = function()
-        -- Check all 5 completion criteria
-        local current_area = sell_type == "joker" and G.jokers or G.consumeables
-        local current_array = current_area.cards
-
-        -- 1. Card count decreased by 1
-        local count_decreased = (current_area.config.card_count == initial_count - 1)
+        -- 1. Card was removed
+        local card_removed = card.removed == true
 
         -- 2. Money increased by sell_cost
         local money_increased = (G.GAME.dollars == expected_money)
 
-        -- 3. Card no longer exists (verify by unique_val)
-        local card_gone = true
-        for _, c in ipairs(current_array) do
-          if c.sort_id == card_id then
-            card_gone = false
-            break
-          end
-        end
-
-        -- 4. State stability
+        -- 3. State stability
         local state_stable = G.STATE_COMPLETE == true
 
-        -- 5. Still in valid state
-        local valid_state = (G.STATE == G.STATES.SHOP or G.STATE == G.STATES.SELECTING_HAND)
+        -- 4. Still in valid state
+        local valid_state = (
+          G.STATE == G.STATES.SHOP
+          or G.STATE == G.STATES.SELECTING_HAND
+          or G.STATE == G.STATES.SMODS_BOOSTER_OPENED
+          or G.STATE == G.STATES.ROUND_EVAL
+          or G.STATE == G.STATES.BLIND_SELECT
+        )
 
-        -- All conditions must be met
-        if count_decreased and money_increased and card_gone and state_stable and valid_state then
-          sendDebugMessage("Return sell()", "BB.ENDPOINTS")
+        if card_removed and money_increased and state_stable and valid_state then
+          sendDebugMessage("sell() → ok", "BB.ENDPOINTS")
           send_response(BB_GAMESTATE.get_gamestate())
           return true
         end

@@ -39,12 +39,13 @@ class BaseLauncher(ABC):
         """
         ...
 
-    async def start(self, config: Config, session_dir: Path) -> subprocess.Popen:
+    async def start(self, config: Config, instance_dir: Path) -> subprocess.Popen:
         """Start Balatro with the given configuration.
 
         Args:
             config: Launcher configuration (mutated with defaults).
-            session_dir: Directory for log files.
+            instance_dir: Per-instance directory for log files. Exposed to the
+                Lua mod as BALATROBOT_LOG_DIR.
 
         Returns:
             The subprocess.Popen object.
@@ -54,12 +55,15 @@ class BaseLauncher(ABC):
         """
         self.validate_paths(config)
         env = self.build_env(config)
+        env["BALATROBOT_LOG_DIR"] = str(instance_dir.resolve())
+        # Expose instance dir so docker can bind-mount it.
+        self.instance_dir = instance_dir.resolve()
         cmd = self.build_cmd(config)
 
-        log_path = session_dir / f"{config.port}.log"
+        log_path = instance_dir / "balatro.log"
 
-        with open(log_path, "w") as log:
-            process = subprocess.Popen(
+        with open(log_path, "w") as log:  # noqa: ASYNC230
+            process = subprocess.Popen(  # noqa: ASYNC220
                 cmd,
                 env=env,
                 stdout=log,
@@ -75,4 +79,3 @@ class BaseLauncher(ABC):
         Override in platform launchers that need special shutdown
         (e.g. wineserver -k for Proton on Linux).
         """
-        pass

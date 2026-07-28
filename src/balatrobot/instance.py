@@ -2,9 +2,10 @@
 
 import asyncio
 import subprocess
-from dataclasses import replace
+from dataclasses import dataclass, replace
 from datetime import datetime
 from pathlib import Path
+from typing import Self
 
 import httpx
 
@@ -12,27 +13,62 @@ from balatrobot.config import Config
 from balatrobot.platforms import get_launcher
 from balatrobot.platforms.base import BaseLauncher
 
+
+@dataclass(frozen=True)
+class InstanceInfo:
+    """Immutable metadata for a running Balatro instance."""
+
+    host: str
+    port: int
+    log_path: Path | None = None
+    stream_port: int | None = None
+
+    @property
+    def url(self) -> str:
+        """Full HTTP URL for this instance."""
+        return f"http://{self.host}:{self.port}"
+
+    @property
+    def stream_url(self) -> str | None:
+        """HLS stream URL when streaming is enabled, else None."""
+        if self.stream_port is None:
+            return None
+        return f"http://{self.host}:{self.stream_port}/index.m3u8"
+
+
 HEALTH_TIMEOUT = 30.0
+
+
+class InstanceDiedError(Exception):
+    """Raised when a Balatro subprocess has exited unexpectedly."""
+
+    def __init__(self, port: int, log_path: str | None = None) -> None:
+        self.port = port
+        self.log_path = log_path
+        msg = f"Instance on port {port} died unexpectedly."
+        if log_path is not None:
+            msg += f"\nLog: {log_path}"
+        super().__init__(msg)
 
 
 class BalatroInstance:
     """Context manager for a single Balatro instance."""
 
     def __init__(
-        self, config: Config | None = None, session_id: str | None = None, **overrides
+        self, config: Config | None = None, session_name: str | None = None, **overrides
     ) -> None:
         """Initialize a Balatro instance.
 
         Args:
             config: Base configuration. If None, uses Config from environment.
-            session_id: Optional session ID for log directory. If None, generated at start().
+            session_name: Session directory name (timestamp). If None, generated at start().
             **overrides: Override specific config fields (e.g., port=12347).
         """
         base = config or Config.from_env()
         self._config = replace(base, **overrides) if overrides else base
         self._process: subprocess.Popen | None = None
         self._log_path: Path | None = None
-        self._session_id = session_id
+        self._session_name = session_name
         self._launcher: BaseLauncher | None = None
 
     @property
@@ -65,7 +101,7 @@ class BalatroInstance:
                     data = response.json()
                     if "result" in data and data["result"].get("status") == "ok":
                         return
-            except (httpx.ConnectError, httpx.TimeoutException):
+            except (httpx.ConnectError, httpx.TimeoutException, httpx.ReadError):
                 pass
             await asyncio.sleep(0.5)
 
@@ -79,17 +115,20 @@ class BalatroInstance:
         if self._process is not None:
             raise RuntimeError("Instance already started")
 
-        # Create session directory (use provided session_id or generate one)
-        timestamp = self._session_id or datetime.now().strftime("%Y-%m-%dT%H-%M-%S")
-        session_dir = Path(self._config.logs_path) / timestamp
-        session_dir.mkdir(parents=True, exist_ok=True)
-        self._log_path = session_dir / f"{self._config.port}.log"
+        # Local time for human-readable session directory names
+        session_name = self._session_name or datetime.now().strftime(  # noqa: DTZ005
+            "%Y-%m-%dT%H-%M-%S"
+        )
+        session_dir = Path(self._config.logs or "logs") / session_name
+        instance_dir = session_dir / str(self._config.port)
+        instance_dir.mkdir(parents=True, exist_ok=True)
+        self._log_path = instance_dir / "balatro.log"
 
         # Get launcher and start process
         self._launcher = get_launcher(self._config.platform)
         print(f"Starting Balatro on port {self._config.port}...")
 
-        self._process = await self._launcher.start(self._config, session_dir)
+        self._process = await self._launcher.start(self._config, instance_dir)
 
         # Wait for health
         print(f"Waiting for health check on {self._config.host}:{self._config.port}...")
@@ -124,12 +163,26 @@ class BalatroInstance:
                 loop.run_in_executor(None, process.wait),
                 timeout=5,
             )
-        except asyncio.TimeoutError:
+        except TimeoutError:
             print(f"Force killing instance on port {self._config.port}...")
             process.kill()
             await loop.run_in_executor(None, process.wait)
 
-    async def __aenter__(self) -> "BalatroInstance":
+    def check_alive(self) -> None:
+        """Check if the subprocess is still running.
+
+        Raises InstanceDiedError if the process has exited.
+        Silently returns if the instance hasn't been started or is already stopped.
+        """
+        if self._process is None:
+            return
+        if self._process.poll() is not None:
+            raise InstanceDiedError(
+                port=self._config.port,
+                log_path=str(self._log_path) if self._log_path is not None else None,
+            )
+
+    async def __aenter__(self) -> Self:
         """Start instance on context entry."""
         await self.start()
         return self

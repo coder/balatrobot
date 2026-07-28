@@ -1,66 +1,154 @@
-"""Serve command - Start Balatro with BalatroBot mod loaded."""
+"""Serve command — start Balatro with BalatroBot mod loaded."""
 
 import asyncio
-from typing import Annotated
+import os
+import re
+import signal
+import sys
+from pathlib import Path
+from typing import Annotated, Self
 
 import typer
 
 from balatrobot.config import Config
-from balatrobot.manager import BalatroInstance
+from balatrobot.instance import InstanceDiedError
+from balatrobot.pool import BalatroPool
+from balatrobot.state import StateFile, StateFileBusy, default_state_path
 
 # Platform choices for validation
-PLATFORM_CHOICES = ["darwin", "linux", "windows", "native"]
+PLATFORM_CHOICES = ["darwin", "linux", "windows", "native", "docker"]
+
+# Regex for valid settings profile names
+_SETTINGS_RE = re.compile(r"^[a-zA-Z0-9][a-zA-Z0-9_-]*$")
+
+
+def settings_callback(value: str | None) -> str | None:
+    """Validate --settings as a bare profile name.
+
+    This is a courtesy guard for CLI users. The same regex is enforced
+    on the Lua side in apply_profile() — that validation is authoritative.
+    """
+    if value is None:
+        return None
+    if not _SETTINGS_RE.match(value):
+        raise typer.BadParameter(
+            f"Must be a valid profile name (alphanumeric, hyphens, underscores). Got: '{value}'"
+        )
+    return value
+
+
+class Server:
+    """Owns the full serve lifecycle: pool start/stop, state file write/delete,
+    and a supervision loop that watches for SIGTERM or child-death.
+
+    Usage::
+
+        async with Server(config, n=2) as server:
+            await server.run()
+    """
+
+    def __init__(
+        self,
+        config: Config,
+        n: int,
+        state_path: Path | None = None,
+    ) -> None:
+        self._config = config
+        self._n = n
+        self._state_path = state_path or default_state_path()
+        self._pool: BalatroPool | None = None
+        self._shutdown = asyncio.Event()
+
+    @property
+    def pool(self) -> BalatroPool | None:
+        return self._pool
+
+    async def __aenter__(self) -> Self:
+        # 1. Check for existing live state file
+        existing = StateFile.read(self._state_path)
+        if existing is not None:
+            raise StateFileBusy(path=self._state_path, pid=existing["pid"])
+
+        # 2. Start pool
+        self._pool = BalatroPool(self._config, n=self._n)
+        try:
+            await self._pool.start()
+            # 3. Write state file
+            StateFile.write(self._state_path, os.getpid(), self._pool.instances)
+        except BaseException:
+            await self._pool.stop()
+            raise
+
+        return self
+
+    async def __aexit__(self, *args: object) -> None:
+        if self._pool is not None:
+            await self._pool.stop()
+        StateFile.delete(self._state_path)
+
+    async def run(self) -> None:
+        """Block until SIGTERM or child death.
+
+        Raises InstanceDiedError on child death.
+        """
+        assert self._pool is not None  # set by __aenter__
+        loop = asyncio.get_running_loop()
+
+        if sys.platform != "win32":
+            loop.add_signal_handler(signal.SIGTERM, self._shutdown.set)
+
+        try:
+            while not self._shutdown.is_set():
+                self._pool.check_alive()
+                try:
+                    await asyncio.wait_for(self._shutdown.wait(), timeout=5)
+                except TimeoutError:
+                    pass
+        finally:
+            if sys.platform != "win32":
+                loop.remove_signal_handler(signal.SIGTERM)
 
 
 def serve(
-    # fmt: off
-    host: Annotated[
-        str | None, typer.Option(help="Server hostname (default: 127.0.0.1)")
+    num: Annotated[
+        int, typer.Option("--num", help="Number of instances to start (default: 1)")
+    ] = 1,
+    settings: Annotated[
+        str | None,
+        typer.Option(
+            "--settings", help="Settings profile name", callback=settings_callback
+        ),
     ] = None,
-    port: Annotated[
-        int | None, typer.Option(help="Server port (default: 12346)")
+    render: Annotated[
+        str | None,
+        typer.Option("--render", help="Render mode: headfull|headless|ondemand"),
     ] = None,
-    fps_cap: Annotated[
-        int | None, typer.Option(help="Maximum FPS cap (default: 60)")
+    debug: Annotated[
+        bool | None, typer.Option("--debug", help="Enable debug endpoints")
     ] = None,
-    gamespeed: Annotated[
-        int | None, typer.Option(help="Game speed multiplier (default: 4)")
+    screenshots: Annotated[
+        bool | None, typer.Option("--screenshots", help="Enable screenshot logging")
     ] = None,
-    animation_fps: Annotated[
-        int | None, typer.Option(help="Animation FPS (default: 10)")
+    host: Annotated[str | None, typer.Option("--host", help="Server hostname")] = None,
+    path_balatro: Annotated[
+        str | None, typer.Option("--path-balatro", help="Path to Balatro directory")
     ] = None,
-    logs_path: Annotated[
-        str | None, typer.Option(help="Directory for log files (default: logs)")
+    path_lovely: Annotated[
+        str | None, typer.Option("--path-lovely", help="Path to lovely library")
     ] = None,
-    fast: Annotated[
-        bool | None, typer.Option(help="Enable fast mode (10x speed)")
-    ] = None,
-    headless: Annotated[bool | None, typer.Option(help="Enable headless mode")] = None,
-    render_on_api: Annotated[
-        bool | None, typer.Option(help="Render only on API calls")
-    ] = None,
-    audio: Annotated[bool | None, typer.Option(help="Enable audio")] = None,
-    debug: Annotated[bool | None, typer.Option(help="Enable debug mode")] = None,
-    no_shaders: Annotated[bool | None, typer.Option(help="Disable shaders")] = None,
-    no_reduced_motion: Annotated[
-        bool | None, typer.Option(help="Disable reduced motion")
-    ] = None,
-    pixel_art_smoothing: Annotated[
-        bool | None, typer.Option(help="Enable pixel art smoothing")
-    ] = None,
-    balatro_path: Annotated[
-        str | None, typer.Option(help="Path to Balatro executable")
-    ] = None,
-    lovely_path: Annotated[
-        str | None, typer.Option(help="Path to lovely library")
-    ] = None,
-    love_path: Annotated[
-        str | None, typer.Option(help="Path to game launcher executable")
+    path_love: Annotated[
+        str | None, typer.Option("--path-love", help="Path to LOVE executable")
     ] = None,
     platform: Annotated[
-        str | None, typer.Option(help="Platform (darwin, linux, windows, native)")
+        str | None,
+        typer.Option(
+            "--platform",
+            help="Platform (darwin, linux, windows, native, docker)",
+        ),
     ] = None,
-    # fmt: on
+    logs: Annotated[
+        str | None, typer.Option("--logs", help="Log directory (parent of sessions)")
+    ] = None,
 ) -> None:
     """Start Balatro with BalatroBot mod loaded."""
     # Validate platform choice
@@ -72,37 +160,51 @@ def serve(
         )
         raise typer.Exit(code=1)
 
+    if num < 1:
+        typer.echo(f"Error: --num must be >= 1, got {num}.", err=True)
+        raise typer.Exit(code=1)
+
     # Build config from kwargs with env var fallback
-    config = Config.from_kwargs(
-        host=host,
-        port=port,
-        fps_cap=fps_cap,
-        gamespeed=gamespeed,
-        animation_fps=animation_fps,
-        logs_path=logs_path,
-        fast=fast,
-        headless=headless,
-        render_on_api=render_on_api,
-        audio=audio,
-        debug=debug,
-        no_shaders=no_shaders,
-        no_reduced_motion=no_reduced_motion,
-        pixel_art_smoothing=pixel_art_smoothing,
-        balatro_path=balatro_path,
-        lovely_path=lovely_path,
-        love_path=love_path,
-        platform=platform,
-    )
+    try:
+        config = Config.from_kwargs(
+            settings=settings,
+            render=render,
+            debug=debug,
+            screenshots=screenshots,
+            host=host,
+            path_balatro=path_balatro,
+            path_lovely=path_lovely,
+            path_love=path_love,
+            platform=platform,
+            logs=logs,
+        )
+    except ValueError as e:
+        typer.echo(f"Error: {e}", err=True)
+        raise typer.Exit(code=1)
 
     try:
-        asyncio.run(_serve(config))
+        asyncio.run(_serve(config, num))
     except KeyboardInterrupt:
         typer.echo("\nShutting down server...")
+    except InstanceDiedError as e:
+        typer.echo(str(e), err=True)
+        raise typer.Exit(code=1)
+    except StateFileBusy as e:
+        typer.echo(str(e), err=True)
+        raise typer.Exit(code=1)
 
 
-async def _serve(config: Config) -> None:
-    """Async serve implementation."""
-    async with BalatroInstance(config) as instance:
-        typer.echo(f"Balatro running on port {instance.port}. Press Ctrl+C to stop.")
-        while True:
-            await asyncio.sleep(5)
+async def _serve(config: Config, n: int) -> None:
+    async with Server(config, n) as server:
+        pool = server.pool
+        assert pool is not None
+        for i, info in enumerate(pool.instances):
+            line = f"Instance [{i}]: {info.url}"
+            if info.stream_url is not None:
+                line += f"  stream: {info.stream_url}"
+            typer.echo(line)
+        typer.echo(
+            f"Session: {pool.session_name} | Logs: {config.logs or 'logs'}/{pool.session_name}/"
+        )
+        typer.echo("Press Ctrl+C to stop.")
+        await server.run()

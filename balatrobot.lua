@@ -2,7 +2,9 @@
 assert(SMODS.load_file("src/lua/settings.lua"))() -- define BB_SETTINGS
 
 -- Configure Balatro with appropriate settings from environment variables
-BB_SETTINGS.setup()
+if not BB_SETTINGS.setup() then
+  return
+end
 
 -- Endpoints for the BalatroBot API
 BB_ENDPOINTS = {
@@ -24,6 +26,7 @@ BB_ENDPOINTS = {
   -- Blind selection endpoints
   "src/lua/endpoints/skip.lua",
   "src/lua/endpoints/select.lua",
+  "src/lua/endpoints/reroll_boss.lua",
   -- Play/discard endpoints
   "src/lua/endpoints/play.lua",
   "src/lua/endpoints/discard.lua",
@@ -33,9 +36,11 @@ BB_ENDPOINTS = {
   "src/lua/endpoints/next_round.lua",
   "src/lua/endpoints/reroll.lua",
   "src/lua/endpoints/buy.lua",
+  "src/lua/endpoints/buy_and_use.lua",
   "src/lua/endpoints/pack.lua",
-  -- Rearrange endpoint
+  -- Hand reorder endpoints (rearrange, sort)
   "src/lua/endpoints/rearrange.lua",
+  "src/lua/endpoints/sort.lua",
   -- Sell endpoint
   "src/lua/endpoints/sell.lua",
   -- Use consumable endpoint
@@ -56,6 +61,7 @@ assert(SMODS.load_file("src/lua/core/dispatcher.lua"))() -- define BB_DISPATCHER
 -- Load gamestate and errors utilities
 BB_GAMESTATE = assert(SMODS.load_file("src/lua/utils/gamestate.lua"))()
 assert(SMODS.load_file("src/lua/utils/errors.lua"))()
+assert(SMODS.load_file("src/lua/utils/screenshot.lua"))() -- define BB_SCREENSHOT
 
 -- Initialize Server
 local server_success = BB_SERVER.init()

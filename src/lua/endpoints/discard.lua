@@ -1,7 +1,7 @@
 -- src/lua/endpoints/discard.lua
 
----@type BB_LOGGER
-local BB_LOGGER = assert(SMODS.load_file("src/lua/utils/logger.lua"))()
+---@type BB_FORMAT
+local BB_FORMAT = assert(SMODS.load_file("src/lua/utils/format.lua"))()
 
 -- ==========================================================================
 -- Discard Endpoint Params
@@ -35,7 +35,7 @@ return {
   ---@param args Request.Endpoint.Discard.Params
   ---@param send_response fun(response: Response.Endpoint)
   execute = function(args, send_response)
-    sendDebugMessage("Init discard()", "BB.ENDPOINTS")
+    sendDebugMessage("discard()", "BB.ENDPOINTS")
     if #args.cards == 0 then
       send_response({
         message = "Must provide at least one card to discard",
@@ -46,7 +46,7 @@ return {
 
     if G.GAME.current_round.discards_left <= 0 then
       send_response({
-        message = "No discards left",
+        message = "No discards left. Play cards using `play` instead.",
         name = BB_ERROR_NAMES.BAD_REQUEST,
       })
       return
@@ -54,7 +54,7 @@ return {
 
     if #args.cards > G.hand.config.highlighted_limit then
       send_response({
-        message = "You can only discard " .. G.hand.config.highlighted_limit .. " cards",
+        message = "You can only discard " .. G.hand.config.highlighted_limit .. " cards. Provide fewer card indices.",
         name = BB_ERROR_NAMES.BAD_REQUEST,
       })
       return
@@ -70,20 +70,50 @@ return {
       end
     end
 
-    -- NOTE: Clear any existing highlights before selecting new cards
-    -- prevent state pollution. This is a bit of a hack but could interfere
-    -- with Boss Blind like Cerulean Bell.
-    G.hand:unhighlight_all()
+    -- Validate forced-selection cards (e.g. Cerulean Bell boss blind)
+    -- If any card has forced_selection, it MUST be included in the discard
+    for i = 1, #G.hand.cards do
+      local card = G.hand.cards[i]
+      if card.ability and card.ability.forced_selection then
+        local included = false
+        for _, card_index in ipairs(args.cards) do
+          if card_index + 1 == i then
+            included = true
+            break
+          end
+        end
+        if not included then
+          send_response({
+            message = "Card at index "
+              .. (i - 1)
+              .. " is forced-selected by the boss blind. Include it in your discard.",
+            name = BB_ERROR_NAMES.BAD_REQUEST,
+          })
+          return
+        end
+      end
+    end
 
+    -- Clear non-forced highlights only (preserves forced-selection cards)
+    for i = #G.hand.highlighted, 1, -1 do
+      if not G.hand.highlighted[i].ability.forced_selection then
+        G.hand.highlighted[i]:highlight(false)
+        table.remove(G.hand.highlighted, i)
+      end
+    end
+
+    -- Click only cards not already highlighted
     for _, card_index in ipairs(args.cards) do
-      G.hand.cards[card_index + 1]:click()
+      if not G.hand.cards[card_index + 1].highlighted then
+        G.hand.cards[card_index + 1]:click()
+      end
     end
 
     -- Log the cards being discarded
-    local card_str = BB_LOGGER.format_playing_cards(G.hand.cards, args.cards)
+    local card_str = BB_FORMAT.format_playing_cards(G.hand.cards, args.cards)
     local remaining = G.GAME.current_round.discards_left - 1
-    sendDebugMessage(
-      string.format("Discarding %d cards: %s (%d discards left)", #args.cards, card_str, remaining),
+    sendInfoMessage(
+      string.format("Discarding %d cards: %s (%d left)", #args.cards, card_str, remaining),
       "BB.ENDPOINTS"
     )
 
@@ -107,7 +137,7 @@ return {
         end
 
         if draw_to_hand and G.buttons and G.STATE == G.STATES.SELECTING_HAND then
-          sendDebugMessage("Return discard()", "BB.ENDPOINTS")
+          sendDebugMessage("discard() → SELECTING_HAND", "BB.ENDPOINTS")
           local state_data = BB_GAMESTATE.get_gamestate()
           send_response(state_data)
           return true

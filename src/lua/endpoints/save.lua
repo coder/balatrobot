@@ -53,7 +53,7 @@ return {
   ---@param args Request.Endpoint.Save.Params
   ---@param send_response fun(response: Response.Endpoint)
   execute = function(args, send_response)
-    sendDebugMessage("Init save()", "BB.ENDPOINTS")
+    sendDebugMessage("save()", "BB.ENDPOINTS")
     local path = args.path
 
     -- Validate we're in a run
@@ -66,10 +66,11 @@ return {
     end
 
     -- Call save_run() and use compress_and_save
-    save_run() ---@diagnostic disable-line: undefined-global
+    sendInfoMessage("Saving to " .. path, "BB.ENDPOINTS")
+    save_run()
 
     local temp_filename = "balatrobot_temp_save_" .. BB_SETTINGS.port .. ".jkr"
-    compress_and_save(temp_filename, G.ARGS.save_run) ---@diagnostic disable-line: undefined-global
+    compress_and_save(temp_filename, G.ARGS.save_run)
 
     -- Read from temp and write to target path using nativefs
     local save_dir = love.filesystem.getSaveDirectory()
@@ -97,7 +98,7 @@ return {
     -- Clean up
     love.filesystem.remove(temp_filename)
 
-    sendDebugMessage("Return save() - saved to " .. path, "BB.ENDPOINTS")
+    sendDebugMessage("save() → ok", "BB.ENDPOINTS")
     send_response({
       success = true,
       path = path,

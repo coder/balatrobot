@@ -1,31 +1,70 @@
 ---@meta enums
 
 ---@alias Deck
----| "RED" # +1 discard every round
----| "BLUE" # +1 hand every round
----| "YELLOW" # Start with extra $10
----| "GREEN" # At end of each Round, $2 per remaining Hand $1 per remaining Discard Earn no Interest
----| "BLACK" # +1 Joker slot -1 hand every round
----| "MAGIC" # Start run with the Cristal Ball voucher and 2 copies of The Fool
----| "NEBULA" # Start run with the Telescope voucher and -1 consumable slot
----| "GHOST" # Spectral cards  may appear in the shop. Start with a Hex card
----| "ABANDONED" # Start run with no Face Cards in your deck
----| "CHECKERED" # Start run with 26 Spaces and 26 Hearts in deck
----| "ZODIAC" # Start run with Tarot Merchant, Planet Merchant, and Overstock
----| "PAINTED" # +2 hand size, -1 Joker slot
----| "ANAGLYPH" # After defeating each Boss Blind, gain a Double Tag
----| "PLASMA" # Balanced Chips and Mult when calculating score for played hand X2 base Blind size
----| "ERRATIC" # All Ranks and Suits in deck are randomized
+---| "b_red" # Red Deck: +1 discard every round
+---| "b_blue" # Blue Deck: +1 hand every round
+---| "b_yellow" # Yellow Deck: Start with extra $10
+---| "b_green" # Green Deck: $2 per remaining Hand, $1 per remaining Discard, no interest
+---| "b_black" # Black Deck: +1 Joker slot, -1 hand every round
+---| "b_magic" # Magic Deck: Start with Crystal Ball and 2 copies of The Fool
+---| "b_nebula" # Nebula Deck: Start with Telescope, -1 consumable slot
+---| "b_ghost" # Ghost Deck: Spectral cards may appear in shop, start with Hex
+---| "b_abandoned" # Abandoned Deck: No Face Cards in starting deck
+---| "b_checkered" # Checkered Deck: 26 Spades and 26 Hearts in deck
+---| "b_zodiac" # Zodiac Deck: Start with Tarot Merchant, Planet Merchant, and Overstock
+---| "b_painted" # Painted Deck: +2 hand size, -1 Joker slot
+---| "b_anaglyph" # Anaglyph Deck: Double Tag after each Boss Blind
+---| "b_plasma" # Plasma Deck: Balanced Chips/Mult, 2X base Blind size
+---| "b_erratic" # Erratic Deck: Random Ranks and Suits
 
 ---@alias Stake
----| "WHITE" # 1. Base Difficulty
----| "RED" # 2. Small Blind gives no reward money. Applies all previous Stakes
----| "GREEN" # 3. Required scores scales faster for each Ante. Applies all previous Stakes
----| "BLACK" # 4. Shop can have Eternal Jokers. Applies all previous Stakes
----| "BLUE" # 5. -1 Discard. Applies all previous Stakes
----| "PURPLE" # 6. Required score scales faster for each Ante. Applies all previous Stakes
----| "ORANGE" # 7. Shop can have Perishable Jokers. Applies all previous Stakes
----| "GOLD" # 8. Shop can have Rental Jokers. Applies all previous Stakes
+---| "stake_white" # 1. Base Difficulty
+---| "stake_red" # 2. Small Blind gives no reward money. Applies all previous Stakes
+---| "stake_green" # 3. Required scores scales faster for each Ante. Applies all previous Stakes
+---| "stake_black" # 4. Shop can have Eternal Jokers. Applies all previous Stakes
+---| "stake_blue" # 5. -1 Discard. Applies all previous Stakes
+---| "stake_purple" # 6. Required score scales faster for each Ante. Applies all previous Stakes
+---| "stake_orange" # 7. Shop can have Perishable Jokers. Applies all previous Stakes
+---| "stake_gold" # 8. Shop can have Rental Jokers. Applies all previous Stakes
+
+-- Base-game challenges (G.CHALLENGES). Static list, but validated at runtime
+-- against the live G.CHALLENGES table in start.lua so SMODS-injected
+-- challenges remain reachable.
+---@alias Challenge
+---| "c_omelette_1" # The Omelette: no blind rewards, no interest, no hand money; start with 5 Eggs
+---| "c_city_1" # 15 Minute City: eternal Ride the Bus + Shortcut; deck is only 4–K
+---| "c_rich_1" # Rich get Richer: chips capped at current $; start with $100
+---| "c_knife_1" # On a Knife's Edge: eternal pinned Ceremonial Dagger
+---| "c_xray_1" # X-ray Vision: 1 in 4 cards drawn face-down
+---| "c_mad_world_1" # Mad World: no hand money/interest; eternal Pareidolia + Business Cards; deck is 2–9 only
+---| "c_luxury_1" # Luxury Tax: hand size -1 per $5 held; start with 10 hand size
+---| "c_non_perishable_1" # Non-Perishable: all Jokers are Eternal
+---| "c_medusa_1" # Medusa: eternal Marble Joker; all J/Q/K are Stone cards
+---| "c_double_nothing_1" # Double or Nothing: played cards debuff after scoring; all cards have Red seal
+---| "c_typecast_1" # Typecast: at ante 4 all Jokers become Eternal and slots drop to 0
+---| "c_inflation_1" # Inflation: prices +$1 every purchase; start with Credit Card
+---| "c_bram_poker_1" # Bram Poker: no shop jokers; eternal Vampire + Tarot-focused start
+---| "c_fragile_1" # Fragile: all-Glass deck; 2× negative eternal Oops; suit-change Tarots banned
+---| "c_monolith_1" # Monolith: eternal Obelisk + negative Marble
+---| "c_blast_off_1" # Blast Off: 2 hands, 2 discards, 4 slots; eternal Constellation + Rocket
+---| "c_five_card_1" # Five-Card Draw: 5-card hand size, 7 slots, 6 discards; Card Sharp + Joker
+---| "c_golden_needle_1" # Golden Needle: 1 hand; discards cost $1; start with Credit Card
+---| "c_cruelty_1" # Cruelty: 3 joker slots; Small & Big blinds give no reward
+---| "c_jokerless_1" # Jokerless: 0 joker slots; no jokers in shop; joker-granting cards banned
+
+---@alias Hand.Name
+---| "Flush Five" # order 1
+---| "Flush House" # order 2
+---| "Five of a Kind" # order 3
+---| "Straight Flush" # order 4
+---| "Four of a Kind" # order 5
+---| "Full House" # order 6
+---| "Flush" # order 7
+---| "Straight" # order 8
+---| "Three of a Kind" # order 9
+---| "Two Pair" # order 10
+---| "Pair" # order 11
+---| "High Card" # order 12
 
 ---@alias State
 ---| "SELECTING_HAND" # 1 When you can select cards to play or discard
@@ -53,7 +92,6 @@
 ---@alias Card.Set
 ---| "BOOSTER" # Booster pack purchasale in the shop
 ---| "DEFAULT" # Default playing card
----| "EDITION" # Card with an edition
 ---| "ENHANCED" # Playing card with an enhancement
 ---| "JOKER" # Joker card
 ---| "TAROT" # Tarot card (consumable)
@@ -379,26 +417,26 @@
 ---| Card.Key.Pack
 
 ---@alias Card.Modifier.Seal
----| "RED" # Retrigger this card 1 time
----| "BLUE" # Creates the Planet card for final played poker hand of round if held in hand (Must have room)
----| "GOLD" # Earn $3 when this card is played and scores
----| "PURPLE" # Creates a Tarot card when discarded (Must have room)
+---| "Red" # Retrigger this card 1 time
+---| "Blue" # Creates the Planet card for final played poker hand of round if held in hand (Must have room)
+---| "Gold" # Earn $3 when this card is played and scores
+---| "Purple" # Creates a Tarot card when discarded (Must have room)
 
 ---@alias Card.Modifier.Edition
----| "HOLO" # +10 Mult when scored (Playing cards). +10 Mult directly before the Joker is reached during scoring (Jokers)
----| "FOIL" # +50 Chips when scored (Playing cards). +50 Chips directly before the Joker is reached during scoring (Jokers)
----| "POLYCHROME" # X1.5 Mult when scored (Playing cards). X1.5 Mult directly after the Joker is reached during scoring (Jokers)
----| "NEGATIVE" # N/A (Playing cards). +1 Joker slot (Jokers). +1 Consumable slot (Consumables)
+---| "e_holo" # +10 Mult when scored (Playing cards). +10 Mult directly before the Joker is reached during scoring (Jokers)
+---| "e_foil" # +50 Chips when scored (Playing cards). +50 Chips directly before the Joker is reached during scoring (Jokers)
+---| "e_polychrome" # X1.5 Mult when scored (Playing cards). X1.5 Mult directly after the Joker is reached during scoring (Jokers)
+---| "e_negative" # N/A (Playing cards). +1 Joker slot (Jokers). +1 Consumable slot (Consumables)
 
 ---@alias Card.Modifier.Enhancement
----| "BONUS" # Enhanced card gives an additional +30 Chips when scored
----| "MULT" # Enhanced card gives +4 Mult when scored
----| "WILD" # Enhanced card is considered to be every suit simultaneously
----| "GLASS" # Enhanced card gives X2 Mult when scored
----| "STEEL" # Enhanced card gives X1.5 Mult while held in hand
----| "STONE" # Enhanced card's value is set to +50 Chips
----| "GOLD" # Enhanced card gives $3 if held in hand at end of round
----| "LUCKY" # Enhanced card has a 1 in 5 chance to give +20 Mult. Enhanced card has a 1 in 15 chance to give $20
+---| "m_bonus" # Enhanced card gives an additional +30 Chips when scored
+---| "m_mult" # Enhanced card gives +4 Mult when scored
+---| "m_wild" # Enhanced card is considered to be every suit simultaneously
+---| "m_glass" # Enhanced card gives X2 Mult when scored
+---| "m_steel" # Enhanced card gives X1.5 Mult while held in hand
+---| "m_stone" # Enhanced card's value is set to +50 Chips
+---| "m_gold" # Enhanced card gives $3 if held in hand at end of round
+---| "m_lucky" # Enhanced card has a 1 in 5 chance to give +20 Mult. Enhanced card has a 1 in 15 chance to give $20
 
 ---@alias Blind.Type
 ---| "SMALL" # No special effects - can be skipped to receive a Tag
@@ -411,3 +449,61 @@
 ---| "UPCOMING" # Future blind
 ---| "DEFEATED" # Previously defeated blind
 ---| "SKIPPED" # Previously skipped blind
+
+---@alias Blind.Key
+---| "bl_small" # Small Blind: No special effects - can be skipped to receive a Tag
+---| "bl_big" # Big Blind: No special effects - can be skipped to receive a Tag
+---| "bl_hook" # The Hook: Discards 2 random cards held in hand after every played hand
+---| "bl_ox" # The Ox: Playing the most played hand this run sets money to $0
+---| "bl_mouth" # The Mouth: Only one hand type can be played this round
+---| "bl_fish" # The Fish: Cards drawn face down after each hand played
+---| "bl_club" # The Club: All Club cards are debuffed
+---| "bl_manacle" # The Manacle: −1 Hand Size
+---| "bl_tooth" # The Tooth: Lose $1 per card played
+---| "bl_wall" # The Wall: Extra large blind (4× base chips required)
+---| "bl_house" # The House: First hand is drawn face down
+---| "bl_mark" # The Mark: All face cards are drawn face down
+---| "bl_wheel" # The Wheel: 1 in 7 cards get drawn face down during the round
+---| "bl_arm" # The Arm: Decrease level of played poker hand by 1
+---| "bl_psychic" # The Psychic: Must play 5 cards (not all cards need to score)
+---| "bl_goad" # The Goad: All Spade cards are debuffed
+---| "bl_water" # The Water: Start with 0 discards
+---| "bl_eye" # The Eye: No repeat hand types this round
+---| "bl_plant" # The Plant: All face cards are debuffed
+---| "bl_needle" # The Needle: Play only 1 hand
+---| "bl_head" # The Head: All Heart cards are debuffed
+---| "bl_window" # The Window: All Diamond cards are debuffed
+---| "bl_serpent" # The Serpent: After Play or Discard, always draw 3 cards (ignores hand size)
+---| "bl_pillar" # The Pillar: Cards played previously this Ante are debuffed
+---| "bl_flint" # The Flint: Base Chips and Mult for played poker hands are halved
+---| "bl_final_acorn" # Amber Acorn: Flips and shuffles all Joker cards (Showdown)
+---| "bl_final_bell" # Cerulean Bell: Forces 1 card to always be selected (Showdown)
+---| "bl_final_heart" # Crimson Heart: One random Joker disabled every hand (Showdown)
+---| "bl_final_leaf" # Verdant Leaf: All cards debuffed until 1 Joker is sold (Showdown)
+---| "bl_final_vessel" # Violet Vessel: Very large blind, 6× base chips required (Showdown)
+
+---@alias Tag.Key
+---| "tag_uncommon" # Uncommon Tag: Shop has a free Uncommon Joker
+---| "tag_rare" # Rare Tag: Shop has a free Rare Joker
+---| "tag_negative" # Negative Tag: Next base edition shop Joker is free and becomes Negative
+---| "tag_foil" # Foil Tag: Next base edition shop Joker is free and becomes Foil
+---| "tag_holo" # Holographic Tag: Next base edition shop Joker is free and becomes Holographic
+---| "tag_polychrome" # Polychrome Tag: Next base edition shop Joker is free and becomes Polychrome
+---| "tag_investment" # Investment Tag: Gain $25 after defeating the next Boss Blind
+---| "tag_voucher" # Voucher Tag: Adds one Voucher to the next shop
+---| "tag_boss" # Boss Tag: Rerolls the Boss Blind
+---| "tag_standard" # Standard Tag: Gives a free Mega Standard Pack
+---| "tag_charm" # Charm Tag: Gives a free Mega Arcana Pack
+---| "tag_meteor" # Meteor Tag: Gives a free Mega Celestial Pack
+---| "tag_buffoon" # Buffoon Tag: Gives a free Mega Buffoon Pack
+---| "tag_handy" # Handy Tag: Gives $1 per played hand this run
+---| "tag_garbage" # Garbage Tag: Gives $1 per unused discard this run
+---| "tag_ethereal" # Ethereal Tag: Gives a free Spectral Pack
+---| "tag_coupon" # Coupon Tag: Initial cards and booster packs in next shop are free
+---| "tag_double" # Double Tag: Gives a copy of the next selected Tag (Double Tag excluded)
+---| "tag_juggle" # Juggle Tag: +3 hand size next round
+---| "tag_d_six" # D6 Tag: Rerolls in next shop start at $0
+---| "tag_top_up" # Top-up Tag: Create up to 2 Common Jokers (Must have room)
+---| "tag_skip" # Skip Tag (aka Speed Tag): Gives $5 per skipped Blind this run
+---| "tag_orbital" # Orbital Tag: Upgrade [poker hand] by 3 levels
+---| "tag_economy" # Economy Tag: Doubles your money (Max of $40)

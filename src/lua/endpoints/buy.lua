@@ -43,7 +43,7 @@ return {
   ---@param args Request.Endpoint.Buy.Params
   ---@param send_response fun(response: Response.Endpoint)
   execute = function(args, send_response)
-    sendDebugMessage("Init buy()", "BB.ENDPOINTS")
+    sendDebugMessage("buy()", "BB.ENDPOINTS")
     local gamestate = BB_GAMESTATE.get_gamestate()
     local area
     local pos
@@ -86,11 +86,11 @@ return {
     if #area.cards == 0 then
       local msg
       if args.card then
-        msg = "No jokers/consumables/cards in the shop. Reroll to restock the shop"
+        msg = "No jokers/consumables/cards in the shop. Use `reroll` to restock the shop."
       elseif args.voucher then
-        msg = "No vouchers to redeem. Defeat boss blind to restock"
+        msg = "No vouchers to redeem. Defeat boss blind to restock."
       elseif args.pack then
-        msg = "No packs to open"
+        msg = "No packs to open. Use `next_round` to advance to the next blind and restock the shop."
       end
       send_response({
         message = msg,
@@ -129,28 +129,40 @@ return {
       return
     end
 
-    -- Ensure there is space in joker area
+    -- Ensure there is space in joker area.
+    -- A Negative-edition card brings its own slot (card_limit=1), matching
+    -- the game's check_for_buy_space: config.card_limit + ability.card_limit.
     if card.set == "JOKER" then
-      if gamestate.jokers.count >= gamestate.jokers.limit then
+      local live_card = G.shop_jokers.cards[pos]
+      local card_limit = (live_card and live_card.ability and live_card.ability.card_limit) or 0
+      local extra_slots = (live_card and live_card.ability and live_card.ability.extra_slots_used) or 0
+      local effective_limit = gamestate.jokers.limit + card_limit - extra_slots
+      if gamestate.jokers.count >= effective_limit then
         send_response({
           message = "Cannot purchase joker card, joker slots are full. Current: "
             .. gamestate.jokers.count
             .. ", Limit: "
-            .. gamestate.jokers.limit,
+            .. gamestate.jokers.limit
+            .. ". Sell a joker using `sell` to free a slot.",
           name = BB_ERROR_NAMES.BAD_REQUEST,
         })
         return
       end
     end
 
-    -- Ensure there is space in consumable area
+    -- Ensure there is space in consumable area (same capacity formula).
     if card.set == "PLANET" or card.set == "SPECTRAL" or card.set == "TAROT" then
-      if gamestate.consumables.count >= gamestate.consumables.limit then
+      local live_card = G.shop_jokers.cards[pos]
+      local card_limit = (live_card and live_card.ability and live_card.ability.card_limit) or 0
+      local extra_slots = (live_card and live_card.ability and live_card.ability.extra_slots_used) or 0
+      local effective_limit = gamestate.consumables.limit + card_limit - extra_slots
+      if gamestate.consumables.count >= effective_limit then
         send_response({
           message = "Cannot purchase consumable card, consumable slots are full. Current: "
             .. gamestate.consumables.count
             .. ", Limit: "
-            .. gamestate.consumables.limit,
+            .. gamestate.consumables.limit
+            .. ". Use `use` to activate a consumable or `sell` to remove one.",
           name = BB_ERROR_NAMES.BAD_REQUEST,
         })
         return
@@ -194,7 +206,7 @@ return {
     -- Log what we're buying
     local item_name = card.name or (card.ability and card.ability.name) or card.label or "Unknown"
     local item_type = args.voucher and "Voucher" or args.pack and "Booster" or card.set or "item"
-    sendDebugMessage(string.format("Buying %s '%s' for $%d", item_type, item_name, card.cost.buy), "BB.ENDPOINTS")
+    sendInfoMessage(string.format("Buying %s '%s' for $%d", item_type, item_name, card.cost.buy), "BB.ENDPOINTS")
 
     -- Use appropriate function: use_card for vouchers, buy_from_shop for others
     if args.voucher or args.pack then
@@ -246,17 +258,24 @@ return {
             and G.STATE == G.STATES.SMODS_BOOSTER_OPENED
           )
           if money_deducted and pack_ready then
-            -- Check if this pack type needs hand (Arcana/Spectral packs)
-            local pack_key = G.pack_cards.cards[1].ability and G.pack_cards.cards[1].ability.set
-            local needs_hand = pack_key == "Tarot" or pack_key == "Spectral"
+            -- Check if this pack type needs hand cards (Arcana/Spectral packs)
+            -- Use the booster's own draw_hand flag — the authoritative source.
+            -- Don't infer from card set: Black Hole (set=Spectral) can appear
+            -- in Celestial packs via soul roll, causing false positives.
+            local needs_hand = SMODS.OPENED_BOOSTER
+              and SMODS.OPENED_BOOSTER.config
+              and SMODS.OPENED_BOOSTER.config.center
+              and SMODS.OPENED_BOOSTER.config.center.draw_hand == true
 
             if needs_hand then
               -- Wait for hand to be fully loaded and positioned
               local hand_limit = G.hand and G.hand.config and G.hand.config.card_limit or 8
+              local deck_size = G.deck and G.deck.config and G.deck.config.card_count or 52
+              local expected_hand_size = math.min(deck_size, hand_limit)
               local hand_ready = G.hand
                 and not G.hand.REMOVED
                 and G.hand.cards
-                and #G.hand.cards == hand_limit
+                and #G.hand.cards >= expected_hand_size
                 and G.hand.T
                 and G.hand.T.x
               local cards_positioned = hand_ready and G.hand.cards[1] and G.hand.cards[1].T and G.hand.cards[1].T.x
@@ -268,7 +287,7 @@ return {
         end
 
         if done then
-          sendDebugMessage("Return buy()", "BB.ENDPOINTS")
+          sendDebugMessage("buy() → ok", "BB.ENDPOINTS")
           send_response(BB_GAMESTATE.get_gamestate())
           return true
         end

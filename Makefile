@@ -11,11 +11,17 @@ RESET  := \033[0m
 # Print helper
 PRINT = printf "%b\n"
 
-# Max pytest-xdist workers
-MAX_XDIST ?= 6
-
-# Compute worker count using Python (cross-platform)
-XDIST_WORKERS := $(shell MAX_XDIST=$(MAX_XDIST) python -c "import multiprocessing as mp, os; print(min(mp.cpu_count(), int(os.environ.get('MAX_XDIST', 6))))")
+# Worker counts tuned per platform
+XDIST_CLI_WORKERS ?= 2
+ifndef XDIST_LUA_WORKERS
+ifeq ($(BALATROBOT_PLATFORM),darwin)
+  XDIST_LUA_WORKERS := 6
+else ifeq ($(BALATROBOT_PLATFORM),docker)
+  XDIST_LUA_WORKERS := 4
+else
+  XDIST_LUA_WORKERS := 2
+endif
+endif
 
 help: ## Show this help message
 	@$(PRINT) "$(BLUE)BalatroBot Development Makefile$(RESET)"
@@ -45,7 +51,7 @@ format: ## Run formatters (ruff, mdformat, stylua)
 	ruff check --select I --fix .
 	ruff format .
 	@$(PRINT) "$(YELLOW)Running mdformat formatter...$(RESET)"
-	mdformat ./docs README.md CLAUDE.md .claude/skills/balatrobot/SKILL.md
+	mdformat --number --exclude "CHANGELOG.md" --exclude ".venv/**" --exclude "vendors/**" ./docs README.md .agents/skills/balatrobot/SKILL.md
 	@if command -v stylua >/dev/null 2>&1; then \
 		$(PRINT) "$(YELLOW)Running stylua formatter...$(RESET)"; \
 		stylua src/lua; \
@@ -58,7 +64,7 @@ typecheck: ## Run type checkers (Python and Lua)
 	@ty check
 	@if command -v lua-language-server >/dev/null 2>&1 && [ -f .luarc.json ]; then \
 		$(PRINT) "$(YELLOW)Running Lua type checker...$(RESET)"; \
-		lua-language-server --check balatrobot.lua src/lua \
+		lua-language-server --check="$(CURDIR)" \
 			--configpath="$(CURDIR)/.luarc.json" 2>/dev/null; \
 	else \
 		$(PRINT) "$(BLUE)Skipping Lua type checker (lua-language-server not found or .luarc.json missing)$(RESET)"; \
@@ -68,17 +74,14 @@ quality: lint typecheck format ## Run all code quality checks
 	@$(PRINT) "$(GREEN)✓ All checks completed$(RESET)"
 
 fixtures: ## Generate fixtures
-	@$(PRINT) "$(YELLOW)Checking Balatro is running...$(RESET)"
-	@balatrobot api health || (echo ''; echo '  Start Balatro in another terminal:'; echo '    balatrobot serve --fast --debug'; echo ''; exit 1)
-	@$(PRINT) "$(GREEN)  Connected!$(RESET)"
 	@$(PRINT) "$(YELLOW)Generating all fixtures...$(RESET)"
 	python tests/fixtures/generate.py
 
 test: ## Run all tests
-	@$(PRINT) "$(YELLOW)Running tests/cli with 2 workers...$(RESET)"
-	pytest -n 2 tests/cli
-	@$(PRINT) "$(YELLOW)Running tests/lua with $(XDIST_WORKERS) workers...$(RESET)"
-	pytest -n $(XDIST_WORKERS) tests/lua
+	@$(PRINT) "$(YELLOW)Running tests/cli with $(XDIST_CLI_WORKERS) workers...$(RESET)"
+	pytest -n $(XDIST_CLI_WORKERS) tests/cli
+	@$(PRINT) "$(YELLOW)Running tests/lua with $(XDIST_LUA_WORKERS) workers...$(RESET)"
+	pytest -n $(XDIST_LUA_WORKERS) tests/lua
 
 
 all: lint format typecheck test ## Run all code quality checks and tests

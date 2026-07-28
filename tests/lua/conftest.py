@@ -4,16 +4,15 @@ import asyncio
 import json
 import os
 import random
-import tempfile
-import uuid
+from collections.abc import AsyncGenerator, Generator
 from pathlib import Path
-from typing import Any, AsyncGenerator, Generator
+from typing import Any
 
 import httpx
 import pytest
 
 from balatrobot.config import Config
-from balatrobot.manager import BalatroInstance
+from balatrobot.instance import BalatroInstance, InstanceInfo
 
 # ============================================================================
 # Constants
@@ -78,6 +77,10 @@ def pytest_configure(config):
     config._balatro_ports = ports
     config._balatro_parallel = parallel
 
+    if os.environ.get("BALATROBOT_PLATFORM") == "docker":
+        repo_root = Path(__file__).parent.parent.parent.resolve()
+        os.environ["BALATROBOT_DOCKER_MOUNTS"] = str(repo_root)
+
     # Start instances
     base_config = Config.from_env()
     instances: list[BalatroInstance] = []
@@ -113,70 +116,58 @@ def pytest_unconfigure(config):
 
     try:
         asyncio.run(stop_all())
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001 - best-effort teardown error reporting
         print(f"Error stopping Balatro instances: {e}")
 
 
 def pytest_collection_modifyitems(items):
-    """Mark all tests in this directory as integration tests."""
-    from pathlib import Path
-
-    current_dir = Path(__file__).parent
-
-    for item in items:
-        # Check if the test file is within the current directory
-        if current_dir in Path(item.path).parents:
-            item.add_marker(pytest.mark.integration)
+    """No-op placeholder. Kept for pytest hook consistency."""
 
 
 @pytest.fixture(scope="session")
-def host() -> str:
-    """Return the default Balatro server host."""
-    return HOST
-
-
-@pytest.fixture(scope="session")
-def port(worker_id) -> int:
-    """Get assigned port for this worker from env var."""
+def instance(worker_id) -> InstanceInfo:
+    """Return InstanceInfo for this worker's assigned instance."""
     ports_str = os.environ.get("BALATROBOT_PORTS", "12346")
     ports = [int(p) for p in ports_str.split(",")]
 
     if worker_id == "master":
-        return ports[0]
+        port = ports[0]
+    else:
+        worker_num = int(worker_id.replace("gw", ""))
+        port = ports[worker_num]
 
-    worker_num = int(worker_id.replace("gw", ""))
-    return ports[worker_num]
+    return InstanceInfo(host=HOST, port=port)
 
 
 @pytest.fixture(scope="session")
-async def balatro_server(port: int, worker_id) -> AsyncGenerator[None, None]:
+async def balatro_server(instance: InstanceInfo) -> AsyncGenerator[None]:
     """Wait for pre-started Balatro instance to be healthy."""
     timeout = 10.0
     elapsed = 0.0
     while elapsed < timeout:
-        if _check_health(HOST, port):
-            print(f"[{worker_id}] Connected to Balatro on port {port}")
+        if _check_health(instance.host, instance.port):
+            print(f"[worker] Connected to Balatro on port {instance.port}")
             yield None
             return
         await asyncio.sleep(0.5)
         elapsed += 0.5
 
-    pytest.fail(f"Balatro instance on port {port} not responding")
+    pytest.fail(f"Balatro instance on port {instance.port} not responding")
 
 
 @pytest.fixture
-def client(host: str, port: int, balatro_server) -> Generator[httpx.Client, None, None]:
+def client(instance: InstanceInfo, balatro_server) -> Generator[httpx.Client]:
     """Create an HTTP client connected to Balatro game instance.
 
     Args:
-        host: The hostname or IP address of the Balatro game server.
-        port: The port number the Balatro game server is listening on.
+        instance: The InstanceInfo for the assigned instance.
+        balatro_server: Ensures the server is healthy.
 
     Yields:
         An httpx.Client for communicating with the game.
     """
     with httpx.Client(
-        base_url=f"http://{host}:{port}",
+        base_url=instance.url,
         timeout=httpx.Timeout(CONNECTION_TIMEOUT, read=REQUEST_TIMEOUT),
     ) as http_client:
         yield http_client
@@ -190,7 +181,7 @@ def client(host: str, port: int, balatro_server) -> Generator[httpx.Client, None
 def api(
     client: httpx.Client,
     method: str,
-    params: dict = {},
+    params: dict | None = None,
     timeout: float = REQUEST_TIMEOUT,
 ) -> dict[str, Any]:
     """Send a JSON-RPC 2.0 API call to the Balatro game and get the response.
@@ -204,6 +195,8 @@ def api(
     Returns:
         The raw JSON-RPC 2.0 response with either 'result' or 'error' field.
     """
+    if params is None:
+        params = {}
     global _request_id_counter
     _request_id_counter += 1
 
@@ -267,16 +260,6 @@ def get_fixture_path(endpoint: str, fixture_name: str) -> Path:
     return fixtures_dir / endpoint / f"{fixture_name}.jkr"
 
 
-def create_temp_save_path() -> Path:
-    """Create a temporary path for save files.
-
-    Returns:
-        Path to a temporary .jkr file in the system temp directory.
-    """
-    temp_dir = Path(tempfile.gettempdir())
-    return temp_dir / f"balatrobot_test_{uuid.uuid4().hex[:8]}.jkr"
-
-
 def load_fixture(
     client: httpx.Client,
     endpoint: str,
@@ -293,7 +276,6 @@ def load_fixture(
     If the fixture file doesn't exist or cache=False, it will be automatically
     generated using the setup steps defined in fixtures.json.
     """
-    global _USE_CACHE_DEFAULT
     if cache is None:
         cache = _USE_CACHE_DEFAULT
 

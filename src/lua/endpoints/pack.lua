@@ -1,7 +1,7 @@
 -- src/lua/endpoints/pack.lua
 
----@type BB_LOGGER
-local BB_LOGGER = assert(SMODS.load_file("src/lua/utils/logger.lua"))()
+---@type BB_FORMAT
+local BB_FORMAT = assert(SMODS.load_file("src/lua/utils/format.lua"))()
 
 -- ==========================================================================
 -- Pack Select Endpoint Params
@@ -83,7 +83,7 @@ return {
   ---@param args Request.Endpoint.Pack.Params
   ---@param send_response fun(response: Response.Endpoint)
   execute = function(args, send_response)
-    sendDebugMessage("Init pack()", "BB.ENDPOINTS")
+    sendDebugMessage("pack()", "BB.ENDPOINTS")
 
     -- Validate that exactly one of card or skip is provided
     local set = 0
@@ -113,7 +113,7 @@ return {
     -- Validate pack_cards exists
     if not G.pack_cards or G.pack_cards.REMOVED then
       send_response({
-        message = "No pack is currently open",
+        message = "No pack is currently open. Use `buy` with `pack` parameter to buy and open a pack.",
         name = BB_ERROR_NAMES.INVALID_STATE,
       })
       return
@@ -135,16 +135,21 @@ return {
       local card = G.pack_cards.cards[pos]
       local card_key = card.config and card.config.center and card.config.center.key
 
-      -- Check if card is a Joker and validate that we have room
+      -- Check if card is a Joker and validate that we have room.
+      -- A Negative-edition Joker brings its own slot (card_limit=1).
       if card.ability and card.ability.set == "Joker" then
         local joker_count = G.jokers and G.jokers.config and G.jokers.config.card_count or 0
         local joker_limit = G.jokers and G.jokers.config and G.jokers.config.card_limit or 0
-        if joker_count >= joker_limit then
+        local card_limit = card.ability.card_limit or 0
+        local extra_slots = card.ability.extra_slots_used or 0
+        local effective_limit = joker_limit + card_limit - extra_slots
+        if joker_count >= effective_limit then
           send_response({
             message = "Cannot select joker, joker slots are full. Current: "
               .. joker_count
               .. ", Limit: "
-              .. joker_limit,
+              .. joker_limit
+              .. ". Sell a joker using `sell` to free a slot.",
             name = BB_ERROR_NAMES.NOT_ALLOWED,
           })
           return true
@@ -160,7 +165,11 @@ return {
             local joker_count = G.jokers and G.jokers.config and G.jokers.config.card_count or 0
             if joker_count == 0 then
               send_response({
-                message = string.format("Card '%s' requires at least 1 joker. Current: %d", card_key, joker_count),
+                message = string.format(
+                  "Card '%s' requires at least 1 joker. Current: %d. Ensure you have enough jokers before selecting this card.",
+                  card_key,
+                  joker_count
+                ),
                 name = BB_ERROR_NAMES.NOT_ALLOWED,
               })
               return true
@@ -173,14 +182,14 @@ return {
             local msg
             if req.min == req.max then
               msg = string.format(
-                "Card '%s' requires exactly %d target card(s). Provided: %d",
+                "Card '%s' requires exactly %d target card(s). Provided: %d. Ensure you have the required targets before selecting.",
                 card_key,
                 req.min,
                 target_count
               )
             else
               msg = string.format(
-                "Card '%s' requires %d-%d target card(s). Provided: %d",
+                "Card '%s' requires %d-%d target card(s). Provided: %d. Ensure you have the required targets before selecting.",
                 card_key,
                 req.min,
                 req.max,
@@ -221,13 +230,10 @@ return {
       local card_name = card.ability and card.ability.name or "Unknown"
       local card_set = card.ability and card.ability.set or card.set or "card"
       if args.targets and #args.targets > 0 then
-        local targets = BB_LOGGER.format_playing_cards(G.hand.cards, args.targets)
-        sendDebugMessage(
-          string.format("Pack: selecting %s '%s' targeting: %s", card_set, card_name, targets),
-          "BB.ENDPOINTS"
-        )
+        local targets = BB_FORMAT.format_playing_cards(G.hand.cards, args.targets)
+        sendInfoMessage(string.format("Selecting %s '%s' on: %s", card_set, card_name, targets), "BB.ENDPOINTS")
       else
-        sendDebugMessage(string.format("Pack: selecting %s '%s'", card_set, card_name), "BB.ENDPOINTS")
+        sendInfoMessage(string.format("Selecting %s '%s'", card_set, card_name), "BB.ENDPOINTS")
       end
 
       -- Select the card by calling use_card
@@ -255,17 +261,17 @@ return {
               and G.STATE == G.STATES.SMODS_BOOSTER_OPENED
 
             if pack_stable then
-              sendDebugMessage("Return pack() after selection (more choices remain)", "BB.ENDPOINTS")
+              sendDebugMessage("pack() → selected (more choices)", "BB.ENDPOINTS")
               send_response(BB_GAMESTATE.get_gamestate())
               return true
             end
           else
-            -- Pack closes - wait for return to shop
+            -- Pack closes - wait for return to shop or blind select
             local pack_closed = not G.pack_cards or G.pack_cards.REMOVED
-            local back_to_shop = G.STATE == G.STATES.SHOP
+            local back_to_shop = G.STATE == G.STATES.SHOP or G.STATE == G.STATES.BLIND_SELECT
 
             if pack_closed and back_to_shop then
-              sendDebugMessage("Return pack() after selection", "BB.ENDPOINTS")
+              sendDebugMessage("pack() → selected", "BB.ENDPOINTS")
               send_response(BB_GAMESTATE.get_gamestate())
               return true
             end
@@ -280,7 +286,7 @@ return {
     -- Handle skip
     if args.skip then
       local pack_count = G.pack_cards.config and G.pack_cards.config.card_count or 0
-      sendDebugMessage(string.format("Pack: skipping (%d cards remaining)", pack_count), "BB.ENDPOINTS")
+      sendInfoMessage(string.format("Skipping pack (%d remaining)", pack_count), "BB.ENDPOINTS")
       G.FUNCS.skip_booster({})
 
       -- Wait for pack to close and return to shop
@@ -289,10 +295,10 @@ return {
         blocking = false,
         func = function()
           local pack_closed = not G.pack_cards or G.pack_cards.REMOVED
-          local back_to_shop = G.STATE == G.STATES.SHOP
+          local back_to_shop = G.STATE == G.STATES.SHOP or G.STATE == G.STATES.BLIND_SELECT
 
           if pack_closed and back_to_shop then
-            sendDebugMessage("Return pack() after skip", "BB.ENDPOINTS")
+            sendDebugMessage("pack() → skipped", "BB.ENDPOINTS")
             send_response(BB_GAMESTATE.get_gamestate())
             return true
           end
@@ -303,13 +309,14 @@ return {
       return
     end
 
-    -- Wait for hand cards to load for Arcana and Spectral packs
-    local pack_key = G.pack_cards
-      and G.pack_cards.cards
-      and G.pack_cards.cards[1]
-      and G.pack_cards.cards[1].ability
-      and G.pack_cards.cards[1].ability.set
-    local needs_hand = pack_key == "Tarot" or pack_key == "Spectral"
+    -- Wait for hand cards to load for packs that need them (Arcana/Spectral)
+    -- Use the booster's own draw_hand flag — the authoritative source.
+    -- Don't infer from card set: Black Hole (set=Spectral) can appear
+    -- in Celestial packs via soul roll, causing false positives.
+    local needs_hand = SMODS.OPENED_BOOSTER
+      and SMODS.OPENED_BOOSTER.config
+      and SMODS.OPENED_BOOSTER.config.center
+      and SMODS.OPENED_BOOSTER.config.center.draw_hand == true
 
     if needs_hand then
       -- Wait for hand cards to be fully loaded and positioned

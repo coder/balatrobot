@@ -7,7 +7,24 @@
 ---@field check_game_over fun()
 ---@field get_blinds_info fun(): table<string, Blind>
 ---@field get_gamestate fun(): GameState
+---@field set_revealed fun(cards: table[]) Mark cards as transiently revealed (use endpoint only)
+---@field clear_revealed fun() Clear the revealed registry
 local gamestate = {}
+
+-- ==========================================================================
+-- Revealed Card Registry (transient, use-endpoint only)
+--
+-- A hidden card flipped face-up → modified → flipped back face-down by a
+-- conversion consumable (Magician, Death, Sigil, …) was momentarily visible to
+-- a human watching the screen. The `revealed` flag tells a fair-play consumer
+-- "you may now know this card". This is OBSERVATION-time info, stamped onto the
+-- `use` response right before extraction and cleared immediately after.
+--
+-- Do NOT "simplify" `revealed` into reading `ability.wheel_flipped`: that is
+-- DEALING-time info (set at deal time, coupled to the blind, and cleared as a
+-- side effect by Card:flip()'s back→front branch). It is the wrong primitive.
+-- ==========================================================================
+local revealed_cards = {} ---@type table<table, boolean> {[card] = true}
 
 -- ==========================================================================
 -- State Name Mapping
@@ -28,57 +45,6 @@ local function get_state_name(state_num)
   end
 
   return "UNKNOWN"
-end
-
--- ==========================================================================
--- Deck Name Mapping
--- ==========================================================================
-
-local DECK_KEY_TO_NAME = {
-  b_red = "RED",
-  b_blue = "BLUE",
-  b_yellow = "YELLOW",
-  b_green = "GREEN",
-  b_black = "BLACK",
-  b_magic = "MAGIC",
-  b_nebula = "NEBULA",
-  b_ghost = "GHOST",
-  b_abandoned = "ABANDONED",
-  b_checkered = "CHECKERED",
-  b_zodiac = "ZODIAC",
-  b_painted = "PAINTED",
-  b_anaglyph = "ANAGLYPH",
-  b_plasma = "PLASMA",
-  b_erratic = "ERRATIC",
-}
-
----Converts deck key to string deck name
----@param deck_key string The key from G.P_CENTERS (e.g., "b_red")
----@return string? deck_name The string name of the deck (e.g., "RED"), or nil if not found
-local function get_deck_name(deck_key)
-  return DECK_KEY_TO_NAME[deck_key]
-end
-
--- ==========================================================================
--- Stake Name Mapping
--- ==========================================================================
-
-local STAKE_LEVEL_TO_NAME = {
-  [1] = "WHITE",
-  [2] = "RED",
-  [3] = "GREEN",
-  [4] = "BLACK",
-  [5] = "BLUE",
-  [6] = "PURPLE",
-  [7] = "ORANGE",
-  [8] = "GOLD",
-}
-
----Converts numeric stake level to string stake name
----@param stake_num number The numeric stake value from G.GAME.stake (1-8)
----@return string? stake_name The string name of the stake (e.g., "WHITE"), or nil if not found
-local function get_stake_name(stake_num)
-  return STAKE_LEVEL_TO_NAME[stake_num]
 end
 
 -- ==========================================================================
@@ -229,17 +195,17 @@ local function extract_card_modifier(card)
 
   -- Seal (direct property)
   if card.seal then
-    modifier.seal = string.upper(card.seal)
+    modifier.seal = card.seal
   end
 
-  -- Edition (table with type/key)
-  if card.edition and card.edition.type then
-    modifier.edition = string.upper(card.edition.type)
+  -- Edition (table with key)
+  if card.edition and card.edition.key then
+    modifier.edition = card.edition.key
   end
 
-  -- Enhancement (from ability.name for enhanced cards)
-  if card.ability and card.ability.effect and card.ability.effect ~= "Base" then
-    modifier.enhancement = string.upper(card.ability.effect:gsub(" Card", ""))
+  -- Enhancement (from center_key for enhanced cards)
+  if card.config and card.config.center_key and card.config.center_key:sub(1, 2) == "m_" then
+    modifier.enhancement = card.config.center_key
   end
 
   -- Eternal (boolean from ability)
@@ -298,6 +264,13 @@ local function extract_card_state(card)
     state.hidden = true
   end
 
+  -- Revealed (transient): a hidden card momentarily exposed by a conversion
+  -- consumable during the `use` endpoint. Set/cleared around the response
+  -- extraction via gamestate.set_revealed / clear_revealed.
+  if revealed_cards[card] then
+    state.revealed = true
+  end
+
   -- Highlighted
   if card.highlighted then
     state.highlight = true
@@ -340,8 +313,6 @@ local function extract_card(card)
       set = "VOUCHER"
     elseif ability_set == "Booster" then
       set = "BOOSTER"
-    elseif ability_set == "Edition" then
-      set = "EDITION"
     elseif card.ability.effect and card.ability.effect ~= "Base" then
       set = "ENHANCED"
     end
@@ -468,6 +439,43 @@ local function extract_round_info()
     round.chips = G.GAME.chips
   end
 
+  if G.GAME.current_round.most_played_poker_hand then
+    round.most_played_hand = G.GAME.current_round.most_played_poker_hand
+  end
+
+  if G.GAME.current_round.idol_card then
+    local idol = G.GAME.current_round.idol_card
+    round.idol_card = {
+      suit = convert_suit_to_enum(idol.suit),
+      rank = convert_rank_to_enum(idol.rank),
+    }
+  end
+
+  if G.GAME.current_round.mail_card then
+    local mail = G.GAME.current_round.mail_card
+    round.mail_card = { rank = convert_rank_to_enum(mail.rank) }
+  end
+
+  if G.GAME.current_round.ancient_card then
+    local ancient = G.GAME.current_round.ancient_card
+    round.ancient_card = { suit = convert_suit_to_enum(ancient.suit) }
+  end
+
+  if G.GAME.current_round.castle_card then
+    local castle = G.GAME.current_round.castle_card
+    round.castle_card = { suit = convert_suit_to_enum(castle.suit) }
+  end
+
+  local to_do = {}
+  for _, joker in ipairs(G.jokers and G.jokers.cards or {}) do
+    if joker.ability and joker.ability.to_do_poker_hand then
+      to_do[#to_do + 1] = joker.ability.to_do_poker_hand
+    end
+  end
+  if #to_do > 0 then
+    round.to_do_list_hands = to_do
+  end
+
   return round
 end
 
@@ -490,11 +498,11 @@ local function get_blind_effect_from_ui(blind_config)
 
   -- Access localization data directly (more reliable than using localize function)
   -- Path: G.localization.descriptions.Blind[blind_key].text
-  if not G or not G.localization then ---@diagnostic disable-line: undefined-global
+  if not G or not G.localization then
     return ""
   end
 
-  local loc_data = G.localization.descriptions ---@diagnostic disable-line: undefined-global
+  local loc_data = G.localization.descriptions
   if not loc_data or not loc_data.Blind or not loc_data.Blind[blind_config.key] then
     return ""
   end
@@ -515,6 +523,89 @@ local function get_blind_effect_from_ui(blind_config)
   return table.concat(effect_parts, " ")
 end
 
+---Strips Balatro color codes from text
+---Color codes are in format {C:color}text{} or {X:color}text{}
+---@param text string The text with color codes
+---@return string clean_text The text without color codes
+local function strip_color_codes(text)
+  if not text then
+    return ""
+  end
+  -- Remove color codes: {C:color_name}, {X:mult}, etc. and closing {}
+  local result = text:gsub("%b{}", ""):gsub("%s+", " "):gsub("^%s+", ""):gsub("%s+$", "")
+  return result
+end
+
+---Gets voucher effect description using the game's localize function
+---Uses the same approach as generate_card_ui() in common_events.lua
+---@param voucher_key string The voucher key (e.g., "v_overstock_norm")
+---@return string effect The effect description
+local function get_voucher_effect(voucher_key)
+  if not voucher_key then
+    return ""
+  end
+
+  -- Get voucher config from G.P_CENTERS
+  local center = G.P_CENTERS and G.P_CENTERS[voucher_key]
+  if not center then
+    return ""
+  end
+
+  -- Build loc_vars based on voucher name (mirrors common_events.lua:2559-2576)
+  local loc_vars = {}
+  local name = center.name
+
+  if name == "Overstock" or name == "Overstock Plus" then
+    -- No vars needed
+  elseif name == "Tarot Merchant" or name == "Tarot Tycoon" then
+    loc_vars = { center.config.extra_disp }
+  elseif name == "Planet Merchant" or name == "Planet Tycoon" then
+    loc_vars = { center.config.extra_disp }
+  elseif name == "Hone" or name == "Glow Up" then
+    loc_vars = { center.config.extra }
+  elseif name == "Reroll Surplus" or name == "Reroll Glut" then
+    loc_vars = { center.config.extra }
+  elseif name == "Grabber" or name == "Nacho Tong" then
+    loc_vars = { center.config.extra }
+  elseif name == "Wasteful" or name == "Recyclomancy" then
+    loc_vars = { center.config.extra }
+  elseif name == "Seed Money" or name == "Money Tree" then
+    loc_vars = { center.config.extra / 5 }
+  elseif name == "Blank" or name == "Antimatter" then
+    -- No vars needed
+  elseif name == "Hieroglyph" or name == "Petroglyph" then
+    loc_vars = { center.config.extra }
+  elseif name == "Director's Cut" or name == "Retcon" then
+    loc_vars = { center.config.extra }
+  elseif name == "Paint Brush" or name == "Palette" then
+    loc_vars = { center.config.extra }
+  elseif name == "Telescope" or name == "Observatory" then
+    loc_vars = { center.config.extra }
+  elseif name == "Clearance Sale" or name == "Liquidation" then
+    loc_vars = { center.config.extra }
+  end
+
+  -- Use localize to get description text
+  if not localize then
+    return ""
+  end
+
+  local text_lines = localize({
+    type = "raw_descriptions",
+    key = voucher_key,
+    set = "Voucher",
+    vars = loc_vars,
+  })
+
+  if not text_lines or type(text_lines) ~= "table" then
+    return ""
+  end
+
+  -- Concatenate and strip color codes
+  local text = table.concat(text_lines, " ")
+  return strip_color_codes(text)
+end
+
 ---Gets tag information using localize function (same approach as Tag:set_text)
 ---@param tag_key string The tag key from G.P_TAGS
 ---@return table tag_info {name: string, effect: string}
@@ -525,7 +616,7 @@ local function get_tag_info(tag_key)
     return result
   end
 
-  if not localize then ---@diagnostic disable-line: undefined-global
+  if not localize then
     return result
   end
 
@@ -562,12 +653,35 @@ local function get_tag_info(tag_key)
   end
 
   -- Use localize with raw_descriptions type (matches Balatro's internal approach)
-  local text_lines = localize({ type = "raw_descriptions", key = tag_key, set = "Tag", vars = loc_vars }) ---@diagnostic disable-line: undefined-global
+  local text_lines = localize({ type = "raw_descriptions", key = tag_key, set = "Tag", vars = loc_vars })
   if text_lines and type(text_lines) == "table" then
     result.effect = table.concat(text_lines, " ")
   end
 
   return result
+end
+
+---Gets all owned tags from G.GAME.tags
+---@return Tag[] tags Array of Tag objects
+local function get_owned_tags()
+  local tags = {}
+
+  if not G or not G.GAME or not G.GAME.tags then
+    return tags
+  end
+
+  for _, tag in pairs(G.GAME.tags) do
+    if tag and tag.key then
+      local tag_info = get_tag_info(tag.key)
+      table.insert(tags, {
+        key = tag.key,
+        name = tag_info.name,
+        effect = tag_info.effect,
+      })
+    end
+  end
+
+  return tags
 end
 
 ---Converts game blind status to uppercase enum
@@ -600,8 +714,7 @@ function gamestate.get_blinds_info()
       name = "",
       effect = "",
       score = 0,
-      tag_name = "",
-      tag_effect = "",
+      tag = nil, --[[@type Tag?]]
     },
     big = {
       type = "BIG",
@@ -609,8 +722,7 @@ function gamestate.get_blinds_info()
       name = "",
       effect = "",
       score = 0,
-      tag_name = "",
-      tag_effect = "",
+      tag = nil, --[[@type Tag?]]
     },
     boss = {
       type = "BOSS",
@@ -618,8 +730,7 @@ function gamestate.get_blinds_info()
       name = "",
       effect = "",
       score = 0,
-      tag_name = "",
-      tag_effect = "",
+      tag = nil, --[[@type Tag?]]
     },
   }
 
@@ -629,7 +740,7 @@ function gamestate.get_blinds_info()
 
   -- Get base blind amount for current ante
   local ante = G.GAME.round_resets.ante or 1
-  local base_amount = get_blind_amount(ante) ---@diagnostic disable-line: undefined-global
+  local base_amount = get_blind_amount(ante)
 
   -- Apply ante scaling with null check
   local ante_scaling = (G.GAME.starting_params and G.GAME.starting_params.ante_scaling) or 1
@@ -642,6 +753,7 @@ function gamestate.get_blinds_info()
   -- Small Blind
   -- ====================
   local small_choice = blind_choices.Small or "bl_small"
+  blinds.small.key = small_choice
   if G.P_BLINDS and G.P_BLINDS[small_choice] then
     local small_blind = G.P_BLINDS[small_choice]
     blinds.small.name = small_blind.name or "Small Blind"
@@ -657,8 +769,11 @@ function gamestate.get_blinds_info()
     local small_tag_key = G.GAME.round_resets.blind_tags and G.GAME.round_resets.blind_tags.Small
     if small_tag_key then
       local tag_info = get_tag_info(small_tag_key)
-      blinds.small.tag_name = tag_info.name
-      blinds.small.tag_effect = tag_info.effect
+      blinds.small.tag = {
+        key = small_tag_key,
+        name = tag_info.name,
+        effect = tag_info.effect,
+      }
     end
   end
 
@@ -666,6 +781,7 @@ function gamestate.get_blinds_info()
   -- Big Blind
   -- ====================
   local big_choice = blind_choices.Big or "bl_big"
+  blinds.big.key = big_choice
   if G.P_BLINDS and G.P_BLINDS[big_choice] then
     local big_blind = G.P_BLINDS[big_choice]
     blinds.big.name = big_blind.name or "Big Blind"
@@ -681,8 +797,11 @@ function gamestate.get_blinds_info()
     local big_tag_key = G.GAME.round_resets.blind_tags and G.GAME.round_resets.blind_tags.Big
     if big_tag_key then
       local tag_info = get_tag_info(big_tag_key)
-      blinds.big.tag_name = tag_info.name
-      blinds.big.tag_effect = tag_info.effect
+      blinds.big.tag = {
+        key = big_tag_key,
+        name = tag_info.name,
+        effect = tag_info.effect,
+      }
     end
   end
 
@@ -690,6 +809,9 @@ function gamestate.get_blinds_info()
   -- Boss Blind
   -- ====================
   local boss_choice = blind_choices.Boss
+  if boss_choice then
+    blinds.boss.key = boss_choice
+  end
   if boss_choice and G.P_BLINDS and G.P_BLINDS[boss_choice] then
     local boss_blind = G.P_BLINDS[boss_choice]
     blinds.boss.name = boss_blind.name or "Boss Blind"
@@ -706,7 +828,18 @@ function gamestate.get_blinds_info()
     blinds.boss.score = math.floor(base_amount * 2 * ante_scaling)
   end
 
-  -- Boss blind has no tags (tag_name and tag_effect remain empty strings)
+  -- Reroll Boss Blind availability (mirrors G.FUNCS.reroll_boss_button gate):
+  -- affordability ((dollars - bankrupt_at) - 10 >= 0) AND
+  -- (v_retcon OR (v_directors_cut AND not boss_rerolled))
+  blinds.boss.reroll_available = not not (
+    ((G.GAME.dollars - G.GAME.bankrupt_at) - 10 >= 0)
+    and (
+      G.GAME.used_vouchers["v_retcon"]
+      or (G.GAME.used_vouchers["v_directors_cut"] and not G.GAME.round_resets.boss_rerolled)
+    )
+  )
+
+  -- Boss blind has no tags (tag remains nil)
 
   return blinds
 end
@@ -731,22 +864,34 @@ function gamestate.get_gamestate()
     state = get_state_name(G.STATE),
   }
 
+  -- Pause flag: true while a blocking overlay is up (win screen, pause
+  -- menu, game over). Exposed so callers can detect a session stuck in a
+  -- paused state — e.g. endless mode after a win if the overlay is left up.
+  state_data.paused = G.SETTINGS and G.SETTINGS.paused or false
+
   -- Basic game info
   if G.GAME then
     state_data.round_num = G.GAME.round or 0
     state_data.ante_num = (G.GAME.round_resets and G.GAME.round_resets.ante) or 0
     state_data.money = G.GAME.dollars or 0
     state_data.won = G.GAME.won
+    state_data.starting_deck_size = G.GAME.starting_deck_size
 
     -- Deck (optional)
     if G.GAME.selected_back and G.GAME.selected_back.effect and G.GAME.selected_back.effect.center then
       local deck_key = G.GAME.selected_back.effect.center.key
-      state_data.deck = get_deck_name(deck_key)
+      state_data.deck = deck_key
     end
 
     -- Stake (optional)
     if G.GAME.stake then
-      state_data.stake = get_stake_name(G.GAME.stake)
+      local stake_level = G.GAME.stake
+      for key, stake_data in pairs(G.P_STAKES) do
+        if stake_data.order == stake_level or stake_data.stake_level == stake_level then
+          state_data.stake = key
+          break
+        end
+      end
     end
 
     -- Seed (optional)
@@ -754,17 +899,33 @@ function gamestate.get_gamestate()
       state_data.seed = G.GAME.pseudorandom.seed
     end
 
+    -- Challenge (optional) — present only during a Challenge Run. Bare id
+    -- (e.g. "c_omelette_1"), matching the keys-not-names convention used for
+    -- deck/stake. G.GAME.challenge is nil for normal runs (init_game_object
+    -- has no challenge key); conditionally absent here, not null.
+    if G.GAME.challenge then
+      state_data.challenge = G.GAME.challenge
+    end
+
+    -- Last Tarot/Planet used (optional) — the key The Fool would create
+    -- (e.g. "c_hermit"). Nil until first use; conditionally absent here.
+    if G.GAME.last_tarot_planet then
+      state_data.last_tarot_planet = G.GAME.last_tarot_planet
+    end
+
     -- Used vouchers (table<string, string>)
     if G.GAME.used_vouchers then
       local used_vouchers = {}
-      for voucher_name, voucher_data in pairs(G.GAME.used_vouchers) do
-        if type(voucher_data) == "table" and voucher_data.description then
-          used_vouchers[voucher_name] = voucher_data.description
-        else
-          used_vouchers[voucher_name] = ""
-        end
+      for voucher_name, _ in pairs(G.GAME.used_vouchers) do
+        used_vouchers[voucher_name] = get_voucher_effect(voucher_name)
       end
       state_data.used_vouchers = used_vouchers
+    end
+
+    -- Owned tags (Tag[])
+    local owned_tags = get_owned_tags()
+    if #owned_tags > 0 then
+      state_data.tags = owned_tags
     end
 
     -- Poker hands
@@ -831,6 +992,28 @@ function gamestate.check_game_over()
     gamestate.on_game_over(gamestate.get_gamestate())
     gamestate.on_game_over = nil
   end
+end
+
+-- ==========================================================================
+-- Revealed Registry API (transient, use-endpoint only)
+-- ==========================================================================
+
+---Mark the given cards as transiently revealed. The `use` endpoint calls this
+---with the snapshot of hidden cards a conversion consumable will flip, right
+---before extracting the response gamestate. Pair every call with
+---clear_revealed() immediately after extraction so later snapshots stay clean.
+---@param cards table[] Array of game card objects to mark revealed
+function gamestate.set_revealed(cards)
+  for _, card in ipairs(cards) do
+    revealed_cards[card] = true
+  end
+end
+
+---Clear the revealed registry. Called by the `use` endpoint right after the
+---response gamestate is extracted, so `revealed` never leaks into later
+---(non-use) snapshots.
+function gamestate.clear_revealed()
+  revealed_cards = {}
 end
 
 return gamestate

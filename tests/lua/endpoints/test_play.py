@@ -86,6 +86,45 @@ class TestPlayEndpoint:
         response = api(client, "play", {"cards": [0]}, timeout=5)
         assert_gamestate_response(response, state="GAME_OVER")
 
+    def test_play_endless_mode_after_won(self, client: httpx.Client) -> None:
+        """Endless-mode play runs unpaused after winning ante 8.
+
+        Winning the ante-8 boss raises the win overlay and pauses the game
+        (``G.SETTINGS.paused = true``). ``play`` must dismiss that overlay so
+        the endless run keeps running on turbo time; otherwise the game is
+        left paused indefinitely and every subsequent play reports
+        ``paused=true``.
+        """
+        # Drive to the ante-8 boss and win it.
+        api(client, "menu")
+        api(
+            client,
+            "start",
+            {"deck": "b_red", "stake": "stake_white", "seed": "TEST123"},
+        )
+        api(client, "skip")
+        api(client, "skip")
+        api(client, "select")
+        api(client, "set", {"ante": 8, "chips": 1000000})
+        win = api(client, "play", {"cards": [0, 3, 4, 5, 6]})
+        assert_gamestate_response(win, state="ROUND_EVAL")
+        assert win["result"]["won"] is True
+
+        # Continue into endless mode.
+        api(client, "cash_out")
+        api(client, "next_round")
+        entering = api(client, "select")
+        assert_gamestate_response(entering, state="SELECTING_HAND")
+        assert entering["result"]["won"] is True
+
+        # An endless play must run unpaused. If the win overlay was left up,
+        # the game stays paused forever and the response reports paused=true.
+        response = api(client, "play", {"cards": [0, 1, 2, 3, 4]})
+        assert_gamestate_response(response)
+        assert response["result"]["paused"] is False, (
+            "endless play left the game paused — win overlay not dismissed"
+        )
+
 
 class TestPlayEndpointValidation:
     """Test play endpoint parameter validation."""
@@ -108,6 +147,34 @@ class TestPlayEndpointValidation:
             api(client, "play", {"cards": "INVALID_CARDS"}),
             "BAD_REQUEST",
             "Field 'cards' must be an array",
+        )
+
+    def test_cerulean_bell_forced_card_not_included_in_play(
+        self, client: httpx.Client
+    ) -> None:
+        """Play a single non-forced card; the forced card must NOT be included."""
+
+        prev_gs = load_fixture(
+            client, "play", "state-SELECTING_HAND--blinds.boss.key-bl_final_bell"
+        )
+        assert prev_gs["blinds"]["boss"]["key"] == "bl_final_bell"
+
+        # Find the forced card (highlighted by The Bell)
+        h_idx, h_card = None, None
+        for i, c in enumerate(prev_gs["hand"]["cards"]):
+            if isinstance(c["state"], dict) and c["state"]["highlight"]:
+                h_idx = i
+                h_card = c
+                break
+        assert h_card is not None, "The Bell should force exactly one card"
+        assert h_idx is not None, "The Bell should force exactly one card"
+
+        # Select another card to play, this should raise an error in the API.
+        response = api(client, "play", {"cards": [1 if h_idx == 0 else 0]})
+        assert_error_response(
+            response,
+            "BAD_REQUEST",
+            "forced-selected by the boss blind",
         )
 
 

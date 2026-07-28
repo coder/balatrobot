@@ -12,12 +12,17 @@
 ---@field deck Deck? Current selected deck
 ---@field stake Stake? Current selected stake
 ---@field seed string? Seed used for the run
+---@field challenge Challenge? Challenge Run id (e.g. "c_omelette_1"); present only during a Challenge Run
+---@field last_tarot_planet (Card.Key.Consumable.Tarot | Card.Key.Consumable.Planet)? Key of the last Tarot/Planet used (what The Fool copies); omitted until first use
 ---@field state State Current game state
+---@field paused boolean Whether the game is paused by a blocking overlay (win screen, pause menu, game over)
 ---@field round_num integer Current round number
 ---@field ante_num integer Current ante number
 ---@field money integer Current money amount
+---@field starting_deck_size integer Deck size at run start (Erosion baseline; e.g. 52)
 ---@field used_vouchers table<string, string>? Vouchers used (name -> description)
----@field hands table<string, Hand>? Poker hands information
+---@field tags Tag[]? Accumulated tags owned by the player
+---@field hands table<Hand.Name, Hand>? Poker hands information
 ---@field round Round? Current round state
 ---@field blinds table<"small"|"big"|"boss", Blind>? Blind information
 ---@field jokers Area? Jokers area
@@ -46,15 +51,27 @@
 ---@field discards_used integer? Number of discards used in this round
 ---@field reroll_cost integer? Current cost to reroll the shop
 ---@field chips integer? Current chips scored in this round
+---@field most_played_hand Hand.Name? Most played poker hand this run
+---@field idol_card { suit: Card.Value.Suit, rank: Card.Value.Rank }? The Idol's per-round target card
+---@field mail_card { rank: Card.Value.Rank }? Mail-In Rebate's per-round target rank
+---@field ancient_card { suit: Card.Value.Suit }? Ancient Joker's per-round target suit
+---@field castle_card { suit: Card.Value.Suit }? Castle's per-round target suit
+---@field to_do_list_hands Hand.Name[]? One target hand per owned To Do List
+
+---@class Tag
+---@field key string The tag key (e.g., "tag_polychrome", "tag_double")
+---@field name string Display name of the tag (e.g., "Polychrome Tag")
+---@field effect string Description of the tag's effect
 
 ---@class Blind
+---@field key Blind.Key Key of the blind (e.g., "bl_small", "bl_hook")
 ---@field type Blind.Type Type of the blind
 ---@field status Blind.Status Status of the bilnd
 ---@field name string Name of the blind (e.g., "Small", "Big" or the Boss name)
 ---@field effect string Description of the blind's effect
 ---@field score integer Score requirement to beat this blind
----@field tag_name string? Name of the tag associated with this blind (Small/Big only)
----@field tag_effect string? Description of the tag's effect (Small/Big only)
+---@field tag Tag? Tag associated with this blind (Small/Big only)
+---@field reroll_available boolean? Whether the Reroll Boss Blind action is currently available (Boss only)
 
 ---@class Area
 ---@field count integer Current number of cards in this area
@@ -79,7 +96,7 @@
 
 ---@class Card.Modifier
 ---@field seal Card.Modifier.Seal? Seal type (playing cards)
----@field edition Card.Modifier.Edition? Edition type (jokers, playing cards and NEGATIVE consumables)
+---@field edition Card.Modifier.Edition? Edition type (jokers, playing cards and e_negative consumables)
 ---@field enhancement Card.Modifier.Enhancement? Enhancement type (playing cards)
 ---@field eternal boolean? If true, card cannot be sold or destroyed (jokers only)
 ---@field perishable integer? Number of rounds remaining (only if > 0) (jokers only)
@@ -89,6 +106,7 @@
 ---@field debuff boolean? If true, card is debuffed and won't score
 ---@field hidden boolean? If true, card is face down (facing == "back")
 ---@field highlight boolean? If true, card is currently highlighted
+---@field revealed boolean? If true, a hidden card was momentarily exposed to a human during a conversion consumable's flip→modify→flip animation (emitted by the `use` endpoint only; co-occurs with `hidden: true`)
 
 ---@class Card.Cost
 ---@field sell integer Sell value of the card
@@ -143,7 +161,7 @@
 ---@alias Request.Endpoint.Method
 ---| "add" | "buy" | "cash_out" | "discard" | "gamestate" | "health" | "load"
 ---| "menu" | "next_round" | "play" | "rearrange" | "reroll" | "save"
----| "screenshot" | "select" | "sell" | "set" | "skip" | "start" | "use"
+---| "screenshot" | "select" | "sell" | "set" | "skip" | "sort" | "start" | "use"
 
 ---@alias Request.Endpoint.Test.Method
 ---| "echo" | "endpoint" | "error" | "state" | "validation"
@@ -168,6 +186,7 @@
 ---| Request.Endpoint.Sell.Params
 ---| Request.Endpoint.Set.Params
 ---| Request.Endpoint.Skip.Params
+---| Request.Endpoint.Sort.Params
 ---| Request.Endpoint.Start.Params
 ---| Request.Endpoint.Use.Params
 
@@ -269,18 +288,15 @@
 ---@class Settings
 ---@field host string Hostname for the HTTP server (default: "127.0.0.1")
 ---@field port integer Port number for the HTTP server (default: 12346)
----@field headless boolean Whether to run in headless mode (minimizes window, disables rendering)
----@field fast boolean Whether to run in fast mode (unlimited FPS, 10x game speed, 60 FPS animations)
----@field render_on_api boolean Whether to render frames only on API calls (mutually exclusive with headless)
----@field audio boolean Whether to play audio (enables sound thread and sets volume levels)
+---@field render string Render mode: headfull|headless|ondemand (default: "headfull")
 ---@field debug boolean Whether debug mode is enabled (requires DebugPlus mod)
----@field no_shaders boolean Whether to disable all shaders for better performance (causes visual glitches)
----@field fps_cap integer Maximum FPS cap for the game (default: 60)
----@field gamespeed integer Game speed multiplier (default: 4)
----@field animation_fps integer Animation FPS (default: 10)
----@field no_reduced_motion boolean Whether to disable reduced motion for faster animations
----@field pixel_art_smoothing boolean Whether to enable pixel art smoothing (texture_scaling = 2)
----@field setup fun()? Initialize and apply all BalatroBot settings
+---@field screenshots boolean Whether screenshot logging is enabled after each API response
+---@field settings string? Settings profile name, e.g. "fast", "turbo", "light" (nil if not provided, defaults to "default" in Lua)
+---@field setup fun(): boolean Initialize BalatroBot settings. Returns false if "BalatroBot" profile not selected.
+
+---@class Screenshot
+---@field capture_when_settled fun(id: integer|string|nil, after: fun()) Wait until the screen is quiescent, capture <id>.png, then call `after`. Write failures are swallowed.
+---@field clear_hover_for_capture fun() Clear hover tint and popups (h_popup/alert/info) on all drawable nodes for the frame being captured. See ADR 0003.
 
 ---@class Debug
 ---@field log table? DebugPlus logger instance with debug/info/error methods (nil if DebugPlus not available)
@@ -294,6 +310,8 @@
 ---@field current_request_id integer|string|nil Current JSON-RPC 2.0 request ID being processed (nil if no active request)
 ---@field client_state table? HTTP request parsing state for current client (buffer, headers, etc.) (nil if no client connected)
 ---@field openrpc_spec string? OpenRPC specification JSON string (loaded at init, nil before init)
+---@field req_file file*? File handle for recording JSON-RPC request bodies (nil if logging disabled)
+---@field res_file file*? File handle for recording JSON-RPC response bodies (nil if logging disabled)
 ---@field init? fun(): boolean Initialize HTTP server socket and load OpenRPC spec
 ---@field accept? fun(): boolean Accept new HTTP client connection
 ---@field send_response? fun(response: Response.Endpoint): boolean Send JSON-RPC 2.0 response over HTTP to client

@@ -1,4 +1,4 @@
-"""Tests for balatrobot.manager module."""
+"""Tests for balatrobot.instance module."""
 
 import asyncio
 from unittest.mock import AsyncMock, MagicMock
@@ -6,7 +6,7 @@ from unittest.mock import AsyncMock, MagicMock
 import pytest
 
 from balatrobot.config import Config
-from balatrobot.manager import BalatroInstance
+from balatrobot.instance import BalatroInstance, InstanceDiedError
 
 
 class TestBalatroInstanceInit:
@@ -25,8 +25,8 @@ class TestBalatroInstanceInit:
 
     def test_init_with_overrides(self):
         """Overrides apply to base config."""
-        config = Config(port=8888, fast=False)
-        instance = BalatroInstance(config, port=9999, fast=True)
+        config = Config(port=8888)
+        instance = BalatroInstance(config, port=9999)
         assert instance.port == 9999
 
     def test_init_overrides_without_config(self):
@@ -111,7 +111,7 @@ class TestBalatroInstanceStop:
             if call_count == 1:
                 # First call (graceful wait) times out
                 await coro  # Consume the coroutine to avoid warning
-                raise asyncio.TimeoutError()
+                raise TimeoutError()
             # Second call (after kill) succeeds
             return await original_wait_for(coro, timeout)
 
@@ -142,6 +142,39 @@ class TestBalatroInstanceHealthCheck:
         with pytest.raises(RuntimeError, match="Health check failed"):
             await instance._wait_for_health(timeout=1.0)
 
+    @pytest.mark.asyncio
+    async def test_health_check_tolerates_read_error(self, monkeypatch):
+        """Transient ReadError (e.g. docker port-proxy during cold start) is retried.
+
+        On Docker Desktop the published-port proxy accepts the host TCP connection
+        before the container's listener is ready, then resets it — surfacing as
+        httpx.ReadError. The loop must swallow it and keep retrying, just like
+        ConnectError.
+        """
+        from unittest.mock import AsyncMock, MagicMock
+
+        import httpx
+
+        calls = {"n": 0}
+
+        async def mock_post(*args, **kwargs):
+            calls["n"] += 1
+            if calls["n"] == 1:
+                raise httpx.ReadError("connection reset")
+            response = MagicMock()
+            response.json.return_value = {"result": {"status": "ok"}}
+            return response
+
+        mock_client = MagicMock()
+        mock_client.__aenter__ = AsyncMock(return_value=mock_client)
+        mock_client.__aexit__ = AsyncMock(return_value=None)
+        mock_client.post = mock_post
+        monkeypatch.setattr("httpx.AsyncClient", MagicMock(return_value=mock_client))
+
+        instance = BalatroInstance()
+        await instance._wait_for_health(timeout=5.0)  # should not raise
+        assert calls["n"] >= 2  # retried after the ReadError
+
 
 class TestBalatroInstanceContextManager:
     """Tests for BalatroInstance context manager protocol."""
@@ -162,15 +195,65 @@ class TestBalatroInstanceContextManager:
         mock_launcher.build_env = MagicMock(return_value={})
         mock_launcher.build_cmd = MagicMock(return_value=["echo"])
 
-        monkeypatch.setattr("balatrobot.manager.get_launcher", lambda x: mock_launcher)
+        monkeypatch.setattr("balatrobot.instance.get_launcher", lambda x: mock_launcher)
 
-        instance = BalatroInstance(logs_path=str(tmp_path))
+        instance = BalatroInstance(logs=str(tmp_path))
 
         # Mock health check to succeed immediately
-        instance._wait_for_health = AsyncMock()  # type: ignore[assignment]
+        instance._wait_for_health = AsyncMock()
 
         async with instance:
             assert instance._process is mock_process
 
         # After exit, process should be cleared
         assert instance._process is None
+
+
+class TestBalatroInstanceCheckAlive:
+    """Tests for BalatroInstance.check_alive() method."""
+
+    def test_check_alive_healthy(self):
+        """No exception when process is running (poll returns None)."""
+        instance = BalatroInstance(port=14001)
+        mock_process = MagicMock()
+        mock_process.poll.return_value = None
+        instance._process = mock_process
+
+        instance.check_alive()  # Should not raise
+
+    def test_check_alive_dead(self):
+        """Raises InstanceDiedError when process has exited."""
+        from pathlib import Path
+
+        instance = BalatroInstance(port=14001)
+        mock_process = MagicMock()
+        mock_process.poll.return_value = 1  # Exit code 1
+        instance._process = mock_process
+        instance._log_path = Path("/tmp/test/14001.log")
+
+        with pytest.raises(InstanceDiedError) as exc_info:
+            instance.check_alive()
+        assert exc_info.value.port == 14001
+        assert "14001" in str(exc_info.value)
+
+    def test_check_alive_dead_with_log_path(self):
+        """InstanceDiedError includes log_path in message."""
+        from pathlib import Path
+
+        instance = BalatroInstance(port=14002)
+        mock_process = MagicMock()
+        mock_process.poll.return_value = 0
+        instance._process = mock_process
+        instance._log_path = Path("/tmp/logs/session/14002.log")
+
+        with pytest.raises(InstanceDiedError) as exc_info:
+            instance.check_alive()
+        assert exc_info.value.port == 14002
+        assert exc_info.value.log_path == "/tmp/logs/session/14002.log"
+        assert "/tmp/logs/session/14002.log" in str(exc_info.value)
+
+    def test_check_alive_not_started(self):
+        """No exception when _process is None (not started)."""
+        instance = BalatroInstance(port=14001)
+        assert instance._process is None
+        instance.check_alive()  # Should not raise

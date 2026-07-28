@@ -25,37 +25,52 @@ Start Balatro with the BalatroBot mod loaded and API server running.
 uvx balatrobot serve [OPTIONS]
 ```
 
+### Profile Activation
+
+The BalatroBot mod only activates when the selected Balatro in-game profile is named exactly `"BalatroBot"` (case-sensitive). If no such profile exists, the HTTP server does not start and no settings overrides are applied. The game boots normally.
+
 ### Options
 
 All options can be set via CLI flags or environment variables. CLI flags override environment variables.
 
-| CLI Flag                        | Environment Variable             | Default       | Description                                |
-| ------------------------------- | -------------------------------- | ------------- | ------------------------------------------ |
-| `--host HOST`                   | `BALATROBOT_HOST`                | `127.0.0.1`   | Server hostname                            |
-| `--port PORT`                   | `BALATROBOT_PORT`                | `12346`       | Server port                                |
-| `--fast`                        | `BALATROBOT_FAST`                | `0`           | Enable fast mode (10x game speed)          |
-| `--headless`                    | `BALATROBOT_HEADLESS`            | `0`           | Enable headless mode (minimal rendering)   |
-| `--render-on-api`               | `BALATROBOT_RENDER_ON_API`       | `0`           | Render only on API calls                   |
-| `--audio`                       | `BALATROBOT_AUDIO`               | `0`           | Enable audio                               |
-| `--debug`                       | `BALATROBOT_DEBUG`               | `0`           | Enable debug mode (requires DebugPlus mod) |
-| `--no-shaders`                  | `BALATROBOT_NO_SHADERS`          | `0`           | Disable all shaders                        |
-| `--fps-cap FPS_CAP`             | `BALATROBOT_FPS_CAP`             | `60`          | Maximum FPS cap                            |
-| `--gamespeed GAMESPEED`         | `BALATROBOT_GAMESPEED`           | `4`           | Game speed multiplier                      |
-| `--animation-fps ANIMATION_FPS` | `BALATROBOT_ANIMATION_FPS`       | `10`          | Animation FPS                              |
-| `--no-reduced-motion`           | `BALATROBOT_NO_REDUCED_MOTION`   | `0`           | Disable reduced motion                     |
-| `--pixel-art-smoothing`         | `BALATROBOT_PIXEL_ART_SMOOTHING` | `0`           | Enable pixel art smoothing                 |
-| `--balatro-path BALATRO_PATH`   | `BALATROBOT_BALATRO_PATH`        | auto-detected | Path to Balatro game directory             |
-| `--lovely-path LOVELY_PATH`     | `BALATROBOT_LOVELY_PATH`         | auto-detected | Path to lovely library (dll/so/dylib)      |
-| `--love-path LOVE_PATH`         | `BALATROBOT_LOVE_PATH`           | auto-detected | Path to game launcher executable           |
-| `--platform PLATFORM`           | `BALATROBOT_PLATFORM`            | auto-detected | Platform: darwin, linux, windows, native   |
-| `--logs-path LOGS_PATH`         | `BALATROBOT_LOGS_PATH`           | `logs`        | Directory for log files                    |
-| `-h, --help`                    | -                                | -             | Show help message and exit                 |
+| CLI Flag              | Environment Variable      | Default       | Description                                        |
+| --------------------- | ------------------------- | ------------- | -------------------------------------------------- |
+| `--settings NAME`     | `BALATROBOT_SETTINGS`     | `default`     | Settings profile name                              |
+| `--render MODE`       | `BALATROBOT_RENDER`       | `headfull`    | Render mode: `headfull`, `headless`, or `ondemand` |
+| `--debug`             | `BALATROBOT_DEBUG`        | `0`           | Enable debug mode (requires DebugPlus mod)         |
+| `--screenshots`       | `BALATROBOT_SCREENSHOTS`  | `0`           | Save a PNG after each successful API response      |
+| `--host HOST`         | `BALATROBOT_HOST`         | `127.0.0.1`   | Server hostname                                    |
+| `--num N`             | -                         | `1`           | Number of instances to start (CLI only)            |
+| `--path-balatro PATH` | `BALATROBOT_PATH_BALATRO` | auto-detected | Path to Balatro game directory                     |
+| `--path-lovely PATH`  | `BALATROBOT_PATH_LOVELY`  | auto-detected | Path to lovely library (dll/so/dylib)              |
+| `--path-love PATH`    | `BALATROBOT_PATH_LOVE`    | auto-detected | Path to game launcher executable                   |
+| `--platform PLATFORM` | `BALATROBOT_PLATFORM`     | auto-detected | Platform: `darwin`, `linux`, `windows`, `native`   |
+| `--logs PATH`         | `BALATROBOT_LOGS`         | `logs`        | Log directory (parent of timestamped sessions)     |
+| `-h, --help`          | -                         | -             | Show help message and exit                         |
 
-!!! note "Mutually Exclusive Flags"
+### Render Modes
 
-    `--headless` and `--render-on-api` are mutually exclusive.
+| Mode       | Behavior                                                                                      |
+| ---------- | --------------------------------------------------------------------------------------------- |
+| `headfull` | Normal rendering. Game window visible and fully interactive.                                  |
+| `headless` | All rendering disabled. Window hidden at 1×1 pixels. Use for CI/automated environments.       |
+| `ondemand` | Frames rendered only when explicitly requested via the API. Use with the screenshot endpoint. |
 
-**Note:** Boolean flags (`--fast`, `--headless`, etc.) use `1` for enabled and `0` for disabled when set via environment variables.
+### Settings Profiles
+
+BalatroBot bundles settings profiles that configure Balatro's game settings (speed, graphics, audio, window, etc.). Use `--settings` with a bare profile name:
+
+```bash
+# Use the "fast" profile (max speed, no audio, minimal graphics)
+uvx balatrobot serve --settings fast
+
+# Default profile is applied when --settings is omitted
+uvx balatrobot serve
+```
+
+Available profiles: `default`, `fast`, `turbo`, `light`.
+
+The profile contains `settings.lua` (merged into `G.SETTINGS`) and optionally `profile.lua` (merged into `G.PROFILES`). Profiles live in `src/lua/profiles/<name>/`. Custom profiles can be added by creating a new directory with a `settings.lua` file.
 
 ## api Command
 
@@ -95,7 +110,7 @@ uvx balatrobot api health
 uvx balatrobot api gamestate
 
 # Start a new game with Red Deck
-uvx balatrobot api start '{"deck": "RED", "stake": "WHITE"}'
+uvx balatrobot api start '{"deck": "b_red", "stake": "WHITE"}'
 
 # Play cards at indices 0 and 2
 uvx balatrobot api play '{"cards": [0, 2]}'
@@ -114,27 +129,24 @@ On error, prints `Error: NAME - message` to stderr (exit code 1).
 ### Basic Usage
 
 ```bash
-# Start with default settings
+# Start with default settings profile (headfull)
 uvx balatrobot serve
 
-# Start with fast mode for development
-uvx balatrobot serve --fast
+# Start headless with the fast profile
+uvx balatrobot serve --settings fast --render headless
 
 # Start with debug mode (requires DebugPlus mod)
-uvx balatrobot serve --fast --debug
-
-# Start headless for automated testing
-uvx balatrobot serve --headless --fast
+uvx balatrobot serve --settings fast --debug
 ```
 
 ### Custom Configuration
 
 ```bash
-# Use a different port
-uvx balatrobot serve --port 8080
-
 # Custom Balatro installation
-uvx balatrobot serve --balatro-path /path/to/Balatro.exe
+uvx balatrobot serve --path-balatro /path/to/Balatro
+
+# On-demand rendering for screenshot capture
+uvx balatrobot serve --render ondemand
 ```
 
 ## Examples with Environment Variables
@@ -143,21 +155,17 @@ uvx balatrobot serve --balatro-path /path/to/Balatro.exe
 
 ```bash
 # Configure via environment variables
-export BALATROBOT_PORT=8080
-export BALATROBOT_FAST=1
+export BALATROBOT_RENDER=headless
+export BALATROBOT_SETTINGS=fast
 
 # Launch with defaults from env vars
 uvx balatrobot serve
-
-# CLI flags override env vars
-uvx balatrobot serve --port 9000  # Uses port 9000, not 8080
 ```
 
 **Windows PowerShell:**
 
 ```powershell
-$env:BALATROBOT_PORT = "8080"
-$env:BALATROBOT_FAST = "1"
+$env:BALATROBOT_RENDER = "headless"
 uvx balatrobot serve
 ```
 
@@ -165,7 +173,7 @@ uvx balatrobot serve
 
 The CLI automatically:
 
-- Logs output to `logs/{timestamp}/{port}.log`
+- Logs output to `logs/{timestamp}/{port}/balatro.log`
 - Sets up the correct environment variables
 - Gracefully shuts down on Ctrl+C
 
@@ -177,8 +185,8 @@ The `windows` platform launches Balatro via Steam on Windows. The CLI auto-detec
 
 **Auto-Detected Paths:**
 
-- `BALATROBOT_LOVE_PATH`: `C:\Program Files (x86)\Steam\steamapps\common\Balatro\Balatro.exe`
-- `BALATROBOT_LOVELY_PATH`: `C:\Program Files (x86)\Steam\steamapps\common\Balatro\version.dll`
+- `BALATROBOT_PATH_LOVE`: `C:\Program Files (x86)\Steam\steamapps\common\Balatro\Balatro.exe`
+- `BALATROBOT_PATH_LOVELY`: `C:\Program Files (x86)\Steam\steamapps\common\Balatro\version.dll`
 
 **Requirements:**
 
@@ -190,10 +198,10 @@ The `windows` platform launches Balatro via Steam on Windows. The CLI auto-detec
 
 ```powershell
 # Auto-detects paths
-uvx balatrobot serve --fast
+uvx balatrobot serve --render headless
 
 # Or specify custom paths
-uvx balatrobot serve --love-path "C:\Custom\Path\Balatro.exe" --lovely-path "C:\Custom\Path\version.dll"
+uvx balatrobot serve --path-love "C:\Custom\Path\Balatro.exe" --path-lovely "C:\Custom\Path\version.dll"
 ```
 
 ### macOS Platform
@@ -202,8 +210,8 @@ The `darwin` platform launches Balatro via Steam on macOS. The CLI auto-detects 
 
 **Auto-Detected Paths:**
 
-- `BALATROBOT_LOVE_PATH`: `~/Library/Application Support/Steam/steamapps/common/Balatro/Balatro.app/Contents/MacOS/love`
-- `BALATROBOT_LOVELY_PATH`: `~/Library/Application Support/Steam/steamapps/common/Balatro/liblovely.dylib`
+- `BALATROBOT_PATH_LOVE`: `~/Library/Application Support/Steam/steamapps/common/Balatro/Balatro.app/Contents/MacOS/love`
+- `BALATROBOT_PATH_LOVELY`: `~/Library/Application Support/Steam/steamapps/common/Balatro/liblovely.dylib`
 
 **Requirements:**
 
@@ -217,10 +225,10 @@ The `darwin` platform launches Balatro via Steam on macOS. The CLI auto-detects 
 
 ```bash
 # Auto-detects paths
-uvx balatrobot serve --fast
+uvx balatrobot serve --render headless
 
 # Or specify custom paths
-uvx balatrobot serve --love-path "/path/to/love" --lovely-path "/path/to/liblovely.dylib"
+uvx balatrobot serve --path-love "/path/to/love" --path-lovely "/path/to/liblovely.dylib"
 ```
 
 ### Linux (Proton) Platform
@@ -229,9 +237,9 @@ The `linux` platform launches Balatro via Steam Proton. The CLI auto-detects Ste
 
 **Auto-Detected Paths:**
 
-- `BALATROBOT_BALATRO_PATH`: `~/.local/share/Steam/steamapps/common/Balatro`
-- `BALATROBOT_LOVE_PATH`: Best available Proton executable (scans `steamapps/common/`)
-- `BALATROBOT_LOVELY_PATH`: `~/.local/share/Steam/steamapps/common/Balatro/version.dll`
+- `BALATROBOT_PATH_BALATRO`: `~/.local/share/Steam/steamapps/common/Balatro`
+- `BALATROBOT_PATH_LOVE`: Best available Proton executable (scans `steamapps/common/`)
+- `BALATROBOT_PATH_LOVELY`: `~/.local/share/Steam/steamapps/common/Balatro/version.dll`
 
 **Requirements:**
 
@@ -244,10 +252,10 @@ The `linux` platform launches Balatro via Steam Proton. The CLI auto-detects Ste
 
 ```bash
 # Auto-detects paths
-uvx balatrobot serve --fast
+uvx balatrobot serve --render headless
 
 # Or specify custom paths
-uvx balatrobot serve --love-path /path/to/proton --balatro-path /path/to/Balatro
+uvx balatrobot serve --path-love /path/to/proton --path-balatro /path/to/Balatro
 ```
 
 !!! warning "Steam Installation"
@@ -260,9 +268,9 @@ The `native` platform runs Balatro from source code using the LÖVE framework in
 
 **Required Paths:**
 
-- `BALATROBOT_BALATRO_PATH`: Directory containing Balatro source code with `main.lua`
-- `BALATROBOT_LOVE_PATH`: Path to LÖVE executable (find with `which love`), e.g., `/usr/bin/love`
-- `BALATROBOT_LOVELY_PATH`: Must be `/usr/local/lib/liblovely.so`
+- `BALATROBOT_PATH_BALATRO`: Directory containing Balatro source code with `main.lua`
+- `BALATROBOT_PATH_LOVE`: Path to LÖVE executable (find with `which love`), e.g., `/usr/bin/love`
+- `BALATROBOT_PATH_LOVELY`: Must be `/usr/local/lib/liblovely.so`
 - Mods directory: `~/.config/love/Mods` (auto-discovered, used by lovely)
 - Settings directory: `~/.local/share/love/balatro` (must contain game settings)
 
@@ -274,7 +282,7 @@ mkdir -p ~/.local/share/love/balatro
 cp -r /path/to/balatro/settings/* ~/.local/share/love/balatro/
 
 # Launch with native platform
-uvx balatrobot serve --platform native --balatro-path /path/to/balatro/source
+uvx balatrobot serve --platform native --path-balatro /path/to/balatro/source
 ```
 
 ??? tip "Hyprland Configuration"
@@ -300,12 +308,51 @@ uvx balatrobot serve --platform native --balatro-path /path/to/balatro/source
     windowrulev2 = suppressevent activate, class:^(love)$, title:^(Balatro)$
     ```
 
+### Docker Platform
+
+The `docker` platform runs the [`balatrobox`](https://github.com/coder/balatrobox) reference image — a container with LOVE + Lovely + Steamodded + the balatrobot mod pre-baked. One container = one Balatro process. balatrobot never touches game files on the host; it only drives the container through the same JSON-RPC API.
+
+**Requirements:**
+
+- Docker installed and the daemon running
+- The image built once from the balatrobox repo: `docker build -t balatrobox .`
+
+**Launch:**
+
+```bash
+# Spin up 2 containers and drive them through the usual pool/list/stop commands
+uvx balatrobot serve --platform docker --num 2
+uvx balatrobot list
+uvx balatrobot api health --index 1
+```
+
+**Streaming (HLS):** Set `BALATROBOX_STREAM=1` on the host. The pool allocates one stream port per instance (mapped to the container's internal `:8080`) and `balatrobot list` prints each `stream` URL:
+
+```bash
+export BALATROBOX_STREAM=1
+uvx balatrobot serve --platform docker --num 2
+uvx balatrobot list   # rpc urls + stream urls
+mpv <stream_url>      # e.g. http://127.0.0.1:<stream_port>/index.m3u8
+```
+
+**Mounting local checkouts (optional):** The docker platform reads these host env vars and translates them into read-only bind mounts — handy for developing balatrobot, the game source, or the DebugPlus mod without rebuilding the image:
+
+| Env var                 | Mounts to                               |
+| ----------------------- | --------------------------------------- |
+| `BALATROSRC_LOCAL_REPO` | `/app/balatro:ro` (game source)         |
+| `BALATROBOT_LOCAL_REPO` | `/mods/balatrobot:ro` (this mod)        |
+| `DEBUGPLUS_LOCAL_REPO`  | `/mods/DebugPlus:ro` (debug dependency) |
+
+All other `BALATROBOX_*` and `BALATROSRC_GITHUB_*` / `BALATROBOT_GITHUB_*` vars are forwarded into the container verbatim when set (see the balatrobox README). `BALATROBOX_PLATFORM` is a build/run-arch concern and is ignored.
+
+**Mounting extra host paths (optional):** `BALATROBOT_DOCKER_MOUNT` is a colon-separated list of host paths bind-mounted **read-write at their identical path** inside the container. Because the `load`/`save` endpoints open the exact path string they receive, these are identity mounts (same path inside and out). The test suite sets this automatically when `BALATROBOT_PLATFORM=docker` to expose `tests/fixtures/` and a temp dir to the container.
+
 ## Troubleshooting
 
-**Connection refused**: Ensure Balatro is running and the mod loaded successfully. Check logs in `logs/{timestamp}/{port}.log` for errors.
+**Connection refused**: Ensure Balatro is running and the mod loaded successfully. Check logs in `logs/{timestamp}/{port}/balatro.log` for errors. Verify the in-game profile is named exactly `"BalatroBot"`.
 
-**Mod not loading**: Verify that Lovely Injector and Steamodded are installed correctly.
+**Mod not loading**: Verify that Lovely Injector and Steamodded are installed correctly. Ensure you have a Balatro profile named `"BalatroBot"` and it is selected.
 
-**Port in use**: Change the port with `--port` or set `BALATROBOT_PORT` to a different value.
+**Port in use**: Ports are allocated ephemerally. If you need a specific port, adjust your firewall rules to allow the ephemeral range.
 
-**Game crashes**: Try disabling shaders with `--no-shaders` or running in headless mode with `--headless`.
+**Game crashes**: Try running in headless mode with `--render headless` and the `fast` profile (`--settings fast`).

@@ -79,6 +79,9 @@ BB_SERVER = {
   current_request_id = nil,
   client_state = nil,
   openrpc_spec = nil,
+  -- JSONL recording
+  req_file = nil,
+  res_file = nil,
 }
 
 --- Create fresh client state for HTTP parsing
@@ -124,13 +127,33 @@ function BB_SERVER.init()
   if spec_file then
     BB_SERVER.openrpc_spec = spec_file:read("*a")
     spec_file:close()
-    sendDebugMessage("Loaded OpenRPC spec from " .. spec_path, "BB.SERVER")
+    sendInfoMessage("Loaded OpenRPC spec from " .. spec_path, "BB.SERVER")
   else
     sendWarnMessage("OpenRPC spec not found at " .. spec_path, "BB.SERVER")
     BB_SERVER.openrpc_spec = '{"error": "OpenRPC spec not found"}'
   end
 
-  sendDebugMessage("HTTP server listening on http://" .. BB_SERVER.host .. ":" .. BB_SERVER.port, "BB.SERVER")
+  sendInfoMessage("HTTP server listening on http://" .. BB_SERVER.host .. ":" .. BB_SERVER.port, "BB.SERVER")
+
+  -- Open JSONL recording files if BALATROBOT_LOG_DIR is set
+  local logs_path = os.getenv("BALATROBOT_LOG_DIR")
+  if logs_path and logs_path ~= "" then
+    local req_path = logs_path .. "/requests.jsonl"
+    local res_path = logs_path .. "/responses.jsonl"
+    local rf, rf_err = io.open(req_path, "a")
+    if rf then
+      BB_SERVER.req_file = rf
+    else
+      sendDebugMessage("Cannot open req JSONL: " .. tostring(rf_err), "BB.SERVER")
+    end
+    local sf, sf_err = io.open(res_path, "a")
+    if sf then
+      BB_SERVER.res_file = sf
+    else
+      sendDebugMessage("Cannot open res JSONL: " .. tostring(sf_err), "BB.SERVER")
+    end
+  end
+
   return true
 end
 
@@ -250,7 +273,7 @@ local function send_raw(response_str)
 
   local _, err = BB_SERVER.client_socket:send(response_str)
   if err then
-    sendDebugMessage("Failed to send response: " .. err, "BB.SERVER")
+    sendErrorMessage("Failed to send response: " .. err, "BB.SERVER")
     return false
   end
   return true
@@ -340,6 +363,12 @@ local function handle_jsonrpc(body, dispatcher)
 
   BB_SERVER.current_request_id = parsed.id
 
+  -- Record request to JSONL
+  if BB_SERVER.req_file then
+    BB_SERVER.req_file:write(body .. "\n")
+    BB_SERVER.req_file:flush()
+  end
+
   -- Dispatch to endpoint
   if dispatcher and dispatcher.dispatch then
     dispatcher.dispatch(parsed)
@@ -410,20 +439,44 @@ function BB_SERVER.send_response(response)
     }
   end
 
-  local success, json_str = pcall(json.encode, wrapped)
-  if not success then
-    sendDebugMessage("Failed to encode response: " .. tostring(json_str), "BB.SERVER")
-    return false
+  -- Encode, record, and send the response. Extracted so the screenshot wait
+  -- (when enabled) can defer this until the screen is quiescent (ADR 0003).
+  local function finalize()
+    local success, json_str = pcall(json.encode, wrapped)
+    if not success then
+      sendErrorMessage("Failed to encode response: " .. tostring(json_str), "BB.SERVER")
+      return false
+    end
+
+    -- Record response to JSONL
+    if BB_SERVER.res_file then
+      BB_SERVER.res_file:write(json_str .. "\n")
+      BB_SERVER.res_file:flush()
+    end
+
+    -- Send HTTP response
+    local http_response = format_http_response(200, "OK", json_str)
+    local sent = send_raw(http_response)
+
+    -- Close connection after response (Connection: close)
+    close_client()
+
+    return sent
   end
 
-  -- Send HTTP response
-  local http_response = format_http_response(200, "OK", json_str)
-  local sent = send_raw(http_response)
+  if response.message then
+    -- Errors stay responsive: respond immediately, no screenshot.
+    return finalize()
+  end
 
-  -- Close connection after response (Connection: close)
-  close_client()
+  if BB_SETTINGS.screenshots then
+    -- Hold the response until the settled frame is captured; this also blocks
+    -- request N+1 at the accept gate until N's screen has settled.
+    BB_SCREENSHOT.capture_when_settled(BB_SERVER.current_request_id, finalize)
+    return true
+  end
 
-  return sent
+  return finalize()
 end
 
 --- Main update loop - called each frame
@@ -432,6 +485,10 @@ function BB_SERVER.update(dispatcher)
   if not BB_SERVER.server_socket then
     return
   end
+
+  -- Clear hover state for the frame being captured (runs after
+  -- G.CONTROLLER:update finalized hover, before love.draw renders+captures).
+  BB_SCREENSHOT.clear_hover_for_capture()
 
   -- Try to accept new connections (only when no active client)
   if not BB_SERVER.client_socket then
@@ -463,9 +520,19 @@ end
 function BB_SERVER.close()
   close_client()
 
+  -- Close JSONL recording files
+  if BB_SERVER.req_file then
+    BB_SERVER.req_file:close()
+    BB_SERVER.req_file = nil
+  end
+  if BB_SERVER.res_file then
+    BB_SERVER.res_file:close()
+    BB_SERVER.res_file = nil
+  end
+
   if BB_SERVER.server_socket then
     BB_SERVER.server_socket:close()
     BB_SERVER.server_socket = nil
-    sendDebugMessage("Server closed", "BB.SERVER")
+    sendInfoMessage("Server closed", "BB.SERVER")
   end
 end

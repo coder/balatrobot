@@ -32,28 +32,32 @@ export PYTHONPATH="${PWD}/src:${PYTHONPATH}"
 export PYTHONPATH="${PWD}/tests:${PYTHONPATH}"
 
 # BALATROBOT env vars
-export BALATROBOT_FAST=1
+export BALATROBOT_SETTINGS=fast
+export BALATROBOT_RENDER=headless
 export BALATROBOT_DEBUG=1
-export BALATROBOT_LOVE_PATH='/path/to/Balatro/love'
-export BALATROBOT_LOVELY_PATH='/path/to/liblovely.dylib'
-export BALATROBOT_RENDER_ON_API=0
-export BALATROBOT_HEADLESS=1
-export BALATROBOT_AUDIO=0
+export BALATROBOT_PATH_LOVE='/path/to/Balatro/love'
+export BALATROBOT_PATH_LOVELY='/path/to/liblovely.dylib'
 ```
 
 **Setup:** Install [direnv](https://direnv.net/), then create `.envrc` in the project root with the above configuration, updating paths for your system.
 
 ### Lua LSP Configuration
 
-The `.luarc.json` file should be placed at the root of the balatrobot repository. It configures the Lua Language Server for IDE support (autocomplete, diagnostics, type checking).
+The `.luarc.json` file at the project root configures the Lua Language Server for IDE support (autocomplete, diagnostics, type checking).
 
-!!! info "Update Library Paths"
+!!! info "Gitignored — copy from template"
 
-    You **must** update the `workspace.library` paths in `.luarc.json` to match your system:
+    `.luarc.json` is **gitignored** and not committed to the repo. Copy the example below to create your own, or check the current version in the CI logs / ask a maintainer.
 
-    - Steamodded LSP definitions: `path/to/Mods/smods/lsp_def`
-    - Love2D library: `path/to/love2d/library` (clone locally: [LuaCATS/love2d](https://github.com/LuaCATS/love2d))
-    - LuaSocket library: `path/to/luasocket/library` (clone locally: [LuaCATS/luasocket](https://github.com/LuaCATS/luasocket))
+    SMODS scans all `.json` files in mod directories and will log a harmless error for `.luarc.json` — this is expected and does not affect mod loading.
+
+!!! info "Library Paths"
+
+    You **must** update the `workspace.library` paths to match your system:
+
+    - **Steamodded LSP definitions:** `/path/to/Balatro/Mods/smods/lsp_def`.
+    - **Love2D library:** `/path/to/love2d/library` (clone locally: [LuaCATS/love2d](https://github.com/LuaCATS/love2d))
+    - **LuaSocket library:** `/path/to/luasocket/library` (clone locally: [LuaCATS/luasocket](https://github.com/LuaCATS/luasocket))
 
 **Example `.luarc.json`:**
 
@@ -76,7 +80,12 @@ The `.luarc.json` file should be placed at the root of the balatrobot repository
       "G",
       "BB_GAMESTATE",
       "BB_ERROR_NAMES",
-      "BB_ENDPOINTS"
+      "BB_ENDPOINTS",
+      "localize",
+      "get_blind_amount",
+      "get_compressed",
+      "save_run",
+      "compress_and_save"
     ]
   },
   "type": {

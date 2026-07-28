@@ -1,0 +1,140 @@
+"""BalatroPool — manages N BalatroInstance instances."""
+
+import asyncio
+import os
+from datetime import datetime
+
+from balatrobot.config import Config
+from balatrobot.instance import BalatroInstance, InstanceInfo
+
+
+class BalatroPool:
+    """Manages N BalatroInstance instances with port allocation.
+
+    The pool creates ``n`` instances from a base config, assigning unique
+    ports to each.  Use ``start()``/``stop()`` to manage the lifecycle
+    and ``check_alive()`` to detect child-death.
+
+    Fail-fast: if any instance fails to start, all already-started
+    instances are stopped and the error is re-raised.
+
+    **Not designed for restart.**  Calling ``start()`` again after
+    ``stop()`` is undefined behaviour.
+    """
+
+    def __init__(
+        self,
+        config: Config,
+        n: int = 1,
+        ports: list[int] | None = None,
+    ) -> None:
+        self._config = config
+        self._ports = ports
+        if ports is not None:
+            self._n = len(ports)
+        else:
+            self._n = n
+        self._instances: list[BalatroInstance] = []
+        self._infos: list[InstanceInfo] = []
+        self._started = False
+        self._session_name: str | None = None
+
+    @property
+    def session_name(self) -> str | None:
+        """Session directory name (timestamp), available after start()."""
+        return self._session_name
+
+    @property
+    def n(self) -> int:
+        """Number of instances in the pool."""
+        return self._n
+
+    @property
+    def is_started(self) -> bool:
+        """Whether the pool has been started."""
+        return self._started
+
+    @property
+    def instances(self) -> list[InstanceInfo]:
+        """List of InstanceInfo for started instances."""
+        return list(self._infos)
+
+    async def start(self) -> None:
+        """Allocate ports, spawn instances, health-check, clean up on failure."""
+        if self._started:
+            raise RuntimeError("Pool already started")
+
+        # Allocate ports
+        if self._ports is not None:
+            ports = self._ports
+        else:
+            from balatrobot.state import allocate_ports
+
+            ports = allocate_ports(self._n)
+
+        if os.environ.get("BALATROBOX_STREAM") == "1":
+            from balatrobot.state import allocate_ports
+
+            stream_ports = allocate_ports(len(ports))
+        else:
+            stream_ports = [None] * len(ports)
+
+        # Local time for human-readable session directory names
+        self._session_name = datetime.now().strftime("%Y-%m-%dT%H-%M-%S")  # noqa: DTZ005
+
+        # Create and start instances
+        self._instances = []
+        self._infos = []
+
+        try:
+            for port, stream_port in zip(ports, stream_ports):
+                overrides: dict[str, object] = {"port": port}
+                if stream_port is not None:
+                    overrides["stream_port"] = stream_port
+                inst = BalatroInstance(
+                    self._config,
+                    session_name=self._session_name,
+                    **overrides,
+                )
+                await inst.start()
+                self._instances.append(inst)
+                self._infos.append(
+                    InstanceInfo(
+                        host=self._config.host,
+                        port=port,
+                        log_path=inst.log_path,
+                        stream_port=stream_port,
+                    )
+                )
+        except Exception:
+            # Fail-fast: stop all instances that were started
+            await self._stop_all()
+            raise
+
+        self._started = True
+
+    async def stop(self) -> None:
+        """Stop all instances concurrently."""
+        if not self._started:
+            return
+        await self._stop_all()
+
+    async def _stop_all(self) -> None:
+        """Internal: stop all instances concurrently."""
+        if not self._instances:
+            return
+        await asyncio.gather(
+            *(inst.stop() for inst in self._instances),
+            return_exceptions=True,
+        )
+        self._instances = []
+        self._infos = []
+        self._started = False
+
+    def check_alive(self) -> None:
+        """Check all instances are still running.
+
+        Raises InstanceDiedError from the first dead instance found.
+        """
+        for inst in self._instances:
+            inst.check_alive()

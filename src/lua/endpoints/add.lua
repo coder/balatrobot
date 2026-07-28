@@ -6,8 +6,8 @@
 
 ---@class Request.Endpoint.Add.Params
 ---@field key Card.Key The card key to add (j_* for jokers, c_* for consumables, v_* for vouchers, SUIT_RANK for playing cards)
----@field seal Card.Modifier.Seal? The card seal to apply (only for playing cards)
----@field edition Card.Modifier.Edition? The card edition to apply (jokers, playing cards and NEGATIVE consumables)
+---@field seal Card.Modifier.Seal? Seal type from G.P_SEALS (e.g. Red, Blue, Gold, Purple) - only valid for playing cards
+---@field edition Card.Modifier.Edition? The card edition to apply (jokers, playing cards and e_negative consumables)
 ---@field enhancement Card.Modifier.Enhancement? The card enhancement to apply (playing cards)
 ---@field eternal boolean? If true, the card will be eternal (jokers only)
 ---@field perishable integer? The card will be perishable for this many rounds (jokers only, must be >= 1)
@@ -40,34 +40,6 @@ local RANK_MAP = {
   Q = "Queen",
   K = "King",
   A = "Ace",
-}
-
--- Seal conversion table
-local SEAL_MAP = {
-  RED = "Red",
-  BLUE = "Blue",
-  GOLD = "Gold",
-  PURPLE = "Purple",
-}
-
--- Edition conversion table
-local EDITION_MAP = {
-  HOLO = "e_holo",
-  FOIL = "e_foil",
-  POLYCHROME = "e_polychrome",
-  NEGATIVE = "e_negative",
-}
-
--- Enhancement conversion table
-local ENHANCEMENT_MAP = {
-  BONUS = "m_bonus",
-  MULT = "m_mult",
-  WILD = "m_wild",
-  GLASS = "m_glass",
-  STEEL = "m_steel",
-  STONE = "m_stone",
-  GOLD = "m_gold",
-  LUCKY = "m_lucky",
 }
 
 ---Detect card type based on key prefix or pattern
@@ -121,28 +93,28 @@ return {
 
   name = "add",
 
-  description = "Add a new card to the game (joker, consumable, voucher, or playing card)",
+  description = "Add a new card to the game (joker, consumable, voucher, pack, or playing card)",
 
   schema = {
     key = {
       type = "string",
       required = true,
-      description = "Card key (j_* for jokers, c_* for consumables, v_* for vouchers, SUIT_RANK for playing cards like H_A)",
+      description = "Card key (j_* for jokers, c_* for consumables, v_* for vouchers, p_* for packs, SUIT_RANK for playing cards like H_A)",
     },
     seal = {
       type = "string",
       required = false,
-      description = "Seal type (RED, BLUE, GOLD, PURPLE) - only valid for playing cards",
+      description = "Seal type from G.P_SEALS (e.g. Red, Blue, Gold, Purple) - only valid for playing cards",
     },
     edition = {
       type = "string",
       required = false,
-      description = "Edition type (HOLO, FOIL, POLYCHROME, NEGATIVE) - valid for jokers, playing cards, and consumables (consumables: NEGATIVE only)",
+      description = "Edition key (e_foil, e_holo, e_polychrome, e_negative) - valid for jokers, playing cards, and consumables (consumables: e_negative only)",
     },
     enhancement = {
       type = "string",
       required = false,
-      description = "Enhancement type (BONUS, MULT, WILD, GLASS, STEEL, STONE, GOLD, LUCKY) - only valid for playing cards",
+      description = "Enhancement key (m_bonus, m_mult, m_wild, m_glass, m_steel, m_stone, m_gold, m_lucky) - only valid for playing cards",
     },
     eternal = {
       type = "boolean",
@@ -166,14 +138,14 @@ return {
   ---@param args Request.Endpoint.Add.Params
   ---@param send_response fun(response: Response.Endpoint)
   execute = function(args, send_response)
-    sendDebugMessage("Init add()", "BB.ENDPOINTS")
+    sendDebugMessage("add()", "BB.ENDPOINTS")
 
     -- Detect card type
     local card_type = detect_card_type(args.key)
 
     if not card_type then
       send_response({
-        message = "Invalid card key format. Expected: joker (j_*), consumable (c_*), voucher (v_*), or playing card (SUIT_RANK)",
+        message = "Invalid card key format. Expected: joker (j_*), consumable (c_*), voucher (v_*), pack (p_*), or playing card (SUIT_RANK)",
         name = BB_ERROR_NAMES.BAD_REQUEST,
       })
       return
@@ -248,17 +220,17 @@ return {
       return
     end
 
-    -- Validate and convert seal value
+    -- Validate seal value
     local seal_value = nil
     if args.seal then
-      seal_value = SEAL_MAP[args.seal]
-      if not seal_value then
+      if args.seal ~= "Red" and args.seal ~= "Blue" and args.seal ~= "Gold" and args.seal ~= "Purple" then
         send_response({
-          message = "Invalid seal value. Expected: RED, BLUE, GOLD, or PURPLE",
+          message = "Invalid seal value. Expected a Seal key from G.P_SEALS (e.g. Red, Blue)",
           name = BB_ERROR_NAMES.BAD_REQUEST,
         })
         return
       end
+      seal_value = args.seal
     end
 
     -- Validate edition parameter is only for jokers, playing cards, or consumables
@@ -270,10 +242,10 @@ return {
       return
     end
 
-    -- Special validation: consumables can only have NEGATIVE edition
-    if args.edition and card_type == "consumable" and args.edition ~= "NEGATIVE" then
+    -- Special validation: consumables can only have e_negative edition
+    if args.edition and card_type == "consumable" and args.edition ~= "e_negative" then
       send_response({
-        message = "Consumables can only have NEGATIVE edition",
+        message = "Consumables can only have e_negative edition",
         name = BB_ERROR_NAMES.BAD_REQUEST,
       })
       return
@@ -282,14 +254,14 @@ return {
     -- Validate and convert edition value
     local edition_value = nil
     if args.edition then
-      edition_value = EDITION_MAP[args.edition]
-      if not edition_value then
+      if args.edition:sub(1, 2) ~= "e_" then
         send_response({
-          message = "Invalid edition value. Expected: HOLO, FOIL, POLYCHROME, or NEGATIVE",
+          message = "Expected an e_* edition key (e.g. e_foil, e_holo)",
           name = BB_ERROR_NAMES.BAD_REQUEST,
         })
         return
       end
+      edition_value = args.edition
     end
 
     -- Validate enhancement parameter is only for playing cards
@@ -301,17 +273,21 @@ return {
       return
     end
 
-    -- Validate and convert enhancement value
+    -- Validate enhancement value
     local enhancement_value = nil
     if args.enhancement then
-      enhancement_value = ENHANCEMENT_MAP[args.enhancement]
-      if not enhancement_value then
+      if
+        type(args.enhancement) ~= "string"
+        or args.enhancement:sub(1, 2) ~= "m_"
+        or not G.P_CENTERS[args.enhancement]
+      then
         send_response({
-          message = "Invalid enhancement value. Expected: BONUS, MULT, WILD, GLASS, STEEL, STONE, GOLD, or LUCKY",
+          message = "Expected an m_* enhancement key (e.g. m_bonus, m_mult)",
           name = BB_ERROR_NAMES.BAD_REQUEST,
         })
         return
       end
+      enhancement_value = args.enhancement
     end
 
     -- Validate eternal parameter is only for jokers
@@ -378,12 +354,6 @@ return {
       if enhancement_value then
         params.enhancement = enhancement_value
       end
-    elseif card_type == "voucher" then
-      params = {
-        key = args.key,
-        area = G.shop_vouchers,
-        skip_materialize = true,
-      }
     else
       -- For jokers and consumables - just pass the key
       params = {
@@ -414,6 +384,8 @@ return {
       end
     end
 
+    sendInfoMessage(string.format("Adding %s '%s'", card_type, args.key), "BB.ENDPOINTS")
+
     -- Track initial state for verification
     local initial_joker_count = G.jokers and G.jokers.config and G.jokers.config.card_count or 0
     local initial_consumable_count = G.consumeables and G.consumeables.config and G.consumeables.config.card_count or 0
@@ -421,14 +393,15 @@ return {
     local initial_hand_count = G.hand and G.hand.config and G.hand.config.card_count or 0
     local initial_pack_count = G.shop_booster and G.shop_booster.config and G.shop_booster.config.card_count or 0
 
-    sendDebugMessage("Initial voucher count: " .. initial_voucher_count, "BB.ENDPOINTS")
-
     -- Call SMODS function with error handling
     local success, result
 
     if card_type == "pack" then
       -- Packs use dedicated SMODS function
       success, result = pcall(SMODS.add_booster_to_shop, args.key)
+    elseif card_type == "voucher" then
+      -- Vouchers use dedicated SMODS function
+      success, result = pcall(SMODS.add_voucher_to_shop, args.key)
     else
       -- Other cards use SMODS.add_card
       success, result = pcall(SMODS.add_card, params)
@@ -446,8 +419,6 @@ return {
     if args.perishable and result and result.ability then
       result.ability.perish_tally = args.perishable
     end
-
-    sendDebugMessage("SMODS.add_card called for: " .. args.key .. " (" .. card_type .. ")", "BB.ENDPOINTS")
 
     -- Wait for card addition to complete with event-based verification
     G.E_MANAGER:add_event(Event({
@@ -487,7 +458,7 @@ return {
 
         -- All conditions must be met
         if added and state_stable and valid_state then
-          sendDebugMessage("Card added successfully: " .. args.key, "BB.ENDPOINTS")
+          sendDebugMessage("add() → ok", "BB.ENDPOINTS")
           send_response(BB_GAMESTATE.get_gamestate())
           return true
         end

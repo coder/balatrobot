@@ -24,7 +24,7 @@ return {
   ---@param _ Request.Endpoint.Menu.Params
   ---@param send_response fun(response: Response.Endpoint)
   execute = function(_, send_response)
-    sendDebugMessage("Init menu()", "BB.ENDPOINTS")
+    sendDebugMessage("menu()", "BB.ENDPOINTS")
     if G.STATE ~= G.STATES.MENU then
       G.FUNCS.go_to_menu({})
     end
@@ -38,7 +38,7 @@ return {
         local done = G.STATE == G.STATES.MENU and G.MAIN_MENU_UI
 
         if done then
-          sendDebugMessage("Return menu()", "BB.ENDPOINTS")
+          sendDebugMessage("menu() → MENU", "BB.ENDPOINTS")
           local state_data = BB_GAMESTATE.get_gamestate()
           send_response(state_data)
         end

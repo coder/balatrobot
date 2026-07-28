@@ -1,7 +1,7 @@
 -- src/lua/endpoints/play.lua
 
----@type BB_LOGGER
-local BB_LOGGER = assert(SMODS.load_file("src/lua/utils/logger.lua"))()
+---@type BB_FORMAT
+local BB_FORMAT = assert(SMODS.load_file("src/lua/utils/format.lua"))()
 
 -- ==========================================================================
 -- Play Endpoint Params
@@ -35,7 +35,7 @@ return {
   ---@param args Request.Endpoint.Play.Params
   ---@param send_response fun(response: Response.Endpoint)
   execute = function(args, send_response)
-    sendDebugMessage("Init play()", "BB.ENDPOINTS")
+    sendDebugMessage("play()", "BB.ENDPOINTS")
     if #args.cards == 0 then
       send_response({
         message = "Must provide at least one card to play",
@@ -46,7 +46,7 @@ return {
 
     if #args.cards > G.hand.config.highlighted_limit then
       send_response({
-        message = "You can only play " .. G.hand.config.highlighted_limit .. " cards",
+        message = "You can only play " .. G.hand.config.highlighted_limit .. " cards. Provide fewer card indices.",
         name = BB_ERROR_NAMES.BAD_REQUEST,
       })
       return
@@ -62,18 +62,46 @@ return {
       end
     end
 
-    -- NOTE: Clear any existing highlights before selecting new cards
-    -- prevent state pollution. This is a bit of a hack but could interfere
-    -- with Boss Blind like Cerulean Bell.
-    G.hand:unhighlight_all()
+    -- Validate forced-selection cards (e.g. Cerulean Bell boss blind)
+    -- If any card has forced_selection, it MUST be included in the play
+    for i = 1, #G.hand.cards do
+      local card = G.hand.cards[i]
+      if card.ability and card.ability.forced_selection then
+        local included = false
+        for _, card_index in ipairs(args.cards) do
+          if card_index + 1 == i then
+            included = true
+            break
+          end
+        end
+        if not included then
+          send_response({
+            message = "Card at index " .. (i - 1) .. " is forced-selected by the boss blind. Include it in your play.",
+            name = BB_ERROR_NAMES.BAD_REQUEST,
+          })
+          return
+        end
+      end
+    end
 
+    -- Clear non-forced highlights only (preserves forced-selection cards)
+    for i = #G.hand.highlighted, 1, -1 do
+      if not G.hand.highlighted[i].ability.forced_selection then
+        G.hand.highlighted[i]:highlight(false)
+        table.remove(G.hand.highlighted, i)
+      end
+    end
+
+    -- Click only cards not already highlighted
     for _, card_index in ipairs(args.cards) do
-      G.hand.cards[card_index + 1]:click()
+      if not G.hand.cards[card_index + 1].highlighted then
+        G.hand.cards[card_index + 1]:click()
+      end
     end
 
     -- Log the cards being played
-    local card_str = BB_LOGGER.format_playing_cards(G.hand.cards, args.cards)
-    sendDebugMessage(string.format("Playing %d cards: %s", #args.cards, card_str), "BB.ENDPOINTS")
+    local card_str = BB_FORMAT.format_playing_cards(G.hand.cards, args.cards)
+    sendInfoMessage(string.format("Playing %d cards: %s", #args.cards, card_str), "BB.ENDPOINTS")
 
     ---@diagnostic disable-next-line: undefined-field
     local play_button = UIBox:get_UIE_by_ID("play_button", G.buttons.UIRoot)
@@ -93,7 +121,7 @@ return {
       trigger = "condition",
       blocking = false,
       blockable = false,
-      created_on_pause = true,
+      pause_force = true,
       func = function()
         -- State progression:
         -- Loss: HAND_PLAYED -> NEW_ROUND -> (game paused) -> GAME_OVER
@@ -121,12 +149,14 @@ return {
             return false
           end
 
-          -- Game is won
-          if G.GAME.won then
-            sendDebugMessage("Return play() - won", "BB.ENDPOINTS")
-            local state_data = BB_GAMESTATE.get_gamestate()
-            send_response(state_data)
-            return true
+          -- Game is won: win_game() raises the win overlay and pauses the game.
+          -- Dismiss it now so the round-eval rows finish building (they are
+          -- pause-skipped while paused) and endless-mode play stays responsive.
+          -- The overlay only appears after ROUND_EVAL is entered, so G.round_eval
+          -- already exists here, and the delayed win events (Jimbo, endless text)
+          -- guard against a nil G.OVERLAY_MENU.
+          if G.GAME.won and G.OVERLAY_MENU then
+            G.FUNCS.exit_overlay_menu()
           end
 
           -- Wait for first scoring row (blind1) to be added to the UI
@@ -144,15 +174,15 @@ return {
 
           -- Both first and last scoring rows must be present
           if has_blind1 and has_cash_out_button then
+            sendDebugMessage(G.GAME.won and "play() → won" or "play() → cash_out", "BB.ENDPOINTS")
             local state_data = BB_GAMESTATE.get_gamestate()
-            sendDebugMessage("Return play() - cash out", "BB.ENDPOINTS")
             send_response(state_data)
             return true
           end
         end
 
         if draw_to_hand and hand_played and G.buttons and G.STATE == G.STATES.SELECTING_HAND then
-          sendDebugMessage("Return play() - same round", "BB.ENDPOINTS")
+          sendDebugMessage("play() → continue", "BB.ENDPOINTS")
           local state_data = BB_GAMESTATE.get_gamestate()
           send_response(state_data)
           return true
