@@ -46,3 +46,4 @@ runs/*.jsonl
 logs/
 .antigravitycli
 .agents/skills/review
+.pi-subagents/artifacts
