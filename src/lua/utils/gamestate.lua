@@ -443,6 +443,39 @@ local function extract_round_info()
     round.most_played_hand = G.GAME.current_round.most_played_poker_hand
   end
 
+  if G.GAME.current_round.idol_card then
+    local idol = G.GAME.current_round.idol_card
+    round.idol_card = {
+      suit = convert_suit_to_enum(idol.suit),
+      rank = convert_rank_to_enum(idol.rank),
+    }
+  end
+
+  if G.GAME.current_round.mail_card then
+    local mail = G.GAME.current_round.mail_card
+    round.mail_card = { rank = convert_rank_to_enum(mail.rank) }
+  end
+
+  if G.GAME.current_round.ancient_card then
+    local ancient = G.GAME.current_round.ancient_card
+    round.ancient_card = { suit = convert_suit_to_enum(ancient.suit) }
+  end
+
+  if G.GAME.current_round.castle_card then
+    local castle = G.GAME.current_round.castle_card
+    round.castle_card = { suit = convert_suit_to_enum(castle.suit) }
+  end
+
+  local to_do = {}
+  for _, joker in ipairs(G.jokers and G.jokers.cards or {}) do
+    if joker.ability and joker.ability.to_do_poker_hand then
+      to_do[#to_do + 1] = joker.ability.to_do_poker_hand
+    end
+  end
+  if #to_do > 0 then
+    round.to_do_list_hands = to_do
+  end
+
   return round
 end
 

@@ -1222,6 +1222,40 @@
           "most_played_hand": {
             "$ref": "#/components/schemas/HandName",
             "description": "Most played poker hand this run"
+          },
+          "idol_card": {
+            "type": "object",
+            "description": "The Idol's per-round target card",
+            "properties": {
+              "suit": { "$ref": "#/components/schemas/Suit" },
+              "rank": { "$ref": "#/components/schemas/Rank" }
+            }
+          },
+          "mail_card": {
+            "type": "object",
+            "description": "Mail-In Rebate's per-round target rank",
+            "properties": {
+              "rank": { "$ref": "#/components/schemas/Rank" }
+            }
+          },
+          "ancient_card": {
+            "type": "object",
+            "description": "Ancient Joker's per-round target suit",
+            "properties": {
+              "suit": { "$ref": "#/components/schemas/Suit" }
+            }
+          },
+          "castle_card": {
+            "type": "object",
+            "description": "Castle's per-round target suit",
+            "properties": {
+              "suit": { "$ref": "#/components/schemas/Suit" }
+            }
+          },
+          "to_do_list_hands": {
+            "type": "array",
+            "description": "One target hand per owned To Do List",
+            "items": { "$ref": "#/components/schemas/HandName" }
           }
         }
       },

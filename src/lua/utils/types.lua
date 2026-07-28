@@ -52,6 +52,11 @@
 ---@field reroll_cost integer? Current cost to reroll the shop
 ---@field chips integer? Current chips scored in this round
 ---@field most_played_hand Hand.Name? Most played poker hand this run
+---@field idol_card { suit: Card.Value.Suit, rank: Card.Value.Rank }? The Idol's per-round target card
+---@field mail_card { rank: Card.Value.Rank }? Mail-In Rebate's per-round target rank
+---@field ancient_card { suit: Card.Value.Suit }? Ancient Joker's per-round target suit
+---@field castle_card { suit: Card.Value.Suit }? Castle's per-round target suit
+---@field to_do_list_hands Hand.Name[]? One target hand per owned To Do List
 
 ---@class Tag
 ---@field key string The tag key (e.g., "tag_polychrome", "tag_double")

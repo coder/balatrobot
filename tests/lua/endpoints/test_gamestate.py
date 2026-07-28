@@ -213,6 +213,71 @@ class TestGamestateRound:
         response = api(client, "reroll", {})
         assert response["result"]["round"]["reroll_cost"] == 6
 
+    @pytest.mark.parametrize(
+        "field,keys",
+        [
+            ("idol_card", {"suit", "rank"}),
+            ("mail_card", {"rank"}),
+            ("ancient_card", {"suit"}),
+            ("castle_card", {"suit"}),
+        ],
+    )
+    def test_round_card_target_shape(
+        self, client: httpx.Client, field: str, keys: set[str]
+    ) -> None:
+        """Each joker card target has its exact shape with valid enums."""
+        gamestate = load_fixture(client, "gamestate", "state-SELECTING_HAND")
+        target = gamestate["round"][field]
+        assert set(target.keys()) == keys
+        if "suit" in target:
+            assert target["suit"] in ["H", "D", "C", "S"]
+        if "rank" in target:
+            assert target["rank"] in [
+                "2",
+                "3",
+                "4",
+                "5",
+                "6",
+                "7",
+                "8",
+                "9",
+                "T",
+                "J",
+                "Q",
+                "K",
+                "A",
+            ]
+
+    def test_round_to_do_list_hands_absent_without_joker(
+        self, client: httpx.Client
+    ) -> None:
+        """round.to_do_list_hands is omitted when no To Do List is owned."""
+        gamestate = load_fixture(client, "gamestate", "state-SELECTING_HAND")
+        assert "to_do_list_hands" not in gamestate["round"]
+
+    def test_round_to_do_list_hands_after_add(self, client: httpx.Client) -> None:
+        """Adding a To Do List exposes its target hand (one entry per owned copy)."""
+        load_fixture(client, "gamestate", "state-SELECTING_HAND")
+        response = api(client, "add", {"key": "j_todo_list"})
+        hands = response["result"]["round"]["to_do_list_hands"]
+        valid_hands = {
+            "Flush Five",
+            "Flush House",
+            "Five of a Kind",
+            "Straight Flush",
+            "Four of a Kind",
+            "Full House",
+            "Flush",
+            "Straight",
+            "Three of a Kind",
+            "Two Pair",
+            "Pair",
+            "High Card",
+        }
+        assert isinstance(hands, list)
+        assert len(hands) == 1
+        assert hands[0] in valid_hands
+
 
 class TestGamestateBlinds:
     """Test gamestate blind extraction."""
