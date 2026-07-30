@@ -169,6 +169,19 @@ class TestGamestateTopLevel:
         gamestate = load_fixture(client, "gamestate", fixture_name)
         assert gamestate["starting_deck_size"] == 52
 
+    def test_skips_zero_at_run_start(self, client: httpx.Client) -> None:
+        """Fresh run: skips is 0 (no blinds skipped yet)."""
+        fixture_name = "state-BLIND_SELECT--round_num-0--deck-b_red--stake-stake_white"
+        gamestate = load_fixture(client, "gamestate", fixture_name)
+        assert gamestate["skips"] == 0
+
+    def test_skips_increments_after_skip(self, client: httpx.Client) -> None:
+        """skips is 1 after skipping Small Blind."""
+        fixture_name = "state-BLIND_SELECT--round_num-0--deck-b_red--stake-stake_white"
+        load_fixture(client, "gamestate", fixture_name)
+        response = api(client, "skip", {})
+        assert response["result"]["skips"] == 1
+
 
 class TestGamestateRound:
     """Test gamestate round extraction."""

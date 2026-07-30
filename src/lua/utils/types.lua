@@ -33,6 +33,7 @@
 ---@field shop Area? Shop area (available during shop phase)
 ---@field vouchers Area? Vouchers area (available during shop phase)
 ---@field packs Area? Booster packs area (available during shop phase)
+---@field skips integer Number of blinds skipped this run (Throwback counter)
 ---@field won boolean? Whether the game has been won
 
 ---@class Hand

@@ -799,6 +799,7 @@ The complete game state returned by most methods.
   "challenge": "c_omelette_1",
   "last_tarot_planet": "c_hermit",
   "won": false,
+  "skips": 0,
   "used_vouchers": {},
   "tags": [ ... ],
   "hands": { ... },

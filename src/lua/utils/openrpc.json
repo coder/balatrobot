@@ -1045,6 +1045,10 @@
             "type": "boolean",
             "description": "Whether the game has been won"
           },
+          "skips": {
+            "type": "integer",
+            "description": "Number of blinds skipped this run (Throwback counter)"
+          },
           "starting_deck_size": {
             "type": "integer",
             "description": "Deck size at run start (Erosion baseline; e.g. 52)"
