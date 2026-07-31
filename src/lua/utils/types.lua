@@ -19,6 +19,10 @@
 ---@field round_num integer Current round number
 ---@field ante_num integer Current ante number
 ---@field money integer Current money amount
+---@field interest_cap integer Cap on interest, in interest units (max interest dollars = interest_cap/5 * interest_amount; Seed Money raises to 50, Money Tree to 100)
+---@field interest_amount integer Interest dollars earned per $5 held (default 1; To the Moon adds 1 per copy)
+---@field no_interest boolean True when the run disables interest entirely (Green Deck, The Omelette, Mad World)
+---@field bankrupt_at integer Money threshold below which purchases are blocked (Credit Card lowers it to -20, allowing debt)
 ---@field starting_deck_size integer Deck size at run start (Erosion baseline; e.g. 52)
 ---@field used_vouchers table<string, string>? Vouchers used (name -> description)
 ---@field tags Tag[]? Accumulated tags owned by the player

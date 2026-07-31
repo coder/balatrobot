@@ -1014,6 +1014,22 @@
             "type": "integer",
             "description": "Current money amount"
           },
+          "interest_cap": {
+            "type": "integer",
+            "description": "Cap on interest, in interest units (max interest dollars = interest_cap/5 * interest_amount)"
+          },
+          "interest_amount": {
+            "type": "integer",
+            "description": "Interest dollars earned per $5 held (default 1)"
+          },
+          "no_interest": {
+            "type": "boolean",
+            "description": "True when the run disables interest entirely (Green Deck, The Omelette, Mad World)"
+          },
+          "bankrupt_at": {
+            "type": "integer",
+            "description": "Money threshold below which purchases are blocked (Credit Card lowers it to -20, allowing debt)"
+          },
           "deck": {
             "$ref": "#/components/schemas/Deck",
             "description": "Current selected deck"

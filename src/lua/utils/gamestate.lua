@@ -874,6 +874,10 @@ function gamestate.get_gamestate()
     state_data.round_num = G.GAME.round or 0
     state_data.ante_num = (G.GAME.round_resets and G.GAME.round_resets.ante) or 0
     state_data.money = G.GAME.dollars or 0
+    state_data.interest_cap = G.GAME.interest_cap
+    state_data.interest_amount = G.GAME.interest_amount
+    state_data.no_interest = not not (G.GAME.modifiers and G.GAME.modifiers.no_interest)
+    state_data.bankrupt_at = G.GAME.bankrupt_at
     state_data.won = G.GAME.won
     state_data.skips = G.GAME.skips
     state_data.starting_deck_size = G.GAME.starting_deck_size

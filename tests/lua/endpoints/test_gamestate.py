@@ -183,6 +183,72 @@ class TestGamestateTopLevel:
         assert response["result"]["skips"] == 1
 
 
+class TestGamestateEconomy:
+    """Test gamestate economy field extraction."""
+
+    def test_interest_cap_default_25(self, client: httpx.Client) -> None:
+        """Fresh run: interest_cap is 25 (the default cap, in interest units)."""
+        fixture_name = "state-BLIND_SELECT--round_num-0--deck-b_red--stake-stake_white"
+        gamestate = load_fixture(client, "gamestate", fixture_name)
+        assert gamestate["interest_cap"] == 25
+
+    def test_interest_cap_after_seed_money(self, client: httpx.Client) -> None:
+        """Buying Seed Money raises interest_cap to 50 (the $10 cap)."""
+        load_fixture(client, "gamestate", "state-SHOP")
+        api(client, "set", {"money": 50})
+        response = api(client, "add", {"key": "v_seed_money"})
+        after = assert_gamestate_response(response)
+        voucher_index = next(
+            i
+            for i, card in enumerate(after["vouchers"]["cards"])
+            if card["key"] == "v_seed_money"
+        )
+        api(client, "buy", {"voucher": voucher_index})
+        response = api(client, "gamestate", {})
+        after = assert_gamestate_response(response)
+        assert after["interest_cap"] == 50
+
+    def test_interest_amount_default_1(self, client: httpx.Client) -> None:
+        """Fresh run: interest_amount is 1 (default interest per $5 held)."""
+        fixture_name = "state-BLIND_SELECT--round_num-0--deck-b_red--stake-stake_white"
+        gamestate = load_fixture(client, "gamestate", fixture_name)
+        assert gamestate["interest_amount"] == 1
+
+    def test_interest_amount_after_to_the_moon(self, client: httpx.Client) -> None:
+        """Owning To the Moon raises interest_amount to 2."""
+        load_fixture(client, "gamestate", "state-SELECTING_HAND")
+        response = api(client, "add", {"key": "j_to_the_moon"})
+        after = assert_gamestate_response(response)
+        assert after["interest_amount"] == 2
+
+    def test_no_interest_false_on_normal_run(self, client: httpx.Client) -> None:
+        """Fresh run: no_interest is False (interest is active)."""
+        fixture_name = "state-BLIND_SELECT--round_num-0--deck-b_red--stake-stake_white"
+        gamestate = load_fixture(client, "gamestate", fixture_name)
+        assert gamestate["no_interest"] is False
+
+    def test_no_interest_true_on_green_deck(self, client: httpx.Client) -> None:
+        """Green Deck: no_interest is True while raw interest values stay nominal."""
+        api(client, "menu", {})
+        response = api(client, "start", {"deck": "b_green", "stake": "stake_white"})
+        gamestate = assert_gamestate_response(response, state="BLIND_SELECT")
+        assert gamestate["no_interest"] is True
+        assert gamestate["interest_cap"] == 25
+
+    def test_bankrupt_at_zero_default(self, client: httpx.Client) -> None:
+        """Fresh run: bankrupt_at is 0 (no debt allowed)."""
+        fixture_name = "state-BLIND_SELECT--round_num-0--deck-b_red--stake-stake_white"
+        gamestate = load_fixture(client, "gamestate", fixture_name)
+        assert gamestate["bankrupt_at"] == 0
+
+    def test_bankrupt_at_after_credit_card(self, client: httpx.Client) -> None:
+        """Owning Credit Card lowers bankrupt_at to -20 (debt allowed)."""
+        load_fixture(client, "gamestate", "state-SELECTING_HAND")
+        response = api(client, "add", {"key": "j_credit_card"})
+        after = assert_gamestate_response(response)
+        assert after["bankrupt_at"] == -20
+
+
 class TestGamestateRound:
     """Test gamestate round extraction."""
 
