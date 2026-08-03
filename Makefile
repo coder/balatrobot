@@ -17,7 +17,10 @@ ifndef XDIST_LUA_WORKERS
 ifeq ($(BALATROBOT_PLATFORM),darwin)
   XDIST_LUA_WORKERS := 6
 else ifeq ($(BALATROBOT_PLATFORM),docker)
-  XDIST_LUA_WORKERS := 4
+  # The in-game HTTP server accepts one client at a time and processes
+  # requests between frames; the fast cached-fixture suite at 4 workers
+  # overwhelms it with connection churn (timeouts/resets). 2 is stable.
+  XDIST_LUA_WORKERS := 2
 else
   XDIST_LUA_WORKERS := 2
 endif

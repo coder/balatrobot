@@ -111,7 +111,7 @@ function BB_SERVER.init()
     return false
   end
 
-  local listen_success, listen_err = server:listen(1)
+  local listen_success, listen_err = server:listen(32)
   if not listen_success then
     sendErrorMessage("Failed to listen: " .. tostring(listen_err), "BB.SERVER")
     server:close()
@@ -504,6 +504,7 @@ function BB_SERVER.update(dispatcher)
 
     if data and #data > 0 then
       BB_SERVER.client_state.buffer = BB_SERVER.client_state.buffer .. data
+      BB_SERVER.client_state.last_activity = love.timer.getTime()
 
       -- Try to parse complete HTTP request
       local request = try_parse_http()
