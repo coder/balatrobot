@@ -1,0 +1,209 @@
+[
+  {
+    "batch": 440,
+    "sample_index": 15364,
+    "hand": [
+      "H_A",
+      "H_K",
+      "C_K",
+      "D_K",
+      "C_J",
+      "S_9",
+      "S_3",
+      "H_2"
+    ],
+    "blind": {
+      "type": "small",
+      "score": [
+        212,
+        300
+      ],
+      "hands": 1,
+      "discards": 2
+    },
+    "hand_values": {
+      "Five of a Kind": [
+        1,
+        120,
+        12
+      ],
+      "Straight Flush": [
+        1,
+        100,
+        8
+      ],
+      "Four of a Kind": [
+        1,
+        60,
+        7
+      ],
+      "Full House": [
+        1,
+        40,
+        4
+      ],
+      "Flush": [
+        1,
+        35,
+        4
+      ],
+      "Straight": [
+        1,
+        30,
+        4
+      ],
+      "Three of a Kind": [
+        1,
+        30,
+        3
+      ],
+      "Two Pair": [
+        1,
+        20,
+        2
+      ],
+      "Pair": [
+        1,
+        10,
+        2
+      ],
+      "High Card": [
+        1,
+        5,
+        1
+      ],
+      "Flush Five": [
+        1,
+        160,
+        16
+      ],
+      "Flush House": [
+        1,
+        140,
+        14
+      ]
+    },
+    "bad_action": {
+      "method": "play",
+      "params": {
+        "cards": [
+          4,
+          3,
+          2,
+          6,
+          5
+        ]
+      }
+    },
+    "winning_cards": [
+      1,
+      2,
+      3
+    ],
+    "winning_score": 180
+  },
+  {
+    "batch": 449,
+    "sample_index": 15943,
+    "hand": [
+      "S_A",
+      "S_T",
+      "H_8",
+      "D_8",
+      "C_6",
+      "C_5",
+      "S_3",
+      "D_3"
+    ],
+    "blind": {
+      "type": "small",
+      "score": [
+        235,
+        300
+      ],
+      "hands": 1,
+      "discards": 1
+    },
+    "hand_values": {
+      "Flush Five": [
+        1,
+        160,
+        16
+      ],
+      "Flush House": [
+        1,
+        140,
+        14
+      ],
+      "Five of a Kind": [
+        1,
+        120,
+        12
+      ],
+      "Straight Flush": [
+        1,
+        100,
+        8
+      ],
+      "Four of a Kind": [
+        1,
+        60,
+        7
+      ],
+      "Full House": [
+        1,
+        40,
+        4
+      ],
+      "Flush": [
+        1,
+        35,
+        4
+      ],
+      "Straight": [
+        1,
+        30,
+        4
+      ],
+      "Three of a Kind": [
+        1,
+        30,
+        3
+      ],
+      "Two Pair": [
+        1,
+        20,
+        2
+      ],
+      "Pair": [
+        1,
+        10,
+        2
+      ],
+      "High Card": [
+        1,
+        5,
+        1
+      ]
+    },
+    "bad_action": {
+      "method": "play",
+      "params": {
+        "cards": [
+          6,
+          7,
+          5,
+          4,
+          3
+        ]
+      }
+    },
+    "winning_cards": [
+      2,
+      3,
+      6,
+      7
+    ],
+    "winning_score": 84
+  }
+]

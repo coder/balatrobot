@@ -1,0 +1,6690 @@
+{
+  "run": {
+    "training_run_id": "broad-layover-3a0ce678e7da",
+    "modal_app_id": "ap-3vCPrQh34oPL9P5dsmtUSa",
+    "modal_app_url": "https://modal.com/id/ap-3vCPrQh34oPL9P5dsmtUSa",
+    "framework": "slime",
+    "config": {
+      "model": {
+        "model_name": "Qwen/Qwen3.8-27B"
+      },
+      "recipe": {
+        "sequence_parallel": true,
+        "rollout_max_response_len": 96,
+        "rollout_temperature": 1.0,
+        "save_interval": 50,
+        "gpu_type": "H100",
+        "colocate": true,
+        "tensor_model_parallel_size": 4,
+        "rollout_num_gpus_per_engine": 2,
+        "num_rollout": 600,
+        "start_rollout_id": null,
+        "rollout_batch_size": 16,
+        "actor_num_nodes": 8,
+        "actor_num_gpus_per_node": 8,
+        "rollout_num_gpus": null,
+        "use_critic": false,
+        "critic_num_nodes": null,
+        "critic_num_gpus_per_node": null,
+        "advantage_estimator": "grpo",
+        "n_samples_per_prompt": 4,
+        "eps_clip": 0.2,
+        "eps_clip_high": null,
+        "use_kl_loss": true,
+        "kl_loss_type": "low_var_kl",
+        "kl_loss_coef": 0.001,
+        "kl_coef": 0.0,
+        "entropy_coef": 0.001,
+        "calculate_per_token_loss": true,
+        "ref_load": "/checkpoints/Qwen3.8-27B_torch_dist_tp4pp2",
+        "over_sampling_batch_size": null,
+        "dynamic_sampling_filter_path": null,
+        "balance_data": true,
+        "rollout_shuffle": true,
+        "rollout_top_p": 1.0,
+        "rollout_stop_token_ids": null,
+        "sglang_mem_fraction_static": 0.75,
+        "use_fault_tolerance": true,
+        "rollout_health_check_interval": 30,
+        "rollout_health_check_timeout": 30,
+        "rollout_health_check_first_wait": 300,
+        "global_batch_size": 64,
+        "lr": 1e-06,
+        "lr_decay_style": "constant",
+        "weight_decay": 0.01,
+        "adam_beta1": 0.9,
+        "adam_beta2": 0.98,
+        "optimizer": "adam",
+        "attention_dropout": 0.0,
+        "hidden_dropout": 0.0,
+        "attention_softmax_in_fp32": true,
+        "accumulate_allreduce_grads_in_fp32": true,
+        "use_distributed_optimizer": false,
+        "recompute_granularity": "full",
+        "recompute_method": "uniform",
+        "recompute_num_layers": 1,
+        "use_dynamic_batch_size": true,
+        "max_tokens_per_gpu": 12288,
+        "qkv_format": "thd",
+        "eval_interval": null,
+        "n_samples_per_eval_prompt": 4,
+        "eval_max_response_len": 16384,
+        "eval_top_p": 1.0,
+        "eval_config": null,
+        "save": "/checkpoints",
+        "load": "/checkpoints/perfect-adhesive-da14ace5a831",
+        "no_save_optim": false,
+        "no_load_optim": false,
+        "megatron_to_hf_mode": "",
+        "freeze_params_name_list": null,
+        "update_weight_mode": "full",
+        "update_weight_transport": "nccl",
+        "update_weight_encoding": "indices",
+        "update_weight_disk_dir": "",
+        "rm_type": "deepscaler",
+        "sglang_enable_dp_attention": false,
+        "sglang_dp_size": null,
+        "sglang_ep_size": null,
+        "sglang_enable_dp_lm_head": false,
+        "sglang_disable_custom_all_reduce": false,
+        "sglang_cuda_graph_bs": null,
+        "sglang_cuda_graph_backend_prefill": "disabled",
+        "sglang_max_running_requests": null,
+        "sglang_tool_call_parser": null,
+        "sglang_reasoning_parser": null,
+        "sglang_config": null,
+        "apply_chat_template_kwargs": "{\"enable_thinking\": false}",
+        "train_env_vars": null,
+        "multimodal_keys": null,
+        "hf_checkpoint": "Qwen/Qwen3.8-27B",
+        "pipeline_model_parallel_size": 2,
+        "decoder_last_pipeline_num_layers": 30,
+        "context_parallel_size": 4,
+        "expert_model_parallel_size": 1,
+        "expert_tensor_parallel_size": 1,
+        "sglang_speculative_algorithm": null,
+        "sglang_speculative_num_steps": null,
+        "sglang_speculative_eagle_topk": null,
+        "sglang_speculative_num_draft_tokens": null,
+        "sglang_mamba_scheduler_strategy": "extra_buffer",
+        "optimizer_cpu_offload": true,
+        "overlap_cpu_optimizer_d2h_h2d": true,
+        "use_precision_aware_optimizer": true,
+        "attention_backend": "flash",
+        "prompt_data": "/data/2d661a1f-cff4-40fa-9756-a148c8cbbb7f-383b42b9053132de.jsonl",
+        "eval_prompt_data": null,
+        "input_key": "messages",
+        "label_key": "label",
+        "apply_chat_template": true,
+        "custom_config_path": {
+          "balatro_max_decisions": 250,
+          "balatro_context_len": 49152,
+          "balatro_capture_screenshot": false,
+          "custom_generate_function_path": "notebook_custom_generate_ndnib50f.generate_balatro_episode",
+          "override_opt_param_scheduler": true,
+          "custom_rm_path": "notebook_custom_rm_v7fr2std.passthrough_reward",
+          "custom_reward_post_process_path": "notebook_custom_reward_post_process_vvgqtrfs.normalize_episode_rewards"
+        },
+        "custom_rollout_log_function_path": "modal_training_gym.frameworks.slime.phase_reporting.log_rollout_data",
+        "custom_eval_rollout_log_function_path": "modal_training_gym.frameworks.slime.phase_reporting.log_eval_rollout_data",
+        "custom_megatron_before_log_prob_hook_path": "modal_training_gym.frameworks.slime.phase_reporting.before_log_prob_hook",
+        "custom_megatron_before_train_step_hook_path": "modal_training_gym.frameworks.slime.phase_reporting.before_train_step_hook"
+      },
+      "metrics": {},
+      "dataset": {
+        "hf_repo": "",
+        "name": "BalatroSeedsDataset"
+      },
+      "eval_dataset": null,
+      "lr": 1e-06,
+      "global_batch_size": 64
+    },
+    "dataset_id": "",
+    "deployment_id": "",
+    "status": "failed",
+    "framework_status": "initialize_rollouts",
+    "created_at": 1789435612,
+    "started_at": 1789435612,
+    "ended_at": 1789460930,
+    "completed_at": 1789460930,
+    "updated_at": 1789460931,
+    "duration_seconds": 25318,
+    "step_times": null,
+    "substep_times": null,
+    "error_message": "Job entrypoint command failed with exit code 1, last available logs (truncated to 20,000 chars):\n  File \"/usr/lib/python3.12/contextlib.py\", line 137, in __enter__\n    return next(self.gen)\n           ^^^^^^^^^^^^^^\n  File \"/usr/local/lib/python3.12/dist-packages/torch/distributed/checkpoint/filesystem.py\", line 520, in create_stream\n    with path.open(mode) as stream:\n         ^^^^^^^^^^^^^^^\n  File \"/usr/lib/python3.12/pathlib.py\", line 1015, in open\n    return io.open(self, mode, buffering, encoding, errors, newline)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nFileNotFoundError: [Errno 2] No such file or directory: '/checkpoints/broad-layover-3a0ce678e7da/iter_0000449/__44_1.distcp'\n (training_run_id=broad-layover-3a0ce678e7da)",
+    "metadata": {
+      "framework_progress": {
+        "phase": "initialize_rollouts",
+        "updated_at": 1789460382,
+        "current": 450,
+        "total": 600,
+        "unit": "step",
+        "rollout_id": 449,
+        "step_id": 449
+      },
+      "dashboard_components": {
+        "balatro": {
+          "name": "balatro",
+          "type": "trajectory_viewer",
+          "sha256": "3f05ebe30f20172fb596b4b9dcb8a4a74a4919354599b017ad3cca65e5a0898b",
+          "filename": "TrajectoryViewer.svelte",
+          "size": 1067084,
+          "path": "components/trajectory_viewer/3f05ebe30f20172fb596b4b9dcb8a4a74a4919354599b017ad3cca65e5a0898b/balatro.svelte",
+          "contract": "training-gym-dashboard-component/v1",
+          "training_run_id": "broad-layover-3a0ce678e7da"
+        }
+      },
+      "checkpoint_location": {
+        "checkpoint_dir": "/checkpoints/broad-layover-3a0ce678e7da",
+        "checkpoints_volume_name": "slime-qwen3_8_27b_recipe-checkpoints",
+        "checkpoints_mount_path": "/checkpoints"
+      },
+      "attempt_count": 4,
+      "last_attempt_started_at": 1789460314,
+      "last_attempt_status": "failed",
+      "attempt_starts": [
+        1789435732,
+        1789459044,
+        1789459634,
+        1789460314
+      ],
+      "latest_rollout": {
+        "rollout_id": 449,
+        "mean": 46.390621725063134,
+        "total": 64,
+        "created_at": 1789458580
+      },
+      "last_attempt_ended_at": 1789460930,
+      "resumed_from_checkpoint": true,
+      "resume_checkpoint_path": "/checkpoints/broad-layover-3a0ce678e7da/iter_0000449",
+      "resume_checkpoint_name": "iter_0000449",
+      "resume_from_iteration": 449
+    },
+    "function_call_id": "fc-01M2HAV5N51FQR76MTYN7KX1KP",
+    "app_name": "",
+    "source_model": null,
+    "metrics": {},
+    "group_id": null
+  },
+  "windows": [
+    {
+      "steps": [
+        400,
+        409
+      ],
+      "episodes": 640,
+      "reward": 51.89420874408144,
+      "ante": 3.2625,
+      "wins": 0.0
+    },
+    {
+      "steps": [
+        410,
+        419
+      ],
+      "episodes": 640,
+      "reward": 48.308131432094385,
+      "ante": 3.109375,
+      "wins": 0.0
+    },
+    {
+      "steps": [
+        420,
+        429
+      ],
+      "episodes": 640,
+      "reward": 49.42259042475537,
+      "ante": 3.165625,
+      "wins": 0.0
+    },
+    {
+      "steps": [
+        430,
+        439
+      ],
+      "episodes": 640,
+      "reward": 50.61567625256471,
+      "ante": 3.175,
+      "wins": 0.0
+    },
+    {
+      "steps": [
+        440,
+        449
+      ],
+      "episodes": 640,
+      "reward": 39.13122086005141,
+      "ante": 2.6671875,
+      "wins": 0.0
+    }
+  ],
+  "sampled_trajectory_audits": {
+    "400": {
+      "rollout": 400,
+      "episodes": 64,
+      "reward": 52.22539668560606,
+      "endings": {
+        "game_over": 55,
+        "context_cap": 9
+      },
+      "antes": {
+        "4": 26,
+        "2": 12,
+        "3": 3,
+        "5": 10,
+        "6": 1,
+        "1": 12
+      },
+      "actions": {
+        "select": 600,
+        "play": 1314,
+        "discard": 1204,
+        "buy": 793,
+        "pack": 392,
+        "next_round": 536,
+        "use": 209,
+        "reroll": 2
+      },
+      "played_hands": {
+        "Full House": 184,
+        "Two Pair": 660,
+        "Three of a Kind": 218,
+        "Pair": 208,
+        "High Card": 25,
+        "Straight": 1,
+        "Five of a Kind": 1,
+        "Four of a Kind": 15,
+        "Flush": 2
+      },
+      "pair_or_high_with_raw_straight_available": 30,
+      "affected_samples": 21,
+      "total_plays": 1314,
+      "plays_including_debuffed_card": 126,
+      "losses_with_discards_left": 21,
+      "caps": [
+        {
+          "sample": 7,
+          "ante": 6,
+          "turns": 131,
+          "reward": 98.0,
+          "tokens": 48561,
+          "phase": "shop",
+          "remaining": null
+        },
+        {
+          "sample": 8,
+          "ante": 4,
+          "turns": 120,
+          "reward": 88.0,
+          "tokens": 48458,
+          "phase": "shop",
+          "remaining": null
+        },
+        {
+          "sample": 10,
+          "ante": 4,
+          "turns": 113,
+          "reward": 84.0,
+          "tokens": 48874,
+          "phase": "shop",
+          "remaining": null
+        },
+        {
+          "sample": 25,
+          "ante": 4,
+          "turns": 123,
+          "reward": 88.0,
+          "tokens": 48992,
+          "phase": "pack",
+          "remaining": null
+        },
+        {
+          "sample": 36,
+          "ante": 5,
+          "turns": 122,
+          "reward": 88.0,
+          "tokens": 48797,
+          "phase": "hand",
+          "remaining": {
+            "type": "boss",
+            "score": [
+              0,
+              22000
+            ],
+            "hands": 4,
+            "discards": 4,
+            "effect": "All face cards are drawn face down"
+          }
+        },
+        {
+          "sample": 37,
+          "ante": 5,
+          "turns": 109,
+          "reward": 88.19772727272728,
+          "tokens": 48894,
+          "phase": "hand",
+          "remaining": {
+            "type": "boss",
+            "score": [
+              4350,
+              22000
+            ],
+            "hands": 4,
+            "discards": 1,
+            "effect": "All face cards are drawn face down"
+          }
+        },
+        {
+          "sample": 38,
+          "ante": 5,
+          "turns": 113,
+          "reward": 88.44136363636363,
+          "tokens": 48699,
+          "phase": "hand",
+          "remaining": {
+            "type": "boss",
+            "score": [
+              9710,
+              22000
+            ],
+            "hands": 2,
+            "discards": 2,
+            "effect": "All face cards are drawn face down"
+          }
+        },
+        {
+          "sample": 45,
+          "ante": 5,
+          "turns": 103,
+          "reward": 76.93945454545455,
+          "tokens": 48781,
+          "phase": "hand",
+          "remaining": {
+            "type": "small",
+            "score": [
+              10334,
+              11000
+            ],
+            "hands": 1,
+            "discards": 1
+          }
+        },
+        {
+          "sample": 47,
+          "ante": 5,
+          "turns": 102,
+          "reward": 80.0,
+          "tokens": 48782,
+          "phase": "hand",
+          "remaining": {
+            "type": "big",
+            "score": [
+              0,
+              16500
+            ],
+            "hands": 4,
+            "discards": 2
+          }
+        }
+      ],
+      "groups": {
+        "3200": [
+          {
+            "index": 0,
+            "reward": 64.91,
+            "ante": 4
+          },
+          {
+            "index": 1,
+            "reward": 68.68,
+            "ante": 4
+          },
+          {
+            "index": 2,
+            "reward": 68.57,
+            "ante": 4
+          },
+          {
+            "index": 3,
+            "reward": 68.47,
+            "ante": 4
+          }
+        ],
+        "3201": [
+          {
+            "index": 4,
+            "reward": 28.53,
+            "ante": 2
+          },
+          {
+            "index": 5,
+            "reward": 46.78,
+            "ante": 3
+          },
+          {
+            "index": 6,
+            "reward": 78.51,
+            "ante": 5
+          },
+          {
+            "index": 7,
+            "reward": 98.0,
+            "ante": 6
+          }
+        ],
+        "3202": [
+          {
+            "index": 8,
+            "reward": 88.0,
+            "ante": 4
+          },
+          {
+            "index": 9,
+            "reward": 48.5,
+            "ante": 2
+          },
+          {
+            "index": 10,
+            "reward": 84.0,
+            "ante": 4
+          },
+          {
+            "index": 11,
+            "reward": 84.87,
+            "ante": 4
+          }
+        ],
+        "3203": [
+          {
+            "index": 12,
+            "reward": 28.63,
+            "ante": 2
+          },
+          {
+            "index": 13,
+            "reward": 28.47,
+            "ante": 2
+          },
+          {
+            "index": 14,
+            "reward": 28.56,
+            "ante": 2
+          },
+          {
+            "index": 15,
+            "reward": 28.57,
+            "ante": 2
+          }
+        ],
+        "3204": [
+          {
+            "index": 16,
+            "reward": 8.55,
+            "ante": 1
+          },
+          {
+            "index": 17,
+            "reward": 8.55,
+            "ante": 1
+          },
+          {
+            "index": 18,
+            "reward": 8.27,
+            "ante": 1
+          },
+          {
+            "index": 19,
+            "reward": 8.55,
+            "ante": 1
+          }
+        ],
+        "3205": [
+          {
+            "index": 20,
+            "reward": 68.47,
+            "ante": 4
+          },
+          {
+            "index": 21,
+            "reward": 28.56,
+            "ante": 2
+          },
+          {
+            "index": 22,
+            "reward": 68.64,
+            "ante": 4
+          },
+          {
+            "index": 23,
+            "reward": 60.82,
+            "ante": 4
+          }
+        ],
+        "3206": [
+          {
+            "index": 24,
+            "reward": 28.96,
+            "ante": 2
+          },
+          {
+            "index": 25,
+            "reward": 88.0,
+            "ante": 4
+          },
+          {
+            "index": 26,
+            "reward": 28.95,
+            "ante": 2
+          },
+          {
+            "index": 27,
+            "reward": 28.96,
+            "ante": 2
+          }
+        ],
+        "3207": [
+          {
+            "index": 28,
+            "reward": 68.51,
+            "ante": 4
+          },
+          {
+            "index": 29,
+            "reward": 68.52,
+            "ante": 4
+          },
+          {
+            "index": 30,
+            "reward": 24.31,
+            "ante": 2
+          },
+          {
+            "index": 31,
+            "reward": 28.77,
+            "ante": 2
+          }
+        ],
+        "3208": [
+          {
+            "index": 32,
+            "reward": 0.62,
+            "ante": 1
+          },
+          {
+            "index": 33,
+            "reward": 0.61,
+            "ante": 1
+          },
+          {
+            "index": 34,
+            "reward": 68.36,
+            "ante": 4
+          },
+          {
+            "index": 35,
+            "reward": 68.33,
+            "ante": 4
+          }
+        ],
+        "3209": [
+          {
+            "index": 36,
+            "reward": 88.0,
+            "ante": 5
+          },
+          {
+            "index": 37,
+            "reward": 88.2,
+            "ante": 5
+          },
+          {
+            "index": 38,
+            "reward": 88.44,
+            "ante": 5
+          },
+          {
+            "index": 39,
+            "reward": 68.73,
+            "ante": 4
+          }
+        ],
+        "3210": [
+          {
+            "index": 40,
+            "reward": 8.64,
+            "ante": 1
+          },
+          {
+            "index": 41,
+            "reward": 8.8,
+            "ante": 1
+          },
+          {
+            "index": 42,
+            "reward": 64.56,
+            "ante": 4
+          },
+          {
+            "index": 43,
+            "reward": 8.64,
+            "ante": 1
+          }
+        ],
+        "3211": [
+          {
+            "index": 44,
+            "reward": 46.41,
+            "ante": 3
+          },
+          {
+            "index": 45,
+            "reward": 76.94,
+            "ante": 5
+          },
+          {
+            "index": 46,
+            "reward": 58.69,
+            "ante": 4
+          },
+          {
+            "index": 47,
+            "reward": 80.0,
+            "ante": 5
+          }
+        ],
+        "3212": [
+          {
+            "index": 48,
+            "reward": 0.31,
+            "ante": 1
+          },
+          {
+            "index": 49,
+            "reward": 64.48,
+            "ante": 4
+          },
+          {
+            "index": 50,
+            "reward": 64.45,
+            "ante": 4
+          },
+          {
+            "index": 51,
+            "reward": 64.52,
+            "ante": 4
+          }
+        ],
+        "3213": [
+          {
+            "index": 52,
+            "reward": 68.59,
+            "ante": 4
+          },
+          {
+            "index": 53,
+            "reward": 8.64,
+            "ante": 1
+          },
+          {
+            "index": 54,
+            "reward": 8.64,
+            "ante": 1
+          },
+          {
+            "index": 55,
+            "reward": 64.67,
+            "ante": 4
+          }
+        ],
+        "3214": [
+          {
+            "index": 56,
+            "reward": 88.85,
+            "ante": 5
+          },
+          {
+            "index": 57,
+            "reward": 86.64,
+            "ante": 5
+          },
+          {
+            "index": 58,
+            "reward": 88.63,
+            "ante": 5
+          },
+          {
+            "index": 59,
+            "reward": 88.77,
+            "ante": 5
+          }
+        ],
+        "3215": [
+          {
+            "index": 60,
+            "reward": 68.5,
+            "ante": 4
+          },
+          {
+            "index": 61,
+            "reward": 48.76,
+            "ante": 3
+          },
+          {
+            "index": 62,
+            "reward": 68.18,
+            "ante": 4
+          },
+          {
+            "index": 63,
+            "reward": 68.41,
+            "ante": 4
+          }
+        ]
+      },
+      "opportunity_examples": [
+        {
+          "sample": 7,
+          "turn": 84,
+          "ante": 4,
+          "blind": {
+            "type": "big",
+            "score": [
+              0,
+              7500
+            ],
+            "hands": 4,
+            "discards": 2
+          },
+          "hand": [
+            "S_A",
+            "H_A",
+            {
+              "id": "D_K",
+              "mod": {
+                "enhancement": "MULT"
+              }
+            },
+            "H_Q",
+            "C_J",
+            "H_T",
+            "D_T",
+            "S_3"
+          ],
+          "action": {
+            "method": "play",
+            "params": {
+              "cards": [
+                2,
+                6,
+                5,
+                4,
+                3
+              ]
+            }
+          },
+          "commit": {
+            "hand": "Pair",
+            "cards": [
+              2,
+              6,
+              5,
+              4,
+              3
+            ],
+            "score": 1980
+          },
+          "straight": [
+            5,
+            4,
+            3,
+            2,
+            0
+          ],
+          "jokers": [
+            {
+              "id": "j_hanging_chad",
+              "effect": "Retrigger first played card used in scoring 2 additional times",
+              "sell": 2
+            },
+            {
+              "id": "j_mad",
+              "effect": "+10 Mult if played hand contains a Two Pair",
+              "mod": {
+                "enhancement": "TYPE MULT"
+              },
+              "sell": 2
+            },
+            {
+              "id": "j_supernova",
+              "effect": "Adds the number of times poker hand has been played this run to Mult",
+              "mod": {
+                "enhancement": "HAND PLAYED MULT"
+              },
+              "sell": 2
+            },
+            {
+              "id": "j_castle",
+              "effect": "This Joker gains +3 Chips per discarded Spade card, suit changes every round (Currently +15 Chips)",
+              "mod": {
+                "edition": "HOLO"
+              },
+              "sell": 4
+            },
+            {
+              "id": "j_odd_todd",
+              "effect": "Played cards with odd rank give +31 Chips when scored (A, 9, 7, 5, 3)",
+              "mod": {
+                "enhancement": "ODD BUFF"
+              },
+              "sell": 2
+            }
+          ],
+          "boss": [
+            "The Head",
+            10000,
+            "All Heart cards are debuffed"
+          ]
+        },
+        {
+          "sample": 11,
+          "turn": 103,
+          "ante": 4,
+          "blind": {
+            "type": "small",
+            "score": [
+              3216,
+              5000
+            ],
+            "hands": 2,
+            "discards": 0
+          },
+          "hand": [
+            "C_A",
+            "S_K",
+            "D_K",
+            "C_Q",
+            "D_J",
+            {
+              "id": "H_T",
+              "mod": {
+                "edition": "POLYCHROME"
+              }
+            },
+            "S_5",
+            "S_2"
+          ],
+          "action": {
+            "method": "play",
+            "params": {
+              "cards": [
+                2,
+                1,
+                6,
+                7,
+                5
+              ]
+            }
+          },
+          "commit": {
+            "hand": "Pair",
+            "cards": [
+              2,
+              1,
+              6,
+              7,
+              5
+            ],
+            "score": 1008
+          },
+          "straight": [
+            5,
+            4,
+            3,
+            1,
+            0
+          ],
+          "jokers": [
+            {
+              "id": "j_misprint",
+              "effect": "  +",
+              "mod": {
+                "enhancement": "RANDOM MULT"
+              },
+              "sell": 2
+            },
+            {
+              "id": "j_cartomancer",
+              "effect": "Create a Tarot card when Blind is selected (Must have room)",
+              "mod": {
+                "edition": "FOIL",
+                "enhancement": "TAROT BUFF"
+              },
+              "sell": 4
+            },
+            {
+              "id": "j_golden",
+              "effect": "Earn $4 at end of round",
+              "mod": {
+                "enhancement": "BONUS DOLLARS"
+              },
+              "sell": 3
+            },
+            {
+              "id": "j_bull",
+              "effect": "+2 Chips for each $1 you have (Currently +4 Chips)",
+              "sell": 3
+            },
+            {
+              "id": "j_delayed_grat",
+              "effect": "Earn $2 per discard if no discards are used by end of the round",
+              "mod": {
+                "enhancement": "DISCARD DOLLARS"
+              },
+              "sell": 2
+            }
+          ],
+          "boss": [
+            "The Manacle",
+            10000,
+            "-1 Hand Size"
+          ]
+        },
+        {
+          "sample": 11,
+          "turn": 104,
+          "ante": 4,
+          "blind": {
+            "type": "small",
+            "score": [
+              4224,
+              5000
+            ],
+            "hands": 1,
+            "discards": 0
+          },
+          "hand": [
+            "S_A",
+            "C_A",
+            "H_K",
+            "C_Q",
+            "D_J",
+            "S_T",
+            "H_T",
+            "H_4"
+          ],
+          "action": {
+            "method": "play",
+            "params": {
+              "cards": [
+                2,
+                3,
+                6,
+                5,
+                7
+              ]
+            }
+          },
+          "commit": {
+            "hand": "Pair",
+            "cards": [
+              2,
+              3,
+              6,
+              5,
+              7
+            ],
+            "score": 1008
+          },
+          "straight": [
+            5,
+            4,
+            3,
+            2,
+            0
+          ],
+          "jokers": [
+            {
+              "id": "j_misprint",
+              "effect": "  +",
+              "mod": {
+                "enhancement": "RANDOM MULT"
+              },
+              "sell": 2
+            },
+            {
+              "id": "j_cartomancer",
+              "effect": "Create a Tarot card when Blind is selected (Must have room)",
+              "mod": {
+                "edition": "FOIL",
+                "enhancement": "TAROT BUFF"
+              },
+              "sell": 4
+            },
+            {
+              "id": "j_golden",
+              "effect": "Earn $4 at end of round",
+              "mod": {
+                "enhancement": "BONUS DOLLARS"
+              },
+              "sell": 3
+            },
+            {
+              "id": "j_bull",
+              "effect": "+2 Chips for each $1 you have (Currently +4 Chips)",
+              "sell": 3
+            },
+            {
+              "id": "j_delayed_grat",
+              "effect": "Earn $2 per discard if no discards are used by end of the round",
+              "mod": {
+                "enhancement": "DISCARD DOLLARS"
+              },
+              "sell": 2
+            }
+          ],
+          "boss": [
+            "The Manacle",
+            10000,
+            "-1 Hand Size"
+          ]
+        }
+      ],
+      "examples": [
+        {
+          "sample": 0,
+          "reward": 64.90520000000001,
+          "ending": "game_over",
+          "ante": 4,
+          "last_before": {
+            "phase": "hand",
+            "ante": 4,
+            "round": 11,
+            "money": 0,
+            "blind": {
+              "type": "big",
+              "score": [
+                6789,
+                7500
+              ],
+              "hands": 1,
+              "discards": 0
+            },
+            "boss": [
+              "The Wall",
+              20000,
+              "Extra large blind"
+            ],
+            "hand": [
+              "D_A",
+              "H_K",
+              "C_Q",
+              "S_9",
+              "S_8",
+              "C_8",
+              "H_7",
+              "D_6",
+              "D_4"
+            ],
+            "jokers": {
+              "slots": "5/5",
+              "items": [
+                {
+                  "id": "j_photograph",
+                  "effect": "First played face card gives X2 Mult when scored",
+                  "sell": 2
+                },
+                {
+                  "id": "j_misprint",
+                  "effect": "  +",
+                  "mod": {
+                    "enhancement": "RANDOM MULT"
+                  },
+                  "sell": 2
+                },
+                {
+                  "id": "j_wrathful_joker",
+                  "effect": "Played cards with Spade suit give +3 Mult when scored",
+                  "mod": {
+                    "enhancement": "SUIT MULT"
+                  },
+                  "sell": 2
+                },
+                {
+                  "id": "j_lusty_joker",
+                  "effect": "Played cards with Heart suit give +3 Mult when scored",
+                  "mod": {
+                    "enhancement": "SUIT MULT"
+                  },
+                  "sell": 2
+                },
+                {
+                  "id": "j_riff_raff",
+                  "effect": "When Blind is selected, create 2 Common Jokers (Must have room)",
+                  "sell": 3
+                }
+              ]
+            },
+            "consumables": {
+              "slots": "0/2"
+            },
+            "hand_values": {
+              "Four of a Kind": [
+                2,
+                90,
+                10
+              ],
+              "Full House": [
+                1,
+                40,
+                4
+              ],
+              "Flush": [
+                1,
+                35,
+                4
+              ],
+              "Straight": [
+                2,
+                60,
+                7
+              ],
+              "Three of a Kind": [
+                2,
+                50,
+                5
+              ],
+              "Two Pair": [
+                2,
+                40,
+                3
+              ],
+              "Pair": [
+                1,
+                10,
+                2
+              ],
+              "High Card": [
+                1,
+                5,
+                1
+              ],
+              "Flush Five": [
+                1,
+                160,
+                16
+              ],
+              "Flush House": [
+                1,
+                140,
+                14
+              ],
+              "Five of a Kind": [
+                1,
+                120,
+                12
+              ],
+              "Straight Flush": [
+                1,
+                100,
+                8
+              ]
+            }
+          },
+          "action": {
+            "method": "play",
+            "params": {
+              "cards": [
+                5,
+                4,
+                3,
+                2,
+                1
+              ]
+            }
+          },
+          "last_after": {
+            "phase": "GAME_OVER",
+            "blind": {
+              "type": "big",
+              "score": [
+                7309,
+                7500
+              ],
+              "hands": 0,
+              "discards": 0
+            },
+            "play_commit": {
+              "score": 520,
+              "hand": "Pair",
+              "cards": [
+                5,
+                4,
+                3,
+                2,
+                1
+              ]
+            }
+          }
+        },
+        {
+          "sample": 7,
+          "reward": 98.0,
+          "ending": "context_cap",
+          "ante": 6,
+          "last_before": {
+            "phase": "hand",
+            "ante": 5,
+            "round": 15,
+            "money": 1,
+            "blind": {
+              "type": "boss",
+              "score": [
+                17756,
+                22000
+              ],
+              "hands": 1,
+              "discards": 1,
+              "effect": "All face cards are debuffed"
+            },
+            "boss": [
+              "The Plant",
+              22000,
+              "All face cards are debuffed"
+            ],
+            "hand": [
+              "H_A",
+              "D_A",
+              {
+                "id": "C_Q",
+                "debuff": true
+              },
+              "H_9",
+              "C_9",
+              {
+                "id": "H_8",
+                "mod": {
+                  "seal": "GOLD"
+                }
+              },
+              "C_7",
+              "C_3"
+            ],
+            "jokers": {
+              "slots": "5/5",
+              "items": [
+                {
+                  "id": "j_hanging_chad",
+                  "effect": "Retrigger first played card used in scoring 2 additional times",
+                  "sell": 2
+                },
+                {
+                  "id": "j_mad",
+                  "effect": "+10 Mult if played hand contains a Two Pair",
+                  "mod": {
+                    "enhancement": "TYPE MULT"
+                  },
+                  "sell": 2
+                },
+                {
+                  "id": "j_supernova",
+                  "effect": "Adds the number of times poker hand has been played this run to Mult",
+                  "mod": {
+                    "enhancement": "HAND PLAYED MULT"
+                  },
+                  "sell": 2
+                },
+                {
+                  "id": "j_castle",
+                  "effect": "This Joker gains +3 Chips per discarded Heart card, suit changes every round (Currently +48 Chips)",
+                  "mod": {
+                    "edition": "HOLO"
+                  },
+                  "sell": 4
+                },
+                {
+                  "id": "j_odd_todd",
+                  "effect": "Played cards with odd rank give +31 Chips when scored (A, 9, 7, 5, 3)",
+                  "mod": {
+                    "enhancement": "ODD BUFF"
+                  },
+                  "sell": 2
+                }
+              ]
+            },
+            "consumables": {
+              "slots": "0/2"
+            },
+            "hand_values": {
+              "Flush House": [
+                1,
+                140,
+                14
+              ],
+              "Flush Five": [
+                1,
+                160,
+                16
+              ],
+              "Five of a Kind": [
+                1,
+                120,
+                12
+              ],
+              "Straight Flush": [
+                1,
+                100,
+                8
+              ],
+              "Four of a Kind": [
+                1,
+                60,
+                7
+              ],
+              "Full House": [
+                1,
+                40,
+                4
+              ],
+              "Flush": [
+                1,
+                35,
+                4
+              ],
+              "Straight": [
+                2,
+                60,
+                7
+              ],
+              "Three of a Kind": [
+                1,
+                30,
+                3
+              ],
+              "Two Pair": [
+                3,
+                60,
+                4
+              ],
+              "Pair": [
+                5,
+                70,
+                6
+              ],
+              "High Card": [
+                1,
+                5,
+                1
+              ]
+            }
+          },
+          "action": {
+            "method": "play",
+            "params": {
+              "cards": [
+                2,
+                3,
+                4,
+                1,
+                0
+              ]
+            }
+          },
+          "last_after": {
+            "phase": "shop",
+            "blind": null,
+            "play_commit": {
+              "hand": "Two Pair",
+              "cards": [
+                2,
+                3,
+                4,
+                1,
+                0
+              ],
+              "score": 14596
+            }
+          }
+        }
+      ],
+      "error_count": 10
+    },
+    "413": {
+      "rollout": 413,
+      "episodes": 64,
+      "reward": 36.44929845722854,
+      "endings": {
+        "game_over": 63,
+        "context_cap": 1
+      },
+      "antes": {
+        "1": 29,
+        "4": 19,
+        "3": 7,
+        "5": 7,
+        "2": 2
+      },
+      "actions": {
+        "select": 440,
+        "play": 1094,
+        "discard": 655,
+        "buy": 568,
+        "pack": 238,
+        "next_round": 376,
+        "use": 151,
+        "reroll": 1
+      },
+      "played_hands": {
+        "Pair": 280,
+        "Full House": 148,
+        "Two Pair": 512,
+        "Three of a Kind": 118,
+        "High Card": 30,
+        "Four of a Kind": 5,
+        "Straight": 1
+      },
+      "pair_or_high_with_raw_straight_available": 55,
+      "affected_samples": 38,
+      "total_plays": 1094,
+      "plays_including_debuffed_card": 97,
+      "losses_with_discards_left": 42,
+      "caps": [
+        {
+          "sample": 14,
+          "ante": 5,
+          "turns": 117,
+          "reward": 86.0,
+          "tokens": 48508,
+          "phase": "hand",
+          "remaining": {
+            "type": "boss",
+            "score": [
+              0,
+              22000
+            ],
+            "hands": 4,
+            "discards": 1,
+            "effect": "#1# in #2# cards get drawn face down"
+          }
+        }
+      ],
+      "groups": {
+        "3408": [
+          {
+            "index": 0,
+            "reward": 4.57,
+            "ante": 1
+          },
+          {
+            "index": 1,
+            "reward": 4.48,
+            "ante": 1
+          },
+          {
+            "index": 2,
+            "reward": 4.57,
+            "ante": 1
+          },
+          {
+            "index": 3,
+            "reward": 8.45,
+            "ante": 1
+          }
+        ],
+        "3409": [
+          {
+            "index": 4,
+            "reward": 8.66,
+            "ante": 1
+          },
+          {
+            "index": 5,
+            "reward": 0.8,
+            "ante": 1
+          },
+          {
+            "index": 6,
+            "reward": 0.8,
+            "ante": 1
+          },
+          {
+            "index": 7,
+            "reward": 8.34,
+            "ante": 1
+          }
+        ],
+        "3410": [
+          {
+            "index": 8,
+            "reward": 66.7,
+            "ante": 4
+          },
+          {
+            "index": 9,
+            "reward": 48.74,
+            "ante": 3
+          },
+          {
+            "index": 10,
+            "reward": 60.51,
+            "ante": 4
+          },
+          {
+            "index": 11,
+            "reward": 64.64,
+            "ante": 4
+          }
+        ],
+        "3411": [
+          {
+            "index": 12,
+            "reward": 82.33,
+            "ante": 5
+          },
+          {
+            "index": 13,
+            "reward": 48.1,
+            "ante": 3
+          },
+          {
+            "index": 14,
+            "reward": 86.0,
+            "ante": 5
+          },
+          {
+            "index": 15,
+            "reward": 0.52,
+            "ante": 1
+          }
+        ],
+        "3412": [
+          {
+            "index": 16,
+            "reward": 64.92,
+            "ante": 4
+          },
+          {
+            "index": 17,
+            "reward": 66.0,
+            "ante": 4
+          },
+          {
+            "index": 18,
+            "reward": 68.0,
+            "ante": 4
+          },
+          {
+            "index": 19,
+            "reward": 68.0,
+            "ante": 4
+          }
+        ],
+        "3413": [
+          {
+            "index": 20,
+            "reward": 4.62,
+            "ante": 1
+          },
+          {
+            "index": 21,
+            "reward": 4.5,
+            "ante": 1
+          },
+          {
+            "index": 22,
+            "reward": 4.62,
+            "ante": 1
+          },
+          {
+            "index": 23,
+            "reward": 4.76,
+            "ante": 1
+          }
+        ],
+        "3414": [
+          {
+            "index": 24,
+            "reward": 0.66,
+            "ante": 1
+          },
+          {
+            "index": 25,
+            "reward": 0.66,
+            "ante": 1
+          },
+          {
+            "index": 26,
+            "reward": 48.38,
+            "ante": 3
+          },
+          {
+            "index": 27,
+            "reward": 0.66,
+            "ante": 1
+          }
+        ],
+        "3415": [
+          {
+            "index": 28,
+            "reward": 68.59,
+            "ante": 4
+          },
+          {
+            "index": 29,
+            "reward": 64.67,
+            "ante": 4
+          },
+          {
+            "index": 30,
+            "reward": 64.82,
+            "ante": 4
+          },
+          {
+            "index": 31,
+            "reward": 64.77,
+            "ante": 4
+          }
+        ],
+        "3416": [
+          {
+            "index": 32,
+            "reward": 4.5,
+            "ante": 1
+          },
+          {
+            "index": 33,
+            "reward": 4.5,
+            "ante": 1
+          },
+          {
+            "index": 34,
+            "reward": 4.39,
+            "ante": 1
+          },
+          {
+            "index": 35,
+            "reward": 24.68,
+            "ante": 2
+          }
+        ],
+        "3417": [
+          {
+            "index": 36,
+            "reward": 88.38,
+            "ante": 5
+          },
+          {
+            "index": 37,
+            "reward": 48.85,
+            "ante": 3
+          },
+          {
+            "index": 38,
+            "reward": 88.46,
+            "ante": 5
+          },
+          {
+            "index": 39,
+            "reward": 88.67,
+            "ante": 5
+          }
+        ],
+        "3418": [
+          {
+            "index": 40,
+            "reward": 0.61,
+            "ante": 1
+          },
+          {
+            "index": 41,
+            "reward": 0.61,
+            "ante": 1
+          },
+          {
+            "index": 42,
+            "reward": 64.83,
+            "ante": 4
+          },
+          {
+            "index": 43,
+            "reward": 0.61,
+            "ante": 1
+          }
+        ],
+        "3419": [
+          {
+            "index": 44,
+            "reward": 0.77,
+            "ante": 1
+          },
+          {
+            "index": 45,
+            "reward": 64.95,
+            "ante": 4
+          },
+          {
+            "index": 46,
+            "reward": 64.45,
+            "ante": 4
+          },
+          {
+            "index": 47,
+            "reward": 28.41,
+            "ante": 2
+          }
+        ],
+        "3420": [
+          {
+            "index": 48,
+            "reward": 68.36,
+            "ante": 4
+          },
+          {
+            "index": 49,
+            "reward": 64.68,
+            "ante": 4
+          },
+          {
+            "index": 50,
+            "reward": 60.63,
+            "ante": 4
+          },
+          {
+            "index": 51,
+            "reward": 62.36,
+            "ante": 4
+          }
+        ],
+        "3421": [
+          {
+            "index": 52,
+            "reward": 66.59,
+            "ante": 4
+          },
+          {
+            "index": 53,
+            "reward": 48.25,
+            "ante": 3
+          },
+          {
+            "index": 54,
+            "reward": 80.71,
+            "ante": 5
+          },
+          {
+            "index": 55,
+            "reward": 82.24,
+            "ante": 5
+          }
+        ],
+        "3422": [
+          {
+            "index": 56,
+            "reward": 8.7,
+            "ante": 1
+          },
+          {
+            "index": 57,
+            "reward": 48.33,
+            "ante": 3
+          },
+          {
+            "index": 58,
+            "reward": 44.69,
+            "ante": 3
+          },
+          {
+            "index": 59,
+            "reward": 0.61,
+            "ante": 1
+          }
+        ],
+        "3423": [
+          {
+            "index": 60,
+            "reward": 4.52,
+            "ante": 1
+          },
+          {
+            "index": 61,
+            "reward": 4.52,
+            "ante": 1
+          },
+          {
+            "index": 62,
+            "reward": 4.67,
+            "ante": 1
+          },
+          {
+            "index": 63,
+            "reward": 8.35,
+            "ante": 1
+          }
+        ]
+      },
+      "opportunity_examples": [
+        {
+          "sample": 0,
+          "turn": 16,
+          "ante": 1,
+          "blind": {
+            "type": "big",
+            "score": [
+              256,
+              450
+            ],
+            "hands": 1,
+            "discards": 1
+          },
+          "hand": [
+            "H_A",
+            "D_K",
+            "S_Q",
+            "H_J",
+            "D_J",
+            "H_T",
+            "S_8",
+            "C_2"
+          ],
+          "action": {
+            "method": "play",
+            "params": {
+              "cards": [
+                4,
+                3,
+                5,
+                6,
+                2
+              ]
+            }
+          },
+          "commit": {
+            "score": 60,
+            "hand": "Pair",
+            "cards": [
+              4,
+              3,
+              5,
+              6,
+              2
+            ]
+          },
+          "straight": [
+            5,
+            3,
+            2,
+            1,
+            0
+          ],
+          "jokers": [
+            {
+              "id": "j_superposition",
+              "effect": "Create a Tarot card if poker hand contains an Ace and a Straight (Must have room)",
+              "sell": 2
+            },
+            {
+              "id": "j_devious",
+              "effect": "+100 Chips if played hand contains a Straight",
+              "sell": 2
+            }
+          ],
+          "boss": [
+            "The Hook",
+            600,
+            "Discards 2 random cards per hand played"
+          ]
+        },
+        {
+          "sample": 2,
+          "turn": 16,
+          "ante": 1,
+          "blind": {
+            "type": "big",
+            "score": [
+              256,
+              450
+            ],
+            "hands": 1,
+            "discards": 1
+          },
+          "hand": [
+            "H_A",
+            "D_K",
+            "S_Q",
+            "H_J",
+            "D_J",
+            "H_T",
+            "S_8",
+            "C_2"
+          ],
+          "action": {
+            "method": "play",
+            "params": {
+              "cards": [
+                4,
+                3,
+                6,
+                5,
+                2
+              ]
+            }
+          },
+          "commit": {
+            "hand": "Pair",
+            "cards": [
+              4,
+              3,
+              6,
+              5,
+              2
+            ],
+            "score": 60
+          },
+          "straight": [
+            5,
+            3,
+            2,
+            1,
+            0
+          ],
+          "jokers": [
+            {
+              "id": "j_superposition",
+              "effect": "Create a Tarot card if poker hand contains an Ace and a Straight (Must have room)",
+              "sell": 2
+            },
+            {
+              "id": "j_devious",
+              "effect": "+100 Chips if played hand contains a Straight",
+              "sell": 2
+            }
+          ],
+          "boss": [
+            "The Hook",
+            600,
+            "Discards 2 random cards per hand played"
+          ]
+        },
+        {
+          "sample": 3,
+          "turn": 24,
+          "ante": 1,
+          "blind": {
+            "type": "boss",
+            "score": [
+              270,
+              600
+            ],
+            "hands": 1,
+            "discards": 0,
+            "effect": "Discards 2 random cards per hand played"
+          },
+          "hand": [
+            "S_A",
+            "D_K",
+            "H_Q",
+            "S_J",
+            "S_T",
+            "C_9",
+            "C_5",
+            "D_2"
+          ],
+          "action": {
+            "method": "play",
+            "params": {
+              "cards": [
+                6,
+                5,
+                4,
+                3,
+                2
+              ]
+            }
+          },
+          "commit": {
+            "score": 15,
+            "hand": "High Card",
+            "cards": [
+              6,
+              5,
+              4,
+              3,
+              2
+            ]
+          },
+          "straight": [
+            4,
+            3,
+            2,
+            1,
+            0
+          ],
+          "jokers": [
+            {
+              "id": "j_superposition",
+              "effect": "Create a Tarot card if poker hand contains an Ace and a Straight (Must have room)",
+              "sell": 2
+            },
+            {
+              "id": "j_wrathful_joker",
+              "effect": "Played cards with Spade suit give +3 Mult when scored",
+              "mod": {
+                "enhancement": "SUIT MULT"
+              },
+              "sell": 2
+            }
+          ],
+          "boss": [
+            "The Hook",
+            600,
+            "Discards 2 random cards per hand played"
+          ]
+        }
+      ],
+      "examples": [
+        {
+          "sample": 0,
+          "reward": 4.568888888888889,
+          "ending": "game_over",
+          "ante": 1,
+          "last_before": {
+            "phase": "hand",
+            "ante": 1,
+            "round": 2,
+            "money": 1,
+            "blind": {
+              "type": "big",
+              "score": [
+                256,
+                450
+              ],
+              "hands": 1,
+              "discards": 1
+            },
+            "boss": [
+              "The Hook",
+              600,
+              "Discards 2 random cards per hand played"
+            ],
+            "hand": [
+              "H_A",
+              "D_K",
+              "S_Q",
+              "H_J",
+              "D_J",
+              "H_T",
+              "S_8",
+              "C_2"
+            ],
+            "jokers": {
+              "slots": "2/5",
+              "items": [
+                {
+                  "id": "j_superposition",
+                  "effect": "Create a Tarot card if poker hand contains an Ace and a Straight (Must have room)",
+                  "sell": 2
+                },
+                {
+                  "id": "j_devious",
+                  "effect": "+100 Chips if played hand contains a Straight",
+                  "sell": 2
+                }
+              ]
+            },
+            "consumables": {
+              "slots": "0/2"
+            },
+            "hand_values": {
+              "Flush Five": [
+                1,
+                160,
+                16
+              ],
+              "Flush House": [
+                1,
+                140,
+                14
+              ],
+              "Five of a Kind": [
+                1,
+                120,
+                12
+              ],
+              "Straight Flush": [
+                1,
+                100,
+                8
+              ],
+              "Four of a Kind": [
+                1,
+                60,
+                7
+              ],
+              "Full House": [
+                1,
+                40,
+                4
+              ],
+              "Flush": [
+                1,
+                35,
+                4
+              ],
+              "Straight": [
+                1,
+                30,
+                4
+              ],
+              "Three of a Kind": [
+                1,
+                30,
+                3
+              ],
+              "Two Pair": [
+                1,
+                20,
+                2
+              ],
+              "Pair": [
+                1,
+                10,
+                2
+              ],
+              "High Card": [
+                1,
+                5,
+                1
+              ]
+            }
+          },
+          "action": {
+            "method": "play",
+            "params": {
+              "cards": [
+                4,
+                3,
+                5,
+                6,
+                2
+              ]
+            }
+          },
+          "last_after": {
+            "phase": "GAME_OVER",
+            "blind": {
+              "type": "big",
+              "score": [
+                316,
+                450
+              ],
+              "hands": 0,
+              "discards": 1
+            },
+            "play_commit": {
+              "score": 60,
+              "hand": "Pair",
+              "cards": [
+                4,
+                3,
+                5,
+                6,
+                2
+              ]
+            }
+          }
+        },
+        {
+          "sample": 39,
+          "reward": 88.66927272727273,
+          "ending": "game_over",
+          "ante": 5,
+          "last_before": {
+            "phase": "hand",
+            "ante": 5,
+            "round": 15,
+            "money": 2,
+            "blind": {
+              "type": "boss",
+              "score": [
+                14724,
+                22000
+              ],
+              "hands": 1,
+              "discards": 0,
+              "effect": "All Heart cards are debuffed"
+            },
+            "boss": [
+              "The Head",
+              22000,
+              "All Heart cards are debuffed"
+            ],
+            "hand": [
+              "C_A",
+              "C_K",
+              "C_J",
+              "C_T",
+              {
+                "id": "H_8",
+                "debuff": true
+              },
+              "S_6",
+              {
+                "id": "H_6",
+                "debuff": true
+              },
+              {
+                "id": "H_4",
+                "debuff": true
+              }
+            ],
+            "jokers": {
+              "slots": "6/5",
+              "items": [
+                {
+                  "id": "j_shoot_the_moon",
+                  "effect": "Each Queen held in hand gives +13 Mult",
+                  "mod": {
+                    "edition": "HOLO"
+                  },
+                  "sell": 4
+                },
+                {
+                  "id": "j_scary_face",
+                  "effect": "Played face cards give +30 Chips when scored",
+                  "mod": {
+                    "enhancement": "SCARY FACES"
+                  },
+                  "sell": 2
+                },
+                {
+                  "id": "j_mad",
+                  "effect": "+10 Mult if played hand contains a Two Pair",
+                  "mod": {
+                    "enhancement": "TYPE MULT"
+                  },
+                  "sell": 2
+                },
+                {
+                  "id": "j_hanging_chad",
+                  "effect": "Retrigger first played card used in scoring 2 additional times",
+                  "sell": 2
+                },
+                {
+                  "id": "j_ice_cream",
+                  "effect": "+5 Chips -5 Chips for every hand played",
+                  "sell": 2
+                },
+                {
+                  "id": "j_bloodstone",
+                  "effect": "1 in 2 chance for played cards with Heart suit to give X1.5 Mult when scored",
+                  "sell": 3
+                }
+              ]
+            },
+            "consumables": {
+              "slots": "2/2",
+              "items": [
+                {
+                  "id": "c_justice",
+                  "effect": "Enhances 1 selected card into a Glass Card",
+                  "mod": {
+                    "enhancement": "ENHANCE"
+                  },
+                  "sell": 1
+                },
+                {
+                  "id": "c_magician",
+                  "effect": "Enhances 2 selected cards to Lucky Cards",
+                  "mod": {
+                    "enhancement": "ENHANCE"
+                  },
+                  "sell": 1
+                }
+              ]
+            },
+            "hand_values": {
+              "Flush Five": [
+                1,
+                160,
+                16
+              ],
+              "Flush House": [
+                1,
+                140,
+                14
+              ],
+              "Five of a Kind": [
+                1,
+                120,
+                12
+              ],
+              "Straight Flush": [
+                1,
+                100,
+                8
+              ],
+              "Four of a Kind": [
+                2,
+                90,
+                10
+              ],
+              "Full House": [
+                2,
+                65,
+                6
+              ],
+              "Flush": [
+                1,
+                35,
+                4
+              ],
+              "Straight": [
+                1,
+                30,
+                4
+              ],
+              "Three of a Kind": [
+                2,
+                50,
+                5
+              ],
+              "Two Pair": [
+                2,
+                40,
+                3
+              ],
+              "Pair": [
+                1,
+                10,
+                2
+              ],
+              "High Card": [
+                1,
+                5,
+                1
+              ]
+            }
+          },
+          "action": {
+            "method": "play",
+            "params": {
+              "cards": [
+                5,
+                4,
+                6,
+                3,
+                2
+              ]
+            }
+          },
+          "last_after": {
+            "phase": "GAME_OVER",
+            "blind": {
+              "type": "boss",
+              "score": [
+                15120,
+                22000
+              ],
+              "hands": 0,
+              "discards": 0,
+              "effect": "All Heart cards are debuffed"
+            },
+            "play_commit": {
+              "hand": "Pair",
+              "cards": [
+                5,
+                4,
+                6,
+                3,
+                2
+              ],
+              "score": 396
+            }
+          }
+        }
+      ],
+      "error_count": 7
+    },
+    "425": {
+      "rollout": 425,
+      "episodes": 64,
+      "reward": 45.764259150094695,
+      "endings": {
+        "game_over": 64
+      },
+      "antes": {
+        "4": 24,
+        "3": 9,
+        "1": 14,
+        "2": 11,
+        "5": 5,
+        "6": 1
+      },
+      "actions": {
+        "select": 530,
+        "discard": 784,
+        "play": 1384,
+        "buy": 664,
+        "pack": 282,
+        "next_round": 466,
+        "use": 122
+      },
+      "played_hands": {
+        "Pair": 398,
+        "Two Pair": 640,
+        "Full House": 134,
+        "Three of a Kind": 153,
+        "High Card": 35,
+        "Four of a Kind": 19,
+        "Straight": 5
+      },
+      "pair_or_high_with_raw_straight_available": 55,
+      "affected_samples": 37,
+      "total_plays": 1384,
+      "plays_including_debuffed_card": 163,
+      "losses_with_discards_left": 47,
+      "caps": [],
+      "groups": {
+        "3600": [
+          {
+            "index": 0,
+            "reward": 64.36,
+            "ante": 4
+          },
+          {
+            "index": 1,
+            "reward": 64.2,
+            "ante": 4
+          },
+          {
+            "index": 2,
+            "reward": 64.29,
+            "ante": 4
+          },
+          {
+            "index": 3,
+            "reward": 64.21,
+            "ante": 4
+          }
+        ],
+        "3601": [
+          {
+            "index": 4,
+            "reward": 68.44,
+            "ante": 4
+          },
+          {
+            "index": 5,
+            "reward": 48.0,
+            "ante": 3
+          },
+          {
+            "index": 6,
+            "reward": 44.18,
+            "ante": 3
+          },
+          {
+            "index": 7,
+            "reward": 60.68,
+            "ante": 4
+          }
+        ],
+        "3602": [
+          {
+            "index": 8,
+            "reward": 4.58,
+            "ante": 1
+          },
+          {
+            "index": 9,
+            "reward": 4.58,
+            "ante": 1
+          },
+          {
+            "index": 10,
+            "reward": 4.58,
+            "ante": 1
+          },
+          {
+            "index": 11,
+            "reward": 4.58,
+            "ante": 1
+          }
+        ],
+        "3603": [
+          {
+            "index": 12,
+            "reward": 28.0,
+            "ante": 2
+          },
+          {
+            "index": 13,
+            "reward": 60.75,
+            "ante": 4
+          },
+          {
+            "index": 14,
+            "reward": 4.5,
+            "ante": 1
+          },
+          {
+            "index": 15,
+            "reward": 28.0,
+            "ante": 2
+          }
+        ],
+        "3604": [
+          {
+            "index": 16,
+            "reward": 60.85,
+            "ante": 4
+          },
+          {
+            "index": 17,
+            "reward": 20.54,
+            "ante": 2
+          },
+          {
+            "index": 18,
+            "reward": 64.62,
+            "ante": 4
+          },
+          {
+            "index": 19,
+            "reward": 20.6,
+            "ante": 2
+          }
+        ],
+        "3605": [
+          {
+            "index": 20,
+            "reward": 44.36,
+            "ante": 3
+          },
+          {
+            "index": 21,
+            "reward": 64.61,
+            "ante": 4
+          },
+          {
+            "index": 22,
+            "reward": 64.87,
+            "ante": 4
+          },
+          {
+            "index": 23,
+            "reward": 60.89,
+            "ante": 4
+          }
+        ],
+        "3606": [
+          {
+            "index": 24,
+            "reward": 68.49,
+            "ante": 4
+          },
+          {
+            "index": 25,
+            "reward": 68.6,
+            "ante": 4
+          },
+          {
+            "index": 26,
+            "reward": 68.66,
+            "ante": 4
+          },
+          {
+            "index": 27,
+            "reward": 44.68,
+            "ante": 3
+          }
+        ],
+        "3607": [
+          {
+            "index": 28,
+            "reward": 44.63,
+            "ante": 3
+          },
+          {
+            "index": 29,
+            "reward": 24.52,
+            "ante": 2
+          },
+          {
+            "index": 30,
+            "reward": 40.77,
+            "ante": 3
+          },
+          {
+            "index": 31,
+            "reward": 44.9,
+            "ante": 3
+          }
+        ],
+        "3608": [
+          {
+            "index": 32,
+            "reward": 82.53,
+            "ante": 4
+          },
+          {
+            "index": 33,
+            "reward": 88.32,
+            "ante": 4
+          },
+          {
+            "index": 34,
+            "reward": 68.51,
+            "ante": 4
+          },
+          {
+            "index": 35,
+            "reward": 88.2,
+            "ante": 4
+          }
+        ],
+        "3609": [
+          {
+            "index": 36,
+            "reward": 28.52,
+            "ante": 2
+          },
+          {
+            "index": 37,
+            "reward": 28.32,
+            "ante": 2
+          },
+          {
+            "index": 38,
+            "reward": 64.59,
+            "ante": 4
+          },
+          {
+            "index": 39,
+            "reward": 28.36,
+            "ante": 2
+          }
+        ],
+        "3610": [
+          {
+            "index": 40,
+            "reward": 28.27,
+            "ante": 2
+          },
+          {
+            "index": 41,
+            "reward": 28.17,
+            "ante": 2
+          },
+          {
+            "index": 42,
+            "reward": 66.23,
+            "ante": 4
+          },
+          {
+            "index": 43,
+            "reward": 28.29,
+            "ante": 2
+          }
+        ],
+        "3611": [
+          {
+            "index": 44,
+            "reward": 8.32,
+            "ante": 1
+          },
+          {
+            "index": 45,
+            "reward": 4.55,
+            "ante": 1
+          },
+          {
+            "index": 46,
+            "reward": 4.55,
+            "ante": 1
+          },
+          {
+            "index": 47,
+            "reward": 4.55,
+            "ante": 1
+          }
+        ],
+        "3612": [
+          {
+            "index": 48,
+            "reward": 100.76,
+            "ante": 5
+          },
+          {
+            "index": 49,
+            "reward": 66.73,
+            "ante": 4
+          },
+          {
+            "index": 50,
+            "reward": 68.62,
+            "ante": 4
+          },
+          {
+            "index": 51,
+            "reward": 98.69,
+            "ante": 5
+          }
+        ],
+        "3613": [
+          {
+            "index": 52,
+            "reward": 104.95,
+            "ante": 6
+          },
+          {
+            "index": 53,
+            "reward": 88.27,
+            "ante": 5
+          },
+          {
+            "index": 54,
+            "reward": 80.54,
+            "ante": 5
+          },
+          {
+            "index": 55,
+            "reward": 82.62,
+            "ante": 5
+          }
+        ],
+        "3614": [
+          {
+            "index": 56,
+            "reward": 48.45,
+            "ante": 3
+          },
+          {
+            "index": 57,
+            "reward": 0.48,
+            "ante": 1
+          },
+          {
+            "index": 58,
+            "reward": 0.72,
+            "ante": 1
+          },
+          {
+            "index": 59,
+            "reward": 40.5,
+            "ante": 3
+          }
+        ],
+        "3615": [
+          {
+            "index": 60,
+            "reward": 4.17,
+            "ante": 1
+          },
+          {
+            "index": 61,
+            "reward": 4.13,
+            "ante": 1
+          },
+          {
+            "index": 62,
+            "reward": 60.3,
+            "ante": 4
+          },
+          {
+            "index": 63,
+            "reward": 4.17,
+            "ante": 1
+          }
+        ]
+      },
+      "opportunity_examples": [
+        {
+          "sample": 1,
+          "turn": 24,
+          "ante": 1,
+          "blind": {
+            "type": "boss",
+            "score": [
+              466,
+              600
+            ],
+            "hands": 2,
+            "discards": 1,
+            "effect": "All Club cards are debuffed"
+          },
+          "hand": [
+            "H_A",
+            {
+              "id": "C_K",
+              "debuff": true
+            },
+            {
+              "id": "C_Q",
+              "debuff": true
+            },
+            "H_J",
+            {
+              "id": "C_J",
+              "debuff": true
+            },
+            "S_T",
+            "D_7",
+            "S_4"
+          ],
+          "action": {
+            "method": "play",
+            "params": {
+              "cards": [
+                4,
+                3,
+                2,
+                1,
+                5
+              ]
+            }
+          },
+          "commit": {
+            "hand": "Pair",
+            "cards": [
+              4,
+              3,
+              2,
+              1,
+              5
+            ],
+            "score": 140
+          },
+          "straight": [
+            5,
+            3,
+            2,
+            1,
+            0
+          ],
+          "jokers": [
+            {
+              "id": "j_sly",
+              "effect": "+50 Chips if played hand contains a Pair",
+              "sell": 1
+            }
+          ],
+          "boss": [
+            "The Club",
+            600,
+            "All Club cards are debuffed"
+          ]
+        },
+        {
+          "sample": 2,
+          "turn": 36,
+          "ante": 2,
+          "blind": {
+            "type": "big",
+            "score": [
+              0,
+              1200
+            ],
+            "hands": 4,
+            "discards": 1
+          },
+          "hand": [
+            "S_K",
+            "H_Q",
+            "S_J",
+            "S_T",
+            "H_T",
+            "D_9",
+            "S_5",
+            "H_4"
+          ],
+          "action": {
+            "method": "play",
+            "params": {
+              "cards": [
+                4,
+                3,
+                5,
+                6,
+                7
+              ]
+            }
+          },
+          "commit": {
+            "hand": "Pair",
+            "cards": [
+              4,
+              3,
+              5,
+              6,
+              7
+            ],
+            "score": 1360
+          },
+          "straight": [
+            5,
+            3,
+            2,
+            1,
+            0
+          ],
+          "jokers": [
+            {
+              "id": "j_sly",
+              "effect": "+50 Chips if played hand contains a Pair",
+              "sell": 1
+            },
+            {
+              "id": "j_zany",
+              "effect": "+12 Mult if played hand contains a Three of a Kind",
+              "mod": {
+                "enhancement": "TYPE MULT"
+              },
+              "sell": 2
+            },
+            {
+              "id": "j_gros_michel",
+              "effect": "+15 Mult 1 in 6 chance this card is destroyed at end of round",
+              "sell": 2
+            },
+            {
+              "id": "j_hiker",
+              "effect": "Every played card permanently gains +5 Chips when scored",
+              "sell": 2
+            }
+          ],
+          "boss": [
+            "The Wheel",
+            1600,
+            "#1# in #2# cards get drawn face down"
+          ]
+        },
+        {
+          "sample": 4,
+          "turn": 63,
+          "ante": 3,
+          "blind": {
+            "type": "big",
+            "score": [
+              1068,
+              3000
+            ],
+            "hands": 5,
+            "discards": 0
+          },
+          "hand": [
+            "C_A",
+            "H_K",
+            "S_Q",
+            "H_J",
+            "H_T",
+            "C_7",
+            "C_5",
+            "D_3"
+          ],
+          "action": {
+            "method": "play",
+            "params": {
+              "cards": [
+                2,
+                3,
+                1,
+                0,
+                6
+              ]
+            }
+          },
+          "commit": {
+            "hand": "High Card",
+            "score": 384,
+            "cards": [
+              2,
+              3,
+              1,
+              0,
+              6
+            ]
+          },
+          "straight": [
+            4,
+            3,
+            2,
+            1,
+            0
+          ],
+          "jokers": [
+            {
+              "id": "j_fibonacci",
+              "effect": "Each played Ace, 2, 3, 5, or 8 gives +8 Mult when scored",
+              "mod": {
+                "enhancement": "CARD MULT"
+              },
+              "sell": 4
+            },
+            {
+              "id": "j_walkie_talkie",
+              "effect": "Each played 10 or 4 gives +10 Chips and +4 Mult when scored",
+              "sell": 2
+            },
+            {
+              "id": "j_burglar",
+              "effect": "When Blind is selected, gain +3 Hands and lose all discards",
+              "sell": 3
+            },
+            {
+              "id": "j_luchador",
+              "effect": "Sell this card to disable the current Boss Blind ",
+              "sell": 2
+            },
+            {
+              "id": "j_mystic_summit",
+              "effect": "+15 Mult when 0 discards remaining",
+              "mod": {
+                "enhancement": "NO DISCARD MULT"
+              },
+              "sell": 2
+            }
+          ],
+          "boss": [
+            "The Needle",
+            2000,
+            "Play only 1 hand"
+          ]
+        }
+      ],
+      "examples": [
+        {
+          "sample": 0,
+          "reward": 64.3572,
+          "ending": "game_over",
+          "ante": 4,
+          "last_before": {
+            "phase": "hand",
+            "ante": 4,
+            "round": 11,
+            "money": 2,
+            "blind": {
+              "type": "big",
+              "score": [
+                2679,
+                7500
+              ],
+              "hands": 1,
+              "discards": 3
+            },
+            "boss": [
+              "The Arm",
+              10000,
+              "Decrease level of played poker hand"
+            ],
+            "hand": [
+              "D_A",
+              "S_J",
+              "H_J",
+              "C_J",
+              "S_8",
+              "C_8",
+              "H_3",
+              "D_2"
+            ],
+            "jokers": {
+              "slots": "5/5",
+              "items": [
+                {
+                  "id": "j_sly",
+                  "effect": "+50 Chips if played hand contains a Pair",
+                  "sell": 1
+                },
+                {
+                  "id": "j_hiker",
+                  "effect": "Every played card permanently gains +5 Chips when scored",
+                  "sell": 2
+                },
+                {
+                  "id": "j_crafty",
+                  "effect": "+80 Chips if played hand contains a Flush",
+                  "sell": 2
+                },
+                {
+                  "id": "j_clever",
+                  "effect": "+80 Chips if played hand contains a Two Pair",
+                  "sell": 2
+                },
+                {
+                  "id": "j_splash",
+                  "effect": "Every played card counts in scoring",
+                  "sell": 1
+                }
+              ]
+            },
+            "consumables": {
+              "slots": "2/2",
+              "items": [
+                {
+                  "id": "c_sun",
+                  "effect": "Converts up to 3 selected cards to Hearts",
+                  "mod": {
+                    "enhancement": "SUIT CONVERSION"
+                  },
+                  "sell": 1
+                },
+                {
+                  "id": "c_justice",
+                  "effect": "Enhances 1 selected card into a Glass Card",
+                  "mod": {
+                    "enhancement": "ENHANCE"
+                  },
+                  "sell": 1
+                }
+              ]
+            },
+            "hand_values": {
+              "Straight Flush": [
+                1,
+                100,
+                8
+              ],
+              "Four of a Kind": [
+                1,
+                60,
+                7
+              ],
+              "Full House": [
+                2,
+                65,
+                6
+              ],
+              "Flush": [
+                1,
+                35,
+                4
+              ],
+              "Straight": [
+                1,
+                30,
+                4
+              ],
+              "Three of a Kind": [
+                1,
+                30,
+                3
+              ],
+              "Two Pair": [
+                2,
+                40,
+                3
+              ],
+              "Pair": [
+                2,
+                25,
+                3
+              ],
+              "High Card": [
+                1,
+                5,
+                1
+              ],
+              "Flush Five": [
+                1,
+                160,
+                16
+              ],
+              "Flush House": [
+                1,
+                140,
+                14
+              ],
+              "Five of a Kind": [
+                1,
+                120,
+                12
+              ]
+            }
+          },
+          "action": {
+            "method": "play",
+            "params": {
+              "cards": [
+                3,
+                2,
+                1,
+                5,
+                4
+              ]
+            }
+          },
+          "last_after": {
+            "phase": "GAME_OVER",
+            "blind": {
+              "type": "big",
+              "score": [
+                4155,
+                7500
+              ],
+              "hands": 0,
+              "discards": 3
+            },
+            "play_commit": {
+              "cards": [
+                3,
+                2,
+                1,
+                5,
+                4
+              ],
+              "hand": "Full House",
+              "score": 1476
+            }
+          }
+        },
+        {
+          "sample": 52,
+          "reward": 104.9491,
+          "ending": "game_over",
+          "ante": 6,
+          "last_before": {
+            "phase": "hand",
+            "ante": 6,
+            "round": 17,
+            "money": 3,
+            "blind": {
+              "type": "big",
+              "score": [
+                28473,
+                30000
+              ],
+              "hands": 1,
+              "discards": 2
+            },
+            "boss": [
+              "The Ox",
+              40000,
+              "Playing a #1# sets money to $0"
+            ],
+            "hand": [
+              "H_K",
+              "D_K",
+              "H_J",
+              "C_T",
+              "D_T",
+              "D_9",
+              "C_5",
+              "D_3"
+            ],
+            "jokers": {
+              "slots": "4/5",
+              "items": [
+                {
+                  "id": "j_madness",
+                  "effect": "When Small Blind or Big Blind is selected, gain X0.5 Mult and destroy a random Joker (Currently X5.5 Mult)",
+                  "sell": 3
+                },
+                {
+                  "id": "j_swashbuckler",
+                  "effect": "Adds the sell value of all other owned Jokers to Mult (Currently +8 Mult)",
+                  "mod": {
+                    "enhancement": "SET MULT"
+                  },
+                  "sell": 2
+                },
+                {
+                  "id": "j_clever",
+                  "effect": "+80 Chips if played hand contains a Two Pair",
+                  "sell": 2
+                },
+                {
+                  "id": "j_rocket",
+                  "effect": "Earn $1 at end of round Payout increases by $2 when Boss Blind is defeated",
+                  "sell": 3
+                }
+              ]
+            },
+            "consumables": {
+              "slots": "2/3",
+              "items": [
+                {
+                  "id": "c_sun",
+                  "effect": "Converts up to 3 selected cards to Hearts",
+                  "mod": {
+                    "enhancement": "SUIT CONVERSION"
+                  },
+                  "sell": 1
+                },
+                {
+                  "id": "c_chariot",
+                  "effect": "Enhances 1 selected card into a Steel Card",
+                  "mod": {
+                    "enhancement": "ENHANCE"
+                  },
+                  "sell": 1
+                }
+              ]
+            },
+            "hand_values": {
+              "Five of a Kind": [
+                1,
+                120,
+                12
+              ],
+              "Straight Flush": [
+                1,
+                100,
+                8
+              ],
+              "Four of a Kind": [
+                1,
+                60,
+                7
+              ],
+              "Full House": [
+                2,
+                65,
+                6
+              ],
+              "Flush": [
+                2,
+                50,
+                6
+              ],
+              "Straight": [
+                1,
+                30,
+                4
+              ],
+              "Three of a Kind": [
+                2,
+                50,
+                5
+              ],
+              "High Card": [
+                1,
+                5,
+                1
+              ],
+              "Pair": [
+                1,
+                10,
+                2
+              ],
+              "Two Pair": [
+                5,
+                100,
+                6
+              ],
+              "Flush Five": [
+                1,
+                160,
+                16
+              ],
+              "Flush House": [
+                1,
+                140,
+                14
+              ]
+            }
+          },
+          "action": {
+            "method": "play",
+            "params": {
+              "cards": [
+                2,
+                3,
+                4,
+                5,
+                6
+              ]
+            }
+          },
+          "last_after": {
+            "phase": "GAME_OVER",
+            "blind": {
+              "type": "big",
+              "score": [
+                29043,
+                30000
+              ],
+              "hands": 0,
+              "discards": 2
+            },
+            "play_commit": {
+              "hand": "Pair",
+              "cards": [
+                2,
+                3,
+                4,
+                5,
+                6
+              ],
+              "score": 570
+            }
+          }
+        }
+      ],
+      "error_count": 7
+    },
+    "440": {
+      "rollout": 440,
+      "episodes": 64,
+      "reward": 26.462248784722224,
+      "endings": {
+        "game_over": 64
+      },
+      "antes": {
+        "2": 18,
+        "1": 26,
+        "3": 13,
+        "4": 7
+      },
+      "actions": {
+        "select": 339,
+        "play": 956,
+        "discard": 278,
+        "buy": 310,
+        "next_round": 275,
+        "pack": 84,
+        "use": 44
+      },
+      "played_hands": {
+        "Pair": 423,
+        "Three of a Kind": 71,
+        "High Card": 46,
+        "Two Pair": 344,
+        "Full House": 68,
+        "Straight": 2,
+        "Four of a Kind": 2
+      },
+      "pair_or_high_with_raw_straight_available": 59,
+      "affected_samples": 45,
+      "total_plays": 956,
+      "plays_including_debuffed_card": 48,
+      "losses_with_discards_left": 58,
+      "caps": [],
+      "groups": {
+        "3840": [
+          {
+            "index": 0,
+            "reward": 28.67,
+            "ante": 2
+          },
+          {
+            "index": 1,
+            "reward": 0.69,
+            "ante": 1
+          },
+          {
+            "index": 2,
+            "reward": 0.52,
+            "ante": 1
+          },
+          {
+            "index": 3,
+            "reward": 20.67,
+            "ante": 2
+          }
+        ],
+        "3841": [
+          {
+            "index": 4,
+            "reward": 0.71,
+            "ante": 1
+          },
+          {
+            "index": 5,
+            "reward": 28.57,
+            "ante": 2
+          },
+          {
+            "index": 6,
+            "reward": 28.66,
+            "ante": 2
+          },
+          {
+            "index": 7,
+            "reward": 28.66,
+            "ante": 2
+          }
+        ],
+        "3842": [
+          {
+            "index": 8,
+            "reward": 46.17,
+            "ante": 3
+          },
+          {
+            "index": 9,
+            "reward": 48.17,
+            "ante": 3
+          },
+          {
+            "index": 10,
+            "reward": 48.17,
+            "ante": 3
+          },
+          {
+            "index": 11,
+            "reward": 40.4,
+            "ante": 3
+          }
+        ],
+        "3843": [
+          {
+            "index": 12,
+            "reward": 8.81,
+            "ante": 1
+          },
+          {
+            "index": 13,
+            "reward": 20.31,
+            "ante": 2
+          },
+          {
+            "index": 14,
+            "reward": 8.56,
+            "ante": 1
+          },
+          {
+            "index": 15,
+            "reward": 8.56,
+            "ante": 1
+          }
+        ],
+        "3844": [
+          {
+            "index": 16,
+            "reward": 40.68,
+            "ante": 3
+          },
+          {
+            "index": 17,
+            "reward": 64.22,
+            "ante": 4
+          },
+          {
+            "index": 18,
+            "reward": 44.68,
+            "ante": 3
+          },
+          {
+            "index": 19,
+            "reward": 8.57,
+            "ante": 1
+          }
+        ],
+        "3845": [
+          {
+            "index": 20,
+            "reward": 60.24,
+            "ante": 3
+          },
+          {
+            "index": 21,
+            "reward": 0.48,
+            "ante": 1
+          },
+          {
+            "index": 22,
+            "reward": 0.76,
+            "ante": 1
+          },
+          {
+            "index": 23,
+            "reward": 64.34,
+            "ante": 3
+          }
+        ],
+        "3846": [
+          {
+            "index": 24,
+            "reward": 0.67,
+            "ante": 1
+          },
+          {
+            "index": 25,
+            "reward": 0.67,
+            "ante": 1
+          },
+          {
+            "index": 26,
+            "reward": 0.67,
+            "ante": 1
+          },
+          {
+            "index": 27,
+            "reward": 0.67,
+            "ante": 1
+          }
+        ],
+        "3847": [
+          {
+            "index": 28,
+            "reward": 4.69,
+            "ante": 1
+          },
+          {
+            "index": 29,
+            "reward": 0.52,
+            "ante": 1
+          },
+          {
+            "index": 30,
+            "reward": 68.66,
+            "ante": 4
+          },
+          {
+            "index": 31,
+            "reward": 4.69,
+            "ante": 1
+          }
+        ],
+        "3848": [
+          {
+            "index": 32,
+            "reward": 44.49,
+            "ante": 3
+          },
+          {
+            "index": 33,
+            "reward": 64.37,
+            "ante": 4
+          },
+          {
+            "index": 34,
+            "reward": 44.49,
+            "ante": 3
+          },
+          {
+            "index": 35,
+            "reward": 42.83,
+            "ante": 3
+          }
+        ],
+        "3849": [
+          {
+            "index": 36,
+            "reward": 20.72,
+            "ante": 2
+          },
+          {
+            "index": 37,
+            "reward": 4.43,
+            "ante": 1
+          },
+          {
+            "index": 38,
+            "reward": 4.52,
+            "ante": 1
+          },
+          {
+            "index": 39,
+            "reward": 4.52,
+            "ante": 1
+          }
+        ],
+        "3850": [
+          {
+            "index": 40,
+            "reward": 0.72,
+            "ante": 1
+          },
+          {
+            "index": 41,
+            "reward": 28.49,
+            "ante": 2
+          },
+          {
+            "index": 42,
+            "reward": 0.61,
+            "ante": 1
+          },
+          {
+            "index": 43,
+            "reward": 62.4,
+            "ante": 4
+          }
+        ],
+        "3851": [
+          {
+            "index": 44,
+            "reward": 28.58,
+            "ante": 2
+          },
+          {
+            "index": 45,
+            "reward": 26.61,
+            "ante": 2
+          },
+          {
+            "index": 46,
+            "reward": 28.77,
+            "ante": 2
+          },
+          {
+            "index": 47,
+            "reward": 26.61,
+            "ante": 2
+          }
+        ],
+        "3852": [
+          {
+            "index": 48,
+            "reward": 0.67,
+            "ante": 1
+          },
+          {
+            "index": 49,
+            "reward": 4.74,
+            "ante": 1
+          },
+          {
+            "index": 50,
+            "reward": 0.51,
+            "ante": 1
+          },
+          {
+            "index": 51,
+            "reward": 4.74,
+            "ante": 1
+          }
+        ],
+        "3853": [
+          {
+            "index": 52,
+            "reward": 20.65,
+            "ante": 2
+          },
+          {
+            "index": 53,
+            "reward": 20.73,
+            "ante": 2
+          },
+          {
+            "index": 54,
+            "reward": 20.73,
+            "ante": 2
+          },
+          {
+            "index": 55,
+            "reward": 20.65,
+            "ante": 2
+          }
+        ],
+        "3854": [
+          {
+            "index": 56,
+            "reward": 84.68,
+            "ante": 4
+          },
+          {
+            "index": 57,
+            "reward": 88.36,
+            "ante": 4
+          },
+          {
+            "index": 58,
+            "reward": 68.45,
+            "ante": 3
+          },
+          {
+            "index": 59,
+            "reward": 88.28,
+            "ante": 4
+          }
+        ],
+        "3855": [
+          {
+            "index": 60,
+            "reward": 48.23,
+            "ante": 3
+          },
+          {
+            "index": 61,
+            "reward": 0.52,
+            "ante": 1
+          },
+          {
+            "index": 62,
+            "reward": 28.6,
+            "ante": 2
+          },
+          {
+            "index": 63,
+            "reward": 28.39,
+            "ante": 2
+          }
+        ]
+      },
+      "opportunity_examples": [
+        {
+          "sample": 0,
+          "turn": 11,
+          "ante": 1,
+          "blind": {
+            "type": "big",
+            "score": [
+              0,
+              450
+            ],
+            "hands": 4,
+            "discards": 4
+          },
+          "hand": [
+            "S_Q",
+            "C_Q",
+            "H_J",
+            "D_T",
+            "H_9",
+            "D_8",
+            "S_5",
+            "H_4"
+          ],
+          "action": {
+            "method": "play",
+            "params": {
+              "cards": [
+                2,
+                3,
+                5,
+                6,
+                7
+              ]
+            }
+          },
+          "commit": {
+            "score": 285,
+            "cards": [
+              2,
+              3,
+              5,
+              6,
+              7
+            ],
+            "hand": "High Card"
+          },
+          "straight": [
+            5,
+            4,
+            3,
+            2,
+            0
+          ],
+          "jokers": [
+            {
+              "id": "j_raised_fist",
+              "effect": "Adds double the rank of lowest ranked card held in hand to Mult",
+              "mod": {
+                "enhancement": "SOCIALIZED MULT"
+              },
+              "sell": 2
+            }
+          ],
+          "boss": [
+            "The Hook",
+            600,
+            "Discards 2 random cards per hand played"
+          ]
+        },
+        {
+          "sample": 0,
+          "turn": 30,
+          "ante": 2,
+          "blind": {
+            "type": "big",
+            "score": [
+              0,
+              1200
+            ],
+            "hands": 4,
+            "discards": 4
+          },
+          "hand": [
+            "S_A",
+            "D_A",
+            "C_T",
+            "D_9",
+            "C_8",
+            "D_8",
+            "S_7",
+            "S_6"
+          ],
+          "action": {
+            "method": "play",
+            "params": {
+              "cards": [
+                5,
+                4,
+                2,
+                1,
+                3
+              ]
+            }
+          },
+          "commit": {
+            "score": 364,
+            "cards": [
+              5,
+              4,
+              2,
+              1,
+              3
+            ],
+            "hand": "Pair"
+          },
+          "straight": [
+            7,
+            6,
+            4,
+            3,
+            2
+          ],
+          "jokers": [
+            {
+              "id": "j_raised_fist",
+              "effect": "Adds double the rank of lowest ranked card held in hand to Mult",
+              "mod": {
+                "enhancement": "SOCIALIZED MULT"
+              },
+              "sell": 2
+            },
+            {
+              "id": "j_shoot_the_moon",
+              "effect": "Each Queen held in hand gives +13 Mult",
+              "sell": 2
+            }
+          ],
+          "boss": [
+            "The Psychic",
+            1600,
+            "Must play 5 cards"
+          ]
+        },
+        {
+          "sample": 0,
+          "turn": 41,
+          "ante": 2,
+          "blind": {
+            "type": "boss",
+            "score": [
+              820,
+              1600
+            ],
+            "hands": 2,
+            "discards": 3,
+            "effect": "Must play 5 cards"
+          },
+          "hand": [
+            "H_A",
+            "D_A",
+            "D_K",
+            "H_Q",
+            "H_J",
+            "S_T",
+            "C_8",
+            "S_3"
+          ],
+          "action": {
+            "method": "play",
+            "params": {
+              "cards": [
+                2,
+                3,
+                1,
+                0,
+                5
+              ]
+            }
+          },
+          "commit": {
+            "score": 256,
+            "cards": [
+              2,
+              3,
+              1,
+              0,
+              5
+            ],
+            "hand": "Pair"
+          },
+          "straight": [
+            5,
+            4,
+            3,
+            2,
+            0
+          ],
+          "jokers": [
+            {
+              "id": "j_raised_fist",
+              "effect": "Adds double the rank of lowest ranked card held in hand to Mult",
+              "mod": {
+                "enhancement": "SOCIALIZED MULT"
+              },
+              "sell": 2
+            },
+            {
+              "id": "j_shoot_the_moon",
+              "effect": "Each Queen held in hand gives +13 Mult",
+              "sell": 2
+            }
+          ],
+          "boss": [
+            "The Psychic",
+            1600,
+            "Must play 5 cards"
+          ]
+        }
+      ],
+      "examples": [
+        {
+          "sample": 0,
+          "reward": 28.6725,
+          "ending": "game_over",
+          "ante": 2,
+          "last_before": {
+            "phase": "hand",
+            "ante": 2,
+            "round": 6,
+            "money": 3,
+            "blind": {
+              "type": "boss",
+              "score": [
+                1076,
+                1600
+              ],
+              "hands": 1,
+              "discards": 3,
+              "effect": "Must play 5 cards"
+            },
+            "boss": [
+              "The Psychic",
+              1600,
+              "Must play 5 cards"
+            ],
+            "hand": [
+              "S_A",
+              "S_J",
+              "H_J",
+              "C_8",
+              "S_7",
+              "C_5",
+              "D_5",
+              "S_3"
+            ],
+            "jokers": {
+              "slots": "2/5",
+              "items": [
+                {
+                  "id": "j_raised_fist",
+                  "effect": "Adds double the rank of lowest ranked card held in hand to Mult",
+                  "mod": {
+                    "enhancement": "SOCIALIZED MULT"
+                  },
+                  "sell": 2
+                },
+                {
+                  "id": "j_shoot_the_moon",
+                  "effect": "Each Queen held in hand gives +13 Mult",
+                  "sell": 2
+                }
+              ]
+            },
+            "consumables": {
+              "slots": "2/2",
+              "items": [
+                {
+                  "id": "c_chariot",
+                  "effect": "Enhances 1 selected card into a Steel Card",
+                  "mod": {
+                    "enhancement": "ENHANCE"
+                  },
+                  "sell": 1
+                },
+                {
+                  "id": "c_lovers",
+                  "effect": "Enhances 1 selected card into a Wild Card",
+                  "mod": {
+                    "enhancement": "ENHANCE"
+                  },
+                  "sell": 1
+                }
+              ]
+            },
+            "hand_values": {
+              "Five of a Kind": [
+                1,
+                120,
+                12
+              ],
+              "Straight Flush": [
+                1,
+                100,
+                8
+              ],
+              "Four of a Kind": [
+                1,
+                60,
+                7
+              ],
+              "Full House": [
+                1,
+                40,
+                4
+              ],
+              "Flush": [
+                1,
+                35,
+                4
+              ],
+              "Straight": [
+                1,
+                30,
+                4
+              ],
+              "Three of a Kind": [
+                1,
+                30,
+                3
+              ],
+              "Two Pair": [
+                1,
+                20,
+                2
+              ],
+              "Pair": [
+                1,
+                10,
+                2
+              ],
+              "High Card": [
+                1,
+                5,
+                1
+              ],
+              "Flush Five": [
+                1,
+                160,
+                16
+              ],
+              "Flush House": [
+                1,
+                140,
+                14
+              ]
+            }
+          },
+          "action": {
+            "method": "play",
+            "params": {
+              "cards": [
+                6,
+                5,
+                2,
+                1,
+                3
+              ]
+            }
+          },
+          "last_after": {
+            "phase": "GAME_OVER",
+            "blind": {
+              "type": "boss",
+              "score": [
+                1476,
+                1600
+              ],
+              "hands": 0,
+              "discards": 3,
+              "effect": "Must play 5 cards"
+            },
+            "play_commit": {
+              "score": 400,
+              "cards": [
+                6,
+                5,
+                2,
+                1,
+                3
+              ],
+              "hand": "Two Pair"
+            }
+          }
+        },
+        {
+          "sample": 57,
+          "reward": 88.3648,
+          "ending": "game_over",
+          "ante": 4,
+          "last_before": {
+            "phase": "hand",
+            "ante": 4,
+            "round": 15,
+            "money": 50,
+            "blind": {
+              "type": "boss",
+              "score": [
+                7296,
+                20000
+              ],
+              "hands": 1,
+              "discards": 4,
+              "effect": "Extra large blind"
+            },
+            "boss": [
+              "The Wall",
+              20000,
+              "Extra large blind"
+            ],
+            "hand": [
+              "S_K",
+              "C_K",
+              "C_Q",
+              "H_J",
+              "C_J",
+              "H_7",
+              "D_4",
+              "C_3"
+            ],
+            "jokers": {
+              "slots": "5/5",
+              "items": [
+                {
+                  "id": "j_mad",
+                  "effect": "+10 Mult if played hand contains a Two Pair",
+                  "mod": {
+                    "enhancement": "TYPE MULT"
+                  },
+                  "sell": 1
+                },
+                {
+                  "id": "j_arrowhead",
+                  "effect": "Played cards with Spade suit give +50 Chips when scored",
+                  "sell": 2
+                },
+                {
+                  "id": "j_banner",
+                  "effect": "+30 Chips for each remaining discard",
+                  "mod": {
+                    "enhancement": "DISCARD CHIPS"
+                  },
+                  "sell": 2
+                },
+                {
+                  "id": "j_golden",
+                  "effect": "Earn $4 at end of round",
+                  "mod": {
+                    "enhancement": "BONUS DOLLARS"
+                  },
+                  "sell": 2
+                },
+                {
+                  "id": "j_pareidolia",
+                  "effect": "All cards are considered face cards",
+                  "mod": {
+                    "edition": "HOLO",
+                    "enhancement": "ALL FACE CARDS"
+                  },
+                  "sell": 3
+                }
+              ]
+            },
+            "consumables": {
+              "slots": "1/2",
+              "items": [
+                {
+                  "id": "c_venus",
+                  "effect": "(lvl.1) Level up Three of a Kind +2 Mult and +20 chips",
+                  "mod": {
+                    "enhancement": "HAND UPGRADE"
+                  },
+                  "sell": 1
+                }
+              ]
+            },
+            "hand_values": {
+              "Straight": [
+                1,
+                30,
+                4
+              ],
+              "Three of a Kind": [
+                1,
+                30,
+                3
+              ],
+              "Two Pair": [
+                3,
+                60,
+                4
+              ],
+              "Pair": [
+                5,
+                70,
+                6
+              ],
+              "High Card": [
+                1,
+                5,
+                1
+              ],
+              "Flush Five": [
+                1,
+                160,
+                16
+              ],
+              "Flush House": [
+                1,
+                140,
+                14
+              ],
+              "Five of a Kind": [
+                1,
+                120,
+                12
+              ],
+              "Straight Flush": [
+                1,
+                100,
+                8
+              ],
+              "Four of a Kind": [
+                1,
+                60,
+                7
+              ],
+              "Full House": [
+                2,
+                65,
+                6
+              ],
+              "Flush": [
+                1,
+                35,
+                4
+              ]
+            }
+          },
+          "action": {
+            "method": "play",
+            "params": {
+              "cards": [
+                4,
+                3,
+                1,
+                2,
+                5
+              ]
+            }
+          },
+          "last_after": {
+            "phase": "GAME_OVER",
+            "blind": {
+              "type": "boss",
+              "score": [
+                10656,
+                20000
+              ],
+              "hands": 0,
+              "discards": 4,
+              "effect": "Extra large blind"
+            },
+            "play_commit": {
+              "score": 3360,
+              "hand": "Pair",
+              "cards": [
+                4,
+                3,
+                1,
+                2,
+                5
+              ]
+            }
+          }
+        }
+      ],
+      "error_count": 5
+    },
+    "449": {
+      "rollout": 449,
+      "episodes": 64,
+      "reward": 46.390621725063134,
+      "endings": {
+        "game_over": 62,
+        "context_cap": 2
+      },
+      "antes": {
+        "4": 19,
+        "5": 7,
+        "1": 14,
+        "6": 2,
+        "3": 12,
+        "2": 10
+      },
+      "actions": {
+        "select": 539,
+        "play": 1308,
+        "discard": 539,
+        "buy": 602,
+        "pack": 248,
+        "next_round": 475,
+        "use": 134,
+        "reroll": 1
+      },
+      "played_hands": {
+        "Pair": 503,
+        "Two Pair": 533,
+        "Three of a Kind": 129,
+        "Full House": 92,
+        "High Card": 39,
+        "Four of a Kind": 8,
+        "Straight": 4
+      },
+      "pair_or_high_with_raw_straight_available": 74,
+      "affected_samples": 41,
+      "total_plays": 1308,
+      "plays_including_debuffed_card": 121,
+      "losses_with_discards_left": 53,
+      "caps": [
+        {
+          "sample": 8,
+          "ante": 6,
+          "turns": 125,
+          "reward": 104.79385,
+          "tokens": 48937,
+          "phase": "hand",
+          "remaining": {
+            "type": "boss",
+            "score": [
+              31754,
+              40000
+            ],
+            "hands": 1,
+            "discards": 3,
+            "effect": "No repeat hand types this round"
+          }
+        },
+        {
+          "sample": 9,
+          "ante": 6,
+          "turns": 132,
+          "reward": 128.247125,
+          "tokens": 48456,
+          "phase": "hand",
+          "remaining": {
+            "type": "boss",
+            "score": [
+              9885,
+              40000
+            ],
+            "hands": 3,
+            "discards": 4,
+            "effect": "All Heart cards are debuffed"
+          }
+        }
+      ],
+      "groups": {
+        "3984": [
+          {
+            "index": 0,
+            "reward": 82.52,
+            "ante": 4
+          },
+          {
+            "index": 1,
+            "reward": 60.69,
+            "ante": 4
+          },
+          {
+            "index": 2,
+            "reward": 84.55,
+            "ante": 4
+          },
+          {
+            "index": 3,
+            "reward": 60.6,
+            "ante": 4
+          }
+        ],
+        "3985": [
+          {
+            "index": 4,
+            "reward": 64.43,
+            "ante": 4
+          },
+          {
+            "index": 5,
+            "reward": 84.38,
+            "ante": 5
+          },
+          {
+            "index": 6,
+            "reward": 64.25,
+            "ante": 4
+          },
+          {
+            "index": 7,
+            "reward": 0.78,
+            "ante": 1
+          }
+        ],
+        "3986": [
+          {
+            "index": 8,
+            "reward": 104.79,
+            "ante": 6
+          },
+          {
+            "index": 9,
+            "reward": 128.25,
+            "ante": 6
+          },
+          {
+            "index": 10,
+            "reward": 0.91,
+            "ante": 1
+          },
+          {
+            "index": 11,
+            "reward": 0.91,
+            "ante": 1
+          }
+        ],
+        "3987": [
+          {
+            "index": 12,
+            "reward": 68.45,
+            "ante": 4
+          },
+          {
+            "index": 13,
+            "reward": 88.17,
+            "ante": 5
+          },
+          {
+            "index": 14,
+            "reward": 88.58,
+            "ante": 5
+          },
+          {
+            "index": 15,
+            "reward": 0.49,
+            "ante": 1
+          }
+        ],
+        "3988": [
+          {
+            "index": 16,
+            "reward": 84.65,
+            "ante": 5
+          },
+          {
+            "index": 17,
+            "reward": 0.72,
+            "ante": 1
+          },
+          {
+            "index": 18,
+            "reward": 88.51,
+            "ante": 5
+          },
+          {
+            "index": 19,
+            "reward": 48.56,
+            "ante": 3
+          }
+        ],
+        "3989": [
+          {
+            "index": 20,
+            "reward": 26.39,
+            "ante": 2
+          },
+          {
+            "index": 21,
+            "reward": 40.12,
+            "ante": 3
+          },
+          {
+            "index": 22,
+            "reward": 28.2,
+            "ante": 2
+          },
+          {
+            "index": 23,
+            "reward": 40.18,
+            "ante": 3
+          }
+        ],
+        "3990": [
+          {
+            "index": 24,
+            "reward": 40.62,
+            "ante": 3
+          },
+          {
+            "index": 25,
+            "reward": 20.68,
+            "ante": 2
+          },
+          {
+            "index": 26,
+            "reward": 48.62,
+            "ante": 3
+          },
+          {
+            "index": 27,
+            "reward": 20.63,
+            "ante": 2
+          }
+        ],
+        "3991": [
+          {
+            "index": 28,
+            "reward": 64.51,
+            "ante": 4
+          },
+          {
+            "index": 29,
+            "reward": 66.3,
+            "ante": 4
+          },
+          {
+            "index": 30,
+            "reward": 68.34,
+            "ante": 4
+          },
+          {
+            "index": 31,
+            "reward": 80.55,
+            "ante": 5
+          }
+        ],
+        "3992": [
+          {
+            "index": 32,
+            "reward": 4.46,
+            "ante": 1
+          },
+          {
+            "index": 33,
+            "reward": 48.45,
+            "ante": 3
+          },
+          {
+            "index": 34,
+            "reward": 24.46,
+            "ante": 2
+          },
+          {
+            "index": 35,
+            "reward": 46.6,
+            "ante": 3
+          }
+        ],
+        "3993": [
+          {
+            "index": 36,
+            "reward": 48.22,
+            "ante": 3
+          },
+          {
+            "index": 37,
+            "reward": 48.22,
+            "ante": 3
+          },
+          {
+            "index": 38,
+            "reward": 48.29,
+            "ante": 3
+          },
+          {
+            "index": 39,
+            "reward": 46.32,
+            "ante": 3
+          }
+        ],
+        "3994": [
+          {
+            "index": 40,
+            "reward": 8.36,
+            "ante": 1
+          },
+          {
+            "index": 41,
+            "reward": 8.36,
+            "ante": 1
+          },
+          {
+            "index": 42,
+            "reward": 8.36,
+            "ante": 1
+          },
+          {
+            "index": 43,
+            "reward": 8.36,
+            "ante": 1
+          }
+        ],
+        "3995": [
+          {
+            "index": 44,
+            "reward": 68.41,
+            "ante": 4
+          },
+          {
+            "index": 45,
+            "reward": 68.35,
+            "ante": 4
+          },
+          {
+            "index": 46,
+            "reward": 68.44,
+            "ante": 4
+          },
+          {
+            "index": 47,
+            "reward": 68.43,
+            "ante": 4
+          }
+        ],
+        "3996": [
+          {
+            "index": 48,
+            "reward": 20.49,
+            "ante": 2
+          },
+          {
+            "index": 49,
+            "reward": 64.56,
+            "ante": 4
+          },
+          {
+            "index": 50,
+            "reward": 64.88,
+            "ante": 4
+          },
+          {
+            "index": 51,
+            "reward": 68.88,
+            "ante": 4
+          }
+        ],
+        "3997": [
+          {
+            "index": 52,
+            "reward": 0.79,
+            "ante": 1
+          },
+          {
+            "index": 53,
+            "reward": 4.65,
+            "ante": 1
+          },
+          {
+            "index": 54,
+            "reward": 4.65,
+            "ante": 1
+          },
+          {
+            "index": 55,
+            "reward": 60.77,
+            "ante": 4
+          }
+        ],
+        "3998": [
+          {
+            "index": 56,
+            "reward": 80.27,
+            "ante": 5
+          },
+          {
+            "index": 57,
+            "reward": 68.71,
+            "ante": 4
+          },
+          {
+            "index": 58,
+            "reward": 44.21,
+            "ante": 3
+          },
+          {
+            "index": 59,
+            "reward": 0.55,
+            "ante": 1
+          }
+        ],
+        "3999": [
+          {
+            "index": 60,
+            "reward": 28.18,
+            "ante": 2
+          },
+          {
+            "index": 61,
+            "reward": 28.18,
+            "ante": 2
+          },
+          {
+            "index": 62,
+            "reward": 28.39,
+            "ante": 2
+          },
+          {
+            "index": 63,
+            "reward": 28.39,
+            "ante": 2
+          }
+        ]
+      },
+      "opportunity_examples": [
+        {
+          "sample": 0,
+          "turn": 81,
+          "ante": 4,
+          "blind": {
+            "type": "big",
+            "score": [
+              0,
+              7500
+            ],
+            "hands": 3,
+            "discards": 5
+          },
+          "hand": [
+            "S_K",
+            "H_K",
+            "H_T",
+            "H_9",
+            "S_6",
+            "S_5",
+            "D_4",
+            "H_3",
+            "S_2"
+          ],
+          "action": {
+            "method": "play",
+            "params": {
+              "cards": [
+                5,
+                4,
+                1,
+                0,
+                6
+              ]
+            }
+          },
+          "commit": {
+            "cards": [
+              5,
+              4,
+              1,
+              0,
+              6
+            ],
+            "score": 1260,
+            "hand": "Pair"
+          },
+          "straight": [
+            8,
+            7,
+            6,
+            5,
+            4
+          ],
+          "jokers": [
+            {
+              "id": "j_abstract",
+              "effect": "+3 Mult for each Joker card (Currently +15 Mult)",
+              "mod": {
+                "enhancement": "JOKER MULT"
+              },
+              "sell": 2
+            },
+            {
+              "id": "j_8_ball",
+              "effect": "1 in 4 chance for each played 8 to create a Tarot card when scored (Must have room)",
+              "mod": {
+                "edition": "HOLO",
+                "enhancement": "SPAWN TAROT"
+              },
+              "sell": 4
+            },
+            {
+              "id": "j_riff_raff",
+              "effect": "When Blind is selected, create 2 Common Jokers (Must have room)",
+              "sell": 3
+            },
+            {
+              "id": "j_juggler",
+              "effect": "+1 hand size",
+              "mod": {
+                "enhancement": "HAND SIZE"
+              },
+              "sell": 2
+            },
+            {
+              "id": "j_business",
+              "effect": "Played face cards have a 1 in 2 chance to give $2 when scored",
+              "mod": {
+                "enhancement": "FACE DOLLAR CHANCE"
+              },
+              "sell": 2
+            }
+          ],
+          "boss": [
+            "The Eye",
+            10000,
+            "No repeat hand types this round"
+          ]
+        },
+        {
+          "sample": 2,
+          "turn": 83,
+          "ante": 4,
+          "blind": {
+            "type": "big",
+            "score": [
+              0,
+              7500
+            ],
+            "hands": 3,
+            "discards": 5
+          },
+          "hand": [
+            "S_K",
+            "H_K",
+            "H_T",
+            "H_9",
+            "S_6",
+            "S_5",
+            "D_4",
+            "H_3",
+            "S_2"
+          ],
+          "action": {
+            "method": "play",
+            "params": {
+              "cards": [
+                3,
+                4,
+                1,
+                0,
+                5
+              ]
+            }
+          },
+          "commit": {
+            "cards": [
+              3,
+              4,
+              1,
+              0,
+              5
+            ],
+            "score": 2160,
+            "hand": "Pair"
+          },
+          "straight": [
+            8,
+            7,
+            6,
+            5,
+            4
+          ],
+          "jokers": [
+            {
+              "id": "j_abstract",
+              "effect": "+3 Mult for each Joker card (Currently +15 Mult)",
+              "mod": {
+                "enhancement": "JOKER MULT"
+              },
+              "sell": 2
+            },
+            {
+              "id": "j_8_ball",
+              "effect": "1 in 4 chance for each played 8 to create a Tarot card when scored (Must have room)",
+              "mod": {
+                "edition": "HOLO",
+                "enhancement": "SPAWN TAROT"
+              },
+              "sell": 4
+            },
+            {
+              "id": "j_riff_raff",
+              "effect": "When Blind is selected, create 2 Common Jokers (Must have room)",
+              "sell": 3
+            },
+            {
+              "id": "j_juggler",
+              "effect": "+1 hand size",
+              "mod": {
+                "enhancement": "HAND SIZE"
+              },
+              "sell": 2
+            },
+            {
+              "id": "j_supernova",
+              "effect": "Adds the number of times poker hand has been played this run to Mult",
+              "mod": {
+                "enhancement": "HAND PLAYED MULT"
+              },
+              "sell": 2
+            }
+          ],
+          "boss": [
+            "The Eye",
+            10000,
+            "No repeat hand types this round"
+          ]
+        },
+        {
+          "sample": 3,
+          "turn": 51,
+          "ante": 3,
+          "blind": {
+            "type": "boss",
+            "score": [
+              3672,
+              4000
+            ],
+            "hands": 1,
+            "discards": 4,
+            "effect": "Decrease level of played poker hand"
+          },
+          "hand": [
+            "H_A",
+            "H_T",
+            "D_9",
+            "S_8",
+            "H_8",
+            "C_7",
+            "S_5",
+            "S_4",
+            "D_3",
+            "D_2"
+          ],
+          "action": {
+            "method": "play",
+            "params": {
+              "cards": [
+                4,
+                3,
+                5,
+                6,
+                7
+              ]
+            }
+          },
+          "commit": {
+            "hand": "Pair",
+            "score": 1312,
+            "cards": [
+              4,
+              3,
+              5,
+              6,
+              7
+            ]
+          },
+          "straight": [
+            0,
+            9,
+            8,
+            7,
+            6
+          ],
+          "jokers": [
+            {
+              "id": "j_abstract",
+              "effect": "+3 Mult for each Joker card (Currently +15 Mult)",
+              "mod": {
+                "enhancement": "JOKER MULT"
+              },
+              "sell": 2
+            },
+            {
+              "id": "j_8_ball",
+              "effect": "1 in 4 chance for each played 8 to create a Tarot card when scored (Must have room)",
+              "mod": {
+                "enhancement": "SPAWN TAROT",
+                "edition": "HOLO"
+              },
+              "sell": 4
+            },
+            {
+              "id": "j_popcorn",
+              "effect": "+4 Mult -4 Mult per round played",
+              "sell": 2
+            },
+            {
+              "id": "j_gluttenous_joker",
+              "effect": "Played cards with Club suit give +3 Mult when scored",
+              "mod": {
+                "enhancement": "SUIT MULT"
+              },
+              "sell": 2
+            },
+            {
+              "id": "j_troubadour",
+              "effect": "+2 hand size, -1 hand each round",
+              "mod": {
+                "enhancement": "HAND SIZE, PLAYS"
+              },
+              "sell": 3
+            }
+          ],
+          "boss": [
+            "The Arm",
+            4000,
+            "Decrease level of played poker hand"
+          ]
+        }
+      ],
+      "examples": [
+        {
+          "sample": 0,
+          "reward": 82.52373333333333,
+          "ending": "game_over",
+          "ante": 4,
+          "last_before": {
+            "phase": "hand",
+            "ante": 4,
+            "round": 14,
+            "money": 9,
+            "blind": {
+              "type": "big",
+              "score": [
+                3928,
+                7500
+              ],
+              "hands": 1,
+              "discards": 5
+            },
+            "boss": [
+              "The Eye",
+              10000,
+              "No repeat hand types this round"
+            ],
+            "hand": [
+              "D_A",
+              "S_Q",
+              "H_Q",
+              "D_T",
+              "D_5",
+              "H_3",
+              "D_3",
+              "S_2",
+              "H_2"
+            ],
+            "jokers": {
+              "slots": "5/5",
+              "items": [
+                {
+                  "id": "j_abstract",
+                  "effect": "+3 Mult for each Joker card (Currently +15 Mult)",
+                  "mod": {
+                    "enhancement": "JOKER MULT"
+                  },
+                  "sell": 2
+                },
+                {
+                  "id": "j_8_ball",
+                  "effect": "1 in 4 chance for each played 8 to create a Tarot card when scored (Must have room)",
+                  "mod": {
+                    "edition": "HOLO",
+                    "enhancement": "SPAWN TAROT"
+                  },
+                  "sell": 4
+                },
+                {
+                  "id": "j_riff_raff",
+                  "effect": "When Blind is selected, create 2 Common Jokers (Must have room)",
+                  "sell": 3
+                },
+                {
+                  "id": "j_juggler",
+                  "effect": "+1 hand size",
+                  "mod": {
+                    "enhancement": "HAND SIZE"
+                  },
+                  "sell": 2
+                },
+                {
+                  "id": "j_business",
+                  "effect": "Played face cards have a 1 in 2 chance to give $2 when scored",
+                  "mod": {
+                    "enhancement": "FACE DOLLAR CHANCE"
+                  },
+                  "sell": 2
+                }
+              ]
+            },
+            "consumables": {
+              "slots": "2/2",
+              "items": [
+                {
+                  "id": "c_devil",
+                  "effect": "Enhances 1 selected card into a Gold Card",
+                  "mod": {
+                    "enhancement": "ENHANCE"
+                  },
+                  "sell": 1
+                },
+                {
+                  "id": "c_death",
+                  "effect": "Select 2 cards, convert the left card into the right card (Drag to rearrange)",
+                  "mod": {
+                    "enhancement": "CARD CONVERSION"
+                  },
+                  "sell": 1
+                }
+              ]
+            },
+            "hand_values": {
+              "Five of a Kind": [
+                1,
+                120,
+                12
+              ],
+              "Straight Flush": [
+                1,
+                100,
+                8
+              ],
+              "Four of a Kind": [
+                1,
+                60,
+                7
+              ],
+              "Full House": [
+                1,
+                40,
+                4
+              ],
+              "Flush": [
+                1,
+                35,
+                4
+              ],
+              "Straight": [
+                1,
+                30,
+                4
+              ],
+              "Three of a Kind": [
+                3,
+                70,
+                7
+              ],
+              "Two Pair": [
+                3,
+                60,
+                4
+              ],
+              "Pair": [
+                2,
+                25,
+                3
+              ],
+              "High Card": [
+                1,
+                5,
+                1
+              ],
+              "Flush Five": [
+                1,
+                160,
+                16
+              ],
+              "Flush House": [
+                1,
+                140,
+                14
+              ]
+            }
+          },
+          "action": {
+            "method": "play",
+            "params": {
+              "cards": [
+                6,
+                5,
+                7,
+                3,
+                2
+              ]
+            }
+          },
+          "last_after": {
+            "phase": "GAME_OVER",
+            "blind": {
+              "type": "big",
+              "score": [
+                4796,
+                7500
+              ],
+              "hands": 0,
+              "discards": 5
+            },
+            "play_commit": {
+              "cards": [
+                6,
+                5,
+                7,
+                3,
+                2
+              ],
+              "score": 868,
+              "hand": "Pair"
+            }
+          }
+        },
+        {
+          "sample": 9,
+          "reward": 128.247125,
+          "ending": "context_cap",
+          "ante": 6,
+          "last_before": {
+            "phase": "hand",
+            "ante": 6,
+            "round": 21,
+            "money": 36,
+            "blind": {
+              "type": "boss",
+              "score": [
+                2325,
+                40000
+              ],
+              "hands": 4,
+              "discards": 4,
+              "effect": "All Heart cards are debuffed"
+            },
+            "boss": [
+              "The Head",
+              40000,
+              "All Heart cards are debuffed"
+            ],
+            "hand": [
+              "S_A",
+              {
+                "id": "H_A",
+                "debuff": true
+              },
+              "C_A",
+              "C_K",
+              "D_K",
+              "S_J",
+              {
+                "id": "H_J",
+                "debuff": true
+              },
+              "D_2"
+            ],
+            "jokers": {
+              "slots": "5/5",
+              "items": [
+                {
+                  "id": "j_raised_fist",
+                  "effect": "Adds double the rank of lowest ranked card held in hand to Mult",
+                  "mod": {
+                    "enhancement": "SOCIALIZED MULT",
+                    "edition": "HOLO"
+                  },
+                  "sell": 4
+                },
+                {
+                  "id": "j_mad",
+                  "effect": "+10 Mult if played hand contains a Two Pair",
+                  "mod": {
+                    "enhancement": "TYPE MULT"
+                  },
+                  "sell": 2
+                },
+                {
+                  "id": "j_loyalty_card",
+                  "effect": "X4 Mult every 6 hands played 1 remaining",
+                  "mod": {
+                    "enhancement": "1 IN 10 MULT",
+                    "edition": "FOIL"
+                  },
+                  "sell": 3
+                },
+                {
+                  "id": "j_wrathful_joker",
+                  "effect": "Played cards with Spade suit give +3 Mult when scored",
+                  "mod": {
+                    "enhancement": "SUIT MULT"
+                  },
+                  "sell": 2
+                },
+                {
+                  "id": "j_abstract",
+                  "effect": "+3 Mult for each Joker card (Currently +15 Mult)",
+                  "mod": {
+                    "enhancement": "JOKER MULT"
+                  },
+                  "sell": 2
+                }
+              ]
+            },
+            "consumables": {
+              "slots": "3/3",
+              "items": [
+                {
+                  "id": "c_justice",
+                  "effect": "Enhances 1 selected card into a Glass Card",
+                  "mod": {
+                    "enhancement": "ENHANCE"
+                  },
+                  "sell": 1
+                },
+                {
+                  "id": "c_devil",
+                  "effect": "Enhances 1 selected card into a Gold Card",
+                  "mod": {
+                    "enhancement": "ENHANCE"
+                  },
+                  "sell": 1
+                },
+                {
+                  "id": "c_magician",
+                  "effect": "Enhances 2 selected cards to Lucky Cards",
+                  "mod": {
+                    "enhancement": "ENHANCE"
+                  },
+                  "sell": 1
+                }
+              ]
+            },
+            "hand_values": {
+              "Straight Flush": [
+                2,
+                140,
+                12
+              ],
+              "Four of a Kind": [
+                1,
+                60,
+                7
+              ],
+              "Full House": [
+                5,
+                140,
+                12
+              ],
+              "Flush": [
+                1,
+                35,
+                4
+              ],
+              "Straight": [
+                1,
+                30,
+                4
+              ],
+              "Three of a Kind": [
+                3,
+                70,
+                7
+              ],
+              "Two Pair": [
+                2,
+                40,
+                3
+              ],
+              "Pair": [
+                3,
+                40,
+                4
+              ],
+              "High Card": [
+                2,
+                15,
+                2
+              ],
+              "Flush Five": [
+                1,
+                160,
+                16
+              ],
+              "Flush House": [
+                1,
+                140,
+                14
+              ],
+              "Five of a Kind": [
+                1,
+                120,
+                12
+              ]
+            }
+          },
+          "action": {
+            "method": "play",
+            "params": {
+              "cards": [
+                4,
+                3,
+                6,
+                5,
+                7
+              ]
+            }
+          },
+          "last_after": {
+            "phase": "hand",
+            "blind": {
+              "type": "boss",
+              "score": [
+                9885,
+                40000
+              ],
+              "hands": 3,
+              "discards": 4,
+              "effect": "All Heart cards are debuffed"
+            },
+            "play_commit": {
+              "hand": "Two Pair",
+              "score": 7560,
+              "cards": [
+                4,
+                3,
+                6,
+                5,
+                7
+              ]
+            }
+          }
+        }
+      ],
+      "error_count": 9
+    }
+  },
+  "optimizer_metrics_steps_425_449": [
+    {
+      "train/loss": -0.21641286656580772,
+      "train/pg_loss": -0.21676085531407555,
+      "train/entropy_loss": 0.026850530799451603,
+      "train/pg_clipfrac": 0.0,
+      "train/ppo_kl": 0.0,
+      "train/kl_loss": 0.37483927906728187,
+      "train/grad_norm": 1.556913919042798,
+      "train/lr-pg_0": 1e-06,
+      "train/lr-pg_1": 1e-06,
+      "train/global_batch_size": 64,
+      "train/step": 425
+    },
+    {
+      "train/loss": -0.25290070317928504,
+      "train/pg_loss": -0.2532545805474411,
+      "train/entropy_loss": 0.026693489603644052,
+      "train/pg_clipfrac": 0.0,
+      "train/ppo_kl": 0.0,
+      "train/kl_loss": 0.3805470976793488,
+      "train/grad_norm": 1.4719941854310257,
+      "train/lr-pg_0": 1e-06,
+      "train/lr-pg_1": 1e-06,
+      "train/global_batch_size": 64,
+      "train/step": 426
+    },
+    {
+      "train/loss": -0.09779988420306737,
+      "train/pg_loss": -0.09818589899198055,
+      "train/entropy_loss": 0.024846588711212557,
+      "train/pg_clipfrac": 0.0,
+      "train/ppo_kl": 0.0,
+      "train/kl_loss": 0.410858464691377,
+      "train/grad_norm": 1.3478951505017798,
+      "train/lr-pg_0": 1e-06,
+      "train/lr-pg_1": 1e-06,
+      "train/global_batch_size": 64,
+      "train/step": 427
+    },
+    {
+      "train/loss": -0.2005713855381584,
+      "train/pg_loss": -0.2009324411389266,
+      "train/entropy_loss": 0.023568182585306324,
+      "train/pg_clipfrac": 0.0,
+      "train/ppo_kl": 0.0,
+      "train/kl_loss": 0.3846095476680247,
+      "train/grad_norm": 1.132750147714902,
+      "train/lr-pg_0": 1e-06,
+      "train/lr-pg_1": 1e-06,
+      "train/global_batch_size": 64,
+      "train/step": 428
+    },
+    {
+      "train/loss": -0.2632190098633299,
+      "train/pg_loss": -0.2635800620884814,
+      "train/entropy_loss": 0.02376489410876715,
+      "train/pg_clipfrac": 0.0,
+      "train/ppo_kl": 0.0,
+      "train/kl_loss": 0.38480287276042074,
+      "train/grad_norm": 1.3758376777683539,
+      "train/lr-pg_0": 1e-06,
+      "train/lr-pg_1": 1e-06,
+      "train/global_batch_size": 64,
+      "train/step": 429
+    },
+    {
+      "train/loss": -0.189753767478996,
+      "train/pg_loss": -0.19009753564223683,
+      "train/entropy_loss": 0.023164339633575354,
+      "train/pg_clipfrac": 0.0,
+      "train/ppo_kl": 0.0,
+      "train/kl_loss": 0.3669177902889512,
+      "train/grad_norm": 1.211287269530679,
+      "train/lr-pg_0": 1e-06,
+      "train/lr-pg_1": 1e-06,
+      "train/global_batch_size": 64,
+      "train/step": 430
+    },
+    {
+      "train/loss": -0.17889164902430044,
+      "train/pg_loss": -0.1792404731222386,
+      "train/entropy_loss": 0.022999692217415317,
+      "train/pg_clipfrac": 0.0,
+      "train/ppo_kl": 0.0,
+      "train/kl_loss": 0.37180209867452135,
+      "train/grad_norm": 1.5390977419773382,
+      "train/lr-pg_0": 1e-06,
+      "train/lr-pg_1": 1e-06,
+      "train/global_batch_size": 64,
+      "train/step": 431
+    },
+    {
+      "train/loss": -0.1417064817028738,
+      "train/pg_loss": -0.14206255764107117,
+      "train/entropy_loss": 0.023387909109281776,
+      "train/pg_clipfrac": 0.0,
+      "train/ppo_kl": 0.0,
+      "train/kl_loss": 0.37945472969895705,
+      "train/grad_norm": 1.2984481370400687,
+      "train/lr-pg_0": 1e-06,
+      "train/lr-pg_1": 1e-06,
+      "train/global_batch_size": 64,
+      "train/step": 432
+    },
+    {
+      "train/loss": -0.1428134509899688,
+      "train/pg_loss": -0.14316571841617512,
+      "train/entropy_loss": 0.02459065635967693,
+      "train/pg_clipfrac": 0.0,
+      "train/ppo_kl": 0.0,
+      "train/kl_loss": 0.37683275921716697,
+      "train/grad_norm": 1.6206478378858158,
+      "train/lr-pg_0": 1e-06,
+      "train/lr-pg_1": 1e-06,
+      "train/global_batch_size": 64,
+      "train/step": 433
+    },
+    {
+      "train/loss": -0.19920421873860295,
+      "train/pg_loss": -0.19956531583554182,
+      "train/entropy_loss": 0.026840993880344464,
+      "train/pg_clipfrac": 0.0,
+      "train/ppo_kl": 0.0,
+      "train/kl_loss": 0.3879405631519123,
+      "train/grad_norm": 1.4545304259694263,
+      "train/lr-pg_0": 1e-06,
+      "train/lr-pg_1": 1e-06,
+      "train/global_batch_size": 64,
+      "train/step": 434
+    },
+    {
+      "train/loss": -0.17250839789225073,
+      "train/pg_loss": -0.17285668573581572,
+      "train/entropy_loss": 0.025975256667529232,
+      "train/pg_clipfrac": 0.0,
+      "train/ppo_kl": 0.0,
+      "train/kl_loss": 0.3742617272316552,
+      "train/grad_norm": 1.4612392990986611,
+      "train/lr-pg_0": 1e-06,
+      "train/lr-pg_1": 1e-06,
+      "train/global_batch_size": 64,
+      "train/step": 435
+    },
+    {
+      "train/loss": -0.2046804181032993,
+      "train/pg_loss": -0.20501417527025975,
+      "train/entropy_loss": 0.029466365412637613,
+      "train/pg_clipfrac": 0.0,
+      "train/ppo_kl": 0.0,
+      "train/kl_loss": 0.36323230457475675,
+      "train/grad_norm": 1.7085359344677757,
+      "train/lr-pg_0": 1e-06,
+      "train/lr-pg_1": 1e-06,
+      "train/global_batch_size": 64,
+      "train/step": 436
+    },
+    {
+      "train/loss": -0.2769795887647989,
+      "train/pg_loss": -0.27733529720043276,
+      "train/entropy_loss": 0.03131602225719658,
+      "train/pg_clipfrac": 0.0,
+      "train/ppo_kl": 0.0,
+      "train/kl_loss": 0.38705226983676994,
+      "train/grad_norm": 1.6940604653809797,
+      "train/lr-pg_0": 1e-06,
+      "train/lr-pg_1": 1e-06,
+      "train/global_batch_size": 64,
+      "train/step": 437
+    },
+    {
+      "train/loss": -0.21127858486526344,
+      "train/pg_loss": -0.2116431410062651,
+      "train/entropy_loss": 0.03200130891719563,
+      "train/pg_clipfrac": 0.0,
+      "train/ppo_kl": 0.0,
+      "train/kl_loss": 0.3965430174099619,
+      "train/grad_norm": 1.8807736829843311,
+      "train/lr-pg_0": 1e-06,
+      "train/lr-pg_1": 1e-06,
+      "train/global_batch_size": 64,
+      "train/step": 438
+    },
+    {
+      "train/loss": -0.19637107101496615,
+      "train/pg_loss": -0.19673552752702222,
+      "train/entropy_loss": 0.035695656077399336,
+      "train/pg_clipfrac": 0.0,
+      "train/ppo_kl": 0.0,
+      "train/kl_loss": 0.40016055706268133,
+      "train/grad_norm": 1.5856371064225763,
+      "train/lr-pg_0": 1e-06,
+      "train/lr-pg_1": 1e-06,
+      "train/global_batch_size": 64,
+      "train/step": 439
+    },
+    {
+      "train/loss": -0.33900399780766743,
+      "train/pg_loss": -0.33935344290505953,
+      "train/entropy_loss": 0.037306210830156526,
+      "train/pg_clipfrac": 0.0,
+      "train/ppo_kl": 0.0,
+      "train/kl_loss": 0.3867309839986664,
+      "train/grad_norm": 2.1157921278513134,
+      "train/lr-pg_0": 1e-06,
+      "train/lr-pg_1": 1e-06,
+      "train/global_batch_size": 64,
+      "train/step": 440
+    },
+    {
+      "train/loss": -0.2976195042988649,
+      "train/pg_loss": -0.29795051069450096,
+      "train/entropy_loss": 0.03832477462661858,
+      "train/pg_clipfrac": 0.0,
+      "train/ppo_kl": 0.0,
+      "train/kl_loss": 0.36929096723855737,
+      "train/grad_norm": 1.7121164101123858,
+      "train/lr-pg_0": 1e-06,
+      "train/lr-pg_1": 1e-06,
+      "train/global_batch_size": 64,
+      "train/step": 441
+    },
+    {
+      "train/loss": -0.31404900958893645,
+      "train/pg_loss": -0.3143895102929619,
+      "train/entropy_loss": 0.04131917257305629,
+      "train/pg_clipfrac": 0.0,
+      "train/ppo_kl": 0.0,
+      "train/kl_loss": 0.3818241269947389,
+      "train/grad_norm": 1.5922104374334893,
+      "train/lr-pg_0": 1e-06,
+      "train/lr-pg_1": 1e-06,
+      "train/global_batch_size": 64,
+      "train/step": 442
+    },
+    {
+      "train/loss": -0.23800103892900312,
+      "train/pg_loss": -0.23833649810099633,
+      "train/entropy_loss": 0.042505249016730466,
+      "train/pg_clipfrac": 0.0,
+      "train/ppo_kl": 0.0,
+      "train/kl_loss": 0.37794794852658375,
+      "train/grad_norm": 1.7267299242963767,
+      "train/lr-pg_0": 1e-06,
+      "train/lr-pg_1": 1e-06,
+      "train/global_batch_size": 64,
+      "train/step": 443
+    },
+    {
+      "train/loss": -0.27410861749795423,
+      "train/pg_loss": -0.27445419467147675,
+      "train/entropy_loss": 0.04275795377148075,
+      "train/pg_clipfrac": 0.0,
+      "train/ppo_kl": 0.0,
+      "train/kl_loss": 0.3883337044438457,
+      "train/grad_norm": 1.6521907943020282,
+      "train/lr-pg_0": 1e-06,
+      "train/lr-pg_1": 1e-06,
+      "train/global_batch_size": 64,
+      "train/step": 444
+    },
+    {
+      "train/loss": -0.23894212135518872,
+      "train/pg_loss": -0.23928473406332756,
+      "train/entropy_loss": 0.04330627421638343,
+      "train/pg_clipfrac": 0.0,
+      "train/ppo_kl": 0.0,
+      "train/kl_loss": 0.3859352525052868,
+      "train/grad_norm": 1.5906632394447295,
+      "train/lr-pg_0": 1e-06,
+      "train/lr-pg_1": 1e-06,
+      "train/global_batch_size": 64,
+      "train/step": 445
+    },
+    {
+      "train/loss": -0.2720324010924771,
+      "train/pg_loss": -0.27236221069470984,
+      "train/entropy_loss": 0.044016578088856485,
+      "train/pg_clipfrac": 0.0,
+      "train/ppo_kl": 0.0,
+      "train/kl_loss": 0.37381386402494216,
+      "train/grad_norm": 1.641423276425294,
+      "train/lr-pg_0": 1e-06,
+      "train/lr-pg_1": 1e-06,
+      "train/global_batch_size": 64,
+      "train/step": 446
+    },
+    {
+      "train/loss": -0.42918934163696715,
+      "train/pg_loss": -0.4295173803532614,
+      "train/entropy_loss": 0.04166895825888049,
+      "train/pg_clipfrac": 0.0,
+      "train/ppo_kl": 0.0,
+      "train/kl_loss": 0.36969821814968573,
+      "train/grad_norm": 1.4649065741736327,
+      "train/lr-pg_0": 1e-06,
+      "train/lr-pg_1": 1e-06,
+      "train/global_batch_size": 64,
+      "train/step": 447
+    },
+    {
+      "train/loss": -0.2181644219873482,
+      "train/pg_loss": -0.21850880750722468,
+      "train/entropy_loss": 0.04093448836954278,
+      "train/pg_clipfrac": 0.0,
+      "train/ppo_kl": 0.0,
+      "train/kl_loss": 0.38532232643547665,
+      "train/grad_norm": 1.3982791917585196,
+      "train/lr-pg_0": 1e-06,
+      "train/lr-pg_1": 1e-06,
+      "train/global_batch_size": 64,
+      "train/step": 448
+    },
+    {
+      "train/loss": -0.31235448297694496,
+      "train/pg_loss": -0.31269035147088176,
+      "train/entropy_loss": 0.03963022837887993,
+      "train/pg_clipfrac": 0.0,
+      "train/ppo_kl": 0.0,
+      "train/kl_loss": 0.37553762350915715,
+      "train/grad_norm": 1.3689244163552206,
+      "train/lr-pg_0": 1e-06,
+      "train/lr-pg_1": 1e-06,
+      "train/global_batch_size": 64,
+      "train/step": 449
+    }
+  ],
+  "failure_log_excerpts": [
+    "2026-09-15 03:51:53-04:00 (MegatronTrainRayActor pid=15329) [2026-09-15 07:51:52.360146] saving checkpoint at iteration     449 to /checkpoints/broad-layover-3a0ce678e7da in torch_dist format",
+    "2026-09-15 03:52:47-04:00 (MegatronTrainRayActor pid=15329)   [2026-09-15 07:52:45.419580] successfully saved checkpoint from iteration     449 to /checkpoints/broad-layover-3a0ce678e7da [ t 1/4, p 1/2 ]",
+    "2026-09-15 03:54:04-04:00 (MegatronTrainRayActor pid=15797)   File \"ras/peers.cc\", line 549, in rasMsgHandlePeersUpdate(rasMsg*, rasSocket*)",
+    "2026-09-15 03:54:05-04:00 (MegatronTrainRayActor pid=4714, ip=10.100.0.3)   File \"ras/peers.cc\", line 549, in rasMsgHandlePeersUpdate(rasMsg*, rasSocket*)",
+    "2026-09-15 03:54:14-04:00 Ray job raysubmit_cMPrxHRXqyvPZ24E finished with status: FAILED: Job entrypoint command failed with exit code 1, last available logs (truncated to 20,000 chars):",
+    "2026-09-15 03:54:14-04:00 (MegatronTrainRayActor pid=4714, ip=10.100.0.3)   File \"ras/peers.cc\", line 549, in rasMsgHandlePeersUpdate(rasMsg*, rasSocket*)",
+    "2026-09-15 03:54:21-04:00 (MegatronTrainRayActor pid=4714, ip=10.100.0.3)   File \"ras/peers.cc\", line 549, in rasMsgHandlePeersUpdate(rasMsg*, rasSocket*)",
+    "2026-09-15 03:57:24-04:00 WARNING: training run broad-layover-3a0ce678e7da is retrying after preemption or interruption (attempt 2).",
+    "2026-09-15 04:06:10-04:00 FileNotFoundError: [Errno 2] No such file or directory: '/checkpoints/broad-layover-3a0ce678e7da/iter_0000449/__32_1.distcp'",
+    "2026-09-15 04:06:10-04:00 FileNotFoundError: [Errno 2] No such file or directory: '/checkpoints/broad-layover-3a0ce678e7da/iter_0000449/__33_1.distcp'",
+    "2026-09-15 04:06:10-04:00 FileNotFoundError: [Errno 2] No such file or directory: '/checkpoints/broad-layover-3a0ce678e7da/iter_0000449/__34_1.distcp'",
+    "2026-09-15 04:06:11-04:00 FileNotFoundError: [Errno 2] No such file or directory: '/checkpoints/broad-layover-3a0ce678e7da/iter_0000449/__35_1.distcp'",
+    "2026-09-15 04:06:16-04:00 Ray job raysubmit_LadGCU76J5BKm2jj finished with status: FAILED: Job entrypoint command failed with exit code 1, last available logs (truncated to 20,000 chars):",
+    "2026-09-15 04:06:16-04:00 FileNotFoundError: [Errno 2] No such file or directory: '/checkpoints/broad-layover-3a0ce678e7da/iter_0000449/__35_1.distcp'",
+    "2026-09-15 04:06:21-04:00 FileNotFoundError: [Errno 2] No such file or directory: '/checkpoints/broad-layover-3a0ce678e7da/iter_0000449/__35_1.distcp'",
+    "2026-09-15 04:07:14-04:00 WARNING: training run broad-layover-3a0ce678e7da is retrying after preemption or interruption (attempt 3).",
+    "2026-09-15 04:17:28-04:00 FileNotFoundError: [Errno 2] No such file or directory: '/checkpoints/broad-layover-3a0ce678e7da/iter_0000449/__52_1.distcp'",
+    "2026-09-15 04:17:28-04:00 FileNotFoundError: [Errno 2] No such file or directory: '/checkpoints/broad-layover-3a0ce678e7da/iter_0000449/__52_1.distcp'",
+    "2026-09-15 04:17:28-04:00 FileNotFoundError: [Errno 2] No such file or directory: '/checkpoints/broad-layover-3a0ce678e7da/iter_0000449/__52_1.distcp'",
+    "2026-09-15 04:17:28-04:00 FileNotFoundError: [Errno 2] No such file or directory: '/checkpoints/broad-layover-3a0ce678e7da/iter_0000449/__44_1.distcp'",
+    "2026-09-15 04:17:28-04:00 FileNotFoundError: [Errno 2] No such file or directory: '/checkpoints/broad-layover-3a0ce678e7da/iter_0000449/__44_1.distcp'",
+    "2026-09-15 04:17:28-04:00 FileNotFoundError: [Errno 2] No such file or directory: '/checkpoints/broad-layover-3a0ce678e7da/iter_0000449/__44_1.distcp'",
+    "2026-09-15 04:17:28-04:00 OSError: [Errno 22] Invalid argument",
+    "2026-09-15 04:17:28-04:00 FileNotFoundError: [Errno 2] No such file or directory: '/checkpoints/broad-layover-3a0ce678e7da/iter_0000449/__48_1.distcp'",
+    "2026-09-15 04:17:28-04:00 FileNotFoundError: [Errno 2] No such file or directory: '/checkpoints/broad-layover-3a0ce678e7da/iter_0000449/__48_1.distcp'",
+    "2026-09-15 04:17:28-04:00 FileNotFoundError: [Errno 2] No such file or directory: '/checkpoints/broad-layover-3a0ce678e7da/iter_0000449/__48_1.distcp'",
+    "2026-09-15 04:17:28-04:00 OSError: [Errno 22] Invalid argument",
+    "2026-09-15 04:17:28-04:00 OSError: [Errno 22] Invalid argument",
+    "2026-09-15 04:17:28-04:00 OSError: [Errno 22] Invalid argument",
+    "2026-09-15 04:17:28-04:00 OSError: [Errno 22] Invalid argument",
+    "2026-09-15 04:17:28-04:00 FileNotFoundError: [Errno 2] No such file or directory: '/checkpoints/broad-layover-3a0ce678e7da/iter_0000449/__48_1.distcp'",
+    "2026-09-15 04:17:28-04:00 OSError: [Errno 22] Invalid argument",
+    "2026-09-15 04:17:28-04:00 OSError: [Errno 22] Invalid argument",
+    "2026-09-15 04:17:28-04:00 OSError: [Errno 22] Invalid argument",
+    "2026-09-15 04:17:28-04:00 OSError: [Errno 22] Invalid argument",
+    "2026-09-15 04:17:28-04:00 FileNotFoundError: [Errno 2] No such file or directory: '/checkpoints/broad-layover-3a0ce678e7da/iter_0000449/__44_1.distcp'",
+    "2026-09-15 04:17:28-04:00 FileNotFoundError: [Errno 2] No such file or directory: '/checkpoints/broad-layover-3a0ce678e7da/iter_0000449/__44_1.distcp'",
+    "2026-09-15 04:17:28-04:00 FileNotFoundError: [Errno 2] No such file or directory: '/checkpoints/broad-layover-3a0ce678e7da/iter_0000449/__44_1.distcp'",
+    "2026-09-15 04:17:28-04:00 OSError: [Errno 22] Invalid argument",
+    "2026-09-15 04:17:28-04:00 OSError: [Errno 22] Invalid argument",
+    "2026-09-15 04:17:28-04:00 OSError: [Errno 22] Invalid argument",
+    "2026-09-15 04:17:28-04:00 FileNotFoundError: [Errno 2] No such file or directory: '/checkpoints/broad-layover-3a0ce678e7da/iter_0000449/__44_1.distcp'",
+    "2026-09-15 04:17:28-04:00 FileNotFoundError: [Errno 2] No such file or directory: '/checkpoints/broad-layover-3a0ce678e7da/iter_0000449/__44_1.distcp'",
+    "2026-09-15 04:17:29-04:00 FileNotFoundError: [Errno 2] No such file or directory: '/checkpoints/broad-layover-3a0ce678e7da/iter_0000449/__44_1.distcp'",
+    "2026-09-15 04:17:32-04:00 Ray job raysubmit_K5cNJyjjLwfUnixe finished with status: FAILED: Job entrypoint command failed with exit code 1, last available logs (truncated to 20,000 chars):",
+    "2026-09-15 04:17:32-04:00 FileNotFoundError: [Errno 2] No such file or directory: '/checkpoints/broad-layover-3a0ce678e7da/iter_0000449/__44_1.distcp'",
+    "2026-09-15 04:17:38-04:00 FileNotFoundError: [Errno 2] No such file or directory: '/checkpoints/broad-layover-3a0ce678e7da/iter_0000449/__44_1.distcp'",
+    "2026-09-15 04:18:34-04:00 WARNING: training run broad-layover-3a0ce678e7da is retrying after preemption or interruption (attempt 4).",
+    "2026-09-15 04:28:44-04:00 FileNotFoundError: [Errno 2] No such file or directory: '/checkpoints/broad-layover-3a0ce678e7da/iter_0000449/__52_1.distcp'",
+    "2026-09-15 04:28:44-04:00 FileNotFoundError: [Errno 2] No such file or directory: '/checkpoints/broad-layover-3a0ce678e7da/iter_0000449/__52_1.distcp'",
+    "2026-09-15 04:28:44-04:00 FileNotFoundError: [Errno 2] No such file or directory: '/checkpoints/broad-layover-3a0ce678e7da/iter_0000449/__52_1.distcp'",
+    "2026-09-15 04:28:44-04:00 FileNotFoundError: [Errno 2] No such file or directory: '/checkpoints/broad-layover-3a0ce678e7da/iter_0000449/__44_1.distcp'",
+    "2026-09-15 04:28:44-04:00 FileNotFoundError: [Errno 2] No such file or directory: '/checkpoints/broad-layover-3a0ce678e7da/iter_0000449/__44_1.distcp'",
+    "2026-09-15 04:28:44-04:00 FileNotFoundError: [Errno 2] No such file or directory: '/checkpoints/broad-layover-3a0ce678e7da/iter_0000449/__44_1.distcp'",
+    "2026-09-15 04:28:44-04:00 OSError: [Errno 22] Invalid argument",
+    "2026-09-15 04:28:44-04:00 FileNotFoundError: [Errno 2] No such file or directory: '/checkpoints/broad-layover-3a0ce678e7da/iter_0000449/__48_1.distcp'",
+    "2026-09-15 04:28:44-04:00 FileNotFoundError: [Errno 2] No such file or directory: '/checkpoints/broad-layover-3a0ce678e7da/iter_0000449/__48_1.distcp'",
+    "2026-09-15 04:28:44-04:00 FileNotFoundError: [Errno 2] No such file or directory: '/checkpoints/broad-layover-3a0ce678e7da/iter_0000449/__48_1.distcp'",
+    "2026-09-15 04:28:44-04:00 OSError: [Errno 22] Invalid argument",
+    "2026-09-15 04:28:44-04:00 OSError: [Errno 22] Invalid argument",
+    "2026-09-15 04:28:44-04:00 OSError: [Errno 22] Invalid argument",
+    "2026-09-15 04:28:44-04:00 OSError: [Errno 22] Invalid argument",
+    "2026-09-15 04:28:44-04:00 FileNotFoundError: [Errno 2] No such file or directory: '/checkpoints/broad-layover-3a0ce678e7da/iter_0000449/__48_1.distcp'",
+    "2026-09-15 04:28:44-04:00 OSError: [Errno 22] Invalid argument",
+    "2026-09-15 04:28:44-04:00 OSError: [Errno 22] Invalid argument",
+    "2026-09-15 04:28:44-04:00 OSError: [Errno 22] Invalid argument",
+    "2026-09-15 04:28:44-04:00 OSError: [Errno 22] Invalid argument",
+    "2026-09-15 04:28:44-04:00 FileNotFoundError: [Errno 2] No such file or directory: '/checkpoints/broad-layover-3a0ce678e7da/iter_0000449/__44_1.distcp'",
+    "2026-09-15 04:28:44-04:00 FileNotFoundError: [Errno 2] No such file or directory: '/checkpoints/broad-layover-3a0ce678e7da/iter_0000449/__44_1.distcp'",
+    "2026-09-15 04:28:44-04:00 FileNotFoundError: [Errno 2] No such file or directory: '/checkpoints/broad-layover-3a0ce678e7da/iter_0000449/__44_1.distcp'",
+    "2026-09-15 04:28:44-04:00 OSError: [Errno 22] Invalid argument",
+    "2026-09-15 04:28:44-04:00 OSError: [Errno 22] Invalid argument",
+    "2026-09-15 04:28:44-04:00 OSError: [Errno 22] Invalid argument",
+    "2026-09-15 04:28:44-04:00 FileNotFoundError: [Errno 2] No such file or directory: '/checkpoints/broad-layover-3a0ce678e7da/iter_0000449/__44_1.distcp'",
+    "2026-09-15 04:28:44-04:00 FileNotFoundError: [Errno 2] No such file or directory: '/checkpoints/broad-layover-3a0ce678e7da/iter_0000449/__44_1.distcp'",
+    "2026-09-15 04:28:45-04:00 FileNotFoundError: [Errno 2] No such file or directory: '/checkpoints/broad-layover-3a0ce678e7da/iter_0000449/__44_1.distcp'",
+    "2026-09-15 04:28:50-04:00 Ray job raysubmit_HSqKgAqbi6tykF1S finished with status: FAILED: Job entrypoint command failed with exit code 1, last available logs (truncated to 20,000 chars):",
+    "2026-09-15 04:28:50-04:00 FileNotFoundError: [Errno 2] No such file or directory: '/checkpoints/broad-layover-3a0ce678e7da/iter_0000449/__44_1.distcp'",
+    "2026-09-15 04:28:55-04:00 FileNotFoundError: [Errno 2] No such file or directory: '/checkpoints/broad-layover-3a0ce678e7da/iter_0000449/__44_1.distcp'"
+  ],
+  "checkpoint_metadata_expected_shards": 128,
+  "checkpoint_present_shards": 112,
+  "missing_shards": [
+    "__40_1.distcp",
+    "__41_1.distcp",
+    "__42_1.distcp",
+    "__43_1.distcp",
+    "__44_1.distcp",
+    "__45_1.distcp",
+    "__46_1.distcp",
+    "__47_1.distcp",
+    "__48_1.distcp",
+    "__49_1.distcp",
+    "__50_1.distcp",
+    "__51_1.distcp",
+    "__52_1.distcp",
+    "__53_1.distcp",
+    "__54_1.distcp",
+    "__55_1.distcp"
+  ],
+  "avoidable_loss_examples": [
+    {
+      "batch": 440,
+      "sample_position": 4,
+      "sample_index": 15364,
+      "group_index": 3841,
+      "seed": "BALATRO-RL-00000255",
+      "action_number": 7,
+      "before": {
+        "phase": "hand",
+        "ante": 1,
+        "round": 1,
+        "money": 4,
+        "blinds": {
+          "small": {
+            "status": "CURRENT",
+            "type": "small",
+            "name": "Small Blind",
+            "score": 300,
+            "tag": "Economy Tag",
+            "tag_effect": "Doubles your money (Max of $40)"
+          },
+          "big": {
+            "status": "UPCOMING",
+            "type": "big",
+            "name": "Big Blind",
+            "score": 450,
+            "tag": "Economy Tag",
+            "tag_effect": "Doubles your money (Max of $40)"
+          },
+          "boss": {
+            "status": "UPCOMING",
+            "type": "boss",
+            "name": "The Manacle",
+            "score": 600,
+            "effect": "-1 Hand Size"
+          }
+        },
+        "boss": [
+          "The Manacle",
+          600,
+          "-1 Hand Size"
+        ],
+        "jokers": {
+          "slots": "0/5"
+        },
+        "consumables": {
+          "slots": "0/2"
+        },
+        "deck": [
+          "C_2",
+          "C_8",
+          "C_9",
+          "C_A",
+          "C_Q",
+          "D_2",
+          "D_3",
+          "D_5",
+          "D_A",
+          "D_T",
+          "H_3",
+          "H_5",
+          "H_6",
+          "H_J",
+          "S_2",
+          "S_5",
+          "S_7",
+          "S_A",
+          "S_J",
+          "S_K",
+          "S_T"
+        ],
+        "blind": {
+          "type": "small",
+          "score": [
+            212,
+            300
+          ],
+          "hands": 1,
+          "discards": 2
+        },
+        "deck_left": 21,
+        "hand": [
+          "H_A",
+          "H_K",
+          "C_K",
+          "D_K",
+          "C_J",
+          "S_9",
+          "S_3",
+          "H_2"
+        ],
+        "hand_values": {
+          "Five of a Kind": [
+            1,
+            120,
+            12
+          ],
+          "Straight Flush": [
+            1,
+            100,
+            8
+          ],
+          "Four of a Kind": [
+            1,
+            60,
+            7
+          ],
+          "Full House": [
+            1,
+            40,
+            4
+          ],
+          "Flush": [
+            1,
+            35,
+            4
+          ],
+          "Straight": [
+            1,
+            30,
+            4
+          ],
+          "Three of a Kind": [
+            1,
+            30,
+            3
+          ],
+          "Two Pair": [
+            1,
+            20,
+            2
+          ],
+          "Pair": [
+            1,
+            10,
+            2
+          ],
+          "High Card": [
+            1,
+            5,
+            1
+          ],
+          "Flush Five": [
+            1,
+            160,
+            16
+          ],
+          "Flush House": [
+            1,
+            140,
+            14
+          ]
+        },
+        "discard": [
+          "C_3",
+          "C_4",
+          "C_5",
+          "C_6",
+          "C_7",
+          "C_T",
+          "D_4",
+          "D_6",
+          "D_7",
+          "D_8",
+          "D_9",
+          "D_J",
+          "D_Q",
+          "H_4",
+          "H_7",
+          "H_8",
+          "H_9",
+          "H_Q",
+          "H_T",
+          "S_4",
+          "S_6",
+          "S_8",
+          "S_Q"
+        ],
+        "hand_stats": {
+          "Two Pair": [
+            1,
+            1,
+            1
+          ],
+          "Pair": [
+            1,
+            2,
+            2
+          ]
+        },
+        "play_commit": {
+          "score": 44,
+          "hand": "Pair",
+          "cards": [
+            6,
+            7,
+            5,
+            4,
+            3
+          ]
+        }
+      },
+      "action": {
+        "method": "play",
+        "params": {
+          "cards": [
+            4,
+            3,
+            2,
+            6,
+            5
+          ]
+        }
+      },
+      "after": {
+        "phase": "GAME_OVER",
+        "ante": 1,
+        "round": 1,
+        "money": 4,
+        "blinds": {
+          "small": {
+            "status": "CURRENT",
+            "type": "small",
+            "name": "Small Blind",
+            "score": 300,
+            "tag": "Economy Tag",
+            "tag_effect": "Doubles your money (Max of $40)"
+          },
+          "big": {
+            "status": "UPCOMING",
+            "type": "big",
+            "name": "Big Blind",
+            "score": 450,
+            "tag": "Economy Tag",
+            "tag_effect": "Doubles your money (Max of $40)"
+          },
+          "boss": {
+            "status": "UPCOMING",
+            "type": "boss",
+            "name": "The Manacle",
+            "score": 600,
+            "effect": "-1 Hand Size"
+          }
+        },
+        "boss": [
+          "The Manacle",
+          600,
+          "-1 Hand Size"
+        ],
+        "jokers": {
+          "slots": "0/5"
+        },
+        "consumables": {
+          "slots": "0/2"
+        },
+        "deck": [
+          "C_2",
+          "C_8",
+          "C_9",
+          "C_A",
+          "C_Q",
+          "D_2",
+          "D_3",
+          "D_5",
+          "D_A",
+          "D_T",
+          "H_3",
+          "H_5",
+          "H_6",
+          "H_J",
+          "S_2",
+          "S_5",
+          "S_7",
+          "S_A",
+          "S_J",
+          "S_K",
+          "S_T"
+        ],
+        "blind": {
+          "type": "small",
+          "score": [
+            272,
+            300
+          ],
+          "hands": 0,
+          "discards": 2
+        },
+        "discard": [
+          "C_3",
+          "C_4",
+          "C_5",
+          "C_6",
+          "C_7",
+          "C_J",
+          "C_K",
+          "C_T",
+          "D_4",
+          "D_6",
+          "D_7",
+          "D_8",
+          "D_9",
+          "D_J",
+          "D_K",
+          "D_Q",
+          "H_4",
+          "H_7",
+          "H_8",
+          "H_9",
+          "H_Q",
+          "H_T",
+          "S_3",
+          "S_4",
+          "S_6",
+          "S_8",
+          "S_9",
+          "S_Q"
+        ],
+        "play_commit": {
+          "score": 60,
+          "hand": "Pair",
+          "cards": [
+            4,
+            3,
+            2,
+            6,
+            5
+          ]
+        }
+      }
+    },
+    {
+      "batch": 449,
+      "sample_position": 7,
+      "sample_index": 15943,
+      "group_index": 3985,
+      "seed": "BALATRO-RL-00000155",
+      "action_number": 8,
+      "before": {
+        "phase": "hand",
+        "ante": 1,
+        "round": 1,
+        "money": 4,
+        "blinds": {
+          "small": {
+            "status": "CURRENT",
+            "type": "small",
+            "name": "Small Blind",
+            "score": 300,
+            "tag": "Polychrome Tag",
+            "tag_effect": "Next base edition shop Joker is free and becomes Polychrome"
+          },
+          "big": {
+            "status": "UPCOMING",
+            "type": "big",
+            "name": "Big Blind",
+            "score": 450,
+            "tag": "Uncommon Tag",
+            "tag_effect": "Shop has a free Uncommon Joker"
+          },
+          "boss": {
+            "status": "UPCOMING",
+            "type": "boss",
+            "name": "The Pillar",
+            "score": 600,
+            "effect": "Cards played previously this Ante are debuffed"
+          }
+        },
+        "boss": [
+          "The Pillar",
+          600,
+          "Cards played previously this Ante are debuffed"
+        ],
+        "jokers": {
+          "slots": "0/5"
+        },
+        "consumables": {
+          "slots": "0/2"
+        },
+        "deck": [
+          "C_3",
+          "C_4",
+          "C_8",
+          "C_9",
+          "C_A",
+          "C_Q",
+          "C_T",
+          "D_9",
+          "D_A",
+          "D_J",
+          "H_2",
+          "H_9",
+          "H_Q",
+          "S_2",
+          "S_7",
+          "S_8",
+          "S_K"
+        ],
+        "blind": {
+          "type": "small",
+          "score": [
+            235,
+            300
+          ],
+          "hands": 1,
+          "discards": 1
+        },
+        "deck_left": 17,
+        "hand": [
+          "S_A",
+          "S_T",
+          "H_8",
+          "D_8",
+          "C_6",
+          "C_5",
+          "S_3",
+          "D_3"
+        ],
+        "hand_values": {
+          "Flush Five": [
+            1,
+            160,
+            16
+          ],
+          "Flush House": [
+            1,
+            140,
+            14
+          ],
+          "Five of a Kind": [
+            1,
+            120,
+            12
+          ],
+          "Straight Flush": [
+            1,
+            100,
+            8
+          ],
+          "Four of a Kind": [
+            1,
+            60,
+            7
+          ],
+          "Full House": [
+            1,
+            40,
+            4
+          ],
+          "Flush": [
+            1,
+            35,
+            4
+          ],
+          "Straight": [
+            1,
+            30,
+            4
+          ],
+          "Three of a Kind": [
+            1,
+            30,
+            3
+          ],
+          "Two Pair": [
+            1,
+            20,
+            2
+          ],
+          "Pair": [
+            1,
+            10,
+            2
+          ],
+          "High Card": [
+            1,
+            5,
+            1
+          ]
+        },
+        "discard": [
+          "C_2",
+          "C_7",
+          "C_J",
+          "C_K",
+          "D_2",
+          "D_4",
+          "D_5",
+          "D_6",
+          "D_7",
+          "D_K",
+          "D_Q",
+          "D_T",
+          "H_3",
+          "H_4",
+          "H_5",
+          "H_6",
+          "H_7",
+          "H_A",
+          "H_J",
+          "H_K",
+          "H_T",
+          "S_4",
+          "S_5",
+          "S_6",
+          "S_9",
+          "S_J",
+          "S_Q"
+        ],
+        "hand_stats": {
+          "Two Pair": [
+            1,
+            2,
+            2
+          ],
+          "High Card": [
+            1,
+            1,
+            1
+          ]
+        },
+        "play_commit": {
+          "score": 120,
+          "cards": [
+            4,
+            5,
+            3,
+            2,
+            1
+          ],
+          "hand": "Two Pair"
+        }
+      },
+      "action": {
+        "method": "play",
+        "params": {
+          "cards": [
+            6,
+            7,
+            5,
+            4,
+            3
+          ]
+        }
+      },
+      "after": {
+        "phase": "GAME_OVER",
+        "ante": 1,
+        "round": 1,
+        "money": 4,
+        "blinds": {
+          "small": {
+            "status": "CURRENT",
+            "type": "small",
+            "name": "Small Blind",
+            "score": 300,
+            "tag": "Polychrome Tag",
+            "tag_effect": "Next base edition shop Joker is free and becomes Polychrome"
+          },
+          "big": {
+            "status": "UPCOMING",
+            "type": "big",
+            "name": "Big Blind",
+            "score": 450,
+            "tag": "Uncommon Tag",
+            "tag_effect": "Shop has a free Uncommon Joker"
+          },
+          "boss": {
+            "status": "UPCOMING",
+            "type": "boss",
+            "name": "The Pillar",
+            "score": 600,
+            "effect": "Cards played previously this Ante are debuffed"
+          }
+        },
+        "boss": [
+          "The Pillar",
+          600,
+          "Cards played previously this Ante are debuffed"
+        ],
+        "jokers": {
+          "slots": "0/5"
+        },
+        "consumables": {
+          "slots": "0/2"
+        },
+        "deck": [
+          "C_3",
+          "C_4",
+          "C_8",
+          "C_9",
+          "C_A",
+          "C_Q",
+          "C_T",
+          "D_9",
+          "D_A",
+          "D_J",
+          "H_2",
+          "H_9",
+          "H_Q",
+          "S_2",
+          "S_7",
+          "S_8",
+          "S_K"
+        ],
+        "blind": {
+          "type": "small",
+          "score": [
+            267,
+            300
+          ],
+          "hands": 0,
+          "discards": 1
+        },
+        "discard": [
+          "C_2",
+          "C_5",
+          "C_6",
+          "C_7",
+          "C_J",
+          "C_K",
+          "D_2",
+          "D_3",
+          "D_4",
+          "D_5",
+          "D_6",
+          "D_7",
+          "D_8",
+          "D_K",
+          "D_Q",
+          "D_T",
+          "H_3",
+          "H_4",
+          "H_5",
+          "H_6",
+          "H_7",
+          "H_A",
+          "H_J",
+          "H_K",
+          "H_T",
+          "S_3",
+          "S_4",
+          "S_5",
+          "S_6",
+          "S_9",
+          "S_J",
+          "S_Q"
+        ],
+        "play_commit": {
+          "score": 32,
+          "cards": [
+            6,
+            7,
+            5,
+            4,
+            3
+          ],
+          "hand": "Pair"
+        }
+      }
+    }
+  ]
+}

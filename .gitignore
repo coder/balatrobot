@@ -7,7 +7,8 @@
 __MACOSX/
 .AppleDouble
 .LSOverride
-Icon[]
+Icon[
+]
 
 # Thumbnails
 ._*
@@ -331,3 +332,5 @@ balatrobot_oldish.lua
 
 balatro_oldish.sh
 balatro.sh
+.launch-config-examples
+reports

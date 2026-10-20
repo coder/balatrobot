@@ -32,7 +32,7 @@ return {
     },
   },
 
-  requires_state = { G.STATES.SELECTING_HAND, G.STATES.SHOP },
+  requires_state = { G.STATES.SELECTING_HAND, G.STATES.SHOP, G.STATES.SMODS_BOOSTER_OPENED },
 
   ---@param args Request.Endpoint.Sell.Params
   ---@param send_response fun(response: Response.Endpoint)
@@ -95,6 +95,17 @@ return {
 
     local card = source_array[pos]
 
+    -- Use the game's own gate: in particular Eternal jokers cannot be sold.
+    if not card:can_sell_card() then
+      send_response({
+        message = "This card cannot be sold at this time",
+        name = BB_ERROR_NAMES.NOT_ALLOWED,
+      })
+      return
+    end
+    local pack_before = G.STATE == G.STATES.SMODS_BOOSTER_OPENED and G.pack_cards or nil
+    local pack_choices_before = G.GAME.pack_choices
+
     -- Track initial state for completion verification
     local area = sell_type == "joker" and G.jokers or G.consumeables
     local initial_count = area.config.card_count
@@ -144,7 +155,17 @@ return {
         local state_stable = G.STATE_COMPLETE == true
 
         -- 5. Still in valid state
-        local valid_state = (G.STATE == G.STATES.SHOP or G.STATE == G.STATES.SELECTING_HAND)
+        local valid_state
+        if pack_before then
+          -- Selling frees inventory capacity; it must not select a pack card,
+          -- consume a choice, close the pack, or return to the shop.
+          valid_state = G.STATE == G.STATES.SMODS_BOOSTER_OPENED
+            and G.pack_cards == pack_before
+            and not G.pack_cards.REMOVED
+            and G.GAME.pack_choices == pack_choices_before
+        else
+          valid_state = G.STATE == G.STATES.SHOP or G.STATE == G.STATES.SELECTING_HAND
+        end
 
         -- All conditions must be met
         if count_decreased and money_increased and card_gone and state_stable and valid_state then

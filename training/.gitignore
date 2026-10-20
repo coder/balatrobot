@@ -1,0 +1,4 @@
+.dojo/
+.venv/
+__pycache__/
+.dojo-config.toml
