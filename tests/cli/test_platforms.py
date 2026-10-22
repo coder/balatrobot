@@ -102,6 +102,81 @@ class TestMacOSLauncher:
 class TestLinuxLauncher:
     """Tests for Linux launcher (Linux only)."""
 
+    @pytest.fixture
+    def steam_installation(self, tmp_path, monkeypatch):
+        """Provide a fake Steam, Balatro, and Proton installation."""
+        steam_root = tmp_path / ".local/share/Steam"
+        balatro = steam_root / "steamapps/common/Balatro"
+        balatro.mkdir(parents=True)
+        (balatro / "Balatro.exe").touch()
+        proton = steam_root / "steamapps/common/Proton - Experimental/proton"
+        proton.parent.mkdir(parents=True)
+        proton.touch()
+        monkeypatch.setenv("HOME", str(tmp_path))
+        monkeypatch.setenv("DISPLAY", ":0")
+        return balatro
+
+    @pytest.mark.parametrize("dll_name", ["winmm.dll", "version.dll"])
+    def test_detects_lovely_dll(self, steam_installation, dll_name):
+        """Select an installed Lovely DLL and set its Wine override."""
+        lovely = steam_installation / dll_name
+        lovely.touch()
+        config = Config()
+        launcher = LinuxLauncher()
+
+        launcher.validate_paths(config)
+
+        assert config.lovely_path == str(lovely)
+        assert launcher.build_env(config)["WINEDLLOVERRIDES"] == (f"{lovely.stem}=n,b")
+
+    def test_prefers_winmm_when_both_lovely_dlls_exist(self, steam_installation):
+        """Prefer the newer DLL when both names are present."""
+        (steam_installation / "version.dll").touch()
+        winmm = steam_installation / "winmm.dll"
+        winmm.touch()
+        config = Config()
+        launcher = LinuxLauncher()
+
+        launcher.validate_paths(config)
+
+        assert config.lovely_path == str(winmm)
+        assert launcher.build_env(config)["WINEDLLOVERRIDES"] == "winmm=n,b"
+
+    @pytest.mark.parametrize("dll_name", ["winmm.dll", "version.dll"])
+    def test_uses_explicit_lovely_path(self, steam_installation, dll_name):
+        """An explicit DLL path takes precedence over auto-detection."""
+        (steam_installation / "winmm.dll").touch()
+        lovely = steam_installation / dll_name
+        lovely.touch()
+        config = Config(lovely_path=str(lovely))
+        launcher = LinuxLauncher()
+
+        launcher.validate_paths(config)
+
+        assert config.lovely_path == str(lovely)
+        assert launcher.build_env(config)["WINEDLLOVERRIDES"] == (f"{lovely.stem}=n,b")
+
+    def test_missing_lovely_dll(self, steam_installation):
+        """Report both supported DLL names when auto-detection fails."""
+        with pytest.raises(RuntimeError, match="winmm.dll or version.dll not found"):
+            LinuxLauncher().validate_paths(Config())
+
+    def test_missing_explicit_lovely_path(self, steam_installation, tmp_path):
+        """Reject an explicit DLL path that does not name a file."""
+        lovely = tmp_path / "missing" / "winmm.dll"
+        config = Config(lovely_path=str(lovely))
+
+        with pytest.raises(RuntimeError, match="Lovely injector DLL not found"):
+            LinuxLauncher().validate_paths(config)
+
+    def test_explicit_lovely_path_must_be_file(self, steam_installation, tmp_path):
+        """Reject a directory even if its name looks like a DLL."""
+        lovely = tmp_path / "winmm.dll"
+        lovely.mkdir()
+
+        with pytest.raises(RuntimeError, match="Lovely injector DLL not found"):
+            LinuxLauncher().validate_paths(Config(lovely_path=str(lovely)))
+
     def test_validate_paths_missing_steam_root(self, tmp_path, monkeypatch):
         """Raises RuntimeError when Steam root not found."""
         launcher = LinuxLauncher()
