@@ -76,17 +76,22 @@ class LinuxLauncher(BaseLauncher):
         if not balatro.is_dir() or not (balatro / "Balatro.exe").is_file():
             raise RuntimeError(f"Balatro game directory not found: {balatro}")
 
-        # Lovely (version.dll)
+        # Lovely injector DLL (newer releases use winmm.dll)
         if config.lovely_path is None:
-            candidate = balatro / "version.dll"
-            if candidate.is_file():
-                config.lovely_path = str(candidate)
+            for dll_name in ("winmm.dll", "version.dll"):
+                candidate = balatro / dll_name
+                if candidate.is_file():
+                    config.lovely_path = str(candidate)
+                    break
 
         if config.lovely_path is None:
             raise RuntimeError(
-                "lovely-injector version.dll not found. "
+                "lovely-injector winmm.dll or version.dll not found. "
                 "Set --lovely-path or BALATROBOT_LOVELY_PATH."
             )
+        lovely = Path(config.lovely_path)
+        if not lovely.is_file():
+            raise RuntimeError(f"Lovely injector DLL not found: {lovely}")
 
         # Proton executable
         if config.love_path is None:
@@ -102,7 +107,10 @@ class LinuxLauncher(BaseLauncher):
     def build_env(self, config: Config) -> dict[str, str]:
         """Build environment with Proton-required variables."""
         env = os.environ.copy()
-        env["WINEDLLOVERRIDES"] = "version=n,b"
+        lovely_dll = (
+            Path(config.lovely_path).stem.lower() if config.lovely_path else "version"
+        )
+        env["WINEDLLOVERRIDES"] = f"{lovely_dll}=n,b"
 
         # Don't override user-set env vars (e.g. custom Wine prefix, Proton version)
         steam_root = _detect_steam_root()
