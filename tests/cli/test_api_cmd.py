@@ -50,7 +50,7 @@ class TestApiCommand:
         from balatrobot.cli.api import Method
 
         methods = [m.value for m in Method]
-        assert len(methods) == 21
+        assert len(methods) == 22
         assert "health" in methods
         assert "gamestate" in methods
 

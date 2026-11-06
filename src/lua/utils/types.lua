@@ -45,6 +45,7 @@
 ---@field discards_left integer? Number of discards remaining in this round
 ---@field discards_used integer? Number of discards used in this round
 ---@field reroll_cost integer? Current cost to reroll the shop
+---@field boss_rerolled boolean? Whether the Boss blind was already rerolled this ante
 ---@field chips integer? Current chips scored in this round
 
 ---@class Blind
@@ -142,8 +143,8 @@
 
 ---@alias Request.Endpoint.Method
 ---| "add" | "buy" | "cash_out" | "discard" | "gamestate" | "health" | "load"
----| "menu" | "next_round" | "play" | "rearrange" | "reroll" | "save"
----| "screenshot" | "select" | "sell" | "set" | "skip" | "start" | "use"
+---| "menu" | "next_round" | "play" | "rearrange" | "reroll" | "reroll_boss"
+---| "save" | "screenshot" | "select" | "sell" | "set" | "skip" | "start" | "use"
 
 ---@alias Request.Endpoint.Test.Method
 ---| "echo" | "endpoint" | "error" | "state" | "validation"
@@ -162,6 +163,7 @@
 ---| Request.Endpoint.Play.Params
 ---| Request.Endpoint.Rearrange.Params
 ---| Request.Endpoint.Reroll.Params
+---| Request.Endpoint.RerollBoss.Params
 ---| Request.Endpoint.Save.Params
 ---| Request.Endpoint.Screenshot.Params
 ---| Request.Endpoint.Select.Params

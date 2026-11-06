@@ -117,6 +117,7 @@ Runs inside the game engine and exposes an API.
     - `play.lua`: Play a card from the hand.
     - `rearrange.lua`: Rearrange cards in hand, jokers, or consumables.
     - `reroll.lua`: Reroll to update the cards in the shop area.
+    - `reroll_boss.lua`: Reroll the Boss blind (requires Director's Cut or Retcon).
     - `save.lua`: Save the current run state to a file.
     - `screenshot.lua`: Take a screenshot of the current game state.
     - `select.lua`: Select the current blind.

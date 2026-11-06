@@ -26,6 +26,7 @@ class Method(StrEnum):
     PLAY = "play"
     REARRANGE = "rearrange"
     REROLL = "reroll"
+    REROLL_BOSS = "reroll_boss"
     SAVE = "save"
     SCREENSHOT = "screenshot"
     SELECT = "select"

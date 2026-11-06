@@ -81,7 +81,7 @@ uvx balatrobot api METHOD [PARAMS] [OPTIONS]
 
 ### Available Methods
 
-`add`, `buy`, `cash_out`, `discard`, `gamestate`, `health`, `load`, `menu`, `next_round`, `pack`, `play`, `rearrange`, `reroll`, `save`, `screenshot`, `select`, `sell`, `set`, `skip`, `start`, `use`
+`add`, `buy`, `cash_out`, `discard`, `gamestate`, `health`, `load`, `menu`, `next_round`, `pack`, `play`, `rearrange`, `reroll`, `reroll_boss`, `save`, `screenshot`, `select`, `sell`, `set`, `skip`, `start`, `use`
 
 For detailed method documentation including parameters and schemas, see the [OpenRPC specification](../src/lua/utils/openrpc.json).
 

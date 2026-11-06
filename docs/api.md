@@ -121,6 +121,7 @@ MENU ──► BLIND_SELECT ──► SELECTING_HAND ──► ROUND_EVAL ──
 - [`load`](#load) - Load a saved run from a file
 - [`select`](#select) - Select the current blind to begin the round
 - [`skip`](#skip) - Skip the current blind (Small or Big only)
+- [`reroll_boss`](#reroll_boss) - Reroll the Boss blind (requires Director's Cut or Retcon)
 - [`buy`](#buy) - Buy a card, voucher, or pack from the shop
 - [`pack`](#pack) - Select a card or skip a pack from an opened booster pack, requires to you select targets for Tarot/Spectral consumables when applicable
 - [`sell`](#sell) - Sell a joker or consumable
@@ -313,6 +314,28 @@ Skip the current blind (Small or Big only).
 curl -X POST http://127.0.0.1:12346 \
   -H "Content-Type: application/json" \
   -d '{"jsonrpc": "2.0", "method": "skip", "id": 1}'
+```
+
+---
+
+### `reroll_boss`
+
+Reroll the upcoming Boss blind from the blind selection screen, like the in-game "Reroll Boss" button. Requires the Director's Cut voucher (one reroll per ante) or the Retcon voucher (unlimited rerolls). Each reroll costs $10. The new Boss is random and can occasionally be the same one.
+
+Use `used_vouchers` and `round.boss_rerolled` in the [GameState](#gamestate-schema) to check whether a reroll is available.
+
+**Returns:** [GameState](#gamestate-schema)
+
+**Errors:** `INVALID_STATE`, `NOT_ALLOWED`
+
+**Required State:** `BLIND_SELECT`
+
+**Example:**
+
+```bash
+curl -X POST http://127.0.0.1:12346 \
+  -H "Content-Type: application/json" \
+  -d '{"jsonrpc": "2.0", "method": "reroll_boss", "id": 1}'
 ```
 
 ---
@@ -767,6 +790,7 @@ Represents a card area (hand, jokers, consumables, shop, etc.).
   "discards_left": 3,
   "discards_used": 0,
   "reroll_cost": 5,
+  "boss_rerolled": false,
   "chips": 0
 }
 ```

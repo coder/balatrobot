@@ -485,6 +485,32 @@
       ]
     },
     {
+      "name": "reroll_boss",
+      "summary": "Reroll the Boss blind",
+      "description": "Reroll the upcoming Boss blind from the blind selection screen. Requires the Director's Cut (once per ante) or Retcon (unlimited) voucher and costs $10.",
+      "tags": [
+        {
+          "$ref": "#/components/tags/blind"
+        }
+      ],
+      "params": [],
+      "result": {
+        "name": "gamestate",
+        "description": "Complete game state after rerolling the Boss blind",
+        "schema": {
+          "$ref": "#/components/schemas/GameState"
+        }
+      },
+      "errors": [
+        {
+          "$ref": "#/components/errors/InvalidState"
+        },
+        {
+          "$ref": "#/components/errors/NotAllowed"
+        }
+      ]
+    },
+    {
       "name": "save",
       "summary": "Save the current run state to a file",
       "description": "Save the current run state to a file. Only works during an active run.",
@@ -1046,6 +1072,10 @@
           "reroll_cost": {
             "type": "integer",
             "description": "Current cost to reroll the shop"
+          },
+          "boss_rerolled": {
+            "type": "boolean",
+            "description": "Whether the Boss blind was already rerolled this ante (Director's Cut allows one reroll per ante)"
           },
           "chips": {
             "type": "integer",

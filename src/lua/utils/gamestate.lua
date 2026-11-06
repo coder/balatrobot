@@ -463,6 +463,9 @@ local function extract_round_info()
     round.reroll_cost = G.GAME.current_round.reroll_cost
   end
 
+  -- Boss reroll flag is stored in G.GAME.round_resets (reset each ante)
+  round.boss_rerolled = (G.GAME.round_resets and G.GAME.round_resets.boss_rerolled) == true
+
   -- Chips is stored in G.GAME not G.GAME.current_round
   if G.GAME.chips then
     round.chips = G.GAME.chips
