@@ -20,11 +20,11 @@ jobs:
       - name: Ruff Check
         uses: astral-sh/ruff-action@v3
         with:
-          version: latest
+          version: "0.14.10"
       - name: Ruff Format
         uses: astral-sh/ruff-action@v3
         with:
-          version: latest
+          version: "0.14.10"
           args: format --check
   ty:
     name: Type Check & Markdown Format
