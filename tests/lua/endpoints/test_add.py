@@ -84,6 +84,22 @@ class TestAddEndpoint:
         assert after["vouchers"]["count"] == 1
         assert after["vouchers"]["cards"][0]["key"] == "v_overstock_norm"
 
+    def test_add_voucher_then_buy(self, client: httpx.Client) -> None:
+        """Test that an added voucher can be bought (redeemed) from the shop."""
+        gamestate = load_fixture(
+            client,
+            "add",
+            "state-SHOP--jokers.count-0--consumables.count-0--vouchers.count-0--packs.count-0",
+        )
+        assert gamestate["state"] == "SHOP"
+        assert_gamestate_response(api(client, "set", {"money": 50}))
+        response = api(client, "add", {"key": "v_overstock_norm"})
+        assert_gamestate_response(response)
+        response = api(client, "buy", {"voucher": 0})
+        after = assert_gamestate_response(response)
+        assert after["vouchers"]["count"] == 0
+        assert "v_overstock_norm" in after["used_vouchers"]
+
     def test_add_pack(self, client: httpx.Client) -> None:
         """Test adding a pack with valid key in SHOP state."""
         gamestate = load_fixture(

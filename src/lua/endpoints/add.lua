@@ -442,6 +442,12 @@ return {
       return
     end
 
+    -- Vouchers added to the shop need the shop UI (price and redeem button),
+    -- same as the Voucher Tag does with create_shop_card_ui
+    if card_type == "voucher" and result then
+      create_shop_card_ui(result, "Voucher", G.shop_vouchers) ---@diagnostic disable-line: undefined-global
+    end
+
     -- Set custom perish_tally if perishable was provided
     if args.perishable and result and result.ability then
       result.ability.perish_tally = args.perishable
@@ -464,9 +470,11 @@ return {
             and G.consumeables.config
             and G.consumeables.config.card_count == initial_consumable_count + 1
         elseif card_type == "voucher" then
+          -- The shop UI (buy button) is created in a delayed event
           added = G.shop_vouchers
             and G.shop_vouchers.config
             and G.shop_vouchers.config.card_count == initial_voucher_count + 1
+            and result.children.buy_button ~= nil
         elseif card_type == "pack" then
           added = G.shop_booster
             and G.shop_booster.config
