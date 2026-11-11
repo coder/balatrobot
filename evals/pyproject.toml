@@ -1,0 +1,16 @@
+[project]
+name = "balatro-evals"
+version = "0.1.0"
+description = "Balatro as a Modal Evals evaluation: a seeded run per task, played through BalatroBot's API, with a replayable play-by-play and video of each game"
+requires-python = ">=3.12,<3.13"
+dependencies = ["modal-evals", "modal>=1.6"]
+
+[tool.uv]
+package = false
+
+[tool.uv.sources]
+# Fetched by setup_modal_evals.py.
+modal-evals = { path = ".modal-evals", editable = true }
+
+[dependency-groups]
+test = ["pytest>=9", "jsonschema>=4"]

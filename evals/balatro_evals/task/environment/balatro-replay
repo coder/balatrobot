@@ -1,0 +1,13 @@
+#!/bin/sh
+# Encode the frames the `balatro` command kept, one per action, into the trial's video of the run.
+set -eu
+FRAMES=/var/lib/balatro/frames
+OUT=/logs/artifacts/replay.mp4
+if [ -d "$FRAMES" ] && [ -n "$(ls "$FRAMES" 2>/dev/null)" ]; then
+    mkdir -p /logs/artifacts
+    ffmpeg -y -loglevel error -framerate 2 -pattern_type glob -i "$FRAMES/*.png" \
+        -vf "scale=trunc(iw/2)*2:trunc(ih/2)*2" -c:v libx264 -pix_fmt yuv420p "$OUT"
+    echo "$OUT: $(ls "$FRAMES" | wc -l) frames"
+else
+    echo "no frames to encode" >&2
+fi
