@@ -818,12 +818,17 @@ The complete game state returned by most methods.
   "round_num": 1,
   "ante_num": 1,
   "money": 4,
+  "interest_cap": 25,
+  "interest_amount": 1,
+  "no_interest": false,
+  "bankrupt_at": 0,
   "deck": "b_red",
   "stake": "stake_white",
   "seed": "ABC123",
   "challenge": "c_omelette_1",
   "last_tarot_planet": "c_hermit",
   "won": false,
+  "skips": 0,
   "used_vouchers": {},
   "tags": [ ... ],
   "hands": { ... },
@@ -842,6 +847,8 @@ The complete game state returned by most methods.
 ```
 
 `challenge` is present only during a Challenge Run; `last_tarot_planet` is the card key The Fool would create (e.g. `c_hermit`), omitted until a Tarot or Planet has been used this run. Both are conditionally absent, not `null`.
+
+`interest_cap` and `interest_amount` are the interest formula inputs: the max end-of-round interest payout is `interest_cap/5 × interest_amount` dollars (defaults 25 and 1 → $5). They are inert when `no_interest` is true (Green Deck, The Omelette, Mad World), which pays no interest while the raw values stay nominal. `bankrupt_at` is the spendable floor: purchases are blocked when `cost > money − bankrupt_at` (Credit Card lowers it to −20, allowing debt).
 
 ### Area
 

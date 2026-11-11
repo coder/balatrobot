@@ -282,7 +282,7 @@ The `native` platform runs Balatro from source code using the LÖVE framework in
 - `BALATROBOT_PATH_BALATRO`: Directory containing Balatro source code with `main.lua`
 - `BALATROBOT_PATH_LOVE`: Path to LÖVE executable (find with `which love`), e.g., `/usr/bin/love`
 - `BALATROBOT_PATH_LOVELY`: Must be `/usr/local/lib/liblovely.so`
-- Mods directory: `~/.config/love/Mods` (auto-discovered, used by lovely)
+- Mods directory: `~/.local/share/love/Mods` (auto-discovered, used by lovely)
 - Settings directory: `~/.local/share/love/balatro` (must contain game settings)
 
 **Setup:**

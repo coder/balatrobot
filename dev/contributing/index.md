@@ -5,8 +5,8 @@ Guide for contributing to BalatroBot development.
 ## Prerequisites
 
 - **Balatro** (v1.0.1+) - Purchase from [Steam](https://store.steampowered.com/app/2379780/Balatro/)
-- **Lovely Injector** (v0.8.0+) - Follow the [installation guide](https://github.com/ethangreen-dev/lovely-injector#manual-installation)
-- **Steamodded** (v1.0.0-beta-1221a+) - Follow the [installation guide](https://github.com/Steamodded/smods/wiki)
+- **Lovely Injector** (v0.9.0+) - Follow the [installation guide](https://github.com/ethangreen-dev/lovely-injector#manual-installation)
+- **Steamodded** (v1.0.0-beta-1814a+) - Follow the [installation guide](https://github.com/Steamodded/smods/wiki)
 - **Uv** (v0.9.21+) - Follow the [installation guide](https://docs.astral.sh/uv)
 - **DebugPlus** (v1.5.1+) (optional) - Follow the [installation guide](https://github.com/WilsontheWolf/DebugPlus) - Required for test endpoints
 
@@ -127,7 +127,7 @@ ln -s "$(pwd)" ~/.local/share/Steam/steamapps/compatdata/2379780/pfx/drive_c/use
 **Linux (native):**
 
 ```bash
-ln -s "$(pwd)" ~/.config/love/Mods/balatrobot/
+ln -s "$(pwd)" ~/.local/share/love/Mods/balatrobot/
 
 ```
 
