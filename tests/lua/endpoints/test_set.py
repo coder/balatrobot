@@ -258,3 +258,117 @@ class TestSetEndpointValidation:
             "BAD_REQUEST",
             "Field 'shop' must be of type boolean",
         )
+
+
+class TestSetEndpointBoss:
+    """Test set endpoint boss blind functionality."""
+
+    def test_set_boss_not_in_blind_select(self, client: httpx.Client) -> None:
+        """Test that set boss fails when not in BLIND_SELECT state."""
+        gamestate = load_fixture(client, "set", "state-SELECTING_HAND")
+        assert gamestate["state"] == "SELECTING_HAND"
+        response = api(client, "set", {"boss": "bl_hook"})
+        assert_error_response(
+            response,
+            "INVALID_STATE",
+            "Can only set boss blind during blind selection (BLIND_SELECT state)",
+        )
+
+    def test_set_boss_invalid_key(self, client: httpx.Client) -> None:
+        """Test that set boss fails when key does not exist."""
+        gamestate = load_fixture(client, "set", "state-BLIND_SELECT")
+        assert gamestate["state"] == "BLIND_SELECT"
+        response = api(client, "set", {"boss": "bl_nonsense"})
+        assert_error_response(
+            response,
+            "BAD_REQUEST",
+            "Unknown boss blind key: bl_nonsense",
+        )
+
+    def test_set_boss_not_a_boss(self, client: httpx.Client) -> None:
+        """Test that set boss fails when key is not a boss blind (e.g. bl_small)."""
+        gamestate = load_fixture(client, "set", "state-BLIND_SELECT")
+        assert gamestate["state"] == "BLIND_SELECT"
+        response = api(client, "set", {"boss": "bl_small"})
+        assert_error_response(
+            response,
+            "BAD_REQUEST",
+            "Not a boss blind: bl_small",
+        )
+
+    def test_set_boss_success(self, client: httpx.Client) -> None:
+        """Test that set boss succeeds and gamestate reflects new boss key."""
+        gamestate = load_fixture(client, "set", "state-BLIND_SELECT")
+        assert gamestate["state"] == "BLIND_SELECT"
+        response = api(client, "set", {"boss": "bl_hook"})
+        after = assert_gamestate_response(response, state="BLIND_SELECT")
+        assert after["blinds"]["boss"]["key"] == "bl_hook"
+
+    def test_set_boss_with_scalar(self, client: httpx.Client) -> None:
+        """Test that set boss combined with money works."""
+        gamestate = load_fixture(client, "set", "state-BLIND_SELECT")
+        assert gamestate["state"] == "BLIND_SELECT"
+        response = api(client, "set", {"boss": "bl_hook", "money": 100})
+        after = assert_gamestate_response(response, state="BLIND_SELECT", money=100)
+        assert after["blinds"]["boss"]["key"] == "bl_hook"
+
+    def test_set_boss_with_shop(self, client: httpx.Client) -> None:
+        """Test that set boss + shop is rejected (mutual exclusion)."""
+        gamestate = load_fixture(client, "set", "state-BLIND_SELECT")
+        assert gamestate["state"] == "BLIND_SELECT"
+        response = api(client, "set", {"boss": "bl_hook", "shop": True})
+        assert_error_response(
+            response,
+            "BAD_REQUEST",
+            "Cannot set boss and shop at the same time",
+        )
+
+    def test_set_boss_invalid_type(self, client: httpx.Client) -> None:
+        """Test that set boss fails when boss parameter is not a string."""
+        gamestate = load_fixture(client, "set", "state-BLIND_SELECT")
+        assert gamestate["state"] == "BLIND_SELECT"
+        response = api(client, "set", {"boss": 123})
+        assert_error_response(
+            response,
+            "BAD_REQUEST",
+            "Field 'boss' must be of type string",
+        )
+
+
+class TestSetEndpointBossIntegration:
+    """Integration test for boss blind override."""
+
+    def test_set_boss_integration(self, client: httpx.Client) -> None:
+        """Set boss → skip small → skip big → select boss → play → verify boss name."""
+        # Start in BLIND_SELECT
+        gamestate = load_fixture(client, "set", "state-BLIND_SELECT")
+        assert gamestate["state"] == "BLIND_SELECT"
+
+        # Override boss blind to bl_hook (The Hook)
+        response = api(client, "set", {"boss": "bl_hook"})
+        after = assert_gamestate_response(response, state="BLIND_SELECT")
+        assert after["blinds"]["boss"]["key"] == "bl_hook"
+
+        # Skip small blind
+        response = api(client, "skip", {})
+        after = assert_gamestate_response(response)
+        assert after["blinds"]["small"]["status"] == "SKIPPED"
+
+        # Skip big blind
+        response = api(client, "skip", {})
+        after = assert_gamestate_response(response)
+        assert after["blinds"]["big"]["status"] == "SKIPPED"
+
+        # Select boss blind
+        response = api(client, "select", {})
+        after = assert_gamestate_response(response, state="SELECTING_HAND")
+        assert after["blinds"]["boss"]["status"] == "CURRENT"
+        assert after["blinds"]["boss"]["key"] == "bl_hook"
+        assert "Hook" in after["blinds"]["boss"]["name"]
+
+        # Beat the boss: set high chips and play a card
+        api(client, "set", {"chips": 1000000})
+        response = api(client, "play", {"cards": [0]})
+        after = assert_gamestate_response(response)
+        # After beating the boss, we should be in ROUND_EVAL or SHOP
+        assert after["state"] in ("ROUND_EVAL", "SHOP")

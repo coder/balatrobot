@@ -12,21 +12,21 @@ class MacOSLauncher(BaseLauncher):
 
     def validate_paths(self, config: Config) -> None:
         """Validate paths, apply macOS defaults if None."""
-        if config.love_path is None:
-            config.love_path = str(
+        if config.path_love is None:
+            config.path_love = str(
                 Path.home()
                 / "Library/Application Support/Steam/steamapps/common/Balatro"
                 / "Balatro.app/Contents/MacOS/love"
             )
-        if config.lovely_path is None:
-            config.lovely_path = str(
+        if config.path_lovely is None:
+            config.path_lovely = str(
                 Path.home()
                 / "Library/Application Support/Steam/steamapps/common/Balatro"
                 / "liblovely.dylib"
             )
 
-        love = Path(config.love_path)
-        lovely = Path(config.lovely_path)
+        love = Path(config.path_love)
+        lovely = Path(config.path_lovely)
 
         if not love.exists():
             raise RuntimeError(f"LOVE executable not found: {love}")
@@ -35,13 +35,13 @@ class MacOSLauncher(BaseLauncher):
 
     def build_env(self, config: Config) -> dict[str, str]:
         """Build environment with DYLD_INSERT_LIBRARIES."""
-        assert config.lovely_path is not None
+        assert config.path_lovely is not None
         env = os.environ.copy()
-        env["DYLD_INSERT_LIBRARIES"] = config.lovely_path
+        env["DYLD_INSERT_LIBRARIES"] = config.path_lovely
         env.update(config.to_env())
         return env
 
     def build_cmd(self, config: Config) -> list[str]:
         """Build macOS launch command."""
-        assert config.love_path is not None
-        return [config.love_path]
+        assert config.path_love is not None
+        return [config.path_love]

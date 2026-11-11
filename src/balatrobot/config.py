@@ -4,49 +4,26 @@ import os
 from dataclasses import dataclass
 from typing import Any, Self
 
-# Mapping: config field -> env var
 ENV_MAP: dict[str, str] = {
     "host": "BALATROBOT_HOST",
-    "port": "BALATROBOT_PORT",
-    "fast": "BALATROBOT_FAST",
-    "headless": "BALATROBOT_HEADLESS",
-    "render_on_api": "BALATROBOT_RENDER_ON_API",
-    "audio": "BALATROBOT_AUDIO",
+    "render": "BALATROBOT_RENDER",
     "debug": "BALATROBOT_DEBUG",
-    "no_shaders": "BALATROBOT_NO_SHADERS",
-    "fps_cap": "BALATROBOT_FPS_CAP",
-    "gamespeed": "BALATROBOT_GAMESPEED",
-    "animation_fps": "BALATROBOT_ANIMATION_FPS",
-    "no_reduced_motion": "BALATROBOT_NO_REDUCED_MOTION",
-    "pixel_art_smoothing": "BALATROBOT_PIXEL_ART_SMOOTHING",
-    "balatro_path": "BALATROBOT_BALATRO_PATH",
-    "lovely_path": "BALATROBOT_LOVELY_PATH",
-    "love_path": "BALATROBOT_LOVE_PATH",
+    "screenshots": "BALATROBOT_SCREENSHOTS",
+    "settings": "BALATROBOT_SETTINGS",
+    "path_balatro": "BALATROBOT_PATH_BALATRO",
+    "path_lovely": "BALATROBOT_PATH_LOVELY",
+    "path_love": "BALATROBOT_PATH_LOVE",
     "platform": "BALATROBOT_PLATFORM",
-    "logs_path": "BALATROBOT_LOGS_PATH",
+    "logs": "BALATROBOT_LOGS",
 }
 
-BOOL_FIELDS = frozenset(
-    {
-        "fast",
-        "headless",
-        "render_on_api",
-        "audio",
-        "debug",
-        "no_shaders",
-        "no_reduced_motion",
-        "pixel_art_smoothing",
-    }
-)
-INT_FIELDS = frozenset({"port", "fps_cap", "gamespeed", "animation_fps"})
+RENDER_CHOICES = frozenset({"headfull", "headless", "ondemand"})
 
 
-def _parse_env_value(field: str, value: str) -> str | int | bool:
-    """Convert env var string to proper type. Raises ValueError on invalid int."""
-    if field in BOOL_FIELDS:
+def _parse_env_value(field: str, value: str) -> str | bool:
+    """Coerce env var string to the right Python type."""
+    if field in ("debug", "screenshots"):
         return value in ("1", "true")
-    if field in INT_FIELDS:
-        return int(value)  # Raises ValueError if invalid
     return value
 
 
@@ -58,41 +35,34 @@ class Config:
     host: str = "127.0.0.1"
     port: int = 12346
 
-    # Balatro
-    fast: bool = False
-    headless: bool = False
-    render_on_api: bool = False
-    audio: bool = False
+    # Settings profile name (bare name, e.g. "fast", "turbo", "light")
+    settings: str | None = None
+
+    # Render mode
+    render: str = "headfull"
+
+    # Debug
     debug: bool = False
-    no_shaders: bool = False
-    fps_cap: int = 60
-    gamespeed: int = 4
-    animation_fps: int = 10
-    no_reduced_motion: bool = False
-    pixel_art_smoothing: bool = False
+
+    # Screenshot logging
+    screenshots: bool = False
 
     # Launcher
-    balatro_path: str | None = None
-    lovely_path: str | None = None
-    love_path: str | None = None
-
-    # Instance
+    path_balatro: str | None = None
+    path_lovely: str | None = None
+    path_love: str | None = None
     platform: str | None = None
-    logs_path: str = "logs"
+    logs: str | None = None
 
-    @classmethod
-    def from_args(cls, args) -> Self:
-        """Create Config from CLI args with env var fallback."""
-        kwargs: dict[str, Any] = {}
+    # Set if BALATROBOX_STREAM=1 and BALATROBOT_PLATFORM=docker
+    stream_port: int | None = None
 
-        for field, env_var in ENV_MAP.items():
-            cli_val = getattr(args, field, None)
-            if cli_val is not None:
-                kwargs[field] = cli_val
-            elif (env_val := os.environ.get(env_var)) is not None:
-                kwargs[field] = _parse_env_value(field, env_val)
-
-        return cls(**kwargs)
+    def __post_init__(self) -> None:
+        if self.render not in RENDER_CHOICES:
+            raise ValueError(
+                f"Invalid render mode '{self.render}'. "
+                f"Choose from: {', '.join(sorted(RENDER_CHOICES))}"
+            )
 
     @classmethod
     def from_env(cls) -> Self:
@@ -122,12 +92,18 @@ class Config:
         """Convert config to environment variables dict."""
         env: dict[str, str] = {}
         for field, env_var in ENV_MAP.items():
+            if field == "logs":
+                # Python-only: the Lua mod reads BALATROBOT_LOG_DIR (set
+                # imperatively by the launcher as the per-instance dir), not
+                # the parent. Don't emit a confusing second log var.
+                continue
             value = getattr(self, field)
             if value is None:
                 continue
-            if field in BOOL_FIELDS:
+            if field in ("debug", "screenshots"):
                 if value:
                     env[env_var] = "1"
             else:
                 env[env_var] = str(value)
+        env["BALATROBOT_PORT"] = str(self.port)
         return env

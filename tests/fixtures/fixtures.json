@@ -9,15 +9,15 @@
       {
         "method": "start",
         "params": {
-          "deck": "RED",
-          "stake": "WHITE",
+          "deck": "b_red",
+          "stake": "stake_white",
           "seed": "TEST123"
         }
       }
     ]
   },
   "gamestate": {
-    "state-BLIND_SELECT--round_num-0--deck-RED--stake-WHITE": [
+    "state-BLIND_SELECT--round_num-0--deck-b_red--stake-stake_white": [
       {
         "method": "menu",
         "params": {}
@@ -25,13 +25,13 @@
       {
         "method": "start",
         "params": {
-          "deck": "RED",
-          "stake": "WHITE",
+          "deck": "b_red",
+          "stake": "stake_white",
           "seed": "TEST123"
         }
       }
     ],
-    "state-BLIND_SELECT--deck-BLUE--stake-RED": [
+    "state-BLIND_SELECT--deck-b_blue--stake-stake_red": [
       {
         "method": "menu",
         "params": {}
@@ -39,8 +39,8 @@
       {
         "method": "start",
         "params": {
-          "deck": "BLUE",
-          "stake": "RED",
+          "deck": "b_blue",
+          "stake": "stake_red",
           "seed": "TEST123"
         }
       }
@@ -53,8 +53,8 @@
       {
         "method": "start",
         "params": {
-          "deck": "RED",
-          "stake": "WHITE",
+          "deck": "b_red",
+          "stake": "stake_white",
           "seed": "TEST123"
         }
       },
@@ -86,8 +86,8 @@
       {
         "method": "start",
         "params": {
-          "deck": "RED",
-          "stake": "WHITE",
+          "deck": "b_red",
+          "stake": "stake_white",
           "seed": "TEST123"
         }
       },
@@ -120,8 +120,8 @@
       {
         "method": "start",
         "params": {
-          "deck": "RED",
-          "stake": "WHITE",
+          "deck": "b_red",
+          "stake": "stake_white",
           "seed": "TEST123"
         }
       },
@@ -156,8 +156,8 @@
       {
         "method": "start",
         "params": {
-          "deck": "RED",
-          "stake": "WHITE",
+          "deck": "b_red",
+          "stake": "stake_white",
           "seed": "QKNXF682"
         }
       },
@@ -199,8 +199,8 @@
       {
         "method": "start",
         "params": {
-          "deck": "RED",
-          "stake": "WHITE",
+          "deck": "b_red",
+          "stake": "stake_white",
           "seed": "TEST123"
         }
       },
@@ -219,8 +219,8 @@
       {
         "method": "start",
         "params": {
-          "deck": "RED",
-          "stake": "WHITE",
+          "deck": "b_red",
+          "stake": "stake_white",
           "seed": "TEST123"
         }
       }
@@ -235,14 +235,28 @@
       {
         "method": "start",
         "params": {
-          "deck": "RED",
-          "stake": "WHITE",
+          "deck": "b_red",
+          "stake": "stake_white",
           "seed": "TEST123"
         }
       }
     ]
   },
   "set": {
+    "state-BLIND_SELECT": [
+      {
+        "method": "menu",
+        "params": {}
+      },
+      {
+        "method": "start",
+        "params": {
+          "deck": "b_red",
+          "stake": "stake_white",
+          "seed": "TEST123"
+        }
+      }
+    ],
     "state-SELECTING_HAND": [
       {
         "method": "menu",
@@ -251,8 +265,8 @@
       {
         "method": "start",
         "params": {
-          "deck": "RED",
-          "stake": "WHITE",
+          "deck": "b_red",
+          "stake": "stake_white",
           "seed": "TEST123"
         }
       },
@@ -269,8 +283,8 @@
       {
         "method": "start",
         "params": {
-          "deck": "RED",
-          "stake": "WHITE",
+          "deck": "b_red",
+          "stake": "stake_white",
           "seed": "TEST123"
         }
       },
@@ -307,8 +321,8 @@
       {
         "method": "start",
         "params": {
-          "deck": "RED",
-          "stake": "WHITE",
+          "deck": "b_red",
+          "stake": "stake_white",
           "seed": "TEST123"
         }
       }
@@ -323,8 +337,8 @@
       {
         "method": "start",
         "params": {
-          "deck": "RED",
-          "stake": "WHITE",
+          "deck": "b_red",
+          "stake": "stake_white",
           "seed": "TEST123"
         }
       }
@@ -339,8 +353,8 @@
       {
         "method": "start",
         "params": {
-          "deck": "RED",
-          "stake": "WHITE",
+          "deck": "b_red",
+          "stake": "stake_white",
           "seed": "TEST123"
         }
       }
@@ -353,8 +367,8 @@
       {
         "method": "start",
         "params": {
-          "deck": "RED",
-          "stake": "WHITE",
+          "deck": "b_red",
+          "stake": "stake_white",
           "seed": "TEST123"
         }
       },
@@ -371,8 +385,8 @@
       {
         "method": "start",
         "params": {
-          "deck": "RED",
-          "stake": "WHITE",
+          "deck": "b_red",
+          "stake": "stake_white",
           "seed": "TEST123"
         }
       },
@@ -395,8 +409,8 @@
       {
         "method": "start",
         "params": {
-          "deck": "RED",
-          "stake": "WHITE",
+          "deck": "b_red",
+          "stake": "stake_white",
           "seed": "TEST123"
         }
       }
@@ -409,8 +423,8 @@
       {
         "method": "start",
         "params": {
-          "deck": "RED",
-          "stake": "WHITE",
+          "deck": "b_red",
+          "stake": "stake_white",
           "seed": "TEST123"
         }
       },
@@ -427,8 +441,8 @@
       {
         "method": "start",
         "params": {
-          "deck": "RED",
-          "stake": "WHITE",
+          "deck": "b_red",
+          "stake": "stake_white",
           "seed": "TEST123"
         }
       },
@@ -451,8 +465,8 @@
       {
         "method": "start",
         "params": {
-          "deck": "RED",
-          "stake": "WHITE",
+          "deck": "b_red",
+          "stake": "stake_white",
           "seed": "TEST123"
         }
       }
@@ -465,8 +479,8 @@
       {
         "method": "start",
         "params": {
-          "deck": "RED",
-          "stake": "WHITE",
+          "deck": "b_red",
+          "stake": "stake_white",
           "seed": "TEST123"
         }
       },
@@ -483,8 +497,8 @@
       {
         "method": "start",
         "params": {
-          "deck": "RED",
-          "stake": "WHITE",
+          "deck": "b_red",
+          "stake": "stake_white",
           "seed": "TEST123"
         }
       },
@@ -509,8 +523,8 @@
       {
         "method": "start",
         "params": {
-          "deck": "RED",
-          "stake": "WHITE",
+          "deck": "b_red",
+          "stake": "stake_white",
           "seed": "TEST123"
         }
       },
@@ -533,8 +547,8 @@
       {
         "method": "start",
         "params": {
-          "deck": "RED",
-          "stake": "WHITE",
+          "deck": "b_red",
+          "stake": "stake_white",
           "seed": "TEST123"
         }
       },
@@ -557,6 +571,38 @@
           "chips": 1000000
         }
       }
+    ],
+    "state-SELECTING_HAND--blinds.boss.key-bl_final_bell": [
+      {
+        "method": "menu",
+        "params": {}
+      },
+      {
+        "method": "start",
+        "params": {
+          "deck": "b_red",
+          "stake": "stake_white",
+          "seed": "TEST123"
+        }
+      },
+      {
+        "method": "set",
+        "params": {
+          "boss": "bl_final_bell"
+        }
+      },
+      {
+        "method": "skip",
+        "params": {}
+      },
+      {
+        "method": "skip",
+        "params": {}
+      },
+      {
+        "method": "select",
+        "params": {}
+      }
     ]
   },
   "discard": {
@@ -568,8 +614,8 @@
       {
         "method": "start",
         "params": {
-          "deck": "RED",
-          "stake": "WHITE",
+          "deck": "b_red",
+          "stake": "stake_white",
           "seed": "TEST123"
         }
       }
@@ -582,8 +628,8 @@
       {
         "method": "start",
         "params": {
-          "deck": "RED",
-          "stake": "WHITE",
+          "deck": "b_red",
+          "stake": "stake_white",
           "seed": "TEST123"
         }
       },
@@ -600,8 +646,8 @@
       {
         "method": "start",
         "params": {
-          "deck": "RED",
-          "stake": "WHITE",
+          "deck": "b_red",
+          "stake": "stake_white",
           "seed": "TEST123"
         }
       },
@@ -615,6 +661,38 @@
           "discards": 0
         }
       }
+    ],
+    "state-SELECTING_HAND--blinds.boss.key-bl_final_bell": [
+      {
+        "method": "menu",
+        "params": {}
+      },
+      {
+        "method": "start",
+        "params": {
+          "deck": "b_red",
+          "stake": "stake_white",
+          "seed": "TEST123"
+        }
+      },
+      {
+        "method": "set",
+        "params": {
+          "boss": "bl_final_bell"
+        }
+      },
+      {
+        "method": "skip",
+        "params": {}
+      },
+      {
+        "method": "skip",
+        "params": {}
+      },
+      {
+        "method": "select",
+        "params": {}
+      }
     ]
   },
   "cash_out": {
@@ -626,8 +704,8 @@
       {
         "method": "start",
         "params": {
-          "deck": "RED",
-          "stake": "WHITE",
+          "deck": "b_red",
+          "stake": "stake_white",
           "seed": "TEST123"
         }
       }
@@ -640,8 +718,8 @@
       {
         "method": "start",
         "params": {
-          "deck": "RED",
-          "stake": "WHITE",
+          "deck": "b_red",
+          "stake": "stake_white",
           "seed": "TEST123"
         }
       },
@@ -674,8 +752,8 @@
       {
         "method": "start",
         "params": {
-          "deck": "RED",
-          "stake": "WHITE",
+          "deck": "b_red",
+          "stake": "stake_white",
           "seed": "TEST123"
         }
       }
@@ -688,8 +766,8 @@
       {
         "method": "start",
         "params": {
-          "deck": "RED",
-          "stake": "WHITE",
+          "deck": "b_red",
+          "stake": "stake_white",
           "seed": "TEST123"
         }
       },
@@ -726,8 +804,8 @@
       {
         "method": "start",
         "params": {
-          "deck": "RED",
-          "stake": "WHITE",
+          "deck": "b_red",
+          "stake": "stake_white",
           "seed": "TEST123"
         }
       }
@@ -740,8 +818,8 @@
       {
         "method": "start",
         "params": {
-          "deck": "RED",
-          "stake": "WHITE",
+          "deck": "b_red",
+          "stake": "stake_white",
           "seed": "TEST123"
         }
       },
@@ -776,8 +854,8 @@
       {
         "method": "start",
         "params": {
-          "deck": "RED",
-          "stake": "WHITE",
+          "deck": "b_red",
+          "stake": "stake_white",
           "seed": "TEST123"
         }
       },
@@ -820,8 +898,8 @@
       {
         "method": "start",
         "params": {
-          "deck": "RED",
-          "stake": "WHITE",
+          "deck": "b_red",
+          "stake": "stake_white",
           "seed": "TEST123"
         }
       }
@@ -834,8 +912,8 @@
       {
         "method": "start",
         "params": {
-          "deck": "RED",
-          "stake": "WHITE",
+          "deck": "b_red",
+          "stake": "stake_white",
           "seed": "TEST123"
         }
       },
@@ -870,8 +948,8 @@
       {
         "method": "start",
         "params": {
-          "deck": "RED",
-          "stake": "WHITE",
+          "deck": "b_red",
+          "stake": "stake_white",
           "seed": "TEST123"
         }
       },
@@ -906,8 +984,8 @@
       {
         "method": "start",
         "params": {
-          "deck": "RED",
-          "stake": "WHITE",
+          "deck": "b_red",
+          "stake": "stake_white",
           "seed": "TEST123"
         }
       },
@@ -942,8 +1020,8 @@
       {
         "method": "start",
         "params": {
-          "deck": "RED",
-          "stake": "WHITE",
+          "deck": "b_red",
+          "stake": "stake_white",
           "seed": "TEST123"
         }
       },
@@ -978,8 +1056,8 @@
       {
         "method": "start",
         "params": {
-          "deck": "RED",
-          "stake": "WHITE",
+          "deck": "b_red",
+          "stake": "stake_white",
           "seed": "TEST123"
         }
       },
@@ -1020,8 +1098,8 @@
       {
         "method": "start",
         "params": {
-          "deck": "RED",
-          "stake": "WHITE",
+          "deck": "b_red",
+          "stake": "stake_white",
           "seed": "TEST123"
         }
       },
@@ -1060,8 +1138,8 @@
       {
         "method": "start",
         "params": {
-          "deck": "RED",
-          "stake": "WHITE",
+          "deck": "b_red",
+          "stake": "stake_white",
           "seed": "TEST123"
         }
       },
@@ -1108,8 +1186,8 @@
       {
         "method": "start",
         "params": {
-          "deck": "RED",
-          "stake": "WHITE",
+          "deck": "b_red",
+          "stake": "stake_white",
           "seed": "TEST123"
         }
       },
@@ -1187,8 +1265,8 @@
       {
         "method": "start",
         "params": {
-          "deck": "RED",
-          "stake": "WHITE",
+          "deck": "b_red",
+          "stake": "stake_white",
           "seed": "TEST123"
         }
       },
@@ -1252,8 +1330,8 @@
       {
         "method": "start",
         "params": {
-          "deck": "RED",
-          "stake": "WHITE",
+          "deck": "b_red",
+          "stake": "stake_white",
           "seed": "TEST123"
         }
       },
@@ -1294,8 +1372,8 @@
       {
         "method": "start",
         "params": {
-          "deck": "RED",
-          "stake": "WHITE",
+          "deck": "b_red",
+          "stake": "stake_white",
           "seed": "TEST123"
         }
       },
@@ -1346,6 +1424,732 @@
           "skip": true
         }
       }
+    ],
+    "state-SHOP--cards.count-2--packs[1].label-Arcana+Pack": [
+      {
+        "method": "menu",
+        "params": {}
+      },
+      {
+        "method": "start",
+        "params": {
+          "deck": "b_abandoned",
+          "stake": "stake_white",
+          "seed": "ISSUE197"
+        }
+      },
+      {
+        "method": "select",
+        "params": {}
+      },
+      {
+        "method": "add",
+        "params": {
+          "key": "c_hanged_man"
+        }
+      },
+      {
+        "method": "use",
+        "params": {
+          "consumable": 0,
+          "cards": [
+            0,
+            1
+          ]
+        }
+      },
+      {
+        "method": "add",
+        "params": {
+          "key": "c_hanged_man"
+        }
+      },
+      {
+        "method": "use",
+        "params": {
+          "consumable": 0,
+          "cards": [
+            0,
+            1
+          ]
+        }
+      },
+      {
+        "method": "add",
+        "params": {
+          "key": "c_hanged_man"
+        }
+      },
+      {
+        "method": "use",
+        "params": {
+          "consumable": 0,
+          "cards": [
+            0,
+            1
+          ]
+        }
+      },
+      {
+        "method": "add",
+        "params": {
+          "key": "c_hanged_man"
+        }
+      },
+      {
+        "method": "use",
+        "params": {
+          "consumable": 0,
+          "cards": [
+            0,
+            1
+          ]
+        }
+      },
+      {
+        "method": "add",
+        "params": {
+          "key": "c_hanged_man"
+        }
+      },
+      {
+        "method": "use",
+        "params": {
+          "consumable": 0,
+          "cards": [
+            0,
+            1
+          ]
+        }
+      },
+      {
+        "method": "add",
+        "params": {
+          "key": "c_hanged_man"
+        }
+      },
+      {
+        "method": "use",
+        "params": {
+          "consumable": 0,
+          "cards": [
+            0,
+            1
+          ]
+        }
+      },
+      {
+        "method": "add",
+        "params": {
+          "key": "c_hanged_man"
+        }
+      },
+      {
+        "method": "use",
+        "params": {
+          "consumable": 0,
+          "cards": [
+            0,
+            1
+          ]
+        }
+      },
+      {
+        "method": "add",
+        "params": {
+          "key": "c_hanged_man"
+        }
+      },
+      {
+        "method": "use",
+        "params": {
+          "consumable": 0,
+          "cards": [
+            0,
+            1
+          ]
+        }
+      },
+      {
+        "method": "add",
+        "params": {
+          "key": "c_hanged_man"
+        }
+      },
+      {
+        "method": "use",
+        "params": {
+          "consumable": 0,
+          "cards": [
+            0,
+            1
+          ]
+        }
+      },
+      {
+        "method": "add",
+        "params": {
+          "key": "c_hanged_man"
+        }
+      },
+      {
+        "method": "use",
+        "params": {
+          "consumable": 0,
+          "cards": [
+            0,
+            1
+          ]
+        }
+      },
+      {
+        "method": "add",
+        "params": {
+          "key": "c_hanged_man"
+        }
+      },
+      {
+        "method": "use",
+        "params": {
+          "consumable": 0,
+          "cards": [
+            0,
+            1
+          ]
+        }
+      },
+      {
+        "method": "add",
+        "params": {
+          "key": "c_hanged_man"
+        }
+      },
+      {
+        "method": "use",
+        "params": {
+          "consumable": 0,
+          "cards": [
+            0,
+            1
+          ]
+        }
+      },
+      {
+        "method": "add",
+        "params": {
+          "key": "c_hanged_man"
+        }
+      },
+      {
+        "method": "use",
+        "params": {
+          "consumable": 0,
+          "cards": [
+            0,
+            1
+          ]
+        }
+      },
+      {
+        "method": "add",
+        "params": {
+          "key": "c_hanged_man"
+        }
+      },
+      {
+        "method": "use",
+        "params": {
+          "consumable": 0,
+          "cards": [
+            0,
+            1
+          ]
+        }
+      },
+      {
+        "method": "add",
+        "params": {
+          "key": "c_hanged_man"
+        }
+      },
+      {
+        "method": "use",
+        "params": {
+          "consumable": 0,
+          "cards": [
+            0,
+            1
+          ]
+        }
+      },
+      {
+        "method": "add",
+        "params": {
+          "key": "c_hanged_man"
+        }
+      },
+      {
+        "method": "use",
+        "params": {
+          "consumable": 0,
+          "cards": [
+            0,
+            1
+          ]
+        }
+      },
+      {
+        "method": "add",
+        "params": {
+          "key": "c_hanged_man"
+        }
+      },
+      {
+        "method": "use",
+        "params": {
+          "consumable": 0,
+          "cards": [
+            0,
+            1
+          ]
+        }
+      },
+      {
+        "method": "add",
+        "params": {
+          "key": "c_hanged_man"
+        }
+      },
+      {
+        "method": "use",
+        "params": {
+          "consumable": 0,
+          "cards": [
+            0,
+            1
+          ]
+        }
+      },
+      {
+        "method": "set",
+        "params": {
+          "chips": 100000
+        }
+      },
+      {
+        "method": "play",
+        "params": {
+          "cards": [
+            0
+          ]
+        }
+      },
+      {
+        "method": "cash_out",
+        "params": {}
+      },
+      {
+        "method": "set",
+        "params": {
+          "money": 100
+        }
+      },
+      {
+        "method": "buy",
+        "params": {
+          "pack": 0
+        }
+      },
+      {
+        "method": "pack",
+        "params": {
+          "skip": true
+        }
+      },
+      {
+        "method": "add",
+        "params": {
+          "key": "p_arcana_normal_1"
+        }
+      }
+    ],
+    "seed-S001250--state-SHOP--pack.cards[0].set-SPECTRAL": [
+      {
+        "method": "menu",
+        "params": {}
+      },
+      {
+        "method": "start",
+        "params": {
+          "deck": "b_red",
+          "stake": "stake_white",
+          "seed": "S001250"
+        }
+      },
+      {
+        "method": "select",
+        "params": {}
+      },
+      {
+        "method": "set",
+        "params": {
+          "chips": 100000,
+          "money": 999
+        }
+      },
+      {
+        "method": "play",
+        "params": {
+          "cards": [
+            0,
+            1,
+            2,
+            3,
+            4
+          ]
+        }
+      },
+      {
+        "method": "cash_out",
+        "params": {}
+      },
+      {
+        "method": "buy",
+        "params": {
+          "pack": 0
+        }
+      },
+      {
+        "method": "pack",
+        "params": {
+          "skip": true
+        }
+      },
+      {
+        "method": "add",
+        "params": {
+          "key": "p_celestial_normal_1"
+        }
+      },
+      {
+        "method": "buy",
+        "params": {
+          "pack": 1
+        }
+      },
+      {
+        "method": "pack",
+        "params": {
+          "skip": true
+        }
+      },
+      {
+        "method": "add",
+        "params": {
+          "key": "p_celestial_normal_1"
+        }
+      },
+      {
+        "method": "buy",
+        "params": {
+          "pack": 1
+        }
+      },
+      {
+        "method": "pack",
+        "params": {
+          "skip": true
+        }
+      },
+      {
+        "method": "add",
+        "params": {
+          "key": "p_celestial_normal_1"
+        }
+      },
+      {
+        "method": "buy",
+        "params": {
+          "pack": 1
+        }
+      },
+      {
+        "method": "pack",
+        "params": {
+          "skip": true
+        }
+      },
+      {
+        "method": "add",
+        "params": {
+          "key": "p_celestial_normal_1"
+        }
+      },
+      {
+        "method": "buy",
+        "params": {
+          "pack": 1
+        }
+      },
+      {
+        "method": "pack",
+        "params": {
+          "skip": true
+        }
+      },
+      {
+        "method": "add",
+        "params": {
+          "key": "p_celestial_normal_1"
+        }
+      },
+      {
+        "method": "buy",
+        "params": {
+          "pack": 1
+        }
+      },
+      {
+        "method": "pack",
+        "params": {
+          "skip": true
+        }
+      },
+      {
+        "method": "add",
+        "params": {
+          "key": "p_celestial_normal_1"
+        }
+      },
+      {
+        "method": "buy",
+        "params": {
+          "pack": 1
+        }
+      },
+      {
+        "method": "pack",
+        "params": {
+          "skip": true
+        }
+      },
+      {
+        "method": "add",
+        "params": {
+          "key": "p_celestial_normal_1"
+        }
+      },
+      {
+        "method": "buy",
+        "params": {
+          "pack": 1
+        }
+      },
+      {
+        "method": "pack",
+        "params": {
+          "skip": true
+        }
+      },
+      {
+        "method": "add",
+        "params": {
+          "key": "p_celestial_normal_1"
+        }
+      },
+      {
+        "method": "buy",
+        "params": {
+          "pack": 1
+        }
+      },
+      {
+        "method": "pack",
+        "params": {
+          "skip": true
+        }
+      },
+      {
+        "method": "add",
+        "params": {
+          "key": "p_celestial_normal_1"
+        }
+      },
+      {
+        "method": "buy",
+        "params": {
+          "pack": 1
+        }
+      },
+      {
+        "method": "pack",
+        "params": {
+          "skip": true
+        }
+      },
+      {
+        "method": "add",
+        "params": {
+          "key": "p_celestial_normal_1"
+        }
+      },
+      {
+        "method": "buy",
+        "params": {
+          "pack": 1
+        }
+      },
+      {
+        "method": "pack",
+        "params": {
+          "skip": true
+        }
+      },
+      {
+        "method": "add",
+        "params": {
+          "key": "p_celestial_normal_1"
+        }
+      },
+      {
+        "method": "buy",
+        "params": {
+          "pack": 1
+        }
+      },
+      {
+        "method": "pack",
+        "params": {
+          "skip": true
+        }
+      },
+      {
+        "method": "add",
+        "params": {
+          "key": "p_celestial_normal_1"
+        }
+      },
+      {
+        "method": "buy",
+        "params": {
+          "pack": 1
+        }
+      },
+      {
+        "method": "pack",
+        "params": {
+          "skip": true
+        }
+      },
+      {
+        "method": "add",
+        "params": {
+          "key": "p_celestial_normal_1"
+        }
+      }
+    ],
+    "seed-NEG003A--state-SHOP--jokers.count-5--shop.cards[0].edition-e_negative": [
+      {
+        "method": "menu",
+        "params": {}
+      },
+      {
+        "method": "start",
+        "params": {
+          "deck": "b_red",
+          "stake": "stake_white",
+          "seed": "NEG003A"
+        }
+      },
+      {
+        "method": "select",
+        "params": {}
+      },
+      {
+        "method": "set",
+        "params": {
+          "chips": 1000,
+          "money": 9999
+        }
+      },
+      {
+        "method": "play",
+        "params": {
+          "cards": [
+            0
+          ]
+        }
+      },
+      {
+        "method": "cash_out",
+        "params": {}
+      },
+      {
+        "method": "add",
+        "params": {
+          "key": "j_joker"
+        }
+      },
+      {
+        "method": "add",
+        "params": {
+          "key": "j_joker"
+        }
+      },
+      {
+        "method": "add",
+        "params": {
+          "key": "j_joker"
+        }
+      },
+      {
+        "method": "add",
+        "params": {
+          "key": "j_joker"
+        }
+      },
+      {
+        "method": "add",
+        "params": {
+          "key": "j_joker"
+        }
+      },
+      {
+        "method": "reroll",
+        "params": {}
+      },
+      {
+        "method": "reroll",
+        "params": {}
+      },
+      {
+        "method": "reroll",
+        "params": {}
+      },
+      {
+        "method": "reroll",
+        "params": {}
+      },
+      {
+        "method": "reroll",
+        "params": {}
+      },
+      {
+        "method": "reroll",
+        "params": {}
+      },
+      {
+        "method": "reroll",
+        "params": {}
+      },
+      {
+        "method": "reroll",
+        "params": {}
+      },
+      {
+        "method": "reroll",
+        "params": {}
+      }
     ]
   },
   "pack": {
@@ -1357,8 +2161,8 @@
       {
         "method": "start",
         "params": {
-          "deck": "RED",
-          "stake": "WHITE",
+          "deck": "b_red",
+          "stake": "stake_white",
           "seed": "TEST123"
         }
       },
@@ -1394,8 +2198,8 @@
       {
         "method": "start",
         "params": {
-          "deck": "RED",
-          "stake": "WHITE",
+          "deck": "b_red",
+          "stake": "stake_white",
           "seed": "TEST123"
         }
       },
@@ -1455,8 +2259,8 @@
       {
         "method": "start",
         "params": {
-          "deck": "RED",
-          "stake": "WHITE",
+          "deck": "b_red",
+          "stake": "stake_white",
           "seed": "TEST123"
         }
       },
@@ -1540,8 +2344,8 @@
       {
         "method": "start",
         "params": {
-          "deck": "RED",
-          "stake": "WHITE",
+          "deck": "b_red",
+          "stake": "stake_white",
           "seed": "TEST123"
         }
       },
@@ -1615,8 +2419,8 @@
       {
         "method": "start",
         "params": {
-          "deck": "RED",
-          "stake": "WHITE",
+          "deck": "b_red",
+          "stake": "stake_white",
           "seed": "QKNXF682"
         }
       },
@@ -1658,8 +2462,8 @@
       {
         "method": "start",
         "params": {
-          "deck": "RED",
-          "stake": "WHITE",
+          "deck": "b_red",
+          "stake": "stake_white",
           "seed": "3Q1KBVT3"
         }
       },
@@ -1701,8 +2505,8 @@
       {
         "method": "start",
         "params": {
-          "deck": "RED",
-          "stake": "WHITE",
+          "deck": "b_red",
+          "stake": "stake_white",
           "seed": "3Q1KBVT3"
         }
       },
@@ -1756,8 +2560,8 @@
       {
         "method": "start",
         "params": {
-          "deck": "RED",
-          "stake": "WHITE",
+          "deck": "b_red",
+          "stake": "stake_white",
           "seed": "VPV32ZTY"
         }
       },
@@ -1799,8 +2603,8 @@
       {
         "method": "start",
         "params": {
-          "deck": "RED",
-          "stake": "WHITE",
+          "deck": "b_red",
+          "stake": "stake_white",
           "seed": "VEBROR8"
         }
       },
@@ -1872,8 +2676,8 @@
       {
         "method": "start",
         "params": {
-          "deck": "RED",
-          "stake": "WHITE",
+          "deck": "b_red",
+          "stake": "stake_white",
           "seed": "7IDNRIV"
         }
       },
@@ -1936,6 +2740,466 @@
           "pack": 0
         }
       }
+    ],
+    "seed-TAGTEST2--state-SMODS_BOOSTER_OPENED--blinds.small.tag.key-tag_charm": [
+      {
+        "method": "menu",
+        "params": {}
+      },
+      {
+        "method": "start",
+        "params": {
+          "deck": "b_red",
+          "stake": "stake_white",
+          "seed": "TAGTEST2"
+        }
+      },
+      {
+        "method": "skip",
+        "params": {}
+      },
+      {
+        "method": "gamestate",
+        "params": {}
+      }
+    ],
+    "seed-S001250--state-SMODS_BOOSTER_OPENED--pack.cards[0].key-c_black_hole": [
+      {
+        "method": "menu",
+        "params": {}
+      },
+      {
+        "method": "start",
+        "params": {
+          "deck": "b_red",
+          "stake": "stake_white",
+          "seed": "S001250"
+        }
+      },
+      {
+        "method": "select",
+        "params": {}
+      },
+      {
+        "method": "set",
+        "params": {
+          "chips": 100000,
+          "money": 999
+        }
+      },
+      {
+        "method": "play",
+        "params": {
+          "cards": [
+            0,
+            1,
+            2,
+            3,
+            4
+          ]
+        }
+      },
+      {
+        "method": "cash_out",
+        "params": {}
+      },
+      {
+        "method": "buy",
+        "params": {
+          "pack": 0
+        }
+      },
+      {
+        "method": "pack",
+        "params": {
+          "skip": true
+        }
+      },
+      {
+        "method": "add",
+        "params": {
+          "key": "p_celestial_normal_1"
+        }
+      },
+      {
+        "method": "buy",
+        "params": {
+          "pack": 1
+        }
+      },
+      {
+        "method": "pack",
+        "params": {
+          "skip": true
+        }
+      },
+      {
+        "method": "add",
+        "params": {
+          "key": "p_celestial_normal_1"
+        }
+      },
+      {
+        "method": "buy",
+        "params": {
+          "pack": 1
+        }
+      },
+      {
+        "method": "pack",
+        "params": {
+          "skip": true
+        }
+      },
+      {
+        "method": "add",
+        "params": {
+          "key": "p_celestial_normal_1"
+        }
+      },
+      {
+        "method": "buy",
+        "params": {
+          "pack": 1
+        }
+      },
+      {
+        "method": "pack",
+        "params": {
+          "skip": true
+        }
+      },
+      {
+        "method": "add",
+        "params": {
+          "key": "p_celestial_normal_1"
+        }
+      },
+      {
+        "method": "buy",
+        "params": {
+          "pack": 1
+        }
+      },
+      {
+        "method": "pack",
+        "params": {
+          "skip": true
+        }
+      },
+      {
+        "method": "add",
+        "params": {
+          "key": "p_celestial_normal_1"
+        }
+      },
+      {
+        "method": "buy",
+        "params": {
+          "pack": 1
+        }
+      },
+      {
+        "method": "pack",
+        "params": {
+          "skip": true
+        }
+      },
+      {
+        "method": "add",
+        "params": {
+          "key": "p_celestial_normal_1"
+        }
+      },
+      {
+        "method": "buy",
+        "params": {
+          "pack": 1
+        }
+      },
+      {
+        "method": "pack",
+        "params": {
+          "skip": true
+        }
+      },
+      {
+        "method": "add",
+        "params": {
+          "key": "p_celestial_normal_1"
+        }
+      },
+      {
+        "method": "buy",
+        "params": {
+          "pack": 1
+        }
+      },
+      {
+        "method": "pack",
+        "params": {
+          "skip": true
+        }
+      },
+      {
+        "method": "add",
+        "params": {
+          "key": "p_celestial_normal_1"
+        }
+      },
+      {
+        "method": "buy",
+        "params": {
+          "pack": 1
+        }
+      },
+      {
+        "method": "pack",
+        "params": {
+          "skip": true
+        }
+      },
+      {
+        "method": "add",
+        "params": {
+          "key": "p_celestial_normal_1"
+        }
+      },
+      {
+        "method": "buy",
+        "params": {
+          "pack": 1
+        }
+      },
+      {
+        "method": "pack",
+        "params": {
+          "skip": true
+        }
+      },
+      {
+        "method": "add",
+        "params": {
+          "key": "p_celestial_normal_1"
+        }
+      },
+      {
+        "method": "buy",
+        "params": {
+          "pack": 1
+        }
+      },
+      {
+        "method": "pack",
+        "params": {
+          "skip": true
+        }
+      },
+      {
+        "method": "add",
+        "params": {
+          "key": "p_celestial_normal_1"
+        }
+      },
+      {
+        "method": "buy",
+        "params": {
+          "pack": 1
+        }
+      },
+      {
+        "method": "pack",
+        "params": {
+          "skip": true
+        }
+      },
+      {
+        "method": "add",
+        "params": {
+          "key": "p_celestial_normal_1"
+        }
+      },
+      {
+        "method": "buy",
+        "params": {
+          "pack": 1
+        }
+      },
+      {
+        "method": "pack",
+        "params": {
+          "skip": true
+        }
+      },
+      {
+        "method": "add",
+        "params": {
+          "key": "p_celestial_normal_1"
+        }
+      },
+      {
+        "method": "buy",
+        "params": {
+          "pack": 1
+        }
+      }
+    ],
+    "seed-NB001A--state-SMODS_BOOSTER_OPENED--jokers.count-5--pack.cards[1].edition-e_negative": [
+      {
+        "method": "menu",
+        "params": {}
+      },
+      {
+        "method": "start",
+        "params": {
+          "deck": "b_red",
+          "stake": "stake_white",
+          "seed": "NB001A"
+        }
+      },
+      {
+        "method": "select",
+        "params": {}
+      },
+      {
+        "method": "set",
+        "params": {
+          "chips": 1000,
+          "money": 99999
+        }
+      },
+      {
+        "method": "play",
+        "params": {
+          "cards": [
+            0
+          ]
+        }
+      },
+      {
+        "method": "cash_out",
+        "params": {}
+      },
+      {
+        "method": "buy",
+        "params": {
+          "pack": 0
+        }
+      },
+      {
+        "method": "pack",
+        "params": {
+          "skip": true
+        }
+      },
+      {
+        "method": "buy",
+        "params": {
+          "pack": 0
+        }
+      },
+      {
+        "method": "pack",
+        "params": {
+          "skip": true
+        }
+      },
+      {
+        "method": "add",
+        "params": {
+          "key": "j_joker"
+        }
+      },
+      {
+        "method": "add",
+        "params": {
+          "key": "j_joker"
+        }
+      },
+      {
+        "method": "add",
+        "params": {
+          "key": "j_joker"
+        }
+      },
+      {
+        "method": "add",
+        "params": {
+          "key": "j_joker"
+        }
+      },
+      {
+        "method": "add",
+        "params": {
+          "key": "j_joker"
+        }
+      },
+      {
+        "method": "add",
+        "params": {
+          "key": "p_buffoon_mega_1"
+        }
+      },
+      {
+        "method": "buy",
+        "params": {
+          "pack": 0
+        }
+      },
+      {
+        "method": "pack",
+        "params": {
+          "skip": true
+        }
+      },
+      {
+        "method": "add",
+        "params": {
+          "key": "p_buffoon_mega_1"
+        }
+      },
+      {
+        "method": "buy",
+        "params": {
+          "pack": 0
+        }
+      },
+      {
+        "method": "pack",
+        "params": {
+          "skip": true
+        }
+      },
+      {
+        "method": "add",
+        "params": {
+          "key": "p_buffoon_mega_1"
+        }
+      },
+      {
+        "method": "buy",
+        "params": {
+          "pack": 0
+        }
+      },
+      {
+        "method": "pack",
+        "params": {
+          "skip": true
+        }
+      },
+      {
+        "method": "add",
+        "params": {
+          "key": "p_buffoon_mega_1"
+        }
+      },
+      {
+        "method": "buy",
+        "params": {
+          "pack": 0
+        }
+      }
     ]
   },
   "sell": {
@@ -1947,10 +3211,56 @@
       {
         "method": "start",
         "params": {
-          "deck": "RED",
-          "stake": "WHITE",
+          "deck": "b_red",
+          "stake": "stake_white",
           "seed": "TEST123"
         }
+      }
+    ],
+    "state-BLIND_SELECT--jokers.count-1": [
+      {
+        "method": "menu",
+        "params": {}
+      },
+      {
+        "method": "start",
+        "params": {
+          "deck": "b_red",
+          "stake": "stake_white",
+          "seed": "TEST123"
+        }
+      },
+      {
+        "method": "select",
+        "params": {}
+      },
+      {
+        "method": "add",
+        "params": {
+          "key": "j_joker"
+        }
+      },
+      {
+        "method": "set",
+        "params": {
+          "chips": 1000
+        }
+      },
+      {
+        "method": "play",
+        "params": {
+          "cards": [
+            0
+          ]
+        }
+      },
+      {
+        "method": "cash_out",
+        "params": {}
+      },
+      {
+        "method": "next_round",
+        "params": {}
       }
     ],
     "state-ROUND_EVAL": [
@@ -1961,14 +3271,52 @@
       {
         "method": "start",
         "params": {
-          "deck": "RED",
-          "stake": "WHITE",
+          "deck": "b_red",
+          "stake": "stake_white",
           "seed": "TEST123"
         }
       },
       {
         "method": "select",
         "params": {}
+      },
+      {
+        "method": "set",
+        "params": {
+          "chips": 1000
+        }
+      },
+      {
+        "method": "play",
+        "params": {
+          "cards": [
+            0
+          ]
+        }
+      }
+    ],
+    "state-ROUND_EVAL--jokers.count-1": [
+      {
+        "method": "menu",
+        "params": {}
+      },
+      {
+        "method": "start",
+        "params": {
+          "deck": "b_red",
+          "stake": "stake_white",
+          "seed": "TEST123"
+        }
+      },
+      {
+        "method": "select",
+        "params": {}
+      },
+      {
+        "method": "add",
+        "params": {
+          "key": "j_joker"
+        }
       },
       {
         "method": "set",
@@ -1993,8 +3341,8 @@
       {
         "method": "start",
         "params": {
-          "deck": "RED",
-          "stake": "WHITE",
+          "deck": "b_red",
+          "stake": "stake_white",
           "seed": "TEST123"
         }
       },
@@ -2011,8 +3359,8 @@
       {
         "method": "start",
         "params": {
-          "deck": "RED",
-          "stake": "WHITE",
+          "deck": "b_red",
+          "stake": "stake_white",
           "seed": "TEST123"
         }
       },
@@ -2060,8 +3408,8 @@
       {
         "method": "start",
         "params": {
-          "deck": "RED",
-          "stake": "WHITE",
+          "deck": "b_red",
+          "stake": "stake_white",
           "seed": "TEST123"
         }
       },
@@ -2108,6 +3456,238 @@
         "method": "select",
         "params": {}
       }
+    ],
+    "state-SHOP--jokers.count-2--jokers.cards[0].key-j_invisible": [
+      {
+        "method": "menu",
+        "params": {}
+      },
+      {
+        "method": "start",
+        "params": {
+          "deck": "b_red",
+          "stake": "stake_white",
+          "seed": "INVIS3"
+        }
+      },
+      {
+        "method": "select",
+        "params": {}
+      },
+      {
+        "method": "add",
+        "params": {
+          "key": "j_invisible"
+        }
+      },
+      {
+        "method": "set",
+        "params": {
+          "chips": 1000
+        }
+      },
+      {
+        "method": "play",
+        "params": {
+          "cards": [
+            0
+          ]
+        }
+      },
+      {
+        "method": "cash_out",
+        "params": {}
+      },
+      {
+        "method": "next_round",
+        "params": {}
+      },
+      {
+        "method": "select",
+        "params": {}
+      },
+      {
+        "method": "set",
+        "params": {
+          "chips": 1000
+        }
+      },
+      {
+        "method": "play",
+        "params": {
+          "cards": [
+            0
+          ]
+        }
+      },
+      {
+        "method": "cash_out",
+        "params": {}
+      },
+      {
+        "method": "add",
+        "params": {
+          "key": "j_greedy_joker"
+        }
+      }
+    ],
+    "state-SMODS_BOOSTER_OPENED--pack.type-arcana--jokers.count-1": [
+      {
+        "method": "menu",
+        "params": {}
+      },
+      {
+        "method": "start",
+        "params": {
+          "deck": "b_red",
+          "stake": "stake_white",
+          "seed": "TEST123"
+        }
+      },
+      {
+        "method": "select",
+        "params": {}
+      },
+      {
+        "method": "set",
+        "params": {
+          "chips": 1000,
+          "money": 1000
+        }
+      },
+      {
+        "method": "play",
+        "params": {
+          "cards": [
+            0
+          ]
+        }
+      },
+      {
+        "method": "cash_out",
+        "params": {}
+      },
+      {
+        "method": "buy",
+        "params": {
+          "pack": 0
+        }
+      },
+      {
+        "method": "pack",
+        "params": {
+          "skip": true
+        }
+      },
+      {
+        "method": "buy",
+        "params": {
+          "pack": 0
+        }
+      },
+      {
+        "method": "pack",
+        "params": {
+          "skip": true
+        }
+      },
+      {
+        "method": "add",
+        "params": {
+          "key": "j_joker"
+        }
+      },
+      {
+        "method": "add",
+        "params": {
+          "key": "p_arcana_normal_1"
+        }
+      },
+      {
+        "method": "buy",
+        "params": {
+          "pack": 0
+        }
+      }
+    ],
+    "state-SMODS_BOOSTER_OPENED--pack.type-arcana--consumables.count-1": [
+      {
+        "method": "menu",
+        "params": {}
+      },
+      {
+        "method": "start",
+        "params": {
+          "deck": "b_red",
+          "stake": "stake_white",
+          "seed": "TEST123"
+        }
+      },
+      {
+        "method": "select",
+        "params": {}
+      },
+      {
+        "method": "set",
+        "params": {
+          "chips": 1000,
+          "money": 1000
+        }
+      },
+      {
+        "method": "play",
+        "params": {
+          "cards": [
+            0
+          ]
+        }
+      },
+      {
+        "method": "cash_out",
+        "params": {}
+      },
+      {
+        "method": "buy",
+        "params": {
+          "pack": 0
+        }
+      },
+      {
+        "method": "pack",
+        "params": {
+          "skip": true
+        }
+      },
+      {
+        "method": "buy",
+        "params": {
+          "pack": 0
+        }
+      },
+      {
+        "method": "pack",
+        "params": {
+          "skip": true
+        }
+      },
+      {
+        "method": "add",
+        "params": {
+          "key": "c_hermit"
+        }
+      },
+      {
+        "method": "add",
+        "params": {
+          "key": "p_arcana_normal_1"
+        }
+      },
+      {
+        "method": "buy",
+        "params": {
+          "pack": 0
+        }
+      }
     ]
   },
   "add": {
@@ -2119,8 +3699,8 @@
       {
         "method": "start",
         "params": {
-          "deck": "RED",
-          "stake": "WHITE",
+          "deck": "b_red",
+          "stake": "stake_white",
           "seed": "TEST123"
         }
       }
@@ -2133,8 +3713,8 @@
       {
         "method": "start",
         "params": {
-          "deck": "RED",
-          "stake": "WHITE",
+          "deck": "b_red",
+          "stake": "stake_white",
           "seed": "TEST123"
         }
       },
@@ -2151,8 +3731,8 @@
       {
         "method": "start",
         "params": {
-          "deck": "RED",
-          "stake": "WHITE",
+          "deck": "b_red",
+          "stake": "stake_white",
           "seed": "TEST123"
         }
       },
@@ -2187,8 +3767,8 @@
       {
         "method": "start",
         "params": {
-          "deck": "RED",
-          "stake": "WHITE",
+          "deck": "b_red",
+          "stake": "stake_white",
           "seed": "TEST123"
         }
       },
@@ -2256,10 +3836,56 @@
       {
         "method": "start",
         "params": {
-          "deck": "RED",
-          "stake": "WHITE",
+          "deck": "b_red",
+          "stake": "stake_white",
           "seed": "TEST123"
         }
+      }
+    ],
+    "state-BLIND_SELECT--consumables.cards[0]-key-c_hermit": [
+      {
+        "method": "menu",
+        "params": {}
+      },
+      {
+        "method": "start",
+        "params": {
+          "deck": "b_red",
+          "stake": "stake_white",
+          "seed": "TEST123"
+        }
+      },
+      {
+        "method": "select",
+        "params": {}
+      },
+      {
+        "method": "add",
+        "params": {
+          "key": "c_hermit"
+        }
+      },
+      {
+        "method": "set",
+        "params": {
+          "chips": 1000
+        }
+      },
+      {
+        "method": "play",
+        "params": {
+          "cards": [
+            0
+          ]
+        }
+      },
+      {
+        "method": "cash_out",
+        "params": {}
+      },
+      {
+        "method": "next_round",
+        "params": {}
       }
     ],
     "state-ROUND_EVAL": [
@@ -2270,8 +3896,8 @@
       {
         "method": "start",
         "params": {
-          "deck": "RED",
-          "stake": "WHITE",
+          "deck": "b_red",
+          "stake": "stake_white",
           "seed": "TEST123"
         }
       },
@@ -2295,6 +3921,45 @@
         }
       }
     ],
+    "state-ROUND_EVAL--consumables.cards[0]-key-c_hermit": [
+      {
+        "method": "menu",
+        "params": {}
+      },
+      {
+        "method": "start",
+        "params": {
+          "deck": "b_red",
+          "stake": "stake_white",
+          "seed": "TEST123"
+        }
+      },
+      {
+        "method": "select",
+        "params": {}
+      },
+      {
+        "method": "add",
+        "params": {
+          "key": "c_hermit"
+        }
+      },
+      {
+        "method": "set",
+        "params": {
+          "chips": 1000,
+          "money": 12
+        }
+      },
+      {
+        "method": "play",
+        "params": {
+          "cards": [
+            0
+          ]
+        }
+      }
+    ],
     "state-SELECTING_HAND--money-12--consumables.cards[0]-key-c_hermit": [
       {
         "method": "menu",
@@ -2303,8 +3968,8 @@
       {
         "method": "start",
         "params": {
-          "deck": "RED",
-          "stake": "WHITE",
+          "deck": "b_red",
+          "stake": "stake_white",
           "seed": "TEST123"
         }
       },
@@ -2333,8 +3998,8 @@
       {
         "method": "start",
         "params": {
-          "deck": "RED",
-          "stake": "WHITE",
+          "deck": "b_red",
+          "stake": "stake_white",
           "seed": "TEST123"
         }
       },
@@ -2357,8 +4022,8 @@
       {
         "method": "start",
         "params": {
-          "deck": "RED",
-          "stake": "WHITE",
+          "deck": "b_red",
+          "stake": "stake_white",
           "seed": "TEST123"
         }
       },
@@ -2399,8 +4064,8 @@
       {
         "method": "start",
         "params": {
-          "deck": "RED",
-          "stake": "WHITE",
+          "deck": "b_red",
+          "stake": "stake_white",
           "seed": "TEST123"
         }
       },
@@ -2423,8 +4088,8 @@
       {
         "method": "start",
         "params": {
-          "deck": "RED",
-          "stake": "WHITE",
+          "deck": "b_red",
+          "stake": "stake_white",
           "seed": "TEST123"
         }
       },
@@ -2471,8 +4136,8 @@
       {
         "method": "start",
         "params": {
-          "deck": "RED",
-          "stake": "WHITE",
+          "deck": "b_red",
+          "stake": "stake_white",
           "seed": "TEST123"
         }
       },
@@ -2532,8 +4197,8 @@
       {
         "method": "start",
         "params": {
-          "deck": "RED",
-          "stake": "WHITE",
+          "deck": "b_red",
+          "stake": "stake_white",
           "seed": "TEST123"
         }
       },
@@ -2556,8 +4221,8 @@
       {
         "method": "start",
         "params": {
-          "deck": "RED",
-          "stake": "WHITE",
+          "deck": "b_red",
+          "stake": "stake_white",
           "seed": "TEST123"
         }
       },
@@ -2599,8 +4264,8 @@
       {
         "method": "start",
         "params": {
-          "deck": "RED",
-          "stake": "WHITE",
+          "deck": "b_red",
+          "stake": "stake_white",
           "seed": "TEST123"
         }
       },
@@ -2633,6 +4298,240 @@
           "key": "c_strength"
         }
       }
+    ],
+    "state-SMODS_BOOSTER_OPENED--pack.type-buffoon--consumables.cards[0].key-c_hermit": [
+      {
+        "method": "menu",
+        "params": {}
+      },
+      {
+        "method": "start",
+        "params": {
+          "deck": "b_red",
+          "stake": "stake_white",
+          "seed": "TEST123"
+        }
+      },
+      {
+        "method": "select",
+        "params": {}
+      },
+      {
+        "method": "set",
+        "params": {
+          "chips": 1000,
+          "money": 1000
+        }
+      },
+      {
+        "method": "play",
+        "params": {
+          "cards": [
+            0
+          ]
+        }
+      },
+      {
+        "method": "cash_out",
+        "params": {}
+      },
+      {
+        "method": "buy",
+        "params": {
+          "pack": 0
+        }
+      },
+      {
+        "method": "pack",
+        "params": {
+          "skip": true
+        }
+      },
+      {
+        "method": "buy",
+        "params": {
+          "pack": 0
+        }
+      },
+      {
+        "method": "pack",
+        "params": {
+          "skip": true
+        }
+      },
+      {
+        "method": "add",
+        "params": {
+          "key": "c_hermit"
+        }
+      },
+      {
+        "method": "add",
+        "params": {
+          "key": "p_buffoon_normal_1"
+        }
+      },
+      {
+        "method": "buy",
+        "params": {
+          "pack": 0
+        }
+      }
+    ],
+    "state-SMODS_BOOSTER_OPENED--pack.type-arcana--consumables.cards[0].key-c_magician": [
+      {
+        "method": "menu",
+        "params": {}
+      },
+      {
+        "method": "start",
+        "params": {
+          "deck": "b_red",
+          "stake": "stake_white",
+          "seed": "TEST123"
+        }
+      },
+      {
+        "method": "select",
+        "params": {}
+      },
+      {
+        "method": "set",
+        "params": {
+          "chips": 1000,
+          "money": 1000
+        }
+      },
+      {
+        "method": "play",
+        "params": {
+          "cards": [
+            0
+          ]
+        }
+      },
+      {
+        "method": "cash_out",
+        "params": {}
+      },
+      {
+        "method": "buy",
+        "params": {
+          "pack": 0
+        }
+      },
+      {
+        "method": "pack",
+        "params": {
+          "skip": true
+        }
+      },
+      {
+        "method": "buy",
+        "params": {
+          "pack": 0
+        }
+      },
+      {
+        "method": "pack",
+        "params": {
+          "skip": true
+        }
+      },
+      {
+        "method": "add",
+        "params": {
+          "key": "c_magician"
+        }
+      },
+      {
+        "method": "add",
+        "params": {
+          "key": "p_arcana_normal_1"
+        }
+      },
+      {
+        "method": "buy",
+        "params": {
+          "pack": 0
+        }
+      }
+    ],
+    "state-SELECTING_HAND--blinds.boss.key-bl_house--consumables.cards[0].key-c_magician": [
+      {
+        "method": "menu",
+        "params": {}
+      },
+      {
+        "method": "start",
+        "params": {
+          "deck": "b_red",
+          "stake": "stake_white",
+          "seed": "TEST123"
+        }
+      },
+      {
+        "method": "set",
+        "params": {
+          "boss": "bl_house"
+        }
+      },
+      {
+        "method": "skip",
+        "params": {}
+      },
+      {
+        "method": "skip",
+        "params": {}
+      },
+      {
+        "method": "select",
+        "params": {}
+      },
+      {
+        "method": "add",
+        "params": {
+          "key": "c_magician"
+        }
+      }
+    ],
+    "state-SELECTING_HAND--blinds.boss.key-bl_house--consumables.cards[0].key-c_sigil": [
+      {
+        "method": "menu",
+        "params": {}
+      },
+      {
+        "method": "start",
+        "params": {
+          "deck": "b_red",
+          "stake": "stake_white",
+          "seed": "TEST123"
+        }
+      },
+      {
+        "method": "set",
+        "params": {
+          "boss": "bl_house"
+        }
+      },
+      {
+        "method": "skip",
+        "params": {}
+      },
+      {
+        "method": "skip",
+        "params": {}
+      },
+      {
+        "method": "select",
+        "params": {}
+      },
+      {
+        "method": "add",
+        "params": {
+          "key": "c_sigil"
+        }
+      }
     ]
   },
   "rearrange": {
@@ -2644,10 +4543,202 @@
       {
         "method": "start",
         "params": {
-          "deck": "RED",
-          "stake": "WHITE",
+          "deck": "b_red",
+          "stake": "stake_white",
           "seed": "TEST123"
         }
+      }
+    ],
+    "state-ROUND_EVAL--jokers.count-2": [
+      {
+        "method": "menu",
+        "params": {}
+      },
+      {
+        "method": "start",
+        "params": {
+          "deck": "b_red",
+          "stake": "stake_white",
+          "seed": "TEST123"
+        }
+      },
+      {
+        "method": "select",
+        "params": {}
+      },
+      {
+        "method": "add",
+        "params": {
+          "key": "j_joker"
+        }
+      },
+      {
+        "method": "add",
+        "params": {
+          "key": "j_greedy_joker"
+        }
+      },
+      {
+        "method": "set",
+        "params": {
+          "chips": 1000
+        }
+      },
+      {
+        "method": "play",
+        "params": {
+          "cards": [
+            0
+          ]
+        }
+      }
+    ],
+    "state-BLIND_SELECT--jokers.count-2": [
+      {
+        "method": "menu",
+        "params": {}
+      },
+      {
+        "method": "start",
+        "params": {
+          "deck": "b_red",
+          "stake": "stake_white",
+          "seed": "TEST123"
+        }
+      },
+      {
+        "method": "select",
+        "params": {}
+      },
+      {
+        "method": "add",
+        "params": {
+          "key": "j_joker"
+        }
+      },
+      {
+        "method": "add",
+        "params": {
+          "key": "j_greedy_joker"
+        }
+      },
+      {
+        "method": "set",
+        "params": {
+          "chips": 1000
+        }
+      },
+      {
+        "method": "play",
+        "params": {
+          "cards": [
+            0
+          ]
+        }
+      },
+      {
+        "method": "cash_out",
+        "params": {}
+      },
+      {
+        "method": "next_round",
+        "params": {}
+      }
+    ],
+    "state-ROUND_EVAL--consumables.count-2": [
+      {
+        "method": "menu",
+        "params": {}
+      },
+      {
+        "method": "start",
+        "params": {
+          "deck": "b_red",
+          "stake": "stake_white",
+          "seed": "TEST123"
+        }
+      },
+      {
+        "method": "select",
+        "params": {}
+      },
+      {
+        "method": "add",
+        "params": {
+          "key": "c_fool"
+        }
+      },
+      {
+        "method": "add",
+        "params": {
+          "key": "c_magician"
+        }
+      },
+      {
+        "method": "set",
+        "params": {
+          "chips": 1000
+        }
+      },
+      {
+        "method": "play",
+        "params": {
+          "cards": [
+            0
+          ]
+        }
+      }
+    ],
+    "state-BLIND_SELECT--consumables.count-2": [
+      {
+        "method": "menu",
+        "params": {}
+      },
+      {
+        "method": "start",
+        "params": {
+          "deck": "b_red",
+          "stake": "stake_white",
+          "seed": "TEST123"
+        }
+      },
+      {
+        "method": "select",
+        "params": {}
+      },
+      {
+        "method": "add",
+        "params": {
+          "key": "c_fool"
+        }
+      },
+      {
+        "method": "add",
+        "params": {
+          "key": "c_magician"
+        }
+      },
+      {
+        "method": "set",
+        "params": {
+          "chips": 1000
+        }
+      },
+      {
+        "method": "play",
+        "params": {
+          "cards": [
+            0
+          ]
+        }
+      },
+      {
+        "method": "cash_out",
+        "params": {}
+      },
+      {
+        "method": "next_round",
+        "params": {}
       }
     ],
     "state-SELECTING_HAND--hand.count-8": [
@@ -2658,8 +4749,8 @@
       {
         "method": "start",
         "params": {
-          "deck": "RED",
-          "stake": "WHITE",
+          "deck": "b_red",
+          "stake": "stake_white",
           "seed": "TEST123"
         }
       },
@@ -2676,8 +4767,8 @@
       {
         "method": "start",
         "params": {
-          "deck": "RED",
-          "stake": "WHITE",
+          "deck": "b_red",
+          "stake": "stake_white",
           "seed": "TEST123"
         }
       },
@@ -2757,8 +4848,8 @@
       {
         "method": "start",
         "params": {
-          "deck": "RED",
-          "stake": "WHITE",
+          "deck": "b_red",
+          "stake": "stake_white",
           "seed": "TEST123"
         }
       },
@@ -2820,10 +4911,914 @@
       {
         "method": "start",
         "params": {
-          "deck": "RED",
-          "stake": "WHITE",
+          "deck": "b_red",
+          "stake": "stake_white",
           "seed": "TEST123"
         }
+      }
+    ]
+  },
+  "buy_and_use": {
+    "state-BLIND_SELECT": [
+      {
+        "method": "menu",
+        "params": {}
+      },
+      {
+        "method": "start",
+        "params": {
+          "deck": "b_red",
+          "stake": "stake_white",
+          "seed": "TEST123"
+        }
+      }
+    ],
+    "state-SHOP--shop.cards[0].set-JOKER": [
+      {
+        "method": "menu",
+        "params": {}
+      },
+      {
+        "method": "start",
+        "params": {
+          "deck": "b_red",
+          "stake": "stake_white",
+          "seed": "TEST123"
+        }
+      },
+      {
+        "method": "select",
+        "params": {}
+      },
+      {
+        "method": "set",
+        "params": {
+          "chips": 1000
+        }
+      },
+      {
+        "method": "play",
+        "params": {
+          "cards": [
+            0
+          ]
+        }
+      },
+      {
+        "method": "cash_out",
+        "params": {}
+      }
+    ],
+    "state-SHOP--shop.cards[1].set-PLANET": [
+      {
+        "method": "menu",
+        "params": {}
+      },
+      {
+        "method": "start",
+        "params": {
+          "deck": "b_red",
+          "stake": "stake_white",
+          "seed": "TEST123"
+        }
+      },
+      {
+        "method": "select",
+        "params": {}
+      },
+      {
+        "method": "set",
+        "params": {
+          "chips": 1000
+        }
+      },
+      {
+        "method": "play",
+        "params": {
+          "cards": [
+            0
+          ]
+        }
+      },
+      {
+        "method": "cash_out",
+        "params": {}
+      }
+    ],
+    "state-SHOP--shop.count-0": [
+      {
+        "method": "menu",
+        "params": {}
+      },
+      {
+        "method": "start",
+        "params": {
+          "deck": "b_red",
+          "stake": "stake_white",
+          "seed": "TEST123"
+        }
+      },
+      {
+        "method": "select",
+        "params": {}
+      },
+      {
+        "method": "set",
+        "params": {
+          "chips": 1000
+        }
+      },
+      {
+        "method": "play",
+        "params": {
+          "cards": [
+            0
+          ]
+        }
+      },
+      {
+        "method": "cash_out",
+        "params": {}
+      },
+      {
+        "method": "buy",
+        "params": {
+          "card": 0
+        }
+      },
+      {
+        "method": "buy",
+        "params": {
+          "card": 0
+        }
+      }
+    ],
+    "state-SHOP--money-0": [
+      {
+        "method": "menu",
+        "params": {}
+      },
+      {
+        "method": "start",
+        "params": {
+          "deck": "b_red",
+          "stake": "stake_white",
+          "seed": "TEST123"
+        }
+      },
+      {
+        "method": "select",
+        "params": {}
+      },
+      {
+        "method": "set",
+        "params": {
+          "chips": 1000
+        }
+      },
+      {
+        "method": "play",
+        "params": {
+          "cards": [
+            0
+          ]
+        }
+      },
+      {
+        "method": "cash_out",
+        "params": {}
+      },
+      {
+        "method": "set",
+        "params": {
+          "money": 0
+        }
+      }
+    ],
+    "state-SHOP--consumables.count-2--shop.cards[1].set-PLANET": [
+      {
+        "method": "menu",
+        "params": {}
+      },
+      {
+        "method": "start",
+        "params": {
+          "deck": "b_red",
+          "stake": "stake_white",
+          "seed": "TEST123"
+        }
+      },
+      {
+        "method": "select",
+        "params": {}
+      },
+      {
+        "method": "set",
+        "params": {
+          "chips": 1000,
+          "money": 1000
+        }
+      },
+      {
+        "method": "play",
+        "params": {
+          "cards": [
+            0
+          ]
+        }
+      },
+      {
+        "method": "cash_out",
+        "params": {}
+      },
+      {
+        "method": "buy",
+        "params": {
+          "card": 1
+        }
+      },
+      {
+        "method": "reroll",
+        "params": {}
+      },
+      {
+        "method": "buy",
+        "params": {
+          "card": 1
+        }
+      },
+      {
+        "method": "reroll",
+        "params": {}
+      },
+      {
+        "method": "reroll",
+        "params": {}
+      },
+      {
+        "method": "reroll",
+        "params": {}
+      }
+    ],
+    "seed-ANKH0001--jokers.count-5--shop.cards[1].key-c_ankh": [
+      {
+        "method": "menu",
+        "params": {}
+      },
+      {
+        "method": "start",
+        "params": {
+          "deck": "b_ghost",
+          "stake": "stake_white",
+          "seed": "ANKH0001"
+        }
+      },
+      {
+        "method": "select",
+        "params": {}
+      },
+      {
+        "method": "set",
+        "params": {
+          "chips": 1000,
+          "money": 9999
+        }
+      },
+      {
+        "method": "play",
+        "params": {
+          "cards": [
+            0
+          ]
+        }
+      },
+      {
+        "method": "cash_out",
+        "params": {}
+      },
+      {
+        "method": "add",
+        "params": {
+          "key": "j_joker"
+        }
+      },
+      {
+        "method": "add",
+        "params": {
+          "key": "j_joker"
+        }
+      },
+      {
+        "method": "add",
+        "params": {
+          "key": "j_joker"
+        }
+      },
+      {
+        "method": "add",
+        "params": {
+          "key": "j_joker"
+        }
+      },
+      {
+        "method": "add",
+        "params": {
+          "key": "j_joker"
+        }
+      },
+      {
+        "method": "reroll",
+        "params": {}
+      },
+      {
+        "method": "reroll",
+        "params": {}
+      },
+      {
+        "method": "reroll",
+        "params": {}
+      },
+      {
+        "method": "reroll",
+        "params": {}
+      },
+      {
+        "method": "reroll",
+        "params": {}
+      },
+      {
+        "method": "reroll",
+        "params": {}
+      },
+      {
+        "method": "reroll",
+        "params": {}
+      },
+      {
+        "method": "reroll",
+        "params": {}
+      },
+      {
+        "method": "reroll",
+        "params": {}
+      },
+      {
+        "method": "reroll",
+        "params": {}
+      },
+      {
+        "method": "reroll",
+        "params": {}
+      },
+      {
+        "method": "reroll",
+        "params": {}
+      },
+      {
+        "method": "reroll",
+        "params": {}
+      },
+      {
+        "method": "reroll",
+        "params": {}
+      },
+      {
+        "method": "reroll",
+        "params": {}
+      },
+      {
+        "method": "reroll",
+        "params": {}
+      },
+      {
+        "method": "reroll",
+        "params": {}
+      },
+      {
+        "method": "reroll",
+        "params": {}
+      },
+      {
+        "method": "reroll",
+        "params": {}
+      },
+      {
+        "method": "reroll",
+        "params": {}
+      },
+      {
+        "method": "reroll",
+        "params": {}
+      },
+      {
+        "method": "reroll",
+        "params": {}
+      },
+      {
+        "method": "reroll",
+        "params": {}
+      },
+      {
+        "method": "reroll",
+        "params": {}
+      },
+      {
+        "method": "reroll",
+        "params": {}
+      },
+      {
+        "method": "reroll",
+        "params": {}
+      },
+      {
+        "method": "reroll",
+        "params": {}
+      },
+      {
+        "method": "reroll",
+        "params": {}
+      },
+      {
+        "method": "reroll",
+        "params": {}
+      },
+      {
+        "method": "reroll",
+        "params": {}
+      },
+      {
+        "method": "reroll",
+        "params": {}
+      },
+      {
+        "method": "reroll",
+        "params": {}
+      },
+      {
+        "method": "reroll",
+        "params": {}
+      },
+      {
+        "method": "reroll",
+        "params": {}
+      },
+      {
+        "method": "reroll",
+        "params": {}
+      },
+      {
+        "method": "reroll",
+        "params": {}
+      },
+      {
+        "method": "reroll",
+        "params": {}
+      },
+      {
+        "method": "reroll",
+        "params": {}
+      },
+      {
+        "method": "reroll",
+        "params": {}
+      },
+      {
+        "method": "reroll",
+        "params": {}
+      },
+      {
+        "method": "reroll",
+        "params": {}
+      },
+      {
+        "method": "reroll",
+        "params": {}
+      },
+      {
+        "method": "reroll",
+        "params": {}
+      },
+      {
+        "method": "reroll",
+        "params": {}
+      },
+      {
+        "method": "reroll",
+        "params": {}
+      },
+      {
+        "method": "reroll",
+        "params": {}
+      },
+      {
+        "method": "reroll",
+        "params": {}
+      },
+      {
+        "method": "reroll",
+        "params": {}
+      },
+      {
+        "method": "reroll",
+        "params": {}
+      },
+      {
+        "method": "reroll",
+        "params": {}
+      },
+      {
+        "method": "reroll",
+        "params": {}
+      },
+      {
+        "method": "reroll",
+        "params": {}
+      },
+      {
+        "method": "reroll",
+        "params": {}
+      }
+    ],
+    "state-SHOP--shop.cards[1].set-TAROT": [
+      {
+        "method": "menu",
+        "params": {}
+      },
+      {
+        "method": "start",
+        "params": {
+          "deck": "b_red",
+          "stake": "stake_white",
+          "seed": "TEST123"
+        }
+      },
+      {
+        "method": "select",
+        "params": {}
+      },
+      {
+        "method": "set",
+        "params": {
+          "chips": 1000
+        }
+      },
+      {
+        "method": "play",
+        "params": {
+          "cards": [
+            0
+          ]
+        }
+      },
+      {
+        "method": "cash_out",
+        "params": {}
+      },
+      {
+        "method": "reroll",
+        "params": {}
+      }
+    ]
+  },
+  "reroll_boss": {
+    "state-BLIND_SELECT--blinds.boss.status-SELECT": [
+      {
+        "method": "menu",
+        "params": {}
+      },
+      {
+        "method": "start",
+        "params": {
+          "deck": "b_red",
+          "stake": "stake_white",
+          "seed": "TEST123"
+        }
+      },
+      {
+        "method": "skip",
+        "params": {}
+      },
+      {
+        "method": "skip",
+        "params": {}
+      }
+    ],
+    "state-BLIND_SELECT--blinds.boss.status-SELECT--used_vouchers.v_directors_cut-1--money-20": [
+      {
+        "method": "menu",
+        "params": {}
+      },
+      {
+        "method": "start",
+        "params": {
+          "deck": "b_red",
+          "stake": "stake_white",
+          "seed": "TEST123"
+        }
+      },
+      {
+        "method": "select",
+        "params": {}
+      },
+      {
+        "method": "set",
+        "params": {
+          "chips": 1000
+        }
+      },
+      {
+        "method": "play",
+        "params": {
+          "cards": [
+            0
+          ]
+        }
+      },
+      {
+        "method": "cash_out",
+        "params": {}
+      },
+      {
+        "method": "set",
+        "params": {
+          "money": 100
+        }
+      },
+      {
+        "method": "buy",
+        "params": {
+          "voucher": 0
+        }
+      },
+      {
+        "method": "add",
+        "params": {
+          "key": "v_directors_cut"
+        }
+      },
+      {
+        "method": "buy",
+        "params": {
+          "voucher": 0
+        }
+      },
+      {
+        "method": "next_round",
+        "params": {}
+      },
+      {
+        "method": "skip",
+        "params": {}
+      },
+      {
+        "method": "set",
+        "params": {
+          "money": 20
+        }
+      }
+    ],
+    "state-BLIND_SELECT--blinds.boss.status-SELECT--used_vouchers.v_directors_cut-1--money-5": [
+      {
+        "method": "menu",
+        "params": {}
+      },
+      {
+        "method": "start",
+        "params": {
+          "deck": "b_red",
+          "stake": "stake_white",
+          "seed": "TEST123"
+        }
+      },
+      {
+        "method": "select",
+        "params": {}
+      },
+      {
+        "method": "set",
+        "params": {
+          "chips": 1000
+        }
+      },
+      {
+        "method": "play",
+        "params": {
+          "cards": [
+            0
+          ]
+        }
+      },
+      {
+        "method": "cash_out",
+        "params": {}
+      },
+      {
+        "method": "set",
+        "params": {
+          "money": 100
+        }
+      },
+      {
+        "method": "buy",
+        "params": {
+          "voucher": 0
+        }
+      },
+      {
+        "method": "add",
+        "params": {
+          "key": "v_directors_cut"
+        }
+      },
+      {
+        "method": "buy",
+        "params": {
+          "voucher": 0
+        }
+      },
+      {
+        "method": "next_round",
+        "params": {}
+      },
+      {
+        "method": "skip",
+        "params": {}
+      },
+      {
+        "method": "set",
+        "params": {
+          "money": 5
+        }
+      }
+    ],
+    "state-BLIND_SELECT--blinds.boss.status-SELECT--used_vouchers.v_retcon-1--money-30": [
+      {
+        "method": "menu",
+        "params": {}
+      },
+      {
+        "method": "start",
+        "params": {
+          "deck": "b_red",
+          "stake": "stake_white",
+          "seed": "TEST123"
+        }
+      },
+      {
+        "method": "select",
+        "params": {}
+      },
+      {
+        "method": "set",
+        "params": {
+          "chips": 1000
+        }
+      },
+      {
+        "method": "play",
+        "params": {
+          "cards": [
+            0
+          ]
+        }
+      },
+      {
+        "method": "cash_out",
+        "params": {}
+      },
+      {
+        "method": "set",
+        "params": {
+          "money": 100
+        }
+      },
+      {
+        "method": "buy",
+        "params": {
+          "voucher": 0
+        }
+      },
+      {
+        "method": "add",
+        "params": {
+          "key": "v_retcon"
+        }
+      },
+      {
+        "method": "buy",
+        "params": {
+          "voucher": 0
+        }
+      },
+      {
+        "method": "next_round",
+        "params": {}
+      },
+      {
+        "method": "skip",
+        "params": {}
+      },
+      {
+        "method": "set",
+        "params": {
+          "money": 30
+        }
+      }
+    ],
+    "state-SHOP": [
+      {
+        "method": "menu",
+        "params": {}
+      },
+      {
+        "method": "start",
+        "params": {
+          "deck": "b_red",
+          "stake": "stake_white",
+          "seed": "TEST123"
+        }
+      },
+      {
+        "method": "select",
+        "params": {}
+      },
+      {
+        "method": "set",
+        "params": {
+          "chips": 1000
+        }
+      },
+      {
+        "method": "play",
+        "params": {
+          "cards": [
+            0
+          ]
+        }
+      },
+      {
+        "method": "cash_out",
+        "params": {}
+      }
+    ]
+  },
+  "sort": {
+    "state-SELECTING_HAND--hand.count-8": [
+      {
+        "method": "menu",
+        "params": {}
+      },
+      {
+        "method": "start",
+        "params": {
+          "deck": "b_red",
+          "stake": "stake_white",
+          "seed": "TEST123"
+        }
+      },
+      {
+        "method": "select",
+        "params": {}
+      },
+      {
+        "method": "rearrange",
+        "params": {
+          "hand": [7, 6, 5, 4, 3, 2, 1, 0]
+        }
+      }
+    ],
+    "state-SHOP": [
+      {
+        "method": "menu",
+        "params": {}
+      },
+      {
+        "method": "start",
+        "params": {
+          "deck": "b_red",
+          "stake": "stake_white",
+          "seed": "TEST123"
+        }
+      },
+      {
+        "method": "select",
+        "params": {}
+      },
+      {
+        "method": "set",
+        "params": {
+          "chips": 1000
+        }
+      },
+      {
+        "method": "play",
+        "params": {
+          "cards": [0]
+        }
+      },
+      {
+        "method": "cash_out",
+        "params": {}
       }
     ]
   }

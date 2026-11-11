@@ -13,7 +13,6 @@ def _random_port() -> int:
     return random.randint(20000, 30000)
 
 
-@pytest.mark.integration
 class TestBalatroIntegration:
     """Integration tests that require a running Balatro instance."""
 
@@ -21,7 +20,7 @@ class TestBalatroIntegration:
     async def test_context_manager_lifecycle(self, tmp_path):
         """Context manager starts and stops Balatro properly."""
         async with BalatroInstance(
-            port=_random_port(), fast=True, headless=True, logs_path=str(tmp_path)
+            port=_random_port(), render="headless", logs=str(tmp_path)
         ) as instance:
             # Instance should be running
             assert instance.process is not None
@@ -44,7 +43,7 @@ class TestBalatroIntegration:
     async def test_health_endpoint_responds(self, tmp_path):
         """Health endpoint returns valid JSON-RPC response."""
         async with BalatroInstance(
-            port=_random_port(), fast=True, headless=True, logs_path=str(tmp_path)
+            port=_random_port(), render="headless", logs=str(tmp_path)
         ) as instance:
             url = f"http://127.0.0.1:{instance.port}"
             payload = {"jsonrpc": "2.0", "method": "health", "params": {}, "id": 42}

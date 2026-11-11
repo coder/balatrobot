@@ -158,6 +158,48 @@ class TestPackEndpointJokerSlots:
             "Cannot select joker, joker slots are full. Current: 5, Limit: 5",
         )
 
+    def test_pack_negative_joker_when_full(self, client: httpx.Client) -> None:
+        """A Negative-edition joker can be selected from a pack even when full.
+
+        The Negative edition grants +1 slot, so the game allows the selection.
+        A mega pack keeps the pack open after one selection (2 choices), so
+        the state stays SMODS_BOOSTER_OPENED rather than returning to SHOP.
+        """
+        before = load_fixture(
+            client,
+            "pack",
+            "seed-NB001A--state-SMODS_BOOSTER_OPENED--jokers.count-5--pack.cards[1].edition-e_negative",
+        )
+        assert before["state"] == "SMODS_BOOSTER_OPENED"
+        assert before["jokers"]["count"] == 5
+        assert before["jokers"]["limit"] == 5
+        assert before["pack"]["cards"][1]["modifier"]["edition"] == "e_negative"
+
+        response = api(client, "pack", {"card": 1})
+        after = assert_gamestate_response(response)
+        # Mega pack: stays open for the second choice
+        assert after["state"] == "SMODS_BOOSTER_OPENED"
+        assert after["jokers"]["count"] == 6
+        assert after["jokers"]["limit"] == 6
+
+    def test_pack_joker_slots_full_sell_joker(self, client: httpx.Client) -> None:
+        """Test selling a joker to make room when joker slots are full during pack selection."""
+        gamestate = load_fixture(
+            client,
+            "pack",
+            "state-SMODS_BOOSTER_OPENED--pack.type-buffoon--jokers.count-5",
+        )
+        assert gamestate["jokers"]["count"] == 5
+        before_jokers = {j["key"] for j in gamestate["jokers"]["cards"]}
+        result = api(client, "sell", {"joker": 0})
+        gamestate = assert_gamestate_response(result)
+        assert gamestate["jokers"]["count"] == 4
+        result = api(client, "pack", {"card": 0})
+        gamestate = assert_gamestate_response(result, state="SHOP")
+        assert gamestate["jokers"]["count"] == 5
+        after_jokers = {j["key"] for j in gamestate["jokers"]["cards"]}
+        assert before_jokers != after_jokers
+
     def test_pack_joker_slots_available(self, client: httpx.Client) -> None:
         """Test selecting joker when slots available succeeds."""
         load_fixture(
@@ -403,6 +445,40 @@ class TestPackEndpointSelection:
         # Pack should be closed after second selection
         assert "pack" not in after_second
 
+    def test_pack_celestial_black_hole_at_index_zero(
+        self, client: httpx.Client
+    ) -> None:
+        """Regression test for #199: selecting Black Hole from a Celestial pack
+        where it is the first card must not hang.
+
+        Black Hole appears in Celestial packs via the soul mechanism (0.3% chance).
+        The bug: pack.lua checks first card's ability.set to decide if hand cards
+        are needed. Black Hole has set=Spectral -> needs_hand=true. But Celestial
+        packs don't deal hand cards -> endpoint hangs forever.
+        """
+        gamestate = load_fixture(
+            client,
+            "pack",
+            "seed-S001250--state-SMODS_BOOSTER_OPENED--pack.cards[0].key-c_black_hole",
+        )
+        assert gamestate["state"] == "SMODS_BOOSTER_OPENED"
+        assert gamestate["pack"]["cards"][0]["key"] == "c_black_hole"
+
+        # Select Black Hole (index 0) — must not hang
+        result = api(client, "pack", {"card": 0}, timeout=10.0)
+        after = assert_gamestate_response(result, state="SHOP")
+
+        # Pack should be closed after selection
+        assert "pack" not in after
+
+        # Black Hole levels up ALL hands by 1
+        before = gamestate
+        for hand_name in before["hands"]:
+            assert (
+                after["hands"][hand_name]["level"]
+                == before["hands"][hand_name]["level"] + 1
+            )
+
 
 # =============================================================================
 # Mega Pack Multi-Selection Tests
@@ -483,6 +559,24 @@ class TestPackEndpointSkip:
 
         result = api(client, "pack", {"skip": True})
         gamestate = assert_gamestate_response(result, state="SHOP")
+        assert "pack" not in gamestate
+
+    def test_pack_skip_from_tag_reward(self, client: httpx.Client) -> None:
+        # Test skipping a pack opened by Charm Tag returns to BLIND_SELECT.
+        #
+        # When skipping a blind with a Charm Tag, a free Mega Arcana Pack opens
+        # from BLIND_SELECT. After skipping the pack, the game must return to
+        # BLIND_SELECT (not SHOP) because the pack interrupted that state.
+
+        load_fixture(
+            client,
+            "pack",
+            "seed-TAGTEST2--state-SMODS_BOOSTER_OPENED--blinds.small.tag.key-tag_charm",
+        )
+
+        result = api(client, "pack", {"skip": True})
+        gamestate = assert_gamestate_response(result)
+        assert gamestate["state"] == "BLIND_SELECT"
         assert "pack" not in gamestate
 
 
@@ -570,7 +664,11 @@ class TestPackEndpointStateRequirements:
     def test_pack_from_SELECTING_HAND(self, client: httpx.Client) -> None:
         """Test that pack fails from SELECTING_HAND state."""
         api(client, "menu", {})
-        api(client, "start", {"deck": "RED", "stake": "WHITE", "seed": "TEST123"})
+        api(
+            client,
+            "start",
+            {"deck": "b_red", "stake": "stake_white", "seed": "TEST123"},
+        )
         api(client, "select", {})
 
         assert_error_response(

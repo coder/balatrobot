@@ -12,17 +12,17 @@ class WindowsLauncher(BaseLauncher):
 
     def validate_paths(self, config: Config) -> None:
         """Validate paths, apply Windows defaults if None."""
-        if config.love_path is None:
-            config.love_path = (
+        if config.path_love is None:
+            config.path_love = (
                 r"C:\Program Files (x86)\Steam\steamapps\common\Balatro\Balatro.exe"
             )
-        if config.lovely_path is None:
-            config.lovely_path = (
+        if config.path_lovely is None:
+            config.path_lovely = (
                 r"C:\Program Files (x86)\Steam\steamapps\common\Balatro\version.dll"
             )
 
-        love = Path(config.love_path)
-        lovely = Path(config.lovely_path)
+        love = Path(config.path_love)
+        lovely = Path(config.path_lovely)
 
         if not love.exists():
             raise RuntimeError(f"Balatro executable not found: {love}")
@@ -37,5 +37,5 @@ class WindowsLauncher(BaseLauncher):
 
     def build_cmd(self, config: Config) -> list[str]:
         """Build Windows launch command."""
-        assert config.love_path is not None
-        return [config.love_path]
+        assert config.path_love is not None
+        return [config.path_love]

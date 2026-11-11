@@ -14,7 +14,7 @@ from tests.lua.conftest import (
     load_fixture,
 )
 
-HEADLESS = os.getenv("BALATROBOT_HEADLESS") == "1"
+HEADLESS = os.getenv("BALATROBOT_RENDER") == "headless"
 
 
 @pytest.mark.skipif(

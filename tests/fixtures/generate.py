@@ -1,6 +1,5 @@
-#!/usr/bin/env python3
-
 import json
+import sys
 from collections import defaultdict
 from dataclasses import dataclass
 from pathlib import Path
@@ -8,9 +7,9 @@ from pathlib import Path
 import httpx
 from tqdm import tqdm
 
+from balatrobot.state import InstanceNotFoundError, StateFile, StateFileNotFound
+
 FIXTURES_DIR = Path(__file__).parent
-HOST = "127.0.0.1"
-PORT = 12346
 
 # JSON-RPC 2.0 request ID counter
 _request_id: int = 0
@@ -112,14 +111,25 @@ def generate_fixture(client: httpx.Client, spec: FixtureSpec, pbar: tqdm) -> boo
 
         return True
 
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001 - report any failure and continue
         pbar.write(f"  Error: {relative_path} failed: {e}")
         return False
 
 
 def main() -> int:
     print("BalatroBot Fixture Generator")
-    print(f"Connecting to {HOST}:{PORT}\n")
+
+    try:
+        info = StateFile.resolve()
+    except (StateFileNotFound, InstanceNotFoundError) as e:
+        print(f"Error: {e}")
+        print(
+            "Make sure Balatro is running (balatrobot serve --settings turbo --debug --render headfull)"
+        )
+        return 1
+
+    host, port = info.host, info.port
+    print(f"Connecting to {host}:{port}\n")
 
     json_data = load_fixtures_json()
     fixtures = aggregate_fixtures(json_data)
@@ -127,7 +137,7 @@ def main() -> int:
 
     try:
         with httpx.Client(
-            base_url=f"http://{HOST}:{PORT}",
+            base_url=f"http://{host}:{port}",
             timeout=httpx.Timeout(60.0, read=10.0),
         ) as client:
             success = 0
@@ -153,16 +163,16 @@ def main() -> int:
             return 1 if failed > 0 else 0
 
     except httpx.ConnectError:
-        print(f"Error: Could not connect to Balatro at {HOST}:{PORT}")
+        print(f"Error: Could not connect to Balatro at {host}:{port}")
         print("Make sure Balatro is running with BalatroBot mod loaded")
         return 1
     except httpx.TimeoutException:
-        print(f"Error: Connection timeout to Balatro at {HOST}:{PORT}")
+        print(f"Error: Connection timeout to Balatro at {host}:{port}")
         return 1
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001 - top-level error reporting
         print(f"Error: {e}")
         return 1
 
 
 if __name__ == "__main__":
-    exit(main())
+    sys.exit(main())

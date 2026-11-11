@@ -6,7 +6,7 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from balatrobot.platforms.base import BaseLauncher
 
-VALID_PLATFORMS = frozenset({"darwin", "linux", "windows", "native"})
+VALID_PLATFORMS = frozenset({"darwin", "linux", "windows", "native", "docker"})
 
 
 def get_launcher(platform: str | None = None) -> "BaseLauncher":
@@ -51,5 +51,9 @@ def get_launcher(platform: str | None = None) -> "BaseLauncher":
             from balatrobot.platforms.native import NativeLauncher
 
             return NativeLauncher()
+        case "docker":
+            from balatrobot.platforms.docker import DockerLauncher
+
+            return DockerLauncher()
         case _:
             raise RuntimeError(f"Unsupported platform: {system}")

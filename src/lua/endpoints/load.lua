@@ -37,10 +37,11 @@ return {
   ---@param args Request.Endpoint.Load.Params
   ---@param send_response fun(response: Response.Endpoint)
   execute = function(args, send_response)
-    sendDebugMessage("Init load()", "BB.ENDPOINTS")
+    sendDebugMessage("load()", "BB.ENDPOINTS")
     local path = args.path
 
     -- Read file using nativefs
+    sendInfoMessage("Loading from " .. path, "BB.ENDPOINTS")
     -- NOTE: We intentionally skip nativefs.getInfo() and go straight to
     -- nativefs.read().  On Proton/Wine, getInfo() uses PHYSFS_mount which
     -- cannot resolve Linux absolute paths, but read() goes through fopen()
@@ -71,7 +72,7 @@ return {
 
     -- Load using game's built-in functions
     G:delete_run()
-    G.SAVED_GAME = get_compressed(temp_filename) ---@diagnostic disable-line: undefined-global
+    G.SAVED_GAME = get_compressed(temp_filename)
 
     if G.SAVED_GAME == nil then
       send_response({
@@ -122,7 +123,7 @@ return {
       func = function()
         local done = false
 
-        if not G.STATE_COMPLETE or G.CONTROLLER.locked then
+        if not G.STATE_COMPLETE or G.CONTROLLER.locked or (G.GAME.STOP_USE and G.GAME.STOP_USE > 0) then
           return false
         end
 
@@ -153,7 +154,7 @@ return {
         end
 
         if done then
-          sendDebugMessage("Return load() - loaded from " .. path, "BB.ENDPOINTS")
+          sendDebugMessage("load() → ok", "BB.ENDPOINTS")
           send_response({
             success = true,
             path = path,

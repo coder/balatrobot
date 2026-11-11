@@ -9,7 +9,7 @@ table.insert(BB_ENDPOINTS, "src/lua/endpoints/tests/echo.lua")
 table.insert(BB_ENDPOINTS, "src/lua/endpoints/tests/state.lua")
 table.insert(BB_ENDPOINTS, "src/lua/endpoints/tests/error.lua")
 table.insert(BB_ENDPOINTS, "src/lua/endpoints/tests/validation.lua")
-sendDebugMessage("Loading test endpoints", "BB.BALATROBOT")
+sendInfoMessage("Loading test endpoints", "BB.BALATROBOT")
 
 -- Helper function to format response as pretty-printed table
 local function format_response(response, depth, indent)
@@ -121,16 +121,16 @@ BB_DEBUG = {
 BB_DEBUG.setup = function()
   local success, dpAPI = pcall(require, "debugplus.api")
   if not success or not dpAPI then
-    sendDebugMessage("DebugPlus API not found", "BB.DEBUGGER")
+    sendWarnMessage("DebugPlus API not found", "BB.DEBUGGER")
     return
   end
   if not dpAPI.isVersionCompatible(1) then
-    sendDebugMessage("DebugPlus API version is not compatible", "BB.DEBUGGER")
+    sendWarnMessage("DebugPlus API version not compatible", "BB.DEBUGGER")
     return
   end
   local dp = dpAPI.registerID("BalatroBot")
   if not dp then
-    sendDebugMessage("Failed to register with DebugPlus", "BB.DEBUGGER")
+    sendWarnMessage("Failed to register with DebugPlus", "BB.DEBUGGER")
     return
   end
 

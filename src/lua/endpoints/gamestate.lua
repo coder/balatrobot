@@ -24,9 +24,9 @@ return {
   ---@param _ Request.Endpoint.Gamestate.Params
   ---@param send_response fun(response: Response.Endpoint)
   execute = function(_, send_response)
-    sendDebugMessage("Init gamestate()", "BB.ENDPOINTS")
+    sendDebugMessage("gamestate()", "BB.ENDPOINTS")
     local state_data = BB_GAMESTATE.get_gamestate()
-    sendDebugMessage("Return gamestate()", "BB.ENDPOINTS")
+    sendDebugMessage("gamestate() → ok", "BB.ENDPOINTS")
     send_response(state_data)
   end,
 }

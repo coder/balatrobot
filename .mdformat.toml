@@ -1,5 +1,0 @@
-wrap = "keep"
-number = true
-end_of_line = "lf"
-validate = true
-exclude = ["balatro/**", "CHANGELOG.md", ".venv/**", "smods.wiki/**"]

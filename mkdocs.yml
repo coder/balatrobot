@@ -5,6 +5,8 @@ repo_name: "coder/balatrobot"
 repo_url: https://github.com/coder/balatrobot
 site_url: https://coder.github.io/balatrobot/
 docs_dir: docs/
+exclude_docs: |
+  adr/
 theme:
   name: material
   favicon: assets/balatrobot.svg

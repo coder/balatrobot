@@ -24,8 +24,8 @@ return {
   ---@param _ Request.Endpoint.Health.Params
   ---@param send_response fun(response: Response.Endpoint)
   execute = function(_, send_response)
-    sendDebugMessage("Init health()", "BB.ENDPOINTS")
-    sendDebugMessage("Return health()", "BB.ENDPOINTS")
+    sendDebugMessage("health()", "BB.ENDPOINTS")
+    sendDebugMessage("health() → ok", "BB.ENDPOINTS")
     send_response({
       status = "ok",
     })

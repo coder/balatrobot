@@ -46,7 +46,7 @@ class TestBuyEndpoint:
         assert_error_response(
             api(client, "buy", {"card": 0}),
             "BAD_REQUEST",
-            "No jokers/consumables/cards in the shop. Reroll to restock the shop",
+            "No jokers/consumables/cards in the shop. Use `reroll` to restock the shop.",
         )
 
     def test_buy_invalid_card_index(self, client: httpx.Client) -> None:
@@ -110,8 +110,31 @@ class TestBuyEndpoint:
         assert_error_response(
             api(client, "buy", {"card": 0}),
             "BAD_REQUEST",
-            "Cannot purchase joker card, joker slots are full. Current: 5, Limit: 5",
+            "Cannot purchase joker card, joker slots are full. Current: 5, Limit: 5. Sell a joker using `sell` to free a slot.",
         )
+
+    def test_buy_negative_joker_when_full(self, client: httpx.Client) -> None:
+        """A Negative-edition joker can be bought even when joker slots are full.
+
+        The Negative edition grants +1 slot, so the game allows the purchase.
+        balatrobot currently blocks it with 'joker slots are full'.
+        """
+        before = load_fixture(
+            client,
+            "buy",
+            "seed-NEG003A--state-SHOP--jokers.count-5--shop.cards[0].edition-e_negative",
+        )
+        assert before["state"] == "SHOP"
+        assert before["jokers"]["count"] == 5
+        assert before["jokers"]["limit"] == 5
+        assert before["shop"]["cards"][0]["key"] == "j_drunkard"
+        assert before["shop"]["cards"][0]["modifier"]["edition"] == "e_negative"
+
+        response = api(client, "buy", {"card": 0})
+        after = assert_gamestate_response(response)
+        assert after["jokers"]["count"] == 6
+        assert after["jokers"]["limit"] == 6
+        assert after["jokers"]["cards"][5]["key"] == "j_drunkard"
 
     def test_buy_consumable_slots_full(self, client: httpx.Client) -> None:
         """Test buy endpoint when player has the maximum number of consumables."""
@@ -126,7 +149,7 @@ class TestBuyEndpoint:
         assert_error_response(
             api(client, "buy", {"card": 1}),
             "BAD_REQUEST",
-            "Cannot purchase consumable card, consumable slots are full. Current: 2, Limit: 2",
+            "Cannot purchase consumable card, consumable slots are full. Current: 2, Limit: 2. Use `use` to activate a consumable or `sell` to remove one.",
         )
 
     def test_buy_vouchers_slot_empty(self, client: httpx.Client) -> None:
@@ -137,7 +160,7 @@ class TestBuyEndpoint:
         assert_error_response(
             api(client, "buy", {"voucher": 0}),
             "BAD_REQUEST",
-            "No vouchers to redeem. Defeat boss blind to restock",
+            "No vouchers to redeem. Defeat boss blind to restock.",
         )
 
     def test_buy_packs_slot_empty(self, client: httpx.Client) -> None:
@@ -148,7 +171,7 @@ class TestBuyEndpoint:
         assert_error_response(
             api(client, "buy", {"pack": 0}),
             "BAD_REQUEST",
-            "No packs to open",
+            "No packs to open. Use `next_round` to advance to the next blind and restock the shop.",
         )
 
     def test_buy_joker_success(self, client: httpx.Client) -> None:
@@ -192,6 +215,46 @@ class TestBuyEndpoint:
         assert gamestate["packs"]["cards"][0]["label"] == "Buffoon Pack"
         assert gamestate["packs"]["cards"][1]["label"] == "Standard Pack"
         response = api(client, "buy", {"pack": 0})
+        gamestate = assert_gamestate_response(response)
+        assert gamestate["pack"] is not None
+        assert len(gamestate["pack"]["cards"]) > 0
+
+    def test_buy_pack_thin_deck(self, client: httpx.Client) -> None:
+        """Regression test for #198: buying an Arcana/Spectral pack with
+        a thin deck (< hand_limit) must not hang.
+        """
+        gamestate = load_fixture(
+            client, "buy", "state-SHOP--cards.count-2--packs[1].label-Arcana+Pack"
+        )
+        assert gamestate["state"] == "SHOP"
+        assert gamestate["cards"]["count"] < 8
+
+        response = api(client, "buy", {"pack": 1}, timeout=10.0)
+        assert_gamestate_response(response)
+
+    def test_buy_celestial_pack_with_black_hole(self, client: httpx.Client) -> None:
+        """Regression test for #199: buying a Celestial pack containing Black Hole
+        (Spectral card) as the first card must not hang.
+
+        Black Hole appears in Celestial packs via the soul mechanism (0.3% chance).
+        The bug: buy.lua checks first card's ability.set to decide if hand cards
+        are needed. Black Hole has set=Spectral -> needs_hand=true. But Celestial
+        packs don't deal hand cards -> endpoint hangs forever.
+        """
+        gamestate = load_fixture(
+            client, "buy", "seed-S001250--state-SHOP--pack.cards[0].set-SPECTRAL"
+        )
+        assert gamestate["state"] == "SHOP"
+
+        # Find the Celestial pack
+        celestial_idx = None
+        for i, pack in enumerate(gamestate["packs"]["cards"]):
+            if "celestial" in pack["key"].lower():
+                celestial_idx = i
+                break
+        assert celestial_idx is not None, "No Celestial pack found in shop"
+
+        response = api(client, "buy", {"pack": celestial_idx}, timeout=10.0)
         gamestate = assert_gamestate_response(response)
         assert gamestate["pack"] is not None
         assert len(gamestate["pack"]["cards"]) > 0

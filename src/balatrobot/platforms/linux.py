@@ -61,42 +61,42 @@ class LinuxLauncher(BaseLauncher):
             )
 
         # Balatro game directory
-        if config.balatro_path is None:
+        if config.path_balatro is None:
             candidate = steam_root / "steamapps/common/Balatro"
             if candidate.is_dir():
-                config.balatro_path = str(candidate)
+                config.path_balatro = str(candidate)
 
-        if config.balatro_path is None:
+        if config.path_balatro is None:
             raise RuntimeError(
                 "Balatro game directory not found under Steam root. "
-                "Set --balatro-path or BALATROBOT_BALATRO_PATH."
+                "Set --path-balatro or BALATROBOT_PATH_BALATRO."
             )
 
-        balatro = Path(config.balatro_path)
+        balatro = Path(config.path_balatro)
         if not balatro.is_dir() or not (balatro / "Balatro.exe").is_file():
             raise RuntimeError(f"Balatro game directory not found: {balatro}")
 
         # Lovely (version.dll)
-        if config.lovely_path is None:
+        if config.path_lovely is None:
             candidate = balatro / "version.dll"
             if candidate.is_file():
-                config.lovely_path = str(candidate)
+                config.path_lovely = str(candidate)
 
-        if config.lovely_path is None:
+        if config.path_lovely is None:
             raise RuntimeError(
                 "lovely-injector version.dll not found. "
-                "Set --lovely-path or BALATROBOT_LOVELY_PATH."
+                "Set --path-lovely or BALATROBOT_PATH_LOVELY."
             )
 
         # Proton executable
-        if config.love_path is None:
+        if config.path_love is None:
             detected = _detect_proton_path(steam_root)
             if detected:
-                config.love_path = str(detected)
+                config.path_love = str(detected)
 
-        if config.love_path is None:
+        if config.path_love is None:
             raise RuntimeError(
-                "Proton executable not found. Set --love-path or BALATROBOT_LOVE_PATH."
+                "Proton executable not found. Set --path-love or BALATROBOT_PATH_LOVE."
             )
 
     def build_env(self, config: Config) -> dict[str, str]:
@@ -118,10 +118,10 @@ class LinuxLauncher(BaseLauncher):
 
     def build_cmd(self, config: Config) -> list[str]:
         """Build Linux launch command via Proton."""
-        assert config.love_path is not None
-        assert config.balatro_path is not None
-        balatro_exe = str(Path(config.balatro_path) / "Balatro.exe")
-        return [config.love_path, "run", balatro_exe]
+        assert config.path_love is not None
+        assert config.path_balatro is not None
+        balatro_exe = str(Path(config.path_balatro) / "Balatro.exe")
+        return [config.path_love, "run", balatro_exe]
 
     def cleanup(self, config: Config) -> None:
         """Shut down the Wine prefix via wineserver -k.
@@ -131,11 +131,11 @@ class LinuxLauncher(BaseLauncher):
         wineserver -k cleanly terminates all Wine processes and
         closes display connections so the compositor removes windows.
         """
-        if config.love_path is None:
+        if config.path_love is None:
             return
 
         # wineserver lives next to the proton script
-        proton_dir = Path(config.love_path).parent
+        proton_dir = Path(config.path_love).parent
         wineserver = proton_dir / "files" / "bin" / "wineserver"
         if not wineserver.is_file():
             return
@@ -156,4 +156,5 @@ class LinuxLauncher(BaseLauncher):
             env={"WINEPREFIX": str(wineprefix)},
             capture_output=True,
             timeout=10,
+            check=False,
         )

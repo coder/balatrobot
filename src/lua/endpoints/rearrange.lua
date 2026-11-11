@@ -41,12 +41,18 @@ return {
     },
   },
 
-  requires_state = { G.STATES.SELECTING_HAND, G.STATES.SHOP, G.STATES.SMODS_BOOSTER_OPENED },
+  requires_state = {
+    G.STATES.SELECTING_HAND,
+    G.STATES.SHOP,
+    G.STATES.SMODS_BOOSTER_OPENED,
+    G.STATES.ROUND_EVAL,
+    G.STATES.BLIND_SELECT,
+  },
 
   ---@param args Request.Endpoint.Rearrange.Params
   ---@param send_response fun(response: Response.Endpoint)
   execute = function(args, send_response)
-    sendDebugMessage("Init rearrange()", "BB.ENDPOINTS")
+    sendDebugMessage("rearrange()", "BB.ENDPOINTS")
     -- Validate exactly one parameter is provided
     local param_count = (args.hand and 1 or 0) + (args.jokers and 1 or 0) + (args.consumables and 1 or 0)
     if param_count == 0 then
@@ -132,10 +138,7 @@ return {
 
     -- Log what we're rearranging
     local order_str = "[" .. table.concat(indices, ",") .. "]"
-    sendDebugMessage(
-      string.format("Rearranging %s (%d cards): %s", type_name, #source_array, order_str),
-      "BB.ENDPOINTS"
-    )
+    sendInfoMessage(string.format("Rearranging %s (%d cards): %s", type_name, #source_array, order_str), "BB.ENDPOINTS")
 
     -- Validate permutation: correct length, no duplicates, all indices present
     -- Check length matches
@@ -216,17 +219,21 @@ return {
             G.STATE == G.STATES.SHOP
             or G.STATE == G.STATES.SELECTING_HAND
             or G.STATE == G.STATES.SMODS_BOOSTER_OPENED
+            or G.STATE == G.STATES.ROUND_EVAL
+            or G.STATE == G.STATES.BLIND_SELECT
           ) and G.jokers ~= nil
         else -- consumables
           done = (
             G.STATE == G.STATES.SHOP
             or G.STATE == G.STATES.SELECTING_HAND
             or G.STATE == G.STATES.SMODS_BOOSTER_OPENED
+            or G.STATE == G.STATES.ROUND_EVAL
+            or G.STATE == G.STATES.BLIND_SELECT
           ) and G.consumeables ~= nil
         end
 
         if done then
-          sendDebugMessage("Return rearrange()", "BB.ENDPOINTS")
+          sendDebugMessage("rearrange() → ok", "BB.ENDPOINTS")
           local state_data = BB_GAMESTATE.get_gamestate()
           send_response(state_data)
         end

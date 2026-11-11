@@ -37,7 +37,7 @@ return {
   ---@param args Request.Endpoint.Screenshot.Params
   ---@param send_response fun(response: Response.Endpoint)
   execute = function(args, send_response)
-    sendDebugMessage("Init screenshot()", "BB.ENDPOINTS")
+    sendDebugMessage("screenshot()", "BB.ENDPOINTS")
     local path = args.path
 
     love.graphics.captureScreenshot(function(imagedata)
@@ -56,6 +56,7 @@ return {
       local png_data = filedata:getString()
 
       -- Write to target path using nativefs
+      sendInfoMessage("Screenshot → " .. path, "BB.ENDPOINTS")
       local write_success = nativefs.write(path, png_data)
       if not write_success then
         send_response({
@@ -65,7 +66,7 @@ return {
         return
       end
 
-      sendDebugMessage("Return screenshot() - saved to " .. path, "BB.ENDPOINTS")
+      sendDebugMessage("screenshot() → ok", "BB.ENDPOINTS")
       send_response({
         success = true,
         path = path,

@@ -24,6 +24,8 @@ return {
   ---@param _ Request.Endpoint.Reroll.Params
   ---@param send_response fun(response: Response.Endpoint)
   execute = function(_, send_response)
+    sendDebugMessage("reroll()", "BB.ENDPOINTS")
+
     -- Check affordability (accounting for Credit Card joker via bankrupt_at)
     local reroll_cost = G.GAME.current_round and G.GAME.current_round.reroll_cost or 0
     local available_money = G.GAME.dollars - G.GAME.bankrupt_at
@@ -37,7 +39,7 @@ return {
     end
 
     -- Log reroll with cost and money
-    sendDebugMessage(string.format("Rerolling shop (cost=$%d, money=$%d)", reroll_cost, G.GAME.dollars), "BB.ENDPOINTS")
+    sendInfoMessage(string.format("Rerolling shop ($%d, money=$%d)", reroll_cost, G.GAME.dollars), "BB.ENDPOINTS")
     G.FUNCS.reroll_shop(nil)
 
     -- Wait for shop state to confirm reroll completed
@@ -47,7 +49,7 @@ return {
       func = function()
         local done = G.STATE == G.STATES.SHOP
         if done then
-          sendDebugMessage(string.format("Return reroll() money=$%d", G.GAME.dollars), "BB.ENDPOINTS")
+          sendDebugMessage("reroll() → ok", "BB.ENDPOINTS")
           send_response(BB_GAMESTATE.get_gamestate())
         end
         return done

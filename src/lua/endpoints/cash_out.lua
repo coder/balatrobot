@@ -24,7 +24,7 @@ return {
   ---@param _ Request.Endpoint.CashOut.Params
   ---@param send_response fun(response: Response.Endpoint)
   execute = function(_, send_response)
-    sendDebugMessage("Init cash_out()", "BB.ENDPOINTS")
+    sendDebugMessage("cash_out()", "BB.ENDPOINTS")
     G.FUNCS.cash_out({ config = {} })
 
     local num_items = function(area)
@@ -48,7 +48,7 @@ return {
         if G.STATE == G.STATES.SHOP and G.STATE_COMPLETE then
           done = num_items(G.shop_booster) > 0 or num_items(G.shop_jokers) > 0 or num_items(G.shop_vouchers) > 0
           if done then
-            sendDebugMessage("Return cash_out() - reached SHOP state", "BB.ENDPOINTS")
+            sendDebugMessage("cash_out() → SHOP", "BB.ENDPOINTS")
             send_response(BB_GAMESTATE.get_gamestate())
             return done
           end

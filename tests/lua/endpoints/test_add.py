@@ -155,7 +155,7 @@ class TestAddEndpointValidation:
         assert_error_response(
             api(client, "add", {"key": "x_unknown"}),
             "BAD_REQUEST",
-            "Invalid card key format. Expected: joker (j_*), consumable (c_*), voucher (v_*), or playing card (SUIT_RANK)",
+            "Invalid card key format. Expected: joker (j_*), consumable (c_*), voucher (v_*), pack (p_*), or playing card (SUIT_RANK)",
         )
 
     def test_invalid_key_known_format(self, client: httpx.Client) -> None:
@@ -265,7 +265,7 @@ class TestAddEndpointPack:
 class TestAddEndpointSeal:
     """Test seal parameter for add endpoint."""
 
-    @pytest.mark.parametrize("seal", ["RED", "BLUE", "GOLD", "PURPLE"])
+    @pytest.mark.parametrize("seal", ["Red", "Blue", "Gold", "Purple"])
     def test_add_playing_card_with_seal(self, client: httpx.Client, seal: str) -> None:
         """Test adding a playing card with various seals."""
         gamestate = load_fixture(
@@ -294,7 +294,7 @@ class TestAddEndpointSeal:
         assert_error_response(
             response,
             "BAD_REQUEST",
-            "Invalid seal value. Expected: RED, BLUE, GOLD, or PURPLE",
+            "Invalid seal value. Expected a Seal key from G.P_SEALS (e.g. Red, Blue)",
         )
 
     @pytest.mark.parametrize(
@@ -310,7 +310,7 @@ class TestAddEndpointSeal:
             "state-SHOP--jokers.count-0--consumables.count-0--vouchers.count-0--packs.count-0",
         )
         assert gamestate["state"] == "SHOP"
-        response = api(client, "add", {"key": key, "seal": "RED"})
+        response = api(client, "add", {"key": key, "seal": "Red"})
         assert_error_response(
             response,
             "BAD_REQUEST",
@@ -321,7 +321,9 @@ class TestAddEndpointSeal:
 class TestAddEndpointEdition:
     """Test edition parameter for add endpoint."""
 
-    @pytest.mark.parametrize("edition", ["HOLO", "FOIL", "POLYCHROME", "NEGATIVE"])
+    @pytest.mark.parametrize(
+        "edition", ["e_holo", "e_foil", "e_polychrome", "e_negative"]
+    )
     def test_add_joker_with_edition(self, client: httpx.Client, edition: str) -> None:
         """Test adding a joker with various editions."""
         gamestate = load_fixture(
@@ -337,7 +339,9 @@ class TestAddEndpointEdition:
         assert after["jokers"]["cards"][0]["key"] == "j_joker"
         assert after["jokers"]["cards"][0]["modifier"]["edition"] == edition
 
-    @pytest.mark.parametrize("edition", ["HOLO", "FOIL", "POLYCHROME", "NEGATIVE"])
+    @pytest.mark.parametrize(
+        "edition", ["e_holo", "e_foil", "e_polychrome", "e_negative"]
+    )
     def test_add_playing_card_with_edition(
         self, client: httpx.Client, edition: str
     ) -> None:
@@ -356,7 +360,7 @@ class TestAddEndpointEdition:
         assert after["hand"]["cards"][8]["modifier"]["edition"] == edition
 
     def test_add_consumable_with_negative_edition(self, client: httpx.Client) -> None:
-        """Test adding a consumable with NEGATIVE edition (only valid edition for consumables)."""
+        """Test adding a consumable with e_negative edition (only valid edition for consumables)."""
         gamestate = load_fixture(
             client,
             "add",
@@ -364,17 +368,17 @@ class TestAddEndpointEdition:
         )
         assert gamestate["state"] == "SHOP"
         assert gamestate["consumables"]["count"] == 0
-        response = api(client, "add", {"key": "c_fool", "edition": "NEGATIVE"})
+        response = api(client, "add", {"key": "c_fool", "edition": "e_negative"})
         after = assert_gamestate_response(response)
         assert after["consumables"]["count"] == 1
         assert after["consumables"]["cards"][0]["key"] == "c_fool"
-        assert after["consumables"]["cards"][0]["modifier"]["edition"] == "NEGATIVE"
+        assert after["consumables"]["cards"][0]["modifier"]["edition"] == "e_negative"
 
-    @pytest.mark.parametrize("edition", ["HOLO", "FOIL", "POLYCHROME"])
+    @pytest.mark.parametrize("edition", ["e_holo", "e_foil", "e_polychrome"])
     def test_add_consumable_with_non_negative_edition_fails(
         self, client: httpx.Client, edition: str
     ) -> None:
-        """Test that adding a consumable with HOLO | FOIL | POLYCHROME edition fails."""
+        """Test that adding a consumable with e_holo | e_foil | e_polychrome edition fails."""
         gamestate = load_fixture(
             client,
             "add",
@@ -386,7 +390,7 @@ class TestAddEndpointEdition:
         assert_error_response(
             response,
             "BAD_REQUEST",
-            "Consumables can only have NEGATIVE edition",
+            "Consumables can only have e_negative edition",
         )
 
     def test_add_voucher_with_edition_fails(self, client: httpx.Client) -> None:
@@ -398,7 +402,7 @@ class TestAddEndpointEdition:
         )
         assert gamestate["state"] == "SHOP"
         assert gamestate["vouchers"]["count"] == 0
-        response = api(client, "add", {"key": "v_overstock_norm", "edition": "FOIL"})
+        response = api(client, "add", {"key": "v_overstock_norm", "edition": "e_foil"})
         assert_error_response(
             response, "BAD_REQUEST", "Edition cannot be applied to vouchers"
         )
@@ -411,7 +415,7 @@ class TestAddEndpointEdition:
             "state-SHOP--jokers.count-0--consumables.count-0--vouchers.count-0--packs.count-0",
         )
         assert gamestate["state"] == "SHOP"
-        response = api(client, "add", {"key": "p_arcana_normal_1", "edition": "FOIL"})
+        response = api(client, "add", {"key": "p_arcana_normal_1", "edition": "e_foil"})
         assert_error_response(
             response, "BAD_REQUEST", "Edition cannot be applied to packs"
         )
@@ -429,7 +433,7 @@ class TestAddEndpointEdition:
         assert_error_response(
             response,
             "BAD_REQUEST",
-            "Invalid edition value. Expected: HOLO, FOIL, POLYCHROME, or NEGATIVE",
+            "Expected an e_* edition key (e.g. e_foil, e_holo)",
         )
 
 
@@ -438,7 +442,16 @@ class TestAddEndpointEnhancement:
 
     @pytest.mark.parametrize(
         "enhancement",
-        ["BONUS", "MULT", "WILD", "GLASS", "STEEL", "STONE", "GOLD", "LUCKY"],
+        [
+            "m_bonus",
+            "m_mult",
+            "m_wild",
+            "m_glass",
+            "m_steel",
+            "m_stone",
+            "m_gold",
+            "m_lucky",
+        ],
     )
     def test_add_playing_card_with_enhancement(
         self, client: httpx.Client, enhancement: str
@@ -470,7 +483,7 @@ class TestAddEndpointEnhancement:
         assert_error_response(
             response,
             "BAD_REQUEST",
-            "Invalid enhancement value. Expected: BONUS, MULT, WILD, GLASS, STEEL, STONE, GOLD, or LUCKY",
+            "Expected an m_* enhancement key (e.g. m_bonus, m_mult)",
         )
 
     @pytest.mark.parametrize(
@@ -486,7 +499,7 @@ class TestAddEndpointEnhancement:
             "state-SHOP--jokers.count-0--consumables.count-0--vouchers.count-0--packs.count-0",
         )
         assert gamestate["state"] == "SHOP"
-        response = api(client, "add", {"key": key, "enhancement": "BONUS"})
+        response = api(client, "add", {"key": key, "enhancement": "m_bonus"})
         assert_error_response(
             response,
             "BAD_REQUEST",
