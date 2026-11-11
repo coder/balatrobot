@@ -1,0 +1,9 @@
+#!/bin/sh
+# Start Balatro with BalatroBot's API on 127.0.0.1:12346, from a writable copy of the release's save, which has
+# been through the game's first run.
+set -eu
+ROOT=/opt/balatro/release
+rm -rf /root/.local/share/love/Balatro
+mkdir -p /root/.local/share/love/Balatro
+cp -a "$ROOT/save/." /root/.local/share/love/Balatro/
+exec python -m balatrobot serve

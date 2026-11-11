@@ -1,0 +1,20 @@
+#!/bin/sh
+# LOVE behind a throwaway X server: the game needs a GL context even headless. Lovely belongs in the game process
+# only, not in this shell or Xvfb.
+set -eu
+LOVELY_PRELOAD="${LD_PRELOAD:-}"
+unset LD_PRELOAD
+DISPLAY_NUM="${BALATRO_DISPLAY:-99}"
+if ! xdpyinfo -display ":$DISPLAY_NUM" >/dev/null 2>&1; then
+    Xvfb ":$DISPLAY_NUM" -screen 0 1280x720x24 -nolisten tcp >/tmp/xvfb.log 2>&1 &
+    i=0
+    while [ "$i" -lt 100 ]; do
+        xdpyinfo -display ":$DISPLAY_NUM" >/dev/null 2>&1 && break
+        i=$((i + 1))
+        sleep 0.1
+    done
+fi
+export DISPLAY=":$DISPLAY_NUM"
+export LD_LIBRARY_PATH="/opt/love/lib:${LD_LIBRARY_PATH:-}"
+export LD_PRELOAD="$LOVELY_PRELOAD"
+exec /opt/balatro/bin/love "$@"

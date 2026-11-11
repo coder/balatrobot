@@ -75,6 +75,17 @@ return {
     local card_str = BB_LOGGER.format_playing_cards(G.hand.cards, args.cards)
     sendDebugMessage(string.format("Playing %d cards: %s", #args.cards, card_str), "BB.ENDPOINTS")
 
+    local chips_before = G.GAME.chips or 0
+    local function send_play_state()
+      local state_data = BB_GAMESTATE.get_gamestate()
+      state_data.play_commit = {
+        cards = args.cards,
+        score = math.max(0, (G.GAME.chips or chips_before) - chips_before),
+        hand = G.GAME.last_hand_played,
+      }
+      send_response(state_data)
+    end
+
     ---@diagnostic disable-next-line: undefined-field
     local play_button = UIBox:get_UIE_by_ID("play_button", G.buttons.UIRoot)
     assert(play_button ~= nil, "play() play button not found")
@@ -87,7 +98,7 @@ return {
     -- because when G.STATE becomes GAME_OVER, the game sets G.SETTINGS.paused = true,
     -- which stops all event processing. This callback is set so that love.update
     -- (which runs even when paused) can detect GAME_OVER immediately.
-    BB_GAMESTATE.on_game_over = send_response
+    BB_GAMESTATE.on_game_over = send_play_state
 
     G.E_MANAGER:add_event(Event({
       trigger = "condition",
@@ -124,8 +135,7 @@ return {
           -- Game is won
           if G.GAME.won then
             sendDebugMessage("Return play() - won", "BB.ENDPOINTS")
-            local state_data = BB_GAMESTATE.get_gamestate()
-            send_response(state_data)
+            send_play_state()
             return true
           end
 
@@ -144,17 +154,15 @@ return {
 
           -- Both first and last scoring rows must be present
           if has_blind1 and has_cash_out_button then
-            local state_data = BB_GAMESTATE.get_gamestate()
             sendDebugMessage("Return play() - cash out", "BB.ENDPOINTS")
-            send_response(state_data)
+            send_play_state()
             return true
           end
         end
 
         if draw_to_hand and hand_played and G.buttons and G.STATE == G.STATES.SELECTING_HAND then
           sendDebugMessage("Return play() - same round", "BB.ENDPOINTS")
-          local state_data = BB_GAMESTATE.get_gamestate()
-          send_response(state_data)
+          send_play_state()
           return true
         end
 

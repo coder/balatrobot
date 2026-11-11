@@ -397,7 +397,12 @@ function BB_SERVER.send_response(response)
       error = {
         code = error_code,
         message = response.message,
-        data = { name = error_name },
+        data = {
+          name = error_name,
+          -- Endpoints may attach diagnostic context without changing the
+          -- stable error-name contract used by existing clients.
+          details = response.details,
+        },
       },
       id = BB_SERVER.current_request_id,
     }

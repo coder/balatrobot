@@ -1,0 +1,888 @@
+diff --git a/modal_training_gym/common/checkpoint.py b/modal_training_gym/common/checkpoint.py
+index bbcd2eb5..2fc9608f 100644
+--- a/modal_training_gym/common/checkpoint.py
++++ b/modal_training_gym/common/checkpoint.py
+@@ -138,18 +138,26 @@ def _list_checkpoints(
+             continue
+         child_rel = f"{rel}/{name}" if rel else name
+         try:
+-            child_names = {
+-                _entry_name(child)
++            child_sizes = {
++                _entry_name(child): getattr(child, "size", 0)
+                 for child in volume.iterdir(child_rel, recursive=False)
++                if not _is_dir_entry(child)
+             }
+         except (FileNotFoundError, NotFoundError):
+-            child_names = set()
++            child_sizes = {}
+         iteration = parse_torch_dist_iteration(name)
+         if (
+             tracker_iteration is None
+             or iteration is None
+             or iteration > tracker_iteration
+-            or not is_complete_torch_dist_checkpoint(child_names)
++        ):
++            continue
++        try:
++            metadata = b"".join(volume.read_file(f"{child_rel}/.metadata"))
++        except (FileNotFoundError, NotFoundError):
++            continue
++        if not is_complete_torch_dist_checkpoint(
++            child_sizes.keys(), metadata=metadata, file_sizes=child_sizes
+         ):
+             continue
+         checkpoints.append(
+diff --git a/modal_training_gym/common/launcher_utils.py b/modal_training_gym/common/launcher_utils.py
+index 79f056bf..6e19b345 100644
+--- a/modal_training_gym/common/launcher_utils.py
++++ b/modal_training_gym/common/launcher_utils.py
+@@ -526,6 +526,37 @@ def drop_materialized_config_key(cfg: Any, key: str) -> None:
+     )
+ 
+ 
++def pin_resume_iteration(cfg: Any, iteration: int | None) -> None:
++    """Load the validated iteration, even when the run tracker points elsewhere.
++
++    Give the reference model its own default tracker selection: otherwise
++    Megatron can apply the actor's ckpt_step to the reference checkpoint too.
++    """
++    if iteration is None:
++        return
++    import tempfile
++    import yaml
++
++    source = getattr(cfg, "extra_config", None)
++    if isinstance(source, str):
++        with open(source) as f:
++            data = yaml.safe_load(f) or {}
++    else:
++        data = dict(source or {})
++    data["ckpt_step"] = iteration
++    data.setdefault("ref_ckpt_step", 0)
++    data["exit_on_missing_checkpoint"] = True
++    # This is recovery from the run's own checkpoint, not a fresh fine-tune
++    # from its parent. Megatron's finetune flag otherwise suppresses optimizer
++    # and RNG restoration even after the launcher clears no_load_optim.
++    data["finetune"] = False
++    data["no_load_rng"] = bool(data.get("no_save_rng", False))
++    with tempfile.NamedTemporaryFile(mode="w", suffix=".yaml", delete=False) as f:
++        yaml.safe_dump(data, f)
++    object.__setattr__(cfg, "extra_config", f.name)
++    object.__setattr__(cfg, "_materialized_config_keys", tuple(data))
++
++
+ def build_train_cmd(
+     cfg: Any,
+     root: str,
+diff --git a/modal_training_gym/common/megatron_patches/patch_checkpoint_commit.py b/modal_training_gym/common/megatron_patches/patch_checkpoint_commit.py
+index f7f0dd74..1154a4b4 100644
+--- a/modal_training_gym/common/megatron_patches/patch_checkpoint_commit.py
++++ b/modal_training_gym/common/megatron_patches/patch_checkpoint_commit.py
+@@ -15,13 +15,14 @@ def save_checkpoint(*args, **kwargs):
+ 
+     result = _training_gym_save_checkpoint(*args, **kwargs)
+     if not getattr(get_args(), "async_save", False):
+-        commit_latest_checkpoint_volume()
++        commit_latest_checkpoint_volume(get_args().save)
+     return result
+ """
+ _FINALIZE_WRAP = """
+ 
+ # PATCHED_TRAINING_GYM_ASYNC_FINALIZE_COMMIT
+ def maybe_finalize_async_save(*args, **kwargs):
++    from megatron.training import get_args
+     from modal_training_gym.common.torch_dist_checkpoint import (
+         commit_latest_checkpoint_volume,
+     )
+@@ -29,7 +30,7 @@ def maybe_finalize_async_save(*args, **kwargs):
+     had_pending = not is_empty_async_queue()
+     result = _training_gym_maybe_finalize_async_save(*args, **kwargs)
+     if had_pending:
+-        commit_latest_checkpoint_volume()
++        commit_latest_checkpoint_volume(get_args().save)
+     return result
+ """
+ 
+@@ -40,6 +41,21 @@ def _wrap(path: Path, original: str, renamed: str, marker: str, wrap: str) -> No
+         return
+     source = path.read_text()
+     if marker in source:
++        # Upgrade an image that already contains the old wrapper.
++        source = source.replace(
++            "commit_latest_checkpoint_volume()",
++            "commit_latest_checkpoint_volume(get_args().save)",
++        )
++        if (
++            original == "maybe_finalize_async_save"
++            and "    from megatron.training import get_args"
++            not in source.split(marker, 1)[1]
++        ):
++            source = source.replace(
++                "def maybe_finalize_async_save(*args, **kwargs):",
++                "def maybe_finalize_async_save(*args, **kwargs):\n    from megatron.training import get_args",
++            )
++        path.write_text(source)
+         print(f"{path.name} already has {marker}")
+         return
+     if f"def {original}(" not in source:
+diff --git a/modal_training_gym/common/run.py b/modal_training_gym/common/run.py
+index 3c7d950b..876e8664 100644
+--- a/modal_training_gym/common/run.py
++++ b/modal_training_gym/common/run.py
+@@ -29,6 +29,7 @@ from modal_training_gym.common.models import ModelConfig
+ from modal_training_gym.common.status import FrameworkStatus, resolve_framework_status
+ from modal_training_gym.common.torch_dist_checkpoint import (
+     TORCH_DIST_TRACKER_NAME,
++    is_complete_torch_dist_checkpoint_dir,
+     parse_torch_dist_iteration,
+     parse_torch_dist_tracker,
+ )
+@@ -761,7 +762,7 @@ def torch_dist_resume_checkpoint(
+     if not os.path.isdir(save_path):
+         return None
+ 
+-    is_complete = is_complete or os.path.isdir
++    is_complete = is_complete or is_complete_torch_dist_checkpoint_dir
+     tracker_path = os.path.join(save_path, TORCH_DIST_TRACKER_NAME)
+     if os.path.isfile(tracker_path):
+         try:
+@@ -771,16 +772,14 @@ def torch_dist_resume_checkpoint(
+             tracker = ""
+         if tracker.strip() == "release":
+             path = os.path.join(save_path, "release")
+-            return (
+-                _resume_checkpoint(path, "release", None) if is_complete(path) else None
+-            )
++            if is_complete(path):
++                return _resume_checkpoint(path, "release", None)
+         iteration = parse_torch_dist_tracker(tracker)
+         if iteration is not None:
+             name = f"iter_{iteration:07d}"
+             path = os.path.join(save_path, name)
+-            return (
+-                _resume_checkpoint(path, name, iteration) if is_complete(path) else None
+-            )
++            if is_complete(path):
++                return _resume_checkpoint(path, name, iteration)
+ 
+     try:
+         candidates: list[tuple[int, str, str]] = []
+diff --git a/modal_training_gym/common/torch_dist_checkpoint.py b/modal_training_gym/common/torch_dist_checkpoint.py
+index 6fff2726..f12c8f6d 100644
+--- a/modal_training_gym/common/torch_dist_checkpoint.py
++++ b/modal_training_gym/common/torch_dist_checkpoint.py
+@@ -1,28 +1,166 @@
+ from __future__ import annotations
+ 
+ import os
+-from collections.abc import Collection
+-from pathlib import Path
++import io
++import pickle
++import json
++from collections.abc import Collection, Mapping
++from pathlib import Path, PurePosixPath
+ from typing import Any, Callable
+ 
+ TORCH_DIST_TRACKER_NAME = "latest_checkpointed_iteration.txt"
+ 
+ 
+-def is_complete_torch_dist_checkpoint(names: Collection[str]) -> bool:
+-    """``.metadata`` is written last, so it separates a finished save from a crashed
+-    one. ``common.pt`` is not required: newer megatron-core folds the common state
+-    into the torch_dist metadata and writes no such file."""
+-    return ".metadata" in names and any(name.endswith(".distcp") for name in names)
++class _MetadataRecord:
++    """Inert stand-in for checkpoint metadata; never imports or executes torch."""
++
++    def __new__(cls, *args, **kwargs):
++        return object.__new__(cls)
++
++    def __init__(self, *args, **kwargs):
++        pass
++
++    def __setstate__(self, state):
++        if isinstance(state, dict):
++            self.__dict__.update(state)
++
++
++class _MetadataReader(pickle.Unpickler):
++    def find_class(self, module, name):
++        allowed = {
++            "torch.distributed.checkpoint.metadata": {
++                "Metadata",
++                "MetadataIndex",
++                "StorageMeta",
++                "TensorStorageMetadata",
++                "BytesStorageMetadata",
++                "TensorProperties",
++                "ChunkStorageMetadata",
++                "_MEM_FORMAT_ENCODING",
++            },
++            "torch.distributed.checkpoint.filesystem": {"_StorageInfo"},
++            "torch.serialization": {"_get_layout"},
++            "torch": {
++                "Size",
++                "bfloat16",
++                "float16",
++                "float32",
++                "float64",
++                "bool",
++                "uint8",
++                "int8",
++                "int16",
++                "int32",
++                "int64",
++                "complex64",
++                "complex128",
++                "float8_e4m3fn",
++                "float8_e5m2",
++                "float8_e4m3fnuz",
++                "float8_e5m2fnuz",
++            },
++        }
++        if name not in allowed.get(module, set()):
++            raise pickle.UnpicklingError(
++                f"Unsupported checkpoint metadata type: {module}.{name}"
++            )
++        return _MetadataRecord
++
++
++def checkpoint_shard_sizes(metadata: bytes) -> dict[str, int]:
++    """Minimum file sizes required by the DCP storage offsets, without torch."""
++    record = _MetadataReader(io.BytesIO(metadata)).load()
++    storage = getattr(record, "storage_data", None)
++    if not isinstance(storage, dict) or not storage:
++        raise ValueError("checkpoint metadata has no storage entries")
++    required: dict[str, int] = {}
++    for entry in storage.values():
++        name = getattr(entry, "relative_path", None)
++        offset = getattr(entry, "offset", None)
++        length = getattr(entry, "length", None)
++        if (
++            not isinstance(name, str)
++            or not name.endswith(".distcp")
++            or PurePosixPath(name).is_absolute()
++            or ".." in PurePosixPath(name).parts
++            or "\\" in name
++            or type(offset) is not int
++            or offset < 0
++            or type(length) is not int
++            or length <= 0
++        ):
++            raise ValueError("invalid checkpoint storage entry")
++        required[name] = max(required.get(name, 0), offset + length)
++    return required
++
++
++def torch_dist_checkpoint_health(
++    metadata: bytes,
++    file_sizes: Mapping[str, int],
++) -> tuple[bool, str]:
++    """Validate every referenced shard and byte range, including legacy saves."""
++    if file_sizes.get(".metadata", 0) <= 0:
++        return False, "missing or empty checkpoint metadata"
++    try:
++        required = checkpoint_shard_sizes(metadata)
++    except (
++        ValueError,
++        TypeError,
++        AttributeError,
++        EOFError,
++        pickle.UnpicklingError,
++    ) as exc:
++        return False, f"unreadable checkpoint metadata: {exc}"
++    missing = sorted(required.keys() - file_sizes.keys())
++    if missing:
++        return False, f"missing referenced shards: {', '.join(missing)}"
++    truncated = sorted(
++        name for name, size in required.items() if file_sizes[name] < size
++    )
++    if truncated:
++        return False, f"truncated referenced shards: {', '.join(truncated)}"
++    return True, f"validated {len(required)} referenced shards and byte ranges"
++
++
++def is_complete_torch_dist_checkpoint(
++    names: Collection[str],
++    *,
++    metadata: bytes | None = None,
++    file_sizes: Mapping[str, int] | None = None,
++) -> bool:
++    # A directory listing alone cannot establish completeness.
++    # Preserve main's support for newer Megatron saves with embedded common
++    # state: common.pt is optional, but every referenced shard must exist.
++    return bool(
++        ".metadata" in names
++        and metadata is not None
++        and file_sizes is not None
++        and torch_dist_checkpoint_health(metadata, file_sizes)[0]
++    )
+ 
+ 
+ def is_complete_torch_dist_checkpoint_dir(
+     checkpoint_dir: str | os.PathLike[str],
+ ) -> bool:
+     try:
+-        names = {entry.name for entry in Path(checkpoint_dir).iterdir()}
+-    except OSError:
++        root = Path(checkpoint_dir)
++        metadata = (root / ".metadata").read_bytes()
++        required = checkpoint_shard_sizes(metadata)
++        sizes = {}
++        for name in [".metadata", "common.pt", *required]:
++            path = root / name
++            if path.resolve().is_relative_to(root.resolve()) and path.is_file():
++                sizes[name] = path.stat().st_size
++        return torch_dist_checkpoint_health(metadata, sizes)[0]
++    except (
++        OSError,
++        ValueError,
++        TypeError,
++        AttributeError,
++        EOFError,
++        pickle.UnpicklingError,
++    ):
+         return False
+-    return is_complete_torch_dist_checkpoint(names)
+ 
+ 
+ def parse_torch_dist_iteration(name: str) -> int | None:
+@@ -102,6 +240,9 @@ def commit_checkpoint_volume_across_ranks(
+ 
+ 
+ class _TorchDistributed:
++    def __init__(self, group=None):
++        self.group = group
++
+     @property
+     def is_coordinator(self) -> bool:
+         import torch.distributed as dist
+@@ -114,17 +255,71 @@ class _TorchDistributed:
+         if not dist.is_initialized():
+             return [error]
+         gathered: list[str | None] = [None] * dist.get_world_size()
+-        dist.all_gather_object(gathered, error)
++        dist.all_gather_object(gathered, error, group=self.group)
+         return gathered
+ 
+ 
+-def commit_latest_checkpoint_volume() -> None:
++def _validate_committed_checkpoint(volume_name: str, save_path: str) -> None:
++    from modal import Volume
++
++    volume = Volume.from_name(volume_name, create_if_missing=False)
++    volume.reload()
++    root = Path(save_path)
++    tracker = (root / TORCH_DIST_TRACKER_NAME).read_text().strip()
++    iteration = parse_torch_dist_tracker(tracker)
++    if tracker == "release":
++        checkpoint = root / "release"
++    elif iteration is not None:
++        checkpoint = root / f"iter_{iteration:07d}"
++    else:
++        raise RuntimeError("Checkpoint tracker is missing a valid saved iteration")
++    if not is_complete_torch_dist_checkpoint_dir(checkpoint):
++        raise RuntimeError(f"Committed checkpoint is incomplete: {checkpoint}")
++    # Publish only after all nodes committed and the committed view was checked.
++    marker = checkpoint / "training_gym_complete.json"
++    temporary = marker.with_suffix(".tmp")
++    temporary.write_text(
++        json.dumps(
++            {
++                "version": 1,
++                "required_shard_sizes": checkpoint_shard_sizes(
++                    (checkpoint / ".metadata").read_bytes()
++                ),
++            }
++        )
++    )
++    temporary.replace(marker)
++    volume.commit()
++
++
++def commit_latest_checkpoint_volume(save_path: str | None = None) -> None:
+     import torch.distributed as dist
++    from torch.distributed.distributed_c10d import new_group
+ 
+     volume_name = os.environ.get("TRAINING_GYM_CHECKPOINTS_VOLUME_NAME")
+-    barrier = dist.barrier if dist.is_initialized() else lambda: None
+-    commit_checkpoint_volume_across_ranks(
+-        volume_name,
+-        _TorchDistributed(),
+-        barrier,
+-    )
++    if not volume_name:
++        return
++    # Filesystem coordination is CPU work. Avoid NCCL object collectives and
++    # their device selection/communicator churn around save and offload.
++    # Slime wraps dist.new_group in ReloadableProcessGroup after registering
++    # WORLD. Its collective wrappers unwrap that proxy, but PyTorch's destroy
++    # does not. This short-lived group must also stay out of Slime's registry
++    # so offload cannot recreate it after we have destroyed it.
++    group = new_group(backend="gloo") if dist.is_initialized() else None
++    wrapper = _TorchDistributed(group)
++    barrier = (lambda: dist.barrier(group=group)) if group is not None else lambda: None
++    try:
++        commit_checkpoint_volume_across_ranks(volume_name, wrapper, barrier)
++        error = None
++        if save_path and wrapper.is_coordinator:
++            try:
++                _validate_committed_checkpoint(volume_name, save_path)
++            except Exception as exc:
++                error = _error_text(exc)
++        _raise_gathered_errors(
++            wrapper, error, "Checkpoint committed-view validation failed"
++        )
++        barrier()
++    finally:
++        if group is not None:
++            dist.destroy_process_group(group)
+diff --git a/modal_training_gym/frameworks/slime/launcher.py b/modal_training_gym/frameworks/slime/launcher.py
+index 55c385d2..c93dad46 100644
+--- a/modal_training_gym/frameworks/slime/launcher.py
++++ b/modal_training_gym/frameworks/slime/launcher.py
+@@ -67,6 +67,7 @@ from modal_training_gym.common.launcher_helpers import (
+ from modal_training_gym.common.train_result import save_train_result_blob
+ from modal_training_gym.common.launcher_utils import (
+     drop_materialized_config_key,
++    pin_resume_iteration,
+     serialize_recipe_params,
+     timing_debug_env,
+ )
+@@ -1159,6 +1160,7 @@ def build_slime_app(
+                 # even for runs launched with an explicit start_rollout_id.
+                 object.__setattr__(slime, "start_rollout_id", None)
+                 drop_materialized_config_key(slime, "start_rollout_id")
++                pin_resume_iteration(slime, resume_from_iteration)
+                 # This run's saves include Adam only when no_save_optim is false.
+                 # TrainConfig.resume_from_checkpoint forces no_load_optim for the source seed;
+                 # that flag is not a property of later saves in this directory.
+diff --git a/tests/test_checkpoint.py b/tests/test_checkpoint.py
+index 16cb766a..cfdd2782 100644
+--- a/tests/test_checkpoint.py
++++ b/tests/test_checkpoint.py
+@@ -3,6 +3,7 @@ from dataclasses import dataclass
+ 
+ import modal
+ import pytest
++from tests.checkpoint_fixtures import metadata_bytes
+ 
+ from modal_training_gym.common import checkpoint as checkpoint_mod
+ from modal_training_gym.common.checkpoint import (
+@@ -204,6 +205,7 @@ class _DirEntry:
+     path: str
+     mtime: float = 1.0
+     is_directory: bool = False
++    size: int = 4096
+ 
+     def is_dir(self) -> bool:
+         return self.is_directory
+@@ -224,6 +226,10 @@ class _ListingVolume:
+         return list(self.tree.get(key, []))
+ 
+     def read_file(self, path: str):
++        if path.endswith("/.metadata") and any(
++            entry.path == path for entry in self.tree.get(path.rsplit("/", 1)[0], [])
++        ):
++            return [metadata_bytes()]
+         if path not in self.files:
+             raise FileNotFoundError(path)
+         return [self.files[path]]
+diff --git a/tests/checkpoint_fixtures.py b/tests/checkpoint_fixtures.py
+new file mode 100644
+index 00000000..1954cfc3
+--- /dev/null
++++ b/tests/checkpoint_fixtures.py
+@@ -0,0 +1,46 @@
++"""Small DCP metadata fixtures, without installing torch or loading tensors."""
++
++import pickle
++import sys
++from types import ModuleType
++from unittest.mock import patch
++
++
++def metadata_bytes(entries=None):
++    if entries is None:
++        entries = [("shard.distcp", 0, 32)]
++    modules = {
++        name: ModuleType(name)
++        for name in ("torch", "torch.distributed", "torch.distributed.checkpoint")
++    }
++    classes = {}
++    for module, name in [
++        ("torch.distributed.checkpoint.metadata", "Metadata"),
++        ("torch.distributed.checkpoint.filesystem", "_StorageInfo"),
++    ]:
++        modules[module] = ModuleType(module)
++        cls = type(name, (), {"__module__": module})
++        setattr(modules[module], name, cls)
++        classes[name] = cls
++    record = classes["Metadata"]()
++    record.storage_data = {}
++    for index, (name, offset, length) in enumerate(entries):
++        item = classes["_StorageInfo"]()
++        item.relative_path, item.offset, item.length = name, offset, length
++        record.storage_data[index] = item
++    with patch.dict(sys.modules, modules):
++        return pickle.dumps(record, protocol=4)
++
++
++def write_checkpoint(root, entries=None):
++    root.mkdir(parents=True, exist_ok=True)
++    entries = entries if entries is not None else [("shard.distcp", 0, 32)]
++    (root / ".metadata").write_bytes(metadata_bytes(entries))
++    (root / "common.pt").write_bytes(b"common")
++    for name, offset, length in entries:
++        path = root / name
++        path.parent.mkdir(parents=True, exist_ok=True)
++        if not path.exists() or path.stat().st_size < offset + length:
++            with path.open("wb") as stream:
++                stream.truncate(offset + length)
++    return root
+diff --git a/tests/checkpoint_group_integration.py b/tests/checkpoint_group_integration.py
+new file mode 100644
+index 00000000..46914918
+--- /dev/null
++++ b/tests/checkpoint_group_integration.py
+@@ -0,0 +1,67 @@
++"""CPU regression against trainer source; set TRAINING_GYM_SLIME_SOURCE."""
++
++import importlib.util
++import os
++import sys
++import tempfile
++from datetime import timedelta
++from pathlib import Path
++from types import ModuleType
++import torch.distributed as dist
++import torch.multiprocessing as mp
++
++
++def worker(rank, rendezvous):
++    from modal_training_gym.common import torch_dist_checkpoint as ckpt
++
++    for name in ["slime", "slime.utils"]:
++        sys.modules[name] = ModuleType(name)
++    memory = ModuleType("slime.utils.memory_utils")
++    memory.available_memory = lambda: {"free_GB": 100}
++    memory.clear_memory = lambda: None
++    memory.print_memory = lambda *a: {}
++    sys.modules[memory.__name__] = memory
++    for name in ["distributed_utils", "reloadable_process_group"]:
++        full = "slime.utils." + name
++        spec = importlib.util.spec_from_file_location(
++            full,
++            str(
++                Path(os.environ["TRAINING_GYM_SLIME_SOURCE"]) / "utils" / (name + ".py")
++            ),
++        )
++        module = importlib.util.module_from_spec(spec)
++        sys.modules[full] = module
++        spec.loader.exec_module(module)
++    reloadable = sys.modules["slime.utils.reloadable_process_group"]
++    dist.init_process_group(
++        "gloo", init_method="file://" + rendezvous, rank=rank, world_size=2
++    )
++    reloadable.register_default_process_group(timedelta(seconds=30))
++    reloadable.monkey_patch_torch_dist()
++    # Reproduce the exact failure from the previous implementation.
++    proxy = dist.new_group(backend="gloo")
++    try:
++        dist.destroy_process_group(proxy)
++    except ValueError as error:
++        assert "Invalid process group" in str(error)
++    else:
++        raise AssertionError("Expected old cleanup to fail")
++    dist.destroy_process_group(proxy.group)
++    reloadable.ReloadableProcessGroup.GROUPS[os.getpid()].remove(proxy)
++    os.environ["LOCAL_RANK"] = "0"
++    os.environ["TRAINING_GYM_CHECKPOINTS_VOLUME_NAME"] = "test"
++    ckpt._commit_volume = lambda name: None
++    ckpt._validate_committed_checkpoint = lambda *args: None
++    for _ in range(3):
++        ckpt.commit_latest_checkpoint_volume("/test")
++        assert not reloadable.ReloadableProcessGroup.GROUPS[os.getpid()]
++    dist.barrier()
++    dist.destroy_process_group()
++    print(
++        f"rank {rank}: old error reproduced; three corrected saves passed", flush=True
++    )
++
++
++if __name__ == "__main__":
++    with tempfile.TemporaryDirectory() as root:
++        mp.spawn(worker, args=(str(Path(root) / "rendezvous"),), nprocs=2, join=True)
+diff --git a/tests/test_torch_dist_checkpoint.py b/tests/test_torch_dist_checkpoint.py
+new file mode 100644
+index 00000000..7101116c
+--- /dev/null
++++ b/tests/test_torch_dist_checkpoint.py
+@@ -0,0 +1,265 @@
++import pickle
++import sys
++from pathlib import Path
++from types import SimpleNamespace
++
++import pytest
++import yaml
++
++from modal_training_gym.common import torch_dist_checkpoint as ckpt
++from modal_training_gym.common.launcher_utils import pin_resume_iteration
++from modal_training_gym.common.run import torch_dist_resume_checkpoint
++from tests.checkpoint_fixtures import metadata_bytes, write_checkpoint
++
++
++def test_all_referenced_files_and_offsets_are_required(tmp_path):
++    root = write_checkpoint(
++        tmp_path / "iter_0000449",
++        [
++            ("__0_0.distcp", 0, 8),
++            ("__1_0.distcp", 0, 16),
++            ("__1_0.distcp", 16, 32),
++        ],
++    )
++    assert ckpt.is_complete_torch_dist_checkpoint_dir(root)
++    (root / "__1_0.distcp").write_bytes(b"x" * 47)
++    assert not ckpt.is_complete_torch_dist_checkpoint_dir(root)
++    (root / "__1_0.distcp").unlink()
++    assert not ckpt.is_complete_torch_dist_checkpoint_dir(root)
++
++
++def test_broad_layover_missing_shard_pattern(tmp_path):
++    root = write_checkpoint(
++        tmp_path,
++        [(f"__{rank}_{part}.distcp", 0, 8) for rank in range(64) for part in range(2)],
++    )
++    for rank in range(40, 56):
++        (root / f"__{rank}_1.distcp").unlink()
++    assert not ckpt.is_complete_torch_dist_checkpoint_dir(root)
++    assert not ckpt.is_complete_torch_dist_checkpoint([p.name for p in root.iterdir()])
++
++
++@pytest.mark.parametrize(
++    "entry",
++    [
++        ("../outside.distcp", 0, 1),
++        ("/outside.distcp", 0, 1),
++        ("shard.distcp", -1, 1),
++        ("shard.distcp", 0, 0),
++    ],
++)
++def test_invalid_storage_entries_are_rejected(entry):
++    with pytest.raises(ValueError):
++        ckpt.checkpoint_shard_sizes(metadata_bytes([entry]))
++
++
++def test_metadata_does_not_execute_pickle_globals(tmp_path):
++    class Payload:
++        def __reduce__(self):
++            return (eval, ("1+1",))
++
++    with pytest.raises(pickle.UnpicklingError, match="Unsupported"):
++        ckpt.checkpoint_shard_sizes(pickle.dumps(Payload()))
++    root = write_checkpoint(tmp_path)
++    (root / ".metadata").write_bytes(b"broken")
++    assert not ckpt.is_complete_torch_dist_checkpoint_dir(root)
++
++
++def test_resume_falls_back_when_tracker_checkpoint_is_truncated(tmp_path):
++    write_checkpoint(tmp_path / "iter_0000399")
++    bad = write_checkpoint(tmp_path / "iter_0000449")
++    (bad / "shard.distcp").write_bytes(b"short")
++    (tmp_path / ckpt.TORCH_DIST_TRACKER_NAME).write_text("449\n")
++    result = torch_dist_resume_checkpoint(
++        str(tmp_path), is_complete=ckpt.is_complete_torch_dist_checkpoint_dir
++    )
++    assert result["resume_from_iteration"] == 399
++    (tmp_path / "iter_0000399" / ".metadata").unlink()
++    assert (
++        torch_dist_resume_checkpoint(
++            str(tmp_path), is_complete=ckpt.is_complete_torch_dist_checkpoint_dir
++        )
++        is None
++    )
++
++
++@pytest.mark.parametrize("reference", [None, 17])
++def test_resume_pins_actor_without_reusing_actor_step_for_reference(
++    tmp_path, reference
++):
++    source = tmp_path / "config.yaml"
++    data = {"ckpt_step": 449, "qkv_format": "thd"}
++    if reference is not None:
++        data["ref_ckpt_step"] = reference
++    source.write_text(yaml.safe_dump(data))
++    cfg = SimpleNamespace(extra_config=str(source))
++    pin_resume_iteration(cfg, 399)
++    actual = yaml.safe_load(Path(cfg.extra_config).read_text())
++    assert actual == {
++        **data,
++        "ckpt_step": 399,
++        "ref_ckpt_step": reference or 0,
++        "exit_on_missing_checkpoint": True,
++        "finetune": False,
++        "no_load_rng": False,
++    }
++    assert yaml.safe_load(source.read_text()) == data
++    Path(cfg.extra_config).unlink()
++
++
++@pytest.mark.parametrize("no_save_rng", [False, True])
++def test_retry_restores_training_state_after_fresh_parent_load(no_save_rng):
++    source = {
++        "ckpt_step": 399,
++        "ref_ckpt_step": 0,
++        "finetune": True,
++        "no_load_rng": True,
++        "no_save_rng": no_save_rng,
++    }
++    cfg = SimpleNamespace(extra_config=source)
++    pin_resume_iteration(cfg, 19)
++    actual = yaml.safe_load(Path(cfg.extra_config).read_text())
++    assert actual["ckpt_step"] == 19
++    assert actual["ref_ckpt_step"] == 0
++    assert actual["finetune"] is False
++    assert actual["no_load_rng"] is no_save_rng
++    assert source["finetune"] is True
++    assert source["ckpt_step"] == 399
++    Path(cfg.extra_config).unlink()
++
++
++def test_completion_marker_requires_durable_complete_view(tmp_path, monkeypatch):
++    root = write_checkpoint(tmp_path / "iter_0000449")
++    (tmp_path / ckpt.TORCH_DIST_TRACKER_NAME).write_text("449\n")
++    calls = []
++    volume = SimpleNamespace(
++        reload=lambda: calls.append("reload"), commit=lambda: calls.append("commit")
++    )
++    from modal import Volume
++
++    monkeypatch.setattr(Volume, "from_name", lambda *a, **k: volume)
++    (root / "shard.distcp").unlink()
++    with pytest.raises(RuntimeError, match="incomplete"):
++        ckpt._validate_committed_checkpoint("volume", str(tmp_path))
++    assert not (root / "training_gym_complete.json").exists()
++    assert calls == ["reload"]
++    (root / "shard.distcp").write_bytes(b"x" * 32)
++    ckpt._validate_committed_checkpoint("volume", str(tmp_path))
++    assert (root / "training_gym_complete.json").exists()
++    assert calls == ["reload", "reload", "commit"]
++
++
++@pytest.mark.parametrize("coordinator", [False, True])
++def test_each_node_commits_before_coordinator(coordinator, monkeypatch):
++    events = []
++    monkeypatch.setenv("LOCAL_RANK", "0")
++    monkeypatch.setattr(ckpt, "_commit_volume", lambda v: events.append("commit"))
++
++    def gather(error):
++        events.append("gather")
++        return [error]
++
++    wrapper = SimpleNamespace(is_coordinator=coordinator, all_gather_object=gather)
++    ckpt.commit_checkpoint_volume_across_ranks(
++        "volume", wrapper, lambda: events.append("barrier")
++    )
++    assert events == (
++        ["gather", "barrier", "commit", "gather", "barrier"]
++        if coordinator
++        else ["commit", "gather", "barrier", "gather", "barrier"]
++    )
++
++
++def test_failed_shard_commit_stops_before_coordinator_publish(monkeypatch):
++    wrapper = SimpleNamespace(
++        is_coordinator=True, all_gather_object=lambda error: [None, "disk failed"]
++    )
++    monkeypatch.setattr(
++        ckpt, "_commit_volume", lambda v: pytest.fail("must not publish")
++    )
++    with pytest.raises(RuntimeError, match="shard commit failed"):
++        ckpt.commit_checkpoint_volume_across_ranks("volume", wrapper, lambda: None)
++
++
++def test_save_coordination_uses_gloo_and_cleans_up(monkeypatch):
++    events = []
++    group = object()
++
++    def new_group(*, backend):
++        assert backend == "gloo"
++        events.append("gloo")
++        return group
++
++    def gather(output, value, **kwargs):
++        assert kwargs["group"] is group
++        output[:] = [value]
++
++    def barrier(**kwargs):
++        assert kwargs["group"] is group
++
++    dist = SimpleNamespace(
++        is_initialized=lambda: True,
++        get_rank=lambda: 0,
++        get_world_size=lambda: 1,
++        new_group=lambda **kwargs: pytest.fail("must bypass Slime's group wrapper"),
++        all_gather_object=gather,
++        barrier=barrier,
++        destroy_process_group=lambda g: events.append("destroy"),
++    )
++    monkeypatch.setitem(sys.modules, "torch", SimpleNamespace(distributed=dist))
++    monkeypatch.setitem(sys.modules, "torch.distributed", dist)
++    monkeypatch.setitem(
++        sys.modules,
++        "torch.distributed.distributed_c10d",
++        SimpleNamespace(new_group=new_group),
++    )
++    monkeypatch.setenv("LOCAL_RANK", "0")
++    monkeypatch.setenv("TRAINING_GYM_CHECKPOINTS_VOLUME_NAME", "volume")
++    monkeypatch.setattr(ckpt, "_commit_volume", lambda v: events.append("commit"))
++    monkeypatch.setattr(
++        ckpt, "_validate_committed_checkpoint", lambda *a: events.append("validate")
++    )
++    ckpt.commit_latest_checkpoint_volume("/checkpoints/run")
++    assert events == ["gloo", "commit", "validate", "destroy"]
++
++
++def test_save_patch_upgrades_old_wrappers_and_is_idempotent(tmp_path, monkeypatch):
++    from modal_training_gym.common.megatron_patches import (
++        patch_checkpoint_commit as patcher,
++    )
++
++    saving = tmp_path / "checkpointing.py"
++    finalize = tmp_path / "async_utils.py"
++    saving.write_text("def save_checkpoint(*args, **kwargs):\n    return 7\n")
++    finalize.write_text(
++        "def maybe_finalize_async_save(*args, **kwargs):\n    return 8\n"
++    )
++    monkeypatch.setattr(patcher, "_CHECKPOINTING", saving)
++    monkeypatch.setattr(patcher, "_ASYNC_UTILS", finalize)
++    patcher.main()
++    for path in (saving, finalize):
++        path.write_text(
++            path.read_text().replace(
++                "commit_latest_checkpoint_volume(get_args().save)",
++                "commit_latest_checkpoint_volume()",
++            )
++        )
++    finalize.write_text(
++        finalize.read_text().replace("    from megatron.training import get_args\n", "")
++    )
++    patcher.main()
++    first = [path.read_text() for path in (saving, finalize)]
++    patcher.main()
++    assert first == [path.read_text() for path in (saving, finalize)]
++    for source in first:
++        compile(source, "patched", "exec")
++        assert "commit_latest_checkpoint_volume(get_args().save)" in source
++        assert "from megatron.training import get_args" in source
++
++
++def test_checkpoint_without_separate_common_state_remains_supported(tmp_path):
++    root = write_checkpoint(tmp_path)
++    (root / "common.pt").unlink()
++    assert ckpt.is_complete_torch_dist_checkpoint_dir(root)
++    (root / "shard.distcp").write_bytes(b"short")
++    assert not ckpt.is_complete_torch_dist_checkpoint_dir(root)

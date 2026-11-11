@@ -119,7 +119,7 @@ end
 
 ---@param message string
 ---@param error_code string
-function BB_DISPATCHER.send_error(message, error_code)
+function BB_DISPATCHER.send_error(message, error_code, details)
   if not BB_DISPATCHER.Server then
     sendDebugMessage("Cannot send error - Server not initialized", "BB.DISPATCHER")
     return
@@ -127,6 +127,7 @@ function BB_DISPATCHER.send_error(message, error_code)
   BB_DISPATCHER.Server.send_response({
     message = message,
     name = error_code,
+    details = details,
   })
 end
 
@@ -188,7 +189,14 @@ function BB_DISPATCHER.dispatch(request)
         break
       end
     end
-    if not state_valid then
+    -- MENU is a special case: Balatro normally leaves STATE_COMPLETE false
+    -- there even when the main-menu UI is fully usable. Gameplay states must
+    -- still be complete and unlocked before accepting an action.
+    local state_stable = current_state == (G and G.STATES and G.STATES.MENU)
+      or (G ~= nil
+        and G.STATE_COMPLETE == true
+        and (not G.CONTROLLER or G.CONTROLLER.locked ~= true))
+    if not state_valid or not state_stable then
       local state_names = {}
       for _, state in ipairs(endpoint.requires_state) do
         table.insert(state_names, get_state_name(state))
@@ -200,7 +208,13 @@ function BB_DISPATCHER.dispatch(request)
       )
       BB_DISPATCHER.send_error(
         "Method '" .. request.method .. "' requires one of these states: " .. table.concat(state_names, ", "),
-        BB_ERROR_NAMES.INVALID_STATE
+        BB_ERROR_NAMES.INVALID_STATE,
+        {
+          current_state = current_state_name,
+          state_complete = G ~= nil and G.STATE_COMPLETE == true,
+          controller_locked = G ~= nil and G.CONTROLLER ~= nil and G.CONTROLLER.locked == true,
+          reason = state_valid and "state_transition_in_progress" or "wrong_state",
+        }
       )
       return
     end

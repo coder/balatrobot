@@ -320,6 +320,75 @@ end
 -- Card Extractor
 -- ==========================================================================
 
+-- These are the targets already visible on the joker this round, not RNG
+-- seeds or future outcomes. Never invoke a reset/random function while reading.
+local function extract_joker_scoring_state(card)
+  local key = card.config and (card.config.center_key or (card.config.center and card.config.center.key))
+  local target_keys = {
+    j_idol = "idol_card",
+    j_ancient = "ancient_card",
+    j_mail = "mail_card",
+    j_castle = "castle_card",
+  }
+  local target_key = target_keys[key]
+  local current_round = G and G.GAME and G.GAME.current_round
+  local target = target_key and current_round and current_round[target_key]
+  if type(target) ~= "table" then return nil end
+  local visible_target = {}
+  if target.suit then visible_target.suit = convert_suit_to_enum(target.suit) end
+  if target.rank then visible_target.rank = convert_rank_to_enum(tostring(target.rank)) end
+  if type(target.id) == "number" then visible_target.rank_id = target.id end
+  local result = { target = visible_target }
+  if key == "j_castle" and card.ability and type(card.ability.extra) == "table" then
+    result.chips = card.ability.extra.chips
+    result.chip_gain = card.ability.extra.chip_mod
+  end
+  return result
+end
+
+-- Copy only documented, observable mechanics. Never serialize the engine's
+-- whole ability/game tables (they can contain hidden state and references).
+local function copy_fields(source, keys)
+  local result = {}
+  for _, key in ipairs(keys) do
+    local value = source and source[key]
+    if type(value) == "number" or type(value) == "boolean" or type(value) == "string" then
+      result[key] = value
+    end
+  end
+  return result
+end
+
+local function extract_counters(card)
+  local ability = card.ability or {}
+  local result = copy_fields(ability, {
+    "perma_bonus", "played_this_ante", "forced_selection", "perma_debuff",
+    "mult", "x_mult", "bonus", "h_mult", "h_x_mult", "h_dollars", "p_dollars",
+    "t_chips", "t_mult", "extra_value", "loyalty_remaining", "burnt_hand",
+    "caino_xmult", "yorick_discards", "invis_rounds", "hands_played_at_create",
+    "to_do_poker_hand", "steel_tally", "stone_tally", "driver_tally", "nine_tally",
+    "perish_tally", "perishable",
+  })
+  -- Playing-card base values already have an enhancement description. Only
+  -- permanent bonuses and per-card history need an extra persistent record.
+  if card.config and card.config.card then
+    local playing = copy_fields(ability, {"perma_bonus", "played_this_ante", "forced_selection", "perma_debuff"})
+    if playing.perma_bonus == 0 then playing.perma_bonus = nil end
+    return playing
+  end
+  if type(ability.extra) == "number" then
+    result.extra = ability.extra
+  elseif type(ability.extra) == "table" then
+    result.extra = copy_fields(ability.extra, {
+      "Xmult", "xmult", "chips", "chip_mod", "mult", "dollars", "odds",
+      "every", "discards", "discard_sub", "hand_add", "h_mod", "h_plays",
+      "h_size", "increase", "size", "min", "max", "faces", "suit",
+      "s_mult", "poker_hand", "d_remaining", "destroy",
+    })
+  end
+  return result
+end
+
 ---Extracts a complete Card object from a game card
 ---@param card table The game card object
 ---@return Card card The Card object
@@ -366,6 +435,8 @@ local function extract_card(card)
     modifier = extract_card_modifier(card),
     state = extract_card_state(card),
     cost = extract_card_cost(card),
+    scoring_state = extract_joker_scoring_state(card),
+    counters = extract_counters(card),
   }
 end
 
@@ -728,7 +799,14 @@ function gamestate.get_gamestate()
   end
 
   local state_data = {
+    snapshot_version = 1,
     state = get_state_name(G.STATE),
+    -- These are transport/readiness details for the Python harness.  They are
+    -- deliberately not part of the compact model prompt, but let the client
+    -- distinguish a stable decision screen from a frame in the middle of a
+    -- Balatro transition.
+    state_complete = G.STATE_COMPLETE == true,
+    controller_locked = G.CONTROLLER and G.CONTROLLER.locked == true or false,
   }
 
   -- Basic game info
@@ -737,6 +815,34 @@ function gamestate.get_gamestate()
     state_data.ante_num = (G.GAME.round_resets and G.GAME.round_resets.ante) or 0
     state_data.money = G.GAME.dollars or 0
     state_data.won = G.GAME.won
+    state_data.run_state = copy_fields(G.GAME, {
+      "last_tarot_planet", "last_hand_played", "hands_played", "unused_discards",
+      "skips", "bankrupt_at", "interest_cap", "interest_amount", "inflation",
+      "discount_percent", "ecto_minus", "starting_deck_size",
+    })
+    state_data.run_state.round = copy_fields(G.GAME.current_round, {
+      "hands_played", "discards_used", "most_played_poker_hand", "free_rerolls",
+      "reroll_cost_increase", "jokers_purchased",
+    })
+    state_data.run_state.consumable_usage = copy_fields(G.GAME.consumeable_usage_total, {"tarot", "planet", "spectral"})
+    state_data.run_state.probabilities = copy_fields(G.GAME.probabilities, {"normal"})
+    state_data.blind_state = copy_fields(G.GAME.blind, {"disabled", "only_hand"})
+    -- The Eye remembers which hand types have been played this blind.
+    state_data.blind_state.played_hands = {}
+    if G.GAME.blind and G.GAME.blind.hands then
+      for name, played in pairs(G.GAME.blind.hands) do
+        if type(played) == "boolean" then state_data.blind_state.played_hands[name] = played end
+      end
+    end
+    state_data.tags = {}
+    for _, tag in ipairs(G.GAME.tags or {}) do
+      local info = get_tag_info(tag.key)
+      state_data.tags[#state_data.tags + 1] = {
+        key = tag.key, name = info.name, effect = info.effect, triggered = tag.triggered == true,
+        ability = copy_fields(tag.ability, {"orbital_hand", "blind_type"}),
+      }
+    end
+    state_data.pack_choices = G.GAME.pack_choices
 
     -- Deck (optional)
     if G.GAME.selected_back and G.GAME.selected_back.effect and G.GAME.selected_back.effect.center then
@@ -782,10 +888,49 @@ function gamestate.get_gamestate()
   -- Always available areas
   state_data.jokers = extract_area(G.jokers)
   state_data.consumables = extract_area(G.consumeables) -- Note: typo in game code
+  -- Owned joker identities are known even when Amber Acorn hides their new
+  -- order. Preserve that multiset without revealing which face-down slot is
+  -- which. Shop/pack cards do not receive this treatment.
+  if G.jokers then
+    local hidden = false
+    for _, card in ipairs(G.jokers.cards or {}) do
+      if card.facing == "back" then hidden = true end
+    end
+    if hidden then
+      state_data.joker_inventory = {count = #G.jokers.cards, limit = #G.jokers.cards, cards = {}}
+      for _, card in ipairs(G.jokers.cards) do
+        local view = extract_card(card)
+        view.id = 0
+        view.state = {}
+        state_data.joker_inventory.cards[#state_data.joker_inventory.cards + 1] = view
+      end
+      table.sort(state_data.joker_inventory.cards, function(a, b) return a.key < b.key end)
+    end
+  end
+
+  -- G.playing_cards contains the full owned deck across all areas. Export a
+  -- sorted composition without per-instance identities or area positions.
+  -- These are known deck contents, not the identity of any face-down slot.
+  state_data.owned_cards = {count = #(G.playing_cards or {}), limit = #(G.playing_cards or {}), cards = {}}
+  for _, card in ipairs(G.playing_cards or {}) do
+    local view = extract_card(card)
+    view.id = 0 -- anonymous composition, not an instance ID
+    view.state = {}
+    view.counters = copy_fields(card.ability, {"perma_bonus", "played_this_ante"})
+    if view.counters.perma_bonus == 0 then view.counters.perma_bonus = nil end
+    state_data.owned_cards.cards[#state_data.owned_cards.cards + 1] = view
+  end
+  table.sort(state_data.owned_cards.cards, function(a, b) return a.key < b.key end)
 
   -- Cards remaining in deck
   if G.deck then
     state_data.cards = extract_area(G.deck)
+  end
+
+  -- Cards already discarded this round/run. The compact Python prompt sorts
+  -- this composition, so it does not leak the hidden draw order.
+  if G.discard then
+    state_data.discard = extract_area(G.discard)
   end
 
   -- Hand (count is 0 during not playing phase)
@@ -812,6 +957,20 @@ function gamestate.get_gamestate()
   end
 
   return state_data
+end
+
+---Whether the game is ready to accept an action in the requested state.
+---@param expected_state integer?
+---@return boolean
+function gamestate.is_stable(expected_state)
+  if not G then
+    return false
+  end
+  if expected_state and G.STATE ~= expected_state then
+    return false
+  end
+  return G.STATE_COMPLETE == true
+    and (not G.CONTROLLER or G.CONTROLLER.locked ~= true)
 end
 
 -- ==========================================================================

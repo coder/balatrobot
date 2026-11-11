@@ -577,7 +577,7 @@
     {
       "name": "sell",
       "summary": "Sell a joker or consumable",
-      "description": "Sell a joker or consumable from player inventory. Must provide exactly one of: joker or consumable.",
+      "description": "Sell a joker or consumable from player inventory in the shop, while selecting a hand, or inside an open booster pack. A pack remains open with its choices unchanged after selling. Must provide exactly one of: joker or consumable. Eternal cards cannot be sold.",
       "tags": [
         {
           "$ref": "#/components/tags/shop"
@@ -954,6 +954,10 @@
             "$ref": "#/components/schemas/Area",
             "description": "Cards remaining in deck (available during run)"
           },
+          "discard": {
+            "$ref": "#/components/schemas/Area",
+            "description": "Cards already discarded (available during run)"
+          },
           "pack": {
             "$ref": "#/components/schemas/Area",
             "description": "Currently open pack (available during pack opening phase)"
@@ -969,6 +973,37 @@
           "packs": {
             "$ref": "#/components/schemas/Area",
             "description": "Booster packs area (available during shop phase)"
+          },
+          "snapshot_version": {
+            "type": "integer",
+            "description": "Version of the state fields required by context resets; currently 1."
+          },
+          "owned_cards": {
+            "$ref": "#/components/schemas/Area",
+            "description": "Full owned deck composition across areas. Cards have anonymous id=0; array order conveys no draw order."
+          },
+          "run_state": {
+            "type": "object",
+            "description": "Allowlisted observable run and round counters, prior hand/consumable, and economy values."
+          },
+          "blind_state": {
+            "type": "object",
+            "description": "Current blind disabled status and hand-type restrictions/history."
+          },
+          "tags": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            },
+            "description": "Pending/active tags, their effects and visible targets."
+          },
+          "pack_choices": {
+            "type": "integer",
+            "description": "Number of selections remaining in the current pack."
+          },
+          "joker_inventory": {
+            "$ref": "#/components/schemas/Area",
+            "description": "Known unordered owned-joker composition when slots are face-down; anonymous IDs reveal no slot mapping."
           }
         },
         "required": [
@@ -1152,6 +1187,26 @@
           },
           "cost": {
             "$ref": "#/components/schemas/CardCost"
+          },
+          "scoring_state": {
+            "type": "object",
+            "description": "Already-visible round target for Idol, Ancient Joker, Mail-In Rebate or Castle; never RNG seeds or future outcomes.",
+            "properties": {
+              "target": {
+                "type": "object",
+                "properties": {
+                  "rank": { "$ref": "#/components/schemas/Rank" },
+                  "suit": { "$ref": "#/components/schemas/Suit" },
+                  "rank_id": { "type": "integer" }
+                }
+              },
+              "chips": { "type": "number" },
+              "chip_gain": { "type": "number" }
+            }
+          },
+          "counters": {
+            "type": "object",
+            "description": "Allowlisted visible persistent card/joker values, including perma_bonus, played_this_ante and accumulated bonuses. No RNG state."
           }
         },
         "required": [
