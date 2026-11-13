@@ -53,3 +53,25 @@ class TestBalatroClient:
         client = BalatroClient(host="127.0.0.1", port=1, timeout=1.0)
         with pytest.raises(httpx.ConnectError):
             client.call("health")
+
+    def test_http_client_built_once(self, monkeypatch):
+        """Every call reuses one httpx.Client."""
+        from balatrobot.cli import client as client_module
+
+        built = []
+        real_client = httpx.Client
+
+        def counting_client(**kwargs):
+            built.append(kwargs)
+            transport = httpx.MockTransport(
+                lambda request: httpx.Response(200, json={"jsonrpc": "2.0", "result": {"status": "ok"}, "id": 1})
+            )
+            return real_client(transport=transport, **kwargs)
+
+        monkeypatch.setattr(client_module.httpx, "Client", counting_client)
+        client = BalatroClient()
+        for _ in range(3):
+            assert client.call("health") == {"status": "ok"}
+        assert len(built) == 1
+        client.close()
+        assert client._http is None
