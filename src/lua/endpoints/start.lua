@@ -113,7 +113,18 @@ return {
         if deck_data.name == deck_name then
           sendDebugMessage("Setting deck to: " .. deck_data.name .. " (from enum: " .. args.deck .. ")", "BB.ENDPOINTS")
           G.GAME.selected_back:change_to(deck_data)
-          G.GAME.viewed_back:change_to(deck_data)
+          -- Steamodded's reworked run select (smods#1560/#1571, Sept 2026) no
+          -- longer creates G.GAME.viewed_back on the setup_run path, so it is
+          -- nil here and indexing it aborts start() with:
+          --   attempt to index field 'viewed_back' (a nil value)
+          -- Recreate it when missing; it only backs the deck-preview graphic.
+          -- Upstream report: https://github.com/coder/balatrobot/issues/244
+          if not G.GAME.viewed_back and Back then
+            G.GAME.viewed_back = Back(deck_data)
+          end
+          if G.GAME.viewed_back then
+            G.GAME.viewed_back:change_to(deck_data)
+          end
           deck_found = true
           break
         end
