@@ -1,0 +1,20 @@
+# Silence Balatro's "LONG DT" frame-time warning in headless mode.
+#
+# Game:update prints LONG DT whenever a frame's dt exceeds 0.05s. Headless
+# mode drives love.update with a fixed dt of 4.99/60 (~0.083s, see
+# configure_love_update in src/lua/settings.lua), so the warning fires on
+# every frame. With fast mode's uncapped FPS that is thousands of lines a
+# second in the stdout log balatrobot serve captures, about 80 MB per
+# instance-hour. Windowed runs keep the warning.
+
+[manifest]
+version = "1.0.0"
+priority = 0
+
+[[patches]]
+[patches.pattern]
+target = "game.lua"
+pattern = "if self.real_dt > 0.05 then print('LONG DT @ '..math.floor(G.TIMERS.REAL)..': '..self.real_dt) end"
+position = "at"
+match_indent = true
+payload = "if self.real_dt > 0.05 and not (BB_SETTINGS and BB_SETTINGS.headless) then print('LONG DT @ '..math.floor(G.TIMERS.REAL)..': '..self.real_dt) end"
