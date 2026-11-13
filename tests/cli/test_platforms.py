@@ -169,10 +169,10 @@ class TestWindowsLauncher:
         assert "LD_PRELOAD" not in env
 
     def test_build_cmd(self, tmp_path):
-        """build_cmd returns Balatro.exe path."""
+        """build_cmd returns Balatro.exe path with Lovely's console turned off."""
         launcher = WindowsLauncher()
         config = Config(love_path=r"C:\path\to\Balatro.exe")
 
         cmd = launcher.build_cmd(config)
 
-        assert cmd == [r"C:\path\to\Balatro.exe"]
+        assert cmd == [r"C:\path\to\Balatro.exe", "--disable-console"]

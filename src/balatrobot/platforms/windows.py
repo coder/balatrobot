@@ -36,6 +36,10 @@ class WindowsLauncher(BaseLauncher):
         return env
 
     def build_cmd(self, config: Config) -> list[str]:
-        """Build Windows launch command."""
+        """Build Windows launch command.
+
+        --disable-console is Lovely's own flag: it skips the console window
+        Lovely opens per game. Lovely still writes its log files.
+        """
         assert config.love_path is not None
-        return [config.love_path]
+        return [config.love_path, "--disable-console"]
