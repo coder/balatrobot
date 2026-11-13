@@ -243,10 +243,15 @@ return {
           local pack_ready = has_pack and state_ok
 
           if money_deducted and pack_ready then
-            -- Check if this pack type needs hand (Arcana/Spectral packs deal hand cards)
-            -- Don't infer pack type from the first card's set — Black Hole is
-            -- set=Spectral but appears in Celestial packs, causing a false match.
-            local needs_hand = G.hand and G.hand.cards and #G.hand.cards > 0
+            -- Arcana/Spectral packs deal hand cards. Ask the booster itself:
+            -- the state turns SMODS_BOOSTER_OPENED before the hand is drawn, so
+            -- an empty hand doesn't mean the pack won't deal one. Don't infer
+            -- pack type from the first card's set — Black Hole is set=Spectral
+            -- but appears in Celestial packs.
+            local booster = SMODS.OPENED_BOOSTER
+            local draws_hand = booster and booster.config and booster.config.center
+              and booster.config.center.draw_hand
+            local needs_hand = draws_hand or (G.hand and G.hand.cards and #G.hand.cards > 0)
 
             if needs_hand then
               -- Wait for hand to be fully loaded and positioned
