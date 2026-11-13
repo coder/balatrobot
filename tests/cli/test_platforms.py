@@ -176,3 +176,47 @@ class TestWindowsLauncher:
         cmd = launcher.build_cmd(config)
 
         assert cmd == [r"C:\path\to\Balatro.exe", "--disable-console"]
+
+
+@pytest.mark.skipif(not IS_WINDOWS, reason="Windows only")
+class TestWindowsHiding:
+    """Headless launches keep the game window hidden."""
+
+    @pytest.mark.parametrize("headless", [True, False])
+    def test_watcher_runs_only_when_headless(self, monkeypatch, tmp_path, headless):
+        import asyncio
+
+        from balatrobot.platforms import base, windows
+
+        fake = object()
+
+        async def fake_start(self, config, session_dir):
+            return fake
+
+        started = []
+        monkeypatch.setattr(base.BaseLauncher, "start", fake_start)
+        monkeypatch.setattr(
+            windows.threading, "Thread",
+            lambda target, args, daemon: type("T", (), {"start": lambda s: started.append(args)})(),
+        )
+        process = asyncio.run(WindowsLauncher().start(Config(headless=headless), tmp_path))
+        assert process is fake
+        assert bool(started) is headless
+
+    def test_hide_windows_hides_a_visible_window(self):
+        import ctypes
+        import os
+        import tkinter as tk
+
+        from balatrobot.platforms.windows import hide_windows
+
+        root = tk.Tk()
+        root.title("hide me")
+        root.update()
+        hwnd = ctypes.windll.user32.GetParent(root.winfo_id())
+        try:
+            assert ctypes.windll.user32.IsWindowVisible(hwnd)
+            assert hide_windows(os.getpid()) >= 1
+            assert not ctypes.windll.user32.IsWindowVisible(hwnd)
+        finally:
+            root.destroy()
