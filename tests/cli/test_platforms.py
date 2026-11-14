@@ -220,3 +220,41 @@ class TestWindowsHiding:
             assert not ctypes.windll.user32.IsWindowVisible(hwnd)
         finally:
             root.destroy()
+
+    def test_watcher_runs_for_a_below_normal_launcher(self, monkeypatch, tmp_path):
+        import asyncio
+
+        from balatrobot.platforms import base, windows
+
+        async def fake_start(self, config, session_dir):
+            return object()
+
+        started = []
+        monkeypatch.setattr(base.BaseLauncher, "start", fake_start)
+        monkeypatch.setattr(windows, "own_priority_class", lambda: 0x4000)  # BELOW_NORMAL
+        monkeypatch.setattr(
+            windows.threading, "Thread",
+            lambda target, args, daemon: type("T", (), {"start": lambda s: started.append(args)})(),
+        )
+        asyncio.run(WindowsLauncher().start(Config(headless=False), tmp_path))
+        assert started and started[0][1:] == (False, 0x4000)
+
+    def test_set_priority_class_changes_a_running_process(self):
+        import ctypes
+        import subprocess
+        import sys
+
+        from balatrobot.platforms.windows import set_priority_class
+
+        child = subprocess.Popen([sys.executable, "-c", "import time; time.sleep(10)"])
+        try:
+            assert set_priority_class(child.pid, 0x4000)
+            kernel32 = ctypes.windll.kernel32
+            kernel32.OpenProcess.restype = ctypes.c_void_p
+            kernel32.GetPriorityClass.argtypes = [ctypes.c_void_p]
+            kernel32.CloseHandle.argtypes = [ctypes.c_void_p]
+            handle = kernel32.OpenProcess(0x1000, False, child.pid)  # QUERY_LIMITED_INFORMATION
+            assert kernel32.GetPriorityClass(handle) == 0x4000
+            kernel32.CloseHandle(handle)
+        finally:
+            child.kill()

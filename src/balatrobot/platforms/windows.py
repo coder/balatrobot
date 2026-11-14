@@ -14,6 +14,30 @@ from balatrobot.platforms.base import BaseLauncher
 # while loading, so headless launches keep hiding it for this long.
 HIDE_WATCH_SECONDS = 60.0
 _SW_HIDE = 0
+_NORMAL_PRIORITY_CLASS = 0x20
+_PROCESS_SET_INFORMATION = 0x200
+
+
+def own_priority_class() -> int:
+    """This process's Windows priority class."""
+    kernel32 = ctypes.windll.kernel32
+    kernel32.GetCurrentProcess.restype = ctypes.c_void_p
+    kernel32.GetPriorityClass.argtypes = [ctypes.c_void_p]
+    return kernel32.GetPriorityClass(kernel32.GetCurrentProcess())
+
+
+def set_priority_class(pid: int, priority: int) -> bool:
+    kernel32 = ctypes.windll.kernel32
+    kernel32.OpenProcess.restype = ctypes.c_void_p
+    kernel32.SetPriorityClass.argtypes = [ctypes.c_void_p, ctypes.c_uint32]
+    kernel32.CloseHandle.argtypes = [ctypes.c_void_p]
+    handle = kernel32.OpenProcess(_PROCESS_SET_INFORMATION, False, pid)
+    if not handle:
+        return False
+    try:
+        return bool(kernel32.SetPriorityClass(handle, priority))
+    finally:
+        kernel32.CloseHandle(handle)
 
 
 def hide_windows(pid: int) -> int:
@@ -38,16 +62,24 @@ def hide_windows(pid: int) -> int:
     return hidden
 
 
-def _hide_while_starting(process: subprocess.Popen, seconds: float) -> None:
-    """Keep the game's windows hidden through startup, or until it exits.
+def _watch_game(process: subprocess.Popen, hide: bool, priority: int | None) -> None:
+    """Hide the game's windows through startup and hold it at *priority* until it exits.
 
     Windows' start-hidden flag doesn't help: the game shows its own window.
     A hidden window still gets WM_CLOSE, so graceful shutdown is unaffected.
+    The game resets its own priority class while starting, so it can't
+    simply inherit the launcher's.
     """
-    deadline = time.monotonic() + seconds
-    while time.monotonic() < deadline and process.poll() is None:
-        hide_windows(process.pid)
-        time.sleep(0.25)
+    deadline = time.monotonic() + HIDE_WATCH_SECONDS
+    while process.poll() is None:
+        starting = time.monotonic() < deadline
+        if starting and hide:
+            hide_windows(process.pid)
+        if priority is not None:
+            set_priority_class(process.pid, priority)
+        elif not starting:
+            return
+        time.sleep(0.25 if starting else 5.0)
 
 
 class WindowsLauncher(BaseLauncher):
@@ -79,12 +111,14 @@ class WindowsLauncher(BaseLauncher):
         return env
 
     async def start(self, config: Config, session_dir: Path) -> subprocess.Popen:
-        """Start Balatro; in headless mode, keep its window hidden."""
+        """Start Balatro; hide its window when headless, and run it at this launcher's priority."""
         process = await super().start(config, session_dir)
-        if config.headless:
+        priority = own_priority_class()
+        priority = None if priority == _NORMAL_PRIORITY_CLASS else priority
+        if config.headless or priority is not None:
             threading.Thread(
-                target=_hide_while_starting,
-                args=(process, HIDE_WATCH_SECONDS),
+                target=_watch_game,
+                args=(process, config.headless, priority),
                 daemon=True,
             ).start()
         return process
