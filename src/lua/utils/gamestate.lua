@@ -384,10 +384,15 @@ local function extract_card_value(card)
     if card.ability.t_chips and card.ability.t_chips ~= 0 then ab.t_chips = card.ability.t_chips end
     if card.ability.mult and card.ability.mult ~= 0 then ab.mult = card.ability.mult end
     if card.ability.x_mult and card.ability.x_mult ~= 0 then ab.x_mult = card.ability.x_mult end
-    -- Driver's License enhanced card count
-    if card.ability.driver_tally then ab.driver_tally = card.ability.driver_tally end
-    -- Loyalty Card: remaining hands until trigger
-    if card.ability.loyalty_remaining ~= nil then ab.loyalty_remaining = card.ability.loyalty_remaining end
+    -- Counts the game keeps on the card and shows in its description (card.lua
+    -- Card:update and generate_UIBox_ability_table); the bot computes the
+    -- joker's current value from them.
+    for _, k in ipairs({
+      "driver_tally", "steel_tally", "stone_tally", "nine_tally",
+      "loyalty_remaining", "yorick_discards", "caino_xmult", "invis_rounds", "to_do_poker_hand",
+    }) do
+      if card.ability[k] ~= nil then ab[k] = card.ability[k] end
+    end
     -- Only include if non-empty
     if next(ab) ~= nil then
       value.ability = ab
@@ -916,6 +921,20 @@ function gamestate.get_gamestate()
 
     -- Blinds info
     state_data.blinds = gamestate.get_blinds_info()
+
+    -- Run-wide counts the game reads when it draws joker descriptions
+    -- (Fortune Teller, Satellite, Erosion; card.lua:743, 878, 908-911).
+    local planets_used_unique = 0
+    for _, v in pairs(G.GAME.consumeable_usage or {}) do
+      if v.set == "Planet" then planets_used_unique = planets_used_unique + 1 end
+    end
+    state_data.counters = {
+      tarots_used = (G.GAME.consumeable_usage_total and G.GAME.consumeable_usage_total.tarot) or 0,
+      planets_used_unique = planets_used_unique,
+      starting_deck_size = G.GAME.starting_deck_size,
+      playing_cards = G.playing_cards and #G.playing_cards or 0,
+      probabilities_normal = G.GAME.probabilities and G.GAME.probabilities.normal or 1,
+    }
 
     -- JackPotts earnings tracker (per-game money attribution)
     if G.GAME.jackpotts_earnings and G.GAME.jackpotts_earnings.entries then
